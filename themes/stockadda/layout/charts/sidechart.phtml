@@ -1,0 +1,134 @@
+<div class="sidebar the_chart">
+    <ul class="list-group trending">
+        <li class="list-group-item sidebar-title-back">
+            <p>INTRADAY STOCK PRICE (Click to Expand!)</p>
+        </li>
+        <li class="list-group-item">
+            <div id="chart" onclick="clicked();"></div>
+        </li>
+    </ul>
+</div>
+<script>
+    $(document).ready(function() {
+        
+        if($('#chart').length){
+
+        function getData(){
+            return Math.random();
+        };
+
+        var checking = false;
+
+        const specifiedElement = document.getElementById('chart');
+        
+        //I'm using "click" but it works with any event
+        document.addEventListener('click', function(event){
+            var isClickInside = specifiedElement.contains(event.target);
+
+            if (!isClickInside) {
+                //the click was outside the specifiedElement, do something
+                checking = false;
+            } else {
+                    checking = true;
+                    }
+        });
+
+        function clicked(){
+            checking = true;
+        };
+
+        var trace1 = {
+            y:[getData()],
+            type: 'line',
+            fill: 'tonexty',
+            hovertemplate: '<b>Price</b>: ₹%{y:.2f}' +
+                            '<br><b>Date</b>: %{x}' + 
+                            ' <extra></extra>',
+        };
+
+        var data = [trace1];
+
+        var layout = {
+            dragmode: 'pan',
+            xaxis: {
+                autorange: true,
+                showgrid: false,
+                zeroline: false,
+                showline: false,
+                autotick: true,
+                ticks: '',
+                showticklabels: false
+                },
+            yaxis: {
+                autorange: true,
+                showgrid: false,
+                zeroline: false,
+                showline: false,
+                autotick: true,
+                ticks: '',
+                showticklabels: false
+            },
+            height: 230,
+            width: $('.the_chart').width() - 30,
+            margin: {
+                l: 0,
+                r: 0,
+                b: 0,
+                t: 0,
+                pad: 0
+            }
+        };
+
+        var cnt = 0;
+
+        Plotly.newPlot('chart', data, layout,{
+            modeBarButtons: [[
+                'toImage',
+            ], [
+                'zoom2d',
+                'pan2d',
+                'zoomIn2d',
+                'zoomOut2d',
+            ], [
+
+                {
+                    name: 'myResetScale2d',
+                    title: 'Reset axes',
+                    icon: Plotly.Icons.home,
+                    click: function(gd) {
+                        if (cnt<100){
+                            Plotly.relayout(gd, {
+                                                'xaxis.range': [0, cnt],
+                                                'yaxis.autorange': true
+                                                });
+                        } else{
+                            Plotly.relayout(gd, {
+                                                'xaxis.range': [cnt-100, cnt],
+                                                'yaxis.autorange': true
+                                                });
+                        }
+                    }
+                }
+            ], [
+                'hoverClosestCartesian'
+            ],], displaylogo: false
+                
+        }, );
+
+        setInterval(function(){
+
+            Plotly.extendTraces('chart', { y:[[getData()]] }, [0]);
+            cnt++;
+
+            if(cnt > 100 && !checking) {
+                Plotly.relayout('chart',{
+                    xaxis:{
+                        range: [cnt-100, cnt]
+                    }
+                });
+            }
+
+        }, 200)}
+    });
+</script>
+			

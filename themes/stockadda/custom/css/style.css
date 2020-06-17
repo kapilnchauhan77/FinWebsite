@@ -1,0 +1,38 @@
+/* 
+
+Add here your custom css styles Example: p { text-align: center; color: red; } 
+
+
+*/
+@media (min-width: 768px) {
+    .container {
+        width: 97%;
+    }
+}
+@media (min-width: 992px) {
+    .container {
+        width: 97%;
+    }
+}
+@media (min-width: 1200px) {
+    .container {
+        width: 97%;
+    }
+}
+.header-fixed1000, .header-fixed1200 {
+	max-width: 97%;
+}
+.navbar-default, .header-fixed1000 > .container-fluid {
+	height:65px!important;
+}
+.content-container {
+    margin-top: 65px!important;
+}
+.brand.header-brand img {
+	width:200px!important;
+}
+.btn-main {
+    color: #ffffff;
+    background-color: #ff9600!important;
+    border-color: #ff9600!important;
+}

@@ -1,0 +1,47 @@
+<script>
+function financeData(fincode, tab_data, fformat, type_to_get){
+		var datum = null;
+		var table_expired = false;
+		if (typeof(Storage) !== "undefined") {
+			datum = localStorage.getItem(fincode + tab_data + type_to_get + "_table_data");
+		}
+		if (datum !== null){ 
+			datum = JSON.parse(datum);
+			if (new Date().getTime() > datum.expiry) {
+				table_expired  = true;
+			}
+			datum = datum.value;
+		}
+		if (datum == null || table_expired == true){
+			$.ajax({
+				url: Wo_Ajax_Requests_File(),
+				type: 'GET',
+				async: false,
+				dataType: 'json',
+				data: {
+					f:'financial_details',
+					fincode: fincode,
+					tab_data: tab_data,
+					fformat: fformat,
+					type_to_get: type_to_get
+				},
+					})
+					.done(function(data) {
+						console.log('Data:');
+						console.log(data);
+						datum = data;
+						if (typeof(Storage) !== "undefined") {
+                            const item = {
+                                value: datum,
+                                expiry: new Date().getTime() + 21000000000
+                            };
+                            if (table_expired === true){
+                                localStorage.removeItem(fincode + tab_data + type_to_get + "_table_data");
+                            }
+                            localStorage.setItem(fincode + tab_data + type_to_get + "_table_data", JSON.stringify(item));
+						}
+					})
+				}
+		return datum;
+}
+</script>

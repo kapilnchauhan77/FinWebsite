@@ -1,0 +1,332 @@
+<script>
+	$(document).ready(function() {
+if (typeof(Storage) !== "undefined") {
+			var company_fincode = <?php echo $wo['company_data']['fincode']; ?>;
+			var company_price_expired = false;
+			full_data = localStorage.getItem(company_fincode + "_company_price");
+		} else{
+			full_data = null;
+		}
+		if (full_data !== null){
+			data = JSON.parse(full_data);
+			if (new Date().getTime() > data.expiry) {
+				company_price_expired = true;
+			} else{
+				full_data = data.value;
+				
+				if (full_data['from_sql']){
+					last_price = full_data['last_price'];
+					change = full_data['change_'];
+					exchange = full_data['exchange'];
+					pcnt_change = full_data['pcnt_change'];
+					open_price = full_data['open_price'];
+					prev_close_price = full_data['prev_close_price'];
+					volume = full_data['volume'];
+					high = full_data['high'];
+					low = full_data['low'];
+					week_high = full_data['week_high'];
+					week_low = full_data['week_low'];
+					mcap = Math.round(full_data['mcap'] * 10)/100;
+					pe = Math.round(full_data['pe'] * 100)/100;
+					pe_cons = Math.round(full_data['pe_cons'] * 100)/100;
+					book_val = Math.round(full_data['book_val'] * 100)/100;
+					face_val = Math.round(full_data['face_val'] * 100)/100;
+					price_book = Math.round(full_data['price_book'] * 100)/100;
+					cash_eps = Math.round(full_data['cash_eps'] * 100)/100;
+					epsc = Math.round(full_data['epsc'] * 100)/100;
+					price_earning = Math.round(full_data['price_earning'] * 100)/100;
+					enterprise_val = Math.round(full_data['enterprise_val']/100000)/100;
+					ev_ebitda = Math.round(full_data['ev_ebitda'] * 100)/100;
+					ev_sales = Math.round(full_data['ev_sales'] * 100)/100;
+					div_yield = Math.round(full_data['div_yield'] * 100)/100;
+					mcap_sales = Math.round(full_data['mcap_sales'] * 100)/100;
+					price_sales = Math.round(full_data['price_sales'] * 100000)/100000;
+				} else{
+					last_price = full_data['CLOSE'];
+					exchange = full_data['EXCHANGE'];
+					change = full_data['CHANGE'];
+					pcnt_change = full_data['PER_CHANGE'];
+					open_price = full_data['OPEN'];
+					prev_close_price = full_data['PREV_CLOSE'];
+					volume = full_data['VOLUME'];
+					high = full_data['High'];
+					low = full_data['LOW'];
+					week_high = full_data['52WeekHigh'];
+					week_low = full_data['52WeekLow'];
+					mcap = Math.round(full_data['MCAP'] * 10)/100;
+					pe = Math.round(full_data['PE'] * 100)/100;
+					pe_cons = Math.round(full_data['PE_CONSOL'] * 100)/100;
+					book_val = Math.round(full_data['BOOKNAVPERSHARE'] * 100)/100;
+					face_val = Math.round(full_data['FV'] * 100)/100;
+					price_book = Math.round(full_data['PRICE_BV'] * 100)/100;
+					cash_eps = Math.round(full_data['CEPS'] * 100)/100;
+					epsc = Math.round(full_data['EPSc'] * 100)/100;
+					price_earning = Math.round(full_data['PEPS'] * 100)/100;
+					enterprise_val = Math.round(full_data['EV']/100000)/100;
+					ev_ebitda = Math.round(full_data['EV_EBITDA'] * 100)/100;
+					ev_sales = Math.round(full_data['EV_SALES'] * 100)/100;
+					div_yield = Math.round(full_data['YIELD'] * 100)/100;
+					mcap_sales = Math.round(full_data['MCAP_SALES'] * 100)/100;
+					price_sales = Math.round(full_data['PRICE_SALES'] * 100000)/100000;
+				};
+				
+				const open_high_low_close_info = `<b>
+					<div class="col-md-2">
+						<span style="font-weight: 700; color: black;">Open</span><br>`+open_price+`
+					</div>
+					<div class="col-md-2">
+						<span style="font-weight: 700; color: black;">Prev Close</span><br>`+prev_close_price+`
+					</div>
+					<div class="col-md-2">
+						<span style="font-weight: 700; color: black;">Volume</span><br>`+volume+`
+					</div>
+
+					<div class="col-md-3">
+						<span style="font-weight: 700; color: black;">Day's Range</span><br>
+						<span>`+high+`</span>
+						<span>-</span>
+						<span>`+low+`</span>
+					</div>
+					<div class="col-md-3">
+						<span style="font-weight: 700; color: black;">52 Wk Range</span><br>
+						<span>`+week_high+`</span>
+						<span>-</span>
+						<span>`+week_low+`</span>
+					</div>
+				</b>`;
+				
+				$('#OHLC').html(open_high_low_close_info);
+
+				const additionInfo = `<b>
+					<div class="col-md-2">
+						<br><br><div style="text-align: right; padding:0% 10%;">
+						<span style="font-weight: 700; color: black; float: left;">Mkt Cap (Cr)</span>&nbsp;`+mcap+`
+						<br><span style="font-weight: 700; color: black; float: left;">PE</span>&nbsp;`+pe+`
+						<br><span style="font-weight: 700; color: black; float: left;">PE(Cons)</span>&nbsp;`+pe_cons+`
+						</div>
+					</div>
+					<div class="col-md-2">
+						<br><br><div style="text-align: right; padding:0% 10%;">
+						<span style="font-weight: 700; color: black; float: left;">Book Value</span>&nbsp;`+book_val+`
+						<br><span style="font-weight: 700; color: black; float: left;">Face Value</span>&nbsp;`+face_val+`
+						<br><span style="font-weight: 700; color: black; float: left;">Price/Book (MRQ)</span>&nbsp;`+price_book+`
+						</div>
+					</div>
+					<div class="col-md-2">
+						<br><br><div style="text-align: right; padding:0% 10%;">
+						<span style="font-weight: 700; color: black; float: left;">Cash EPS</span>&nbsp;`+cash_eps+`
+						<br><span style="font-weight: 700; color: black; float: left;">EPSc</span>&nbsp;`+epsc+`
+						<br><span style="font-weight: 700; color: black; float: left;">Price/Earning (TTM)</span>&nbsp;`+price_earning+`
+						</div>
+					</div>
+					<div class="col-md-3">
+						<br><br><div style="text-align: right; padding:0% 10%;">
+						<span style="font-weight: 700; color: black; float: left;">Enterprise Val (Cr)</span>&nbsp;`+enterprise_val+`
+						<br><span style="font-weight: 700; color: black; float: left;">EV/EBITDA</span>&nbsp;`+ev_ebitda+`
+						<br><span style="font-weight: 700; color: black; float: left;">EV/Sales</span>&nbsp;`+ev_sales+`
+						</div>
+					</div>
+					<div class="col-md-3">
+						<br><br><div style="text-align: right; padding:0% 10%;">
+						<span style="font-weight: 700; color: black; float: left;">Div Yield</span>&nbsp;`+div_yield+`
+						<br><span style="font-weight: 700; color: black; float: left;">Mcap to Sales</span>&nbsp;`+mcap_sales+`
+						<br><span style="font-weight: 700; color: black; float: left;">Price/Sales</span>&nbsp;`+price_sales+`
+						</div>
+					</div>
+				</b>`
+
+				$('#additional_things').html(additionInfo);
+
+				if (pcnt_change > 0){
+					const postitive_show = `<div style="margin-top: 0%; font-size: 30px; color: #008000">
+							&#8377;<span style="font-size: 55px;">`+last_price+`</span>
+							<svg width="35px" height="35px" viewBox="100 25 1792 2192" xmlns="http://www.w3.org/2000/svg">
+								<path fill="#008000" d="M1412 895q0-27-18-45l-362-362-91-91q-18-18-45-18t-45 18l-91 91-362 362q-18 18-18 45t18 45l91 91q18 18 45 18t45-18l189-189v502q0 26 19 45t45 19h128q26 0 45-19t19-45v-502l189 189q19 19 45 19t45-19l91-91q18-18 18-45zm252 1q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"/>
+							</svg>`+change+`&nbsp;(`+pcnt_change+`%)&nbsp;<span style="color: grey; font-size: 25px;">`+exchange+`</span>
+						</div>`;
+					$('#prices').html(postitive_show);
+				} else{
+					const negative_show = `<div style="margin-top: 0%; font-size: 30px; color: #FF0000">
+							&#8377;<span style="font-size: 55px;">`+last_price+`</span>
+							<svg width="35px" height="35px" viewBox="100 450 1792 2192" xmlns="http://www.w3.org/2000/svg">
+								<path style="transform: rotate(180deg); transform-origin: 50% 50%;" fill="#FF0000" d="M1412 895q0-27-18-45l-362-362-91-91q-18-18-45-18t-45 18l-91 91-362 362q-18 18-18 45t18 45l91 91q18 18 45 18t45-18l189-189v502q0 26 19 45t45 19h128q26 0 45-19t19-45v-502l189 189q19 19 45 19t45-19l91-91q18-18 18-45zm252 1q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"/>
+							</svg>`+change+`&nbsp;(`+pcnt_change+`%)&nbsp;<span style="color: grey; font-size: 25px;">`+exchange+`</span>
+						</div>`
+					$('#prices').html(negative_show);
+				}
+			}
+		} 
+		if (full_data === null || company_price_expired === true){
+			$.ajax({
+				url: Wo_Ajax_Requests_File(),
+				type: 'GET',
+				dataType: 'json',
+				data: {
+					f:'company_price',
+					fincode: <?php echo $wo['company_data']['fincode'];?>,
+					timestamp: Math.round((new Date()).getTime() / 1000),
+				},
+					})
+					.done(function(data) {
+						if (data['status'] == 200){
+							full_data = data.company_prices;
+							// console.log(full_data);
+							
+							if (full_data['from_sql']){
+								last_price = full_data['last_price'];
+								change = full_data['change_'];
+								pcnt_change = full_data['pcnt_change'];
+								open_price = full_data['open_price'];
+								prev_close_price = full_data['prev_close_price'];
+								volume = full_data['volume'];
+								high = full_data['high'];
+								low = full_data['low'];
+								week_high = full_data['week_high'];
+								week_low = full_data['week_low'];
+								mcap = Math.round(full_data['mcap'] * 10)/100;
+								pe = Math.round(full_data['pe'] * 100)/100;
+								pe_cons = Math.round(full_data['pe_cons'] * 100)/100;
+								book_val = Math.round(full_data['book_val'] * 100)/100;
+								face_val = Math.round(full_data['face_val'] * 100)/100;
+								price_book = Math.round(full_data['price_book'] * 100)/100;
+								cash_eps = Math.round(full_data['cash_eps'] * 100)/100;
+								epsc = Math.round(full_data['epsc'] * 100)/100;
+								price_earning = Math.round(full_data['price_earning'] * 100)/100;
+								enterprise_val = Math.round(full_data['enterprise_val']/100000)/100;
+								ev_ebitda = Math.round(full_data['ev_ebitda'] * 100)/100;
+								ev_sales = Math.round(full_data['ev_sales'] * 100)/100;
+								div_yield = Math.round(full_data['div_yield'] * 100)/100;
+								mcap_sales = Math.round(full_data['mcap_sales'] * 100)/100;
+								price_sales = Math.round(full_data['price_sales'] * 100000)/100000;
+							} else{
+								last_price = full_data['CLOSE'];
+								change = full_data['CHANGE'];
+								pcnt_change = full_data['PER_CHANGE'];
+								open_price = full_data['OPEN'];
+								prev_close_price = full_data['PREV_CLOSE'];
+								volume = full_data['VOLUME'];
+								high = full_data['High'];
+								low = full_data['LOW'];
+								week_high = full_data['52WeekHigh'];
+								week_low = full_data['52WeekLow'];
+								mcap = Math.round(full_data['MCAP'] * 10)/100;
+								pe = Math.round(full_data['PE'] * 100)/100;
+								pe_cons = Math.round(full_data['PE_CONSOL'] * 100)/100;
+								book_val = Math.round(full_data['BOOKNAVPERSHARE'] * 100)/100;
+								face_val = Math.round(full_data['FV'] * 100)/100;
+								price_book = Math.round(full_data['PRICE_BV'] * 100)/100;
+								cash_eps = Math.round(full_data['CEPS'] * 100)/100;
+								epsc = Math.round(full_data['EPSc'] * 100)/100;
+								price_earning = Math.round(full_data['PEPS'] * 100)/100;
+								enterprise_val = Math.round(full_data['EV']/100000)/100;
+								ev_ebitda = Math.round(full_data['EV_EBITDA'] * 100)/100;
+								ev_sales = Math.round(full_data['EV_SALES'] * 100)/100;
+								div_yield = Math.round(full_data['YIELD'] * 100)/100;
+								mcap_sales = Math.round(full_data['MCAP_SALES'] * 100)/100;
+								price_sales = Math.round(full_data['PRICE_SALES'] * 100000)/100000;
+							};
+							
+							const open_high_low_close_info = `<b>
+								<div class="col-md-2">
+									<span style="font-weight: 700; color: black;">Open</span><br>`+open_price+`
+								</div>
+								<div class="col-md-2">
+									<span style="font-weight: 700; color: black;">Prev Close</span><br>`+prev_close_price+`
+								</div>
+								<div class="col-md-2">
+									<span style="font-weight: 700; color: black;">Volume</span><br>`+volume+`
+								</div>
+
+								<div class="col-md-3">
+									<span style="font-weight: 700; color: black;">Day's Range</span><br>
+									<span>`+high+`</span>
+									<span>-</span>
+									<span>`+low+`</span>
+								</div>
+								<div class="col-md-3">
+									<span style="font-weight: 700; color: black;">52 Wk Range</span><br>
+									<span>`+week_high+`</span>
+									<span>-</span>
+									<span>`+week_low+`</span>
+								</div>
+							</b>`;
+							
+							$('#OHLC').html(open_high_low_close_info);
+
+							const additionInfo = `<b>
+								<div class="col-md-2">
+									<br><br><div style="text-align: right; padding:0% 10%;">
+									<span style="font-weight: 700; color: black; float: left;">Mkt Cap (Cr)</span>&nbsp;`+mcap+`
+									<br><span style="font-weight: 700; color: black; float: left;">PE</span>&nbsp;`+pe+`
+									<br><span style="font-weight: 700; color: black; float: left;">PE(Cons)</span>&nbsp;`+pe_cons+`
+									</div>
+								</div>
+								<div class="col-md-2">
+									<br><br><div style="text-align: right; padding:0% 10%;">
+									<span style="font-weight: 700; color: black; float: left;">Book Value</span>&nbsp;`+book_val+`
+									<br><span style="font-weight: 700; color: black; float: left;">Face Value</span>&nbsp;`+face_val+`
+									<br><span style="font-weight: 700; color: black; float: left;">Price/Book (MRQ)</span>&nbsp;`+price_book+`
+									</div>
+								</div>
+								<div class="col-md-2">
+									<br><br><div style="text-align: right; padding:0% 10%;">
+									<span style="font-weight: 700; color: black; float: left;">Cash EPS</span>&nbsp;`+cash_eps+`
+									<br><span style="font-weight: 700; color: black; float: left;">EPSc</span>&nbsp;`+epsc+`
+									<br><span style="font-weight: 700; color: black; float: left;">Price/Earning (TTM)</span>&nbsp;`+price_earning+`
+									</div>
+								</div>
+								<div class="col-md-3">
+									<br><br><div style="text-align: right; padding:0% 10%;">
+									<span style="font-weight: 700; color: black; float: left;">Enterprise Val (Cr)</span>&nbsp;`+enterprise_val+`
+									<br><span style="font-weight: 700; color: black; float: left;">EV/EBITDA</span>&nbsp;`+ev_ebitda+`
+									<br><span style="font-weight: 700; color: black; float: left;">EV/Sales</span>&nbsp;`+ev_sales+`
+									</div>
+								</div>
+								<div class="col-md-3">
+									<br><br><div style="text-align: right; padding:0% 10%;">
+									<span style="font-weight: 700; color: black; float: left;">Div Yield</span>&nbsp;`+div_yield+`
+									<br><span style="font-weight: 700; color: black; float: left;">Mcap to Sales</span>&nbsp;`+mcap_sales+`
+									<br><span style="font-weight: 700; color: black; float: left;">Price/Sales</span>&nbsp;`+price_sales+`
+									</div>
+								</div>
+							</b>`
+
+							$('#additional_things').html(additionInfo);
+
+							if (pcnt_change > 0){
+								const postitive_show = `<div style="margin-top: 0%; font-size: 30px; color: #008000">
+										&#8377;<span style="font-size: 55px;">`+last_price+`</span>
+										<svg width="35px" height="35px" viewBox="100 25 1792 2192" xmlns="http://www.w3.org/2000/svg">
+											<path fill="#008000" d="M1412 895q0-27-18-45l-362-362-91-91q-18-18-45-18t-45 18l-91 91-362 362q-18 18-18 45t18 45l91 91q18 18 45 18t45-18l189-189v502q0 26 19 45t45 19h128q26 0 45-19t19-45v-502l189 189q19 19 45 19t45-19l91-91q18-18 18-45zm252 1q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"/>
+										</svg>`+change+`&nbsp;(`+pcnt_change+`%)&nbsp;<span style="color: grey; font-size: 25px;">BSE</span>
+									</div>`;
+								$('#prices').html(postitive_show);
+							} else{
+								const negative_show = `<div style="margin-top: 0%; font-size: 30px; color: #FF0000">
+										&#8377;<span style="font-size: 55px;">`+last_price+`</span>
+										<svg width="35px" height="35px" viewBox="100 450 1792 2192" xmlns="http://www.w3.org/2000/svg">
+											<path style="transform: rotate(180deg); transform-origin: 50% 50%;" fill="#FF0000" d="M1412 895q0-27-18-45l-362-362-91-91q-18-18-45-18t-45 18l-91 91-362 362q-18 18-18 45t18 45l91 91q18 18 45 18t45-18l189-189v502q0 26 19 45t45 19h128q26 0 45-19t19-45v-502l189 189q19 19 45 19t45-19l91-91q18-18 18-45zm252 1q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"/>
+										</svg>`+change+`&nbsp;(`+pcnt_change+`%)&nbsp;<span style="color: grey; font-size: 25px;">BSE</span>
+									</div>`
+								$('#prices').html(negative_show);
+							}
+							if (typeof(Storage) !== "undefined") {
+								const item = {
+									value: full_data,
+									expiry: new Date().getTime() + 210000
+                                }
+                                if (company_price_expired === true){
+                    				localStorage.removeItem(company_fincode + "_company_price");
+                                }
+								localStorage.setItem(company_fincode + "_company_price", JSON.stringify(item));
+							}
+						}
+						else{
+							console.log(data['status']);
+						} 
+					})
+					.fail(function() {
+						console.log("error_fail");
+					});
+		}});
+</script>

@@ -1,0 +1,3687 @@
+<script>
+    function to_load_main_quote_graph(company_fincode, type_, DateOption, DateCount, price_to_get='price'){
+        moment.suppressDeprecationWarnings = true;
+        function volumeInK (value) {
+          return value > 1000 ? Math.round(value / 10)/100 + 'K' : value;
+        }
+
+        Chart.defaults.LineWithLine = Chart.defaults.line;
+        Chart.controllers.LineWithLine = Chart.controllers.line.extend({
+            draw: function (ease) {
+                Chart.controllers.line.prototype.draw.call(this, ease);
+                if (this.chart.tooltip._active && this.chart.tooltip._active.length) {
+                    var bty = 0;
+                    if (price_to_get=='pe'){
+                        bty = this.chart.scales['Price-id'].bottom;
+                    }
+                    else{
+                        bty = this.chart.scales['Volume-id'].bottom;
+                    }
+                    var activePoint = this.chart.tooltip._active[0],
+                        ctx = this.chart.ctx,
+                        x = activePoint.tooltipPosition().x,
+                        topY = this.chart.scales['Price-id'].top,
+                        bottomY = bty;
+
+                    // draw line
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(x, topY);
+                    ctx.lineTo(x, bottomY);
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([2, 3]),
+                        ctx.strokeStyle = '#68696b';
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        });
+
+        var currentchart;
+
+        var options;
+
+        var unit_to_use = 'month';
+        var _format_ = 'll';
+        if (DateOption == "M" || DateOption == "D"){
+            unit_to_use = 'day';
+        }else if(type_ == "I"){
+            unit_to_use = 'minute';
+            _format_ = 'lll';
+        }
+
+        if (price_to_get == "pe"){
+            options = {
+                responsive: true,
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            unit: unit_to_use
+                        },
+                        gridLines: {
+                            drawBorder: false,
+                            display: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 6, // hide main x-axis line
+                            beginAtZero: true,
+                            maxRotation: 0,
+                            padding: 10,
+                            fontColor: '#000',
+                        },
+                    }],
+                    yAxes: [{
+                        display: true,
+                        type: 'linear',
+                        position: 'right',
+                        gridLines: {
+                            drawBorder: false,
+                            color: '#eeeeee',
+                            tickMarkLength: 0,
+                            zeroLineColor: '#eeeeee',
+                        },
+                        scaleLabel: {
+                        display: true,
+                        labelString: 'Price to Earning',
+                        beginAtZero: true,
+                        },
+                        ticks: {
+                            padding: 10
+                        },
+                        id: 'Price-id'
+                    }],
+                },
+                tooltips: {
+                    intersect: false,
+                    callbacks: {
+                        title: function (tooltipItem, data) {
+                            var d = moment(data['labels'][tooltipItem[0]['index']], "M/D/YYYY HH:mm:ss A");
+                            return d.format(_format_)
+                        },
+
+                        label: function (tooltipItems, data) {
+                            var multistringText = [];
+                            multistringText.push('PE: ' + data.datasets[0].data[tooltipItems.index]);
+                            return multistringText;
+                        }
+                    },
+                    backgroundColor: '#FFFFFF',
+                    titleFontSize: 15,
+                    titleFontStyle: 'normal',
+                    bodyFontFamily: 'Source Sans Pro',
+                    bodyFontStyle: 'bold',
+                    titleFontFamily: 'Hind',
+                    titleFontColor: '#000',
+                    bodyFontColor: '#000',
+                    bodyFontSize: 18,
+                    displayColors: false,
+                    xPadding: 10,
+                    yPadding: 10,
+                    borderColor: '#000',
+                    borderWidth: 2,
+                },
+                legend: {
+                    display: false,
+                }
+            };
+        } else{
+            options = {
+                responsive: true,
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            unit: unit_to_use
+                        },
+                        gridLines: {
+                            drawBorder: false,
+                            display: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 6, // hide main x-axis line
+                            beginAtZero: true,
+                            maxRotation: 0,
+                            padding: 10,
+                            fontColor: '#000',
+                        },
+                    }],
+                    yAxes: [{
+                        display: true,
+                        type: 'linear',
+                        position: 'right',
+                        gridLines: {
+                            drawBorder: false,
+                            color: '#eeeeee',
+                            tickMarkLength: 0,
+                            zeroLineColor: '#eeeeee',
+                        },
+                        scaleLabel: {
+                        display: true,
+                        labelString: 'Price',
+                        beginAtZero: true,
+                        },
+                        ticks: {
+                            padding: 10
+                        },
+                        id: 'Price-id'
+                    },
+                    {
+                        display: true,
+                        type: 'linear',
+                        position: 'left',
+                        gridLines: {
+                        display: false,
+                        },
+                        scaleLabel: {
+                        display: true,
+                        labelString: 'Volume',
+                        beginAtZero: true,
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            padding: 10,
+                            fontColor: '#000',
+                            callback: volumeInK
+                        },
+                        id: 'Volume-id',
+                    }
+                ],
+                },
+                tooltips: {
+                    intersect: false,
+                    callbacks: {
+                        title: function (tooltipItem, data) {
+                            var d = moment(data['labels'][tooltipItem[0]['index']], "M/D/YYYY HH:mm:ss A");
+                            return d.format(_format_)
+                        },
+
+                        label: function (tooltipItems, data) {
+                            var multistringText = [];
+                            multistringText.push('Price: ₹' + data.datasets[0].data[tooltipItems.index]);
+                            multistringText.push('Volume: ' + volumeInK(data.datasets[1].data[tooltipItems.index]));
+                            return multistringText;
+                        }
+                    },
+                    backgroundColor: '#FFFFFF',
+                    titleFontSize: 15,
+                    titleFontStyle: 'normal',
+                    bodyFontFamily: 'Source Sans Pro',
+                    bodyFontStyle: 'bold',
+                    titleFontFamily: 'Hind',
+                    titleFontColor: '#000',
+                    bodyFontColor: '#000',
+                    bodyFontSize: 18,
+                    displayColors: false,
+                    xPadding: 10,
+                    yPadding: 10,
+                    borderColor: '#000',
+                    borderWidth: 2,
+                },
+                legend: {
+                    display: false,
+                }
+            };
+        };
+
+        var GetChartData = function () {
+            var is_it_ytd = false;
+            if (typeof(Storage) !== "undefined") {
+                var company_graph_price_expired = false;
+                var full_data = null;
+                // console.log(DateOption);
+                full_data = localStorage.getItem(company_fincode + type_ + DateOption + DateCount + price_to_get + "_company_graph_price");
+                // console.log(company_fincode + type_ + DateOption + DateCount + price_to_get + "_company_graph_price");
+                if (full_data !== null){ 
+                    full_data = JSON.parse(full_data);
+                    if (new Date().getTime() > full_data.expiry) {
+                        company_graph_price_expired  = true;
+                    }
+                }
+            } else{
+                full_data = null;
+            }
+            if (full_data === null  || company_graph_price_expired === true){
+                var count = $('#count').val();
+                var type = $('#type').val();
+                var StartDate = '';
+                if (DateOption == "YTD"){
+                    is_it_ytd = true;
+                    DateOption = "";
+                    StartDate = new Date().getFullYear().toString();
+                };
+                $.ajax({
+                    url: Wo_Ajax_Requests_File(),
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        f:'company_graph_price',
+                        fincode: company_fincode,
+                        timestamp: Math.round((new Date()).getTime() / 1000),
+                        type: type_,
+                        DateOption: DateOption,
+                        DateCount: DateCount,
+                        StartDate: StartDate,
+                        EndDate: ''
+                    },
+                    success: function (data) {
+                        d = data.company_prices;
+                        console.log(d);
+                        var dateLabel = [];
+                        var priceValue = [];
+                        var volumeValue = [];
+                        chartData = {};
+
+                        if (price_to_get == "pe"){
+                            $.each(d.Table, function (key, value) {
+                                dateLabel.push(value.Date);
+                                priceValue.push(Math.round(value.pe * 100) / 100);
+                            });
+                        } else{
+                            $.each(d.Table, function (key, value) {
+                                dateLabel.push(value.Date);
+                                priceValue.push(Math.round(value.price * 100) / 100);
+                                volumeValue.push(value.volume);
+                            });
+                        }
+                        
+                        if (price_to_get == "pe"){
+                            chartData = {
+                                labels: dateLabel,
+                                datasets: [
+                                    {
+                                        label: 'Price',
+                                        yAxisID: "Price-id",
+                                        data: priceValue,
+                                        pointRadius: 0,
+                                        pointBackgroundColor: '#000',
+                                        pointBorderWidth: 0,
+                                        fill: false,
+                                        borderColor: 'rgba(24, 68, 93, 1)',
+                                        borderWidth: 2,
+                                    }
+                                ]
+                            };
+                        } else{
+                            chartData = {
+                                labels: dateLabel,
+                                datasets: [
+                                    {
+                                        label: 'Price',
+                                        yAxisID: "Price-id",
+                                        data: priceValue,
+                                        pointRadius: 0,
+                                        pointBackgroundColor: '#000',
+                                        pointBorderWidth: 0,
+                                        fill: false,
+                                        borderColor: 'rgba(24, 68, 93, 1)',
+                                        borderWidth: 2,
+                                    },
+                                    {
+                                        type: 'bar',
+                                        maxBarThickness: 5,
+                                        label: 'Volume',
+                                        yAxisID: "Volume-id",
+                                        data: volumeValue,
+                                        pointRadius: 0,
+                                        pointBackgroundColor: '#03e08b',
+                                        pointBorderWidth: 0,
+                                        fill: true,
+                                        backgroundColor: 'rgba(160, 216, 248, 1)',
+                                        borderColor: 'rgba(160, 216, 248, 1)',
+                                        borderWidth: 2,
+                                    }
+                                ]
+                            };
+                        }
+                        if (typeof(Storage) !== "undefined") {
+                            var item;
+                            item = {
+                                value: chartData,
+                                expiry: new Date().getTime() + 210000
+                            }
+                            if (type_=='H'){
+                                item = {
+									value: chartData,
+									expiry: new Date().getTime() + 2100000000000
+                                }
+                            }
+                            if(is_it_ytd == true){
+                                DateOption = "YTD";
+                            }
+                            if (company_graph_price_expired === true){
+                                localStorage.removeItem(company_fincode + type_ + DateOption + DateCount + price_to_get + "_company_graph_price");
+                            }
+                            localStorage.setItem(company_fincode + type_ + DateOption + DateCount + price_to_get + "_company_graph_price", JSON.stringify(item));
+							}
+                        respondCanvas();
+                    }
+                });
+            }else{
+                chartData = full_data.value;
+                respondCanvas();
+            }
+        };
+
+        function respondCanvas() {
+            if (document.getElementById("dual-line") != null) {
+                $('#loading').html('');
+                var ctx = document.getElementById("dual-line").getContext("2d");
+                var chart = new Chart(ctx, {
+                    type: 'LineWithLine',
+                    data: chartData,
+                    options: options,
+                });
+
+                if ($('#type').val() == "w" || ($('#type').val() == "m" && $('#count').val() == "1")) {
+                    chart.options.scales.xAxes[0].time.unit = 'day';
+                    chart.update();
+                }
+                currentchart = chart;
+
+            }
+        }
+
+
+        $(document).ready(function () {
+            if (company_fincode==""){
+                company_fincode = <?php echo $wo['company_data']['fincode']; ?>;
+            }
+            GetChartData();
+        });
+
+
+        if (window.matchMedia("(max-width: 575px)").matches) {
+            $("#dual-line").attr("height", "960");
+        }
+
+    }
+
+    function to_load_extra_quote_graph(company_fincode, company_fformat){
+
+        var chartData = {};
+        var Net_Sales_Growth_sparkline = {};
+        var Earning_Per_Share_sparkline = {};
+        var Book_NAV_Share_sparkline = {};
+        var EBITDA_Margin_sparkline = {};
+        var PAT_Marginsparkline = {};
+        var ROCE_sparkline = {};
+        var ROA_sparkline = {};
+        var ROE_sparkline = {};
+        var Debt_Equity_Ratio_sparkline = {};
+
+        var sparklinestyle = {
+            responsive: true,
+            legend: {
+                display: false
+            },
+            tooltips: {
+                intersect: false,
+                mode: 'nearest',
+                titleFontSize: 13,
+                titleFontStyle: 'normal',
+                backgroundColor: '#FFFFFF',
+                bodyFontFamily: 'Source Sans Pro',
+                bodyFontStyle: 'bold',
+                titleFontFamily: 'Hind',
+                titleFontColor: '#000',
+                bodyFontColor: '#000',
+                bodyFontSize: 13,
+                displayColors: false,
+                xPadding: 10,
+                yPadding: 10,
+                borderColor: '#0078ff',
+                borderWidth: 1,
+                callbacks: {
+                    label: function (tooltipItems, data) {
+                        return tooltipItems.yLabel.toFixed(2);
+                    }
+                }
+            },
+            hover: { mode: null },
+
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        display: false
+                    },
+                    gridLines: 0,
+                    gridLines: {
+                        zeroLineColor: "transparent",
+                        drawTicks: false,
+                        display: false,
+                        drawBorder: false
+                    }
+                }],
+                xAxes: [{
+                    display: 0,
+                    gridLines: 0,
+                    ticks: {
+                        display: false
+                    },
+                    gridLines: {
+                        zeroLineColor: "transparent",
+                        drawTicks: false,
+                        display: false,
+                        drawBorder: false
+                    }
+                }]
+            },
+            layout: {
+                padding: { left: 10, right: 10, top: 10, bottom: 10 }
+            }
+        };
+
+
+        var extraGraphData = function () {
+
+            var extra_g_d = "";
+
+            if(company_fformat=="MAN"){
+                extra_g_d = ['consolidated_NetSalesGrowth', 'consolidated_EarningsPerShareRs', 'consolidated_BookNAVShareRs', 'consolidated_CoreEBITDAMargin', 'consolidated_PATMargin', 'consolidated_ROCE', 'consolidated_ROA', 'consolidated_ROE', 'consolidated_CurrentRatiox'];
+            } else{
+                extra_g_d = ['consolidated_EarningsPerShareRs', 'consolidated_NIM', 'consolidated_NetProfitGrowth', 'consolidated_InterestSpread', 'consolidated_ROCE', 'consolidated_CostIncomeRatio', 'consolidated_AdvancesGrowth', 'consolidated_ROE', 'consolidated_NetNPAsfundedtoNetAdvances'];
+            }
+
+            if (typeof(Storage) !== "undefined") {
+                var company_extra_graph_price_expired = false;
+                var full_data = null;
+                full_data = localStorage.getItem(company_fincode + company_fformat + "company_extra_graph_price");
+                if (full_data !== null){ 
+                    full_data = JSON.parse(full_data);
+                    if (new Date().getTime() > full_data.expiry) {
+                        company_extra_graph_price_expired  = true;
+                    }
+                }
+            } else{
+                full_data = null;
+            }
+            if (full_data === null  || company_extra_graph_price_expired === true){
+                $.ajax({
+                    url: Wo_Ajax_Requests_File(),
+                    type: 'GET',
+                    dataType: 'json',
+                    // async: false,
+                    data: {
+                        f:'extra_graphs_data',
+                        fincode: company_fincode,
+                        extra_g_d: extra_g_d,
+                    },
+                    success: function (d) {
+                        // console.log('hi');
+
+                        var _data_ = {};
+                        var labels = [];
+                        $.each(d.data.Dates, function (key, value) {
+                            if (key != 'fincode'){
+                                labels.push(value);
+                            }
+                        });
+                        var datasets = {};
+
+                        datasets['borderColor'] = "#0078ff";
+                        datasets['pointBackgroundColor'] = "#0078ff";
+                        datasets['borderWidth'] = 2;
+                        datasets['fill'] = false;
+
+                        _data_['labels'] = labels;
+                        _data_['datasets'] = Array(datasets);
+
+                        if(company_fformat!=="MAN"){
+                            NIM_sparkline = $.extend(true, {}, _data_);
+                            var NIM_Value = [];
+                            $.each(d.data.extra_finance_data.consolidated_NIM, function (key, value) {
+                                if (key != 'fincode'){
+                                    NIM_Value.push(parseFloat(value));
+                                }
+                            });
+                            NIM_sparkline['datasets'][0]['data'] = NIM_Value;
+
+                            NetProfitGrowth_sparkline = $.extend(true, {}, _data_);
+                            var NetProfitGrowth_Value = [];
+                            $.each(d.data.extra_finance_data.consolidated_NetProfitGrowth, function (key, value) {
+                                if (key != 'fincode'){
+                                    NetProfitGrowth_Value.push(parseFloat(value));
+                                }
+                            });
+                            Book_NAV_Share_sparkline['datasets'][0]['data'] = Book_NAV_Share_Value;
+                                                
+                            InterestSpread_sparkline = $.extend(true, {}, _data_);
+                            var InterestSpread_Value = [];
+                            $.each(d.data.extra_finance_data.consolidated_InterestSpread, function (key, value) {
+                                if (key != 'fincode'){
+                                    InterestSpread_Value.push(parseFloat(value));
+                                }
+                            });
+                            InterestSpread_sparkline['datasets'][0]['data'] = InterestSpread_Value;
+
+                            CostIncomeRatiosparkline = $.extend(true, {}, _data_);
+                            var CostIncomeRatioValue = [];
+                            $.each(d.data.extra_finance_data.consolidated_CostIncomeRatio, function (key, value) {
+                                if (key != 'fincode'){
+                                    CostIncomeRatioValue.push(parseFloat(value));
+                                }
+                            });
+                            CostIncomeRatiosparkline['datasets'][0]['data'] = CostIncomeRatioValue;
+
+                            AdvancesGrowth_sparkline = $.extend(true, {}, _data_);
+                            var AdvancesGrowth_Value = [];
+                            $.each(d.data.extra_finance_data.consolidated_AdvancesGrowth, function (key, value) {
+                                if (key != 'fincode'){
+                                    AdvancesGrowth_Value.push(parseFloat(value));
+                                }
+                            });
+                            AdvancesGrowth_sparkline['datasets'][0]['data'] = AdvancesGrowth_Value;
+                            // console.log(AdvancesGrowth_Value)
+                            // console.log(AdvancesGrowth_sparkline)
+
+                            NetNPAsfundedtoNetAdvances_sparkline = $.extend(true, {}, _data_);
+                            var NetNPAsfundedtoNetAdvances_Value = [];
+                            $.each(d.data.extra_finance_data.consolidated_NetNPAsfundedtoNetAdvances, function (key, value) {
+                                if (key != 'fincode'){
+                                    NetNPAsfundedtoNetAdvances_Value.push(parseFloat(value));
+                                }
+                            });
+                            NetNPAsfundedtoNetAdvances_sparkline['datasets'][0]['data'] = NetNPAsfundedtoNetAdvances_Value;
+                        }else{
+                            Net_Sales_Growth_sparkline = $.extend(true, {}, _data_);
+                            var Net_Sales_Growth_Value = [];
+                            $.each(d.data.extra_finance_data.consolidated_NetSalesGrowth, function (key, value) {
+                                if (key != 'fincode'){
+                                    Net_Sales_Growth_Value.push(parseFloat(value));
+                                }
+                            });
+                            Net_Sales_Growth_sparkline['datasets'][0]['data'] = Net_Sales_Growth_Value;
+
+                            Book_NAV_Share_sparkline = $.extend(true, {}, _data_);
+                            var Book_NAV_Share_Value = [];
+                            $.each(d.data.extra_finance_data.consolidated_BookNAVShareRs, function (key, value) {
+                                if (key != 'fincode'){
+                                    Book_NAV_Share_Value.push(parseFloat(value));
+                                }
+                            });
+                            Book_NAV_Share_sparkline['datasets'][0]['data'] = Book_NAV_Share_Value;
+                                                
+                            EBITDA_Margin_sparkline = $.extend(true, {}, _data_);
+                            var EBITDA_Margin_Value = [];
+                            $.each(d.data.extra_finance_data.consolidated_CoreEBITDAMargin, function (key, value) {
+                                if (key != 'fincode'){
+                                    EBITDA_Margin_Value.push(parseFloat(value));
+                                }
+                            });
+                            EBITDA_Margin_sparkline['datasets'][0]['data'] = EBITDA_Margin_Value;
+
+                            PAT_Marginsparkline = $.extend(true, {}, _data_);
+                            var PAT_MarginValue = [];
+                            $.each(d.data.extra_finance_data.consolidated_PATMargin, function (key, value) {
+                                if (key != 'fincode'){
+                                    PAT_MarginValue.push(parseFloat(value));
+                                }
+                            });
+                            PAT_Marginsparkline['datasets'][0]['data'] = PAT_MarginValue;
+
+                            ROA_sparkline = $.extend(true, {}, _data_);
+                            var ROA_Value = [];
+                            $.each(d.data.extra_finance_data.consolidated_ROA, function (key, value) {
+                                if (key != 'fincode'){
+                                    ROA_Value.push(parseFloat(value));
+                                }
+                            });
+                            ROA_sparkline['datasets'][0]['data'] = ROA_Value;
+                            // console.log(ROA_Value)
+                            // console.log(ROA_sparkline)
+
+                            Debt_Equity_Ratio_sparkline = $.extend(true, {}, _data_);
+                            var Debt_Equity_Ratio_Value = [];
+                            $.each(d.data.extra_finance_data.consolidated_CurrentRatiox, function (key, value) {
+                                if (key != 'fincode'){
+                                    Debt_Equity_Ratio_Value.push(parseFloat(value));
+                                }
+                            });
+                            Debt_Equity_Ratio_sparkline['datasets'][0]['data'] = Debt_Equity_Ratio_Value;
+                        }
+
+                        Earning_Per_Share_sparkline = $.extend(true, {}, _data_);
+                        var Earning_Per_Share_Value = [];
+                        $.each(d.data.extra_finance_data.consolidated_EarningsPerShareRs, function (key, value) {
+                            if (key != 'fincode'){
+                                Earning_Per_Share_Value.push(parseFloat(value));
+                            }
+                        });
+                        Earning_Per_Share_sparkline['datasets'][0]['data'] = Earning_Per_Share_Value;
+
+
+                        ROE_sparkline = $.extend(true, {}, _data_);
+                        var ROE_Value = [];
+                        $.each(d.data.extra_finance_data.consolidated_ROE, function (key, value) {
+                            if (key != 'fincode'){
+                                ROE_Value.push(parseFloat(value));
+                            }
+                        });
+                        ROE_sparkline['datasets'][0]['data'] = ROE_Value;
+                        // console.log(ROE_Value)
+                        // console.log(ROE_sparkline)
+
+                        ROCE_sparkline = $.extend(true, {}, _data_);
+                        var ROCE_Value = [];
+                        $.each(d.data.extra_finance_data.consolidated_ROCE, function (key, value) {
+                            if (key != 'fincode'){
+                                ROCE_Value.push(parseFloat(value));
+                            }
+                        });
+                        ROCE_sparkline['datasets'][0]['data'] = ROCE_Value;
+
+                        if (typeof(Storage) !== "undefined") {
+                            const item = {
+                                value: d,
+                                expiry: new Date().getTime() + 2100000000000
+                            }
+                            if (company_extra_graph_price_expired === true){
+                                localStorage.removeItem(company_fincode + company_fformat + "company_extra_graph_price");
+                            }
+                            localStorage.setItem(company_fincode + company_fformat + "company_extra_graph_price", JSON.stringify(item));
+						}
+
+                        extraGraphCanvas();
+                    }
+                });
+            } else{
+                d = full_data.value;
+                var _data_ = {};
+                var labels = [];
+                $.each(d.data.Dates, function (key, value) {
+                    if (key != 'fincode'){
+                        labels.push(value);
+                    }
+                });
+                var datasets = {};
+
+                datasets['borderColor'] = "#0078ff";
+                datasets['pointBackgroundColor'] = "#0078ff";
+                datasets['borderWidth'] = 2;
+                datasets['fill'] = false;
+
+                _data_['labels'] = labels;
+                _data_['datasets'] = Array(datasets);
+
+                if(company_fformat!=="MAN"){
+                    NIM_sparkline = $.extend(true, {}, _data_);
+                    var NIM_Value = [];
+                    $.each(d.data.extra_finance_data.consolidated_NIM, function (key, value) {
+                        if (key != 'fincode'){
+                            NIM_Value.push(parseFloat(value));
+                        }
+                    });
+                    NIM_sparkline['datasets'][0]['data'] = NIM_Value;
+
+                    NetProfitGrowth_sparkline = $.extend(true, {}, _data_);
+                    var NetProfitGrowth_Value = [];
+                    $.each(d.data.extra_finance_data.consolidated_NetProfitGrowth, function (key, value) {
+                        if (key != 'fincode'){
+                            NetProfitGrowth_Value.push(parseFloat(value));
+                        }
+                    });
+                    Book_NAV_Share_sparkline['datasets'][0]['data'] = Book_NAV_Share_Value;
+                                        
+                    InterestSpread_sparkline = $.extend(true, {}, _data_);
+                    var InterestSpread_Value = [];
+                    $.each(d.data.extra_finance_data.consolidated_InterestSpread, function (key, value) {
+                        if (key != 'fincode'){
+                            InterestSpread_Value.push(parseFloat(value));
+                        }
+                    });
+                    InterestSpread_sparkline['datasets'][0]['data'] = InterestSpread_Value;
+
+                    CostIncomeRatiosparkline = $.extend(true, {}, _data_);
+                    var CostIncomeRatioValue = [];
+                    $.each(d.data.extra_finance_data.consolidated_CostIncomeRatio, function (key, value) {
+                        if (key != 'fincode'){
+                            CostIncomeRatioValue.push(parseFloat(value));
+                        }
+                    });
+                    CostIncomeRatiosparkline['datasets'][0]['data'] = CostIncomeRatioValue;
+
+                    AdvancesGrowth_sparkline = $.extend(true, {}, _data_);
+                    var AdvancesGrowth_Value = [];
+                    $.each(d.data.extra_finance_data.consolidated_AdvancesGrowth, function (key, value) {
+                        if (key != 'fincode'){
+                            AdvancesGrowth_Value.push(parseFloat(value));
+                        }
+                    });
+                    AdvancesGrowth_sparkline['datasets'][0]['data'] = AdvancesGrowth_Value;
+                    // console.log(AdvancesGrowth_Value)
+                    // console.log(AdvancesGrowth_sparkline)
+
+                    NetNPAsfundedtoNetAdvances_sparkline = $.extend(true, {}, _data_);
+                    var NetNPAsfundedtoNetAdvances_Value = [];
+                    $.each(d.data.extra_finance_data.consolidated_NetNPAsfundedtoNetAdvances, function (key, value) {
+                        if (key != 'fincode'){
+                            NetNPAsfundedtoNetAdvances_Value.push(parseFloat(value));
+                        }
+                    });
+                    NetNPAsfundedtoNetAdvances_sparkline['datasets'][0]['data'] = NetNPAsfundedtoNetAdvances_Value;
+                }else{
+                    Net_Sales_Growth_sparkline = $.extend(true, {}, _data_);
+                    var Net_Sales_Growth_Value = [];
+                    $.each(d.data.extra_finance_data.consolidated_NetSalesGrowth, function (key, value) {
+                        if (key != 'fincode'){
+                            Net_Sales_Growth_Value.push(parseFloat(value));
+                        }
+                    });
+                    Net_Sales_Growth_sparkline['datasets'][0]['data'] = Net_Sales_Growth_Value;
+
+                    Book_NAV_Share_sparkline = $.extend(true, {}, _data_);
+                    var Book_NAV_Share_Value = [];
+                    $.each(d.data.extra_finance_data.consolidated_BookNAVShareRs, function (key, value) {
+                        if (key != 'fincode'){
+                            Book_NAV_Share_Value.push(parseFloat(value));
+                        }
+                    });
+                    Book_NAV_Share_sparkline['datasets'][0]['data'] = Book_NAV_Share_Value;
+                                        
+                    EBITDA_Margin_sparkline = $.extend(true, {}, _data_);
+                    var EBITDA_Margin_Value = [];
+                    $.each(d.data.extra_finance_data.consolidated_CoreEBITDAMargin, function (key, value) {
+                        if (key != 'fincode'){
+                            EBITDA_Margin_Value.push(parseFloat(value));
+                        }
+                    });
+                    EBITDA_Margin_sparkline['datasets'][0]['data'] = EBITDA_Margin_Value;
+
+                    PAT_Marginsparkline = $.extend(true, {}, _data_);
+                    var PAT_MarginValue = [];
+                    $.each(d.data.extra_finance_data.consolidated_PATMargin, function (key, value) {
+                        if (key != 'fincode'){
+                            PAT_MarginValue.push(parseFloat(value));
+                        }
+                    });
+                    PAT_Marginsparkline['datasets'][0]['data'] = PAT_MarginValue;
+
+                    ROA_sparkline = $.extend(true, {}, _data_);
+                    var ROA_Value = [];
+                    $.each(d.data.extra_finance_data.consolidated_ROA, function (key, value) {
+                        if (key != 'fincode'){
+                            ROA_Value.push(parseFloat(value));
+                        }
+                    });
+                    ROA_sparkline['datasets'][0]['data'] = ROA_Value;
+                    // console.log(ROA_Value)
+                    // console.log(ROA_sparkline)
+
+                    Debt_Equity_Ratio_sparkline = $.extend(true, {}, _data_);
+                    var Debt_Equity_Ratio_Value = [];
+                    $.each(d.data.extra_finance_data.consolidated_CurrentRatiox, function (key, value) {
+                        if (key != 'fincode'){
+                            Debt_Equity_Ratio_Value.push(parseFloat(value));
+                        }
+                    });
+                    Debt_Equity_Ratio_sparkline['datasets'][0]['data'] = Debt_Equity_Ratio_Value;
+                }
+                Earning_Per_Share_sparkline = $.extend(true, {}, _data_);
+                var Earning_Per_Share_Value = [];
+                $.each(d.data.extra_finance_data.consolidated_EarningsPerShareRs, function (key, value) {
+                    if (key != 'fincode'){
+                        Earning_Per_Share_Value.push(parseFloat(value));
+                    }
+                });
+                Earning_Per_Share_sparkline['datasets'][0]['data'] = Earning_Per_Share_Value;
+
+
+                ROE_sparkline = $.extend(true, {}, _data_);
+                var ROE_Value = [];
+                $.each(d.data.extra_finance_data.consolidated_ROE, function (key, value) {
+                    if (key != 'fincode'){
+                        ROE_Value.push(parseFloat(value));
+                    }
+                });
+                ROE_sparkline['datasets'][0]['data'] = ROE_Value;
+                // console.log(ROE_Value)
+                // console.log(ROE_sparkline)
+
+                ROCE_sparkline = $.extend(true, {}, _data_);
+                var ROCE_Value = [];
+                $.each(d.data.extra_finance_data.consolidated_ROCE, function (key, value) {
+                    if (key != 'fincode'){
+                        ROCE_Value.push(parseFloat(value));
+                    }
+                });
+                ROCE_sparkline['datasets'][0]['data'] = ROCE_Value;
+                extraGraphCanvas();
+            }
+        };
+        function extraGraphCanvas() {
+            $('.Net_Sales_Growth_sparkline').each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+
+                // console.log(Net_Sales_Growth_sparkline);
+
+                var chartNet_Sales_Growth_sparkline = new Chart(ctx, {
+                    type: 'line',
+                    data: Net_Sales_Growth_sparkline,
+                    options: sparklinestyle
+                });
+
+            })
+            $('.Earning_Per_Share_sparkline').each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: Earning_Per_Share_sparkline,
+                    options: sparklinestyle
+                });
+            })
+            $('.Book_NAV_Share_sparkline').each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: Book_NAV_Share_sparkline,
+                    options: sparklinestyle
+                });
+            })
+            $('.EBITDA_Margin_sparkline').each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: EBITDA_Margin_sparkline,
+                    options: sparklinestyle
+                });
+            })
+            $('.PAT_Marginsparkline').each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: PAT_Marginsparkline,
+                    options: sparklinestyle
+                });
+            })
+            $('.ROCE_sparkline').each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: ROCE_sparkline,
+                    options: sparklinestyle
+                });
+            })
+            $('.ROA_sparkline').each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+
+                // console.log(ROA_sparkline)
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: ROA_sparkline,
+                    options: sparklinestyle
+                });
+            })
+            $('.ROE_sparkline').each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+
+                console.log(ROE_sparkline)
+
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: ROE_sparkline,
+                    options: sparklinestyle
+                });
+            })
+            $('.Debt_Equity_Ratio_sparkline').each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: Debt_Equity_Ratio_sparkline,
+                    options: sparklinestyle
+                });
+            })
+        }
+
+        $(document).ready(function () {
+            if (company_fincode=="" || company_fformat==""){
+                company_fincode = <?php echo $wo['company_data']['fincode']; ?>;
+                company_fformat = <?php echo "'" . $wo['company_data']['fformat'] . "'"; ?>;
+            }
+            extraGraphData();
+        });
+    }
+    function graphing_table_data(data, tab){
+
+        console.log(data);
+
+        var date_labels = [];
+        $.each(data.data.Dates, function (key, value) {
+            date_labels.push(value);
+        });
+
+        var data_to_graph = [];
+        var description_to_graph = [];
+
+        var description_ideal = [];
+        if(tab=='qtrly_result'){
+            description_ideal = qtrly_graphs;
+        } else if(tab=='annual_result'){
+            description_ideal = annual_graphs;
+        } else if(tab=='financial_ratios'){
+            description_ideal = _financial_graphs;
+        } else if(tab=='PL'){
+            description_ideal = profit_loss_graphs;
+        }
+
+        for (var index = 0; index < data.data.finance_data.length; index++) { 
+            if (description_ideal.includes(data.data.finance_data[index].description)){
+                description_to_graph.push(data.data.finance_data[index].description);
+                data_to_graph.push([
+                    data.data.finance_data[index].y1, data.data.finance_data[index].y2, data.data.finance_data[index].y3, data.data.finance_data[index].y4,
+                    data.data.finance_data[index].y5, data.data.finance_data[index].y6, data.data.finance_data[index].y7, data.data.finance_data[index].y8,
+                    data.data.finance_data[index].y9, data.data.finance_data[index].y10, data.data.finance_data[index].y11, data.data.finance_data[index].y12
+                    ]);
+            }
+        }
+
+        var graph_table_html_to_add = ``;
+
+        var column_count = 0;
+        var close_row_div = false;
+
+        var sparklinestyle = {
+            responsive: true,
+            legend: {
+                display: false
+            },
+            tooltips: {
+                intersect: false,
+                mode: 'nearest',
+                titleFontSize: 13,
+                titleFontStyle: 'normal',
+                backgroundColor: '#FFFFFF',
+                bodyFontFamily: 'Source Sans Pro',
+                bodyFontStyle: 'bold',
+                titleFontFamily: 'Hind',
+                titleFontColor: '#000',
+                bodyFontColor: '#000',
+                bodyFontSize: 13,
+                displayColors: false,
+                xPadding: 10,
+                yPadding: 10,
+                borderColor: '#0078ff',
+                borderWidth: 1,
+                callbacks: {
+                    label: function (tooltipItems, data) {
+                        return tooltipItems.yLabel.toFixed(2);
+                    }
+                }
+            },
+            hover: { mode: null },
+
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        display: false
+                    },
+                    gridLines: 0,
+                    gridLines: {
+                        zeroLineColor: "transparent",
+                        drawTicks: false,
+                        display: false,
+                        drawBorder: false
+                    }
+                }],
+                xAxes: [{
+                    display: 0,
+                    gridLines: 0,
+                    ticks: {
+                        display: false
+                    },
+                    gridLines: {
+                        zeroLineColor: "transparent",
+                        drawTicks: false,
+                        display: false,
+                        drawBorder: false
+                    }
+                }]
+            },
+            layout: {
+                padding: { left: 10, right: 10, top: 10, bottom: 10 }
+            }
+        };
+
+        var _data_ = {};
+        var datasets = {};
+
+        datasets['borderColor'] = "#0078ff";
+        datasets['pointBackgroundColor'] = "#0078ff";
+        datasets['borderWidth'] = 2;
+        datasets['fill'] = false;
+
+        _data_['labels'] = date_labels;
+        _data_['datasets'] = Array(datasets);
+
+        $.each(description_to_graph, function (key, val) {
+
+            if(column_count % 3 == 0){
+                if (close_row_div==true){
+                    graph_table_html_to_add += `</div>`;
+                };
+                graph_table_html_to_add += `<div class="row" style="position: relative; top: ` + (15 + (column_count / 3)*18) + `px;">`;
+                close_row_div = true;
+            }
+            
+            graph_table_html_to_add += `<div id="Content_`+ column_count +`" class="col-12 col-md-4">
+                                            <div class="card cardscreen cardsmall" data-aos="fade-up" data-aos-delay="`+((column_count%3)*50)+`" style='background-color: white; border-radius: 4px; box-shadow: 1px 1px 1px 1px #eee;'>
+                                                <b><h4 style="padding-left:5%; padding-top:2%; font-weight: 600;">`+ val +`</h4></b>
+                                                <div class="sparkchartwrapper d-block w-100">
+                                                    <canvas id="Content`+ column_count +`" class="Content_`+ column_count +`_sparkline"></canvas>
+                                                </div>
+                                                <br/>
+                                            </div>
+                                        </div>`;
+            
+            column_count += 1;
+        });
+
+        graph_table_html_to_add += `</div>`;
+        
+        $('#finance_content').html(graph_table_html_to_add);
+
+        // 0th graph
+        if( $('.Content_0_sparkline').length ){
+            the_value_of_sparkline0 = $.extend(true, {}, _data_);
+            var the_value0 = [];
+
+            $.each(data_to_graph[0], function (key, value) {
+                if(value==""){
+                    the_value0.push(0);    
+                } else{
+                    the_value0.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline0['datasets'][0]['data'] = the_value0;
+
+            $(".Content_0_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline0,
+                    options: sparklinestyle
+                });
+            });
+        }
+        
+        // 1st graph
+        if( $('.Content_1_sparkline').length ){
+            the_value_of_sparkline1 = $.extend(true, {}, _data_);
+            var the_value1 = [];
+
+            $.each(data_to_graph[1], function (key, value) {
+                if(value==""){
+                    the_value1.push(0);    
+                } else{
+                    the_value1.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline1['datasets'][0]['data'] = the_value1;
+
+            $(".Content_1_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline1,
+                    options: sparklinestyle
+                });
+            });
+        }
+        
+        // 2nd graph
+        if( $('.Content_2_sparkline').length ){
+            the_value_of_sparkline2 = $.extend(true, {}, _data_);
+            var the_value2 = [];
+
+            $.each(data_to_graph[2], function (key, value) {
+                if(value==""){
+                    the_value2.push(0);    
+                } else{
+                    the_value2.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline2['datasets'][0]['data'] = the_value2;
+
+            $(".Content_2_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline2,
+                    options: sparklinestyle
+                });
+            });
+        }
+        
+        // 3rd graph
+        if( $('.Content_3_sparkline').length ){
+            the_value_of_sparkline3 = $.extend(true, {}, _data_);
+            var the_value3 = [];
+
+            $.each(data_to_graph[3], function (key, value) {
+                if(value==""){
+                    the_value3.push(0);    
+                } else{
+                    the_value3.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline3['datasets'][0]['data'] = the_value3;
+
+            $(".Content_3_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline3,
+                    options: sparklinestyle
+                });
+            });
+        }       
+        
+
+        // 4th graph
+        if( $('.Content_4_sparkline').length ){
+            the_value_of_sparkline4 = $.extend(true, {}, _data_);
+            var the_value4 = [];
+
+            $.each(data_to_graph[4], function (key, value) {
+                if(value==""){
+                    the_value4.push(0);    
+                } else{
+                    the_value4.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline4['datasets'][0]['data'] = the_value4;
+
+            $(".Content_4_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline4,
+                    options: sparklinestyle
+                });
+            });
+        }
+        
+        // 5th graph
+        if( $('.Content_5_sparkline').length ){
+            the_value_of_sparkline5 = $.extend(true, {}, _data_);
+            var the_value5 = [];
+
+            $.each(data_to_graph[5], function (key, value) {
+                if(value==""){
+                    the_value5.push(0);    
+                } else{
+                    the_value5.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline5['datasets'][0]['data'] = the_value5;
+
+            $(".Content_5_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline5,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 6th graph
+        if( $('.Content_6_sparkline').length ){
+            the_value_of_sparkline6 = $.extend(true, {}, _data_);
+            var the_value6 = [];
+
+            $.each(data_to_graph[6], function (key, value) {
+                if(value==""){
+                    the_value6.push(0);    
+                } else{
+                    the_value6.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline6['datasets'][0]['data'] = the_value6;
+
+            $(".Content_6_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline6,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 7th graph
+        if( $('.Content_7_sparkline').length ){
+            the_value_of_sparkline7 = $.extend(true, {}, _data_);
+            var the_value7 = [];
+
+            $.each(data_to_graph[7], function (key, value) {
+                if(value==""){
+                    the_value7.push(0);    
+                } else{
+                    the_value7.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline7['datasets'][0]['data'] = the_value7;
+
+            $(".Content_7_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline7,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 8th graph
+        if( $('.Content_8_sparkline').length ){
+            the_value_of_sparkline8 = $.extend(true, {}, _data_);
+            var the_value8 = [];
+
+            $.each(data_to_graph[8], function (key, value) {
+                if(value==""){
+                    the_value8.push(0);    
+                } else{
+                    the_value8.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline8['datasets'][0]['data'] = the_value8;
+
+            $(".Content_8_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline8,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 9th graph
+        if( $('.Content_9_sparkline').length ){
+            the_value_of_sparkline9 = $.extend(true, {}, _data_);
+            var the_value9 = [];
+
+            $.each(data_to_graph[9], function (key, value) {
+                if(value==""){
+                    the_value9.push(0);    
+                } else{
+                    the_value9.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline9['datasets'][0]['data'] = the_value9;
+
+            $(".Content_9_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline9,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 10th graph
+        if( $('.Content_10_sparkline').length ){
+            the_value_of_sparkline10 = $.extend(true, {}, _data_);
+            var the_value10 = [];
+
+            $.each(data_to_graph[10], function (key, value) {
+                if(value==""){
+                    the_value10.push(0);    
+                } else{
+                    the_value10.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline10['datasets'][0]['data'] = the_value10;
+
+            $(".Content_10_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline10,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 11th graph
+        if( $('.Content_11_sparkline').length ){
+            the_value_of_sparkline11 = $.extend(true, {}, _data_);
+            var the_value11 = [];
+
+            $.each(data_to_graph[11], function (key, value) {
+                if(value==""){
+                    the_value11.push(0);    
+                } else{
+                    the_value11.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline11['datasets'][0]['data'] = the_value11;
+
+            $(".Content_11_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline11,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 12th graph
+        if( $('.Content_12_sparkline').length ){
+            the_value_of_sparkline12 = $.extend(true, {}, _data_);
+            var the_value12 = [];
+
+            $.each(data_to_graph[12], function (key, value) {
+                if(value==""){
+                    the_value12.push(0);    
+                } else{
+                    the_value12.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline12['datasets'][0]['data'] = the_value12;
+
+            $(".Content_12_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline12,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 13th graph
+        if( $('.Content_13_sparkline').length ){
+            the_value_of_sparkline13 = $.extend(true, {}, _data_);
+            var the_value13 = [];
+
+            $.each(data_to_graph[13], function (key, value) {
+                if(value==""){
+                    the_value13.push(0);    
+                } else{
+                    the_value13.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline13['datasets'][0]['data'] = the_value13;
+
+            $(".Content_13_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline13,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 14th graph
+        if( $('.Content_14_sparkline').length ){
+            the_value_of_sparkline14 = $.extend(true, {}, _data_);
+            var the_value14 = [];
+
+            $.each(data_to_graph[14], function (key, value) {
+                if(value==""){
+                    the_value14.push(0);    
+                } else{
+                    the_value14.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline14['datasets'][0]['data'] = the_value14;
+
+            $(".Content_14_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline14,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 15th graph
+        if( $('.Content_15_sparkline').length ){
+            the_value_of_sparkline15 = $.extend(true, {}, _data_);
+            var the_value15 = [];
+
+            $.each(data_to_graph[15], function (key, value) {
+                if(value==""){
+                    the_value15.push(0);    
+                } else{
+                    the_value15.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline15['datasets'][0]['data'] = the_value15;
+
+            $(".Content_15_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline15,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 16th graph
+        if( $('.Content_16_sparkline').length ){
+            the_value_of_sparkline16 = $.extend(true, {}, _data_);
+            var the_value16 = [];
+
+            $.each(data_to_graph[16], function (key, value) {
+                if(value==""){
+                    the_value16.push(0);    
+                } else{
+                    the_value16.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline16['datasets'][0]['data'] = the_value16;
+
+            $(".Content_16_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline16,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 17th graph
+        if( $('.Content_17_sparkline').length ){
+            the_value_of_sparkline17 = $.extend(true, {}, _data_);
+            var the_value17 = [];
+
+            $.each(data_to_graph[17], function (key, value) {
+                if(value==""){
+                    the_value17.push(0);    
+                } else{
+                    the_value17.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline17['datasets'][0]['data'] = the_value17;
+
+            $(".Content_17_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline17,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 18th graph
+        if( $('.Content_18_sparkline').length ){
+            the_value_of_sparkline18 = $.extend(true, {}, _data_);
+            var the_value18 = [];
+
+            $.each(data_to_graph[18], function (key, value) {
+                if(value==""){
+                    the_value18.push(0);    
+                } else{
+                    the_value18.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline18['datasets'][0]['data'] = the_value18;
+
+            $(".Content_18_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline18,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 19th graph
+        if( $('.Content_19_sparkline').length ){
+            the_value_of_sparkline19 = $.extend(true, {}, _data_);
+            var the_value19 = [];
+
+            $.each(data_to_graph[19], function (key, value) {
+                if(value==""){
+                    the_value19.push(0);    
+                } else{
+                    the_value19.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline19['datasets'][0]['data'] = the_value19;
+
+            $(".Content_19_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline19,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 20th graph
+        if( $('.Content_20_sparkline').length ){
+            the_value_of_sparkline20 = $.extend(true, {}, _data_);
+            var the_value20 = [];
+
+            $.each(data_to_graph[20], function (key, value) {
+                if(value==""){
+                    the_value20.push(0);    
+                } else{
+                    the_value20.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline20['datasets'][0]['data'] = the_value20;
+
+            $(".Content_20_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline20,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 21th graph
+        if( $('.Content_21_sparkline').length ){
+            the_value_of_sparkline21 = $.extend(true, {}, _data_);
+            var the_value21 = [];
+
+            $.each(data_to_graph[21], function (key, value) {
+                if(value==""){
+                    the_value21.push(0);    
+                } else{
+                    the_value21.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline21['datasets'][0]['data'] = the_value21;
+
+            $(".Content_21_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline21,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 22th graph
+        if( $('.Content_22_sparkline').length ){
+            the_value_of_sparkline22 = $.extend(true, {}, _data_);
+            var the_value22 = [];
+
+            $.each(data_to_graph[22], function (key, value) {
+                if(value==""){
+                    the_value22.push(0);    
+                } else{
+                    the_value22.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline22['datasets'][0]['data'] = the_value22;
+
+            $(".Content_22_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline22,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 23th graph
+        if( $('.Content_23_sparkline').length ){
+            the_value_of_sparkline23 = $.extend(true, {}, _data_);
+            var the_value23 = [];
+
+            $.each(data_to_graph[23], function (key, value) {
+                if(value==""){
+                    the_value23.push(0);    
+                } else{
+                    the_value23.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline23['datasets'][0]['data'] = the_value23;
+
+            $(".Content_23_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline23,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 24th graph
+        if( $('.Content_24_sparkline').length ){
+            the_value_of_sparkline24 = $.extend(true, {}, _data_);
+            var the_value24 = [];
+
+            $.each(data_to_graph[24], function (key, value) {
+                if(value==""){
+                    the_value24.push(0);    
+                } else{
+                    the_value24.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline24['datasets'][0]['data'] = the_value24;
+
+            $(".Content_24_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline24,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 25th graph
+        if( $('.Content_25_sparkline').length ){
+            the_value_of_sparkline25 = $.extend(true, {}, _data_);
+            var the_value25 = [];
+
+            $.each(data_to_graph[25], function (key, value) {
+                if(value==""){
+                    the_value25.push(0);    
+                } else{
+                    the_value25.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline25['datasets'][0]['data'] = the_value25;
+
+            $(".Content_25_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline25,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 26th graph
+        if( $('.Content_26_sparkline').length ){
+            the_value_of_sparkline26 = $.extend(true, {}, _data_);
+            var the_value26 = [];
+
+            $.each(data_to_graph[26], function (key, value) {
+                if(value==""){
+                    the_value26.push(0);    
+                } else{
+                    the_value26.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline26['datasets'][0]['data'] = the_value26;
+
+            $(".Content_26_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline26,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 27th graph
+        if( $('.Content_27_sparkline').length ){
+            the_value_of_sparkline27 = $.extend(true, {}, _data_);
+            var the_value27 = [];
+
+            $.each(data_to_graph[27], function (key, value) {
+                if(value==""){
+                    the_value27.push(0);    
+                } else{
+                    the_value27.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline27['datasets'][0]['data'] = the_value27;
+
+            $(".Content_27_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline27,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 28th graph
+        if( $('.Content_28_sparkline').length ){
+            the_value_of_sparkline28 = $.extend(true, {}, _data_);
+            var the_value28 = [];
+
+            $.each(data_to_graph[28], function (key, value) {
+                if(value==""){
+                    the_value28.push(0);    
+                } else{
+                    the_value28.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline28['datasets'][0]['data'] = the_value28;
+
+            $(".Content_28_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline28,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 29th graph
+        if( $('.Content_29_sparkline').length ){
+            the_value_of_sparkline29 = $.extend(true, {}, _data_);
+            var the_value29 = [];
+
+            $.each(data_to_graph[29], function (key, value) {
+                if(value==""){
+                    the_value29.push(0);    
+                } else{
+                    the_value29.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline29['datasets'][0]['data'] = the_value29;
+
+            $(".Content_29_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline29,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 30th graph
+        if( $('.Content_30_sparkline').length ){
+            the_value_of_sparkline30 = $.extend(true, {}, _data_);
+            var the_value30 = [];
+
+            $.each(data_to_graph[30], function (key, value) {
+                if(value==""){
+                    the_value30.push(0);    
+                } else{
+                    the_value30.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline30['datasets'][0]['data'] = the_value30;
+
+            $(".Content_30_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline30,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 31th graph
+        if( $('.Content_31_sparkline').length ){
+            the_value_of_sparkline31 = $.extend(true, {}, _data_);
+            var the_value31 = [];
+
+            $.each(data_to_graph[31], function (key, value) {
+                if(value==""){
+                    the_value31.push(0);    
+                } else{
+                    the_value31.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline31['datasets'][0]['data'] = the_value31;
+
+            $(".Content_31_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline31,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 32th graph
+        if( $('.Content_32_sparkline').length ){
+            the_value_of_sparkline32 = $.extend(true, {}, _data_);
+            var the_value32 = [];
+
+            $.each(data_to_graph[32], function (key, value) {
+                if(value==""){
+                    the_value32.push(0);    
+                } else{
+                    the_value32.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline32['datasets'][0]['data'] = the_value32;
+
+            $(".Content_32_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline32,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 33th graph
+        if( $('.Content_33_sparkline').length ){
+            the_value_of_sparkline33 = $.extend(true, {}, _data_);
+            var the_value33 = [];
+
+            $.each(data_to_graph[33], function (key, value) {
+                if(value==""){
+                    the_value33.push(0);    
+                } else{
+                    the_value33.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline33['datasets'][0]['data'] = the_value33;
+
+            $(".Content_33_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline33,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 34th graph
+        if( $('.Content_34_sparkline').length ){
+            the_value_of_sparkline34 = $.extend(true, {}, _data_);
+            var the_value34 = [];
+
+            $.each(data_to_graph[34], function (key, value) {
+                if(value==""){
+                    the_value34.push(0);    
+                } else{
+                    the_value34.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline34['datasets'][0]['data'] = the_value34;
+
+            $(".Content_34_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline34,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 35th graph
+        if( $('.Content_35_sparkline').length ){
+            the_value_of_sparkline35 = $.extend(true, {}, _data_);
+            var the_value35 = [];
+
+            $.each(data_to_graph[35], function (key, value) {
+                if(value==""){
+                    the_value35.push(0);    
+                } else{
+                    the_value35.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline35['datasets'][0]['data'] = the_value35;
+
+            $(".Content_35_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline35,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 36th graph
+        if( $('.Content_36_sparkline').length ){
+            the_value_of_sparkline36 = $.extend(true, {}, _data_);
+            var the_value36 = [];
+
+            $.each(data_to_graph[36], function (key, value) {
+                if(value==""){
+                    the_value36.push(0);    
+                } else{
+                    the_value36.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline36['datasets'][0]['data'] = the_value36;
+
+            $(".Content_36_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline36,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 37th graph
+        if( $('.Content_37_sparkline').length ){
+            the_value_of_sparkline37 = $.extend(true, {}, _data_);
+            var the_value37 = [];
+
+            $.each(data_to_graph[37], function (key, value) {
+                if(value==""){
+                    the_value37.push(0);    
+                } else{
+                    the_value37.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline37['datasets'][0]['data'] = the_value37;
+
+            $(".Content_37_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline37,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 38th graph
+        if( $('.Content_38_sparkline').length ){
+            the_value_of_sparkline38 = $.extend(true, {}, _data_);
+            var the_value38 = [];
+
+            $.each(data_to_graph[38], function (key, value) {
+                if(value==""){
+                    the_value38.push(0);    
+                } else{
+                    the_value38.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline38['datasets'][0]['data'] = the_value38;
+
+            $(".Content_38_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline38,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 39th graph
+        if( $('.Content_39_sparkline').length ){
+            the_value_of_sparkline39 = $.extend(true, {}, _data_);
+            var the_value39 = [];
+
+            $.each(data_to_graph[39], function (key, value) {
+                if(value==""){
+                    the_value39.push(0);    
+                } else{
+                    the_value39.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline39['datasets'][0]['data'] = the_value39;
+
+            $(".Content_39_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline39,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 40th graph
+        if( $('.Content_40_sparkline').length ){
+            the_value_of_sparkline40 = $.extend(true, {}, _data_);
+            var the_value40 = [];
+
+            $.each(data_to_graph[40], function (key, value) {
+                if(value==""){
+                    the_value40.push(0);    
+                } else{
+                    the_value40.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline40['datasets'][0]['data'] = the_value40;
+
+            $(".Content_40_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline40,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 41th graph
+        if( $('.Content_41_sparkline').length ){
+            the_value_of_sparkline41 = $.extend(true, {}, _data_);
+            var the_value41 = [];
+
+            $.each(data_to_graph[41], function (key, value) {
+                if(value==""){
+                    the_value41.push(0);    
+                } else{
+                    the_value41.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline41['datasets'][0]['data'] = the_value41;
+
+            $(".Content_41_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline41,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 42th graph
+        if( $('.Content_42_sparkline').length ){
+            the_value_of_sparkline42 = $.extend(true, {}, _data_);
+            var the_value42 = [];
+
+            $.each(data_to_graph[42], function (key, value) {
+                if(value==""){
+                    the_value42.push(0);    
+                } else{
+                    the_value42.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline42['datasets'][0]['data'] = the_value42;
+
+            $(".Content_42_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline42,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 43th graph
+        if( $('.Content_43_sparkline').length ){
+            the_value_of_sparkline43 = $.extend(true, {}, _data_);
+            var the_value43 = [];
+
+            $.each(data_to_graph[43], function (key, value) {
+                if(value==""){
+                    the_value43.push(0);    
+                } else{
+                    the_value43.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline43['datasets'][0]['data'] = the_value43;
+
+            $(".Content_43_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline43,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 44th graph
+        if( $('.Content_44_sparkline').length ){
+            the_value_of_sparkline44 = $.extend(true, {}, _data_);
+            var the_value44 = [];
+
+            $.each(data_to_graph[44], function (key, value) {
+                if(value==""){
+                    the_value44.push(0);    
+                } else{
+                    the_value44.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline44['datasets'][0]['data'] = the_value44;
+
+            $(".Content_44_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline44,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 45th graph
+        if( $('.Content_45_sparkline').length ){
+            the_value_of_sparkline45 = $.extend(true, {}, _data_);
+            var the_value45 = [];
+
+            $.each(data_to_graph[45], function (key, value) {
+                if(value==""){
+                    the_value45.push(0);    
+                } else{
+                    the_value45.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline45['datasets'][0]['data'] = the_value45;
+
+            $(".Content_45_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline45,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 46th graph
+        if( $('.Content_46_sparkline').length ){
+            the_value_of_sparkline46 = $.extend(true, {}, _data_);
+            var the_value46 = [];
+
+            $.each(data_to_graph[46], function (key, value) {
+                if(value==""){
+                    the_value46.push(0);    
+                } else{
+                    the_value46.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline46['datasets'][0]['data'] = the_value46;
+
+            $(".Content_46_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline46,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 47th graph
+        if( $('.Content_47_sparkline').length ){
+            the_value_of_sparkline47 = $.extend(true, {}, _data_);
+            var the_value47 = [];
+
+            $.each(data_to_graph[47], function (key, value) {
+                if(value==""){
+                    the_value47.push(0);    
+                } else{
+                    the_value47.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline47['datasets'][0]['data'] = the_value47;
+
+            $(".Content_47_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline47,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 48th graph
+        if( $('.Content_48_sparkline').length ){
+            the_value_of_sparkline48 = $.extend(true, {}, _data_);
+            var the_value48 = [];
+
+            $.each(data_to_graph[48], function (key, value) {
+                if(value==""){
+                    the_value48.push(0);    
+                } else{
+                    the_value48.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline48['datasets'][0]['data'] = the_value48;
+
+            $(".Content_48_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline48,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 49th graph
+        if( $('.Content_49_sparkline').length ){
+            the_value_of_sparkline49 = $.extend(true, {}, _data_);
+            var the_value49 = [];
+
+            $.each(data_to_graph[49], function (key, value) {
+                if(value==""){
+                    the_value49.push(0);    
+                } else{
+                    the_value49.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline49['datasets'][0]['data'] = the_value49;
+
+            $(".Content_49_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline49,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 50th graph
+        if( $('.Content_50_sparkline').length ){
+            the_value_of_sparkline50 = $.extend(true, {}, _data_);
+            var the_value50 = [];
+
+            $.each(data_to_graph[50], function (key, value) {
+                if(value==""){
+                    the_value50.push(0);    
+                } else{
+                    the_value50.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline50['datasets'][0]['data'] = the_value50;
+
+            $(".Content_50_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline50,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 51th graph
+        if( $('.Content_51_sparkline').length ){
+            the_value_of_sparkline51 = $.extend(true, {}, _data_);
+            var the_value51 = [];
+
+            $.each(data_to_graph[51], function (key, value) {
+                if(value==""){
+                    the_value51.push(0);    
+                } else{
+                    the_value51.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline51['datasets'][0]['data'] = the_value51;
+
+            $(".Content_51_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline51,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 52th graph
+        if( $('.Content_52_sparkline').length ){
+            the_value_of_sparkline52 = $.extend(true, {}, _data_);
+            var the_value52 = [];
+
+            $.each(data_to_graph[52], function (key, value) {
+                if(value==""){
+                    the_value52.push(0);    
+                } else{
+                    the_value52.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline52['datasets'][0]['data'] = the_value52;
+
+            $(".Content_52_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline52,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 53th graph
+        if( $('.Content_53_sparkline').length ){
+            the_value_of_sparkline53 = $.extend(true, {}, _data_);
+            var the_value53 = [];
+
+            $.each(data_to_graph[53], function (key, value) {
+                if(value==""){
+                    the_value53.push(0);    
+                } else{
+                    the_value53.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline53['datasets'][0]['data'] = the_value53;
+
+            $(".Content_53_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline53,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 54th graph
+        if( $('.Content_54_sparkline').length ){
+            the_value_of_sparkline54 = $.extend(true, {}, _data_);
+            var the_value54 = [];
+
+            $.each(data_to_graph[54], function (key, value) {
+                if(value==""){
+                    the_value54.push(0);    
+                } else{
+                    the_value54.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline54['datasets'][0]['data'] = the_value54;
+
+            $(".Content_54_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline54,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 55th graph
+        if( $('.Content_55_sparkline').length ){
+            the_value_of_sparkline55 = $.extend(true, {}, _data_);
+            var the_value55 = [];
+
+            $.each(data_to_graph[55], function (key, value) {
+                if(value==""){
+                    the_value55.push(0);    
+                } else{
+                    the_value55.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline55['datasets'][0]['data'] = the_value55;
+
+            $(".Content_55_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline55,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 56th graph
+        if( $('.Content_56_sparkline').length ){
+            the_value_of_sparkline56 = $.extend(true, {}, _data_);
+            var the_value56 = [];
+
+            $.each(data_to_graph[56], function (key, value) {
+                if(value==""){
+                    the_value56.push(0);    
+                } else{
+                    the_value56.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline56['datasets'][0]['data'] = the_value56;
+
+            $(".Content_56_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline56,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 57th graph
+        if( $('.Content_57_sparkline').length ){
+            the_value_of_sparkline57 = $.extend(true, {}, _data_);
+            var the_value57 = [];
+
+            $.each(data_to_graph[57], function (key, value) {
+                if(value==""){
+                    the_value57.push(0);    
+                } else{
+                    the_value57.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline57['datasets'][0]['data'] = the_value57;
+
+            $(".Content_57_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline57,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 58th graph
+        if( $('.Content_58_sparkline').length ){
+            the_value_of_sparkline58 = $.extend(true, {}, _data_);
+            var the_value58 = [];
+
+            $.each(data_to_graph[58], function (key, value) {
+                if(value==""){
+                    the_value58.push(0);    
+                } else{
+                    the_value58.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline58['datasets'][0]['data'] = the_value58;
+
+            $(".Content_58_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline58,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 59th graph
+        if( $('.Content_59_sparkline').length ){
+            the_value_of_sparkline59 = $.extend(true, {}, _data_);
+            var the_value59 = [];
+
+            $.each(data_to_graph[59], function (key, value) {
+                if(value==""){
+                    the_value59.push(0);    
+                } else{
+                    the_value59.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline59['datasets'][0]['data'] = the_value59;
+
+            $(".Content_59_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline59,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 60th graph
+        if( $('.Content_60_sparkline').length ){
+            the_value_of_sparkline60 = $.extend(true, {}, _data_);
+            var the_value60 = [];
+
+            $.each(data_to_graph[60], function (key, value) {
+                if(value==""){
+                    the_value60.push(0);    
+                } else{
+                    the_value60.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline60['datasets'][0]['data'] = the_value60;
+
+            $(".Content_60_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline60,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 61th graph
+        if( $('.Content_61_sparkline').length ){
+            the_value_of_sparkline61 = $.extend(true, {}, _data_);
+            var the_value61 = [];
+
+            $.each(data_to_graph[61], function (key, value) {
+                if(value==""){
+                    the_value61.push(0);    
+                } else{
+                    the_value61.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline61['datasets'][0]['data'] = the_value61;
+
+            $(".Content_61_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline61,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 62th graph
+        if( $('.Content_62_sparkline').length ){
+            the_value_of_sparkline62 = $.extend(true, {}, _data_);
+            var the_value62 = [];
+
+            $.each(data_to_graph[62], function (key, value) {
+                if(value==""){
+                    the_value62.push(0);    
+                } else{
+                    the_value62.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline62['datasets'][0]['data'] = the_value62;
+
+            $(".Content_62_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline62,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 63th graph
+        if( $('.Content_63_sparkline').length ){
+            the_value_of_sparkline63 = $.extend(true, {}, _data_);
+            var the_value63 = [];
+
+            $.each(data_to_graph[63], function (key, value) {
+                if(value==""){
+                    the_value63.push(0);    
+                } else{
+                    the_value63.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline63['datasets'][0]['data'] = the_value63;
+
+            $(".Content_63_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline63,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 64th graph
+        if( $('.Content_64_sparkline').length ){
+            the_value_of_sparkline64 = $.extend(true, {}, _data_);
+            var the_value64 = [];
+
+            $.each(data_to_graph[64], function (key, value) {
+                if(value==""){
+                    the_value64.push(0);    
+                } else{
+                    the_value64.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline64['datasets'][0]['data'] = the_value64;
+
+            $(".Content_64_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline64,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 65th graph
+        if( $('.Content_65_sparkline').length ){
+            the_value_of_sparkline65 = $.extend(true, {}, _data_);
+            var the_value65 = [];
+
+            $.each(data_to_graph[65], function (key, value) {
+                if(value==""){
+                    the_value65.push(0);    
+                } else{
+                    the_value65.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline65['datasets'][0]['data'] = the_value65;
+
+            $(".Content_65_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline65,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 66th graph
+        if( $('.Content_66_sparkline').length ){
+            the_value_of_sparkline66 = $.extend(true, {}, _data_);
+            var the_value66 = [];
+
+            $.each(data_to_graph[66], function (key, value) {
+                if(value==""){
+                    the_value66.push(0);    
+                } else{
+                    the_value66.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline66['datasets'][0]['data'] = the_value66;
+
+            $(".Content_66_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline66,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 67th graph
+        if( $('.Content_67_sparkline').length ){
+            the_value_of_sparkline67 = $.extend(true, {}, _data_);
+            var the_value67 = [];
+
+            $.each(data_to_graph[67], function (key, value) {
+                if(value==""){
+                    the_value67.push(0);    
+                } else{
+                    the_value67.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline67['datasets'][0]['data'] = the_value67;
+
+            $(".Content_67_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline67,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 68th graph
+        if( $('.Content_68_sparkline').length ){
+            the_value_of_sparkline68 = $.extend(true, {}, _data_);
+            var the_value68 = [];
+
+            $.each(data_to_graph[68], function (key, value) {
+                if(value==""){
+                    the_value68.push(0);    
+                } else{
+                    the_value68.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline68['datasets'][0]['data'] = the_value68;
+
+            $(".Content_68_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline68,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 69th graph
+        if( $('.Content_69_sparkline').length ){
+            the_value_of_sparkline69 = $.extend(true, {}, _data_);
+            var the_value69 = [];
+
+            $.each(data_to_graph[69], function (key, value) {
+                if(value==""){
+                    the_value69.push(0);    
+                } else{
+                    the_value69.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline69['datasets'][0]['data'] = the_value69;
+
+            $(".Content_69_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline69,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 70th graph
+        if( $('.Content_70_sparkline').length ){
+            the_value_of_sparkline70 = $.extend(true, {}, _data_);
+            var the_value70 = [];
+
+            $.each(data_to_graph[70], function (key, value) {
+                if(value==""){
+                    the_value70.push(0);    
+                } else{
+                    the_value70.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline70['datasets'][0]['data'] = the_value70;
+
+            $(".Content_70_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline70,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 71th graph
+        if( $('.Content_71_sparkline').length ){
+            the_value_of_sparkline71 = $.extend(true, {}, _data_);
+            var the_value71 = [];
+
+            $.each(data_to_graph[71], function (key, value) {
+                if(value==""){
+                    the_value71.push(0);    
+                } else{
+                    the_value71.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline71['datasets'][0]['data'] = the_value71;
+
+            $(".Content_71_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline71,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 72th graph
+        if( $('.Content_72_sparkline').length ){
+            the_value_of_sparkline72 = $.extend(true, {}, _data_);
+            var the_value72 = [];
+
+            $.each(data_to_graph[72], function (key, value) {
+                if(value==""){
+                    the_value72.push(0);    
+                } else{
+                    the_value72.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline72['datasets'][0]['data'] = the_value72;
+
+            $(".Content_72_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline72,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 73th graph
+        if( $('.Content_73_sparkline').length ){
+            the_value_of_sparkline73 = $.extend(true, {}, _data_);
+            var the_value73 = [];
+
+            $.each(data_to_graph[73], function (key, value) {
+                if(value==""){
+                    the_value73.push(0);    
+                } else{
+                    the_value73.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline73['datasets'][0]['data'] = the_value73;
+
+            $(".Content_73_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline73,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 74th graph
+        if( $('.Content_74_sparkline').length ){
+            the_value_of_sparkline74 = $.extend(true, {}, _data_);
+            var the_value74 = [];
+
+            $.each(data_to_graph[74], function (key, value) {
+                if(value==""){
+                    the_value74.push(0);    
+                } else{
+                    the_value74.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline74['datasets'][0]['data'] = the_value74;
+
+            $(".Content_74_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline74,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 75th graph
+        if( $('.Content_75_sparkline').length ){
+            the_value_of_sparkline75 = $.extend(true, {}, _data_);
+            var the_value75 = [];
+
+            $.each(data_to_graph[75], function (key, value) {
+                if(value==""){
+                    the_value75.push(0);    
+                } else{
+                    the_value75.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline75['datasets'][0]['data'] = the_value75;
+
+            $(".Content_75_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline75,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 76th graph
+        if( $('.Content_76_sparkline').length ){
+            the_value_of_sparkline76 = $.extend(true, {}, _data_);
+            var the_value76 = [];
+
+            $.each(data_to_graph[76], function (key, value) {
+                if(value==""){
+                    the_value76.push(0);    
+                } else{
+                    the_value76.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline76['datasets'][0]['data'] = the_value76;
+
+            $(".Content_76_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline76,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 77th graph
+        if( $('.Content_77_sparkline').length ){
+            the_value_of_sparkline77 = $.extend(true, {}, _data_);
+            var the_value77 = [];
+
+            $.each(data_to_graph[77], function (key, value) {
+                if(value==""){
+                    the_value77.push(0);    
+                } else{
+                    the_value77.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline77['datasets'][0]['data'] = the_value77;
+
+            $(".Content_77_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline77,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 78th graph
+        if( $('.Content_78_sparkline').length ){
+            the_value_of_sparkline78 = $.extend(true, {}, _data_);
+            var the_value78 = [];
+
+            $.each(data_to_graph[78], function (key, value) {
+                if(value==""){
+                    the_value78.push(0);    
+                } else{
+                    the_value78.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline78['datasets'][0]['data'] = the_value78;
+
+            $(".Content_78_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline78,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 79th graph
+        if( $('.Content_79_sparkline').length ){
+            the_value_of_sparkline79 = $.extend(true, {}, _data_);
+            var the_value79 = [];
+
+            $.each(data_to_graph[79], function (key, value) {
+                if(value==""){
+                    the_value79.push(0);    
+                } else{
+                    the_value79.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline79['datasets'][0]['data'] = the_value79;
+
+            $(".Content_79_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline79,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 80th graph
+        if( $('.Content_80_sparkline').length ){
+            the_value_of_sparkline80 = $.extend(true, {}, _data_);
+            var the_value80 = [];
+
+            $.each(data_to_graph[80], function (key, value) {
+                if(value==""){
+                    the_value80.push(0);    
+                } else{
+                    the_value80.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline80['datasets'][0]['data'] = the_value80;
+
+            $(".Content_80_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline80,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 81th graph
+        if( $('.Content_81_sparkline').length ){
+            the_value_of_sparkline81 = $.extend(true, {}, _data_);
+            var the_value81 = [];
+
+            $.each(data_to_graph[81], function (key, value) {
+                if(value==""){
+                    the_value81.push(0);    
+                } else{
+                    the_value81.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline81['datasets'][0]['data'] = the_value81;
+
+            $(".Content_81_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline81,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 82th graph
+        if( $('.Content_82_sparkline').length ){
+            the_value_of_sparkline82 = $.extend(true, {}, _data_);
+            var the_value82 = [];
+
+            $.each(data_to_graph[82], function (key, value) {
+                if(value==""){
+                    the_value82.push(0);    
+                } else{
+                    the_value82.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline82['datasets'][0]['data'] = the_value82;
+
+            $(".Content_82_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline82,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 83th graph
+        if( $('.Content_83_sparkline').length ){
+            the_value_of_sparkline83 = $.extend(true, {}, _data_);
+            var the_value83 = [];
+
+            $.each(data_to_graph[83], function (key, value) {
+                if(value==""){
+                    the_value83.push(0);    
+                } else{
+                    the_value83.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline83['datasets'][0]['data'] = the_value83;
+
+            $(".Content_83_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline83,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 84th graph
+        if( $('.Content_84_sparkline').length ){
+            the_value_of_sparkline84 = $.extend(true, {}, _data_);
+            var the_value84 = [];
+
+            $.each(data_to_graph[84], function (key, value) {
+                if(value==""){
+                    the_value84.push(0);    
+                } else{
+                    the_value84.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline84['datasets'][0]['data'] = the_value84;
+
+            $(".Content_84_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline84,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 85th graph
+        if( $('.Content_85_sparkline').length ){
+            the_value_of_sparkline85 = $.extend(true, {}, _data_);
+            var the_value85 = [];
+
+            $.each(data_to_graph[85], function (key, value) {
+                if(value==""){
+                    the_value85.push(0);    
+                } else{
+                    the_value85.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline85['datasets'][0]['data'] = the_value85;
+
+            $(".Content_85_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline85,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 86th graph
+        if( $('.Content_86_sparkline').length ){
+            the_value_of_sparkline86 = $.extend(true, {}, _data_);
+            var the_value86 = [];
+
+            $.each(data_to_graph[86], function (key, value) {
+                if(value==""){
+                    the_value86.push(0);    
+                } else{
+                    the_value86.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline86['datasets'][0]['data'] = the_value86;
+
+            $(".Content_86_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline86,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 87th graph
+        if( $('.Content_87_sparkline').length ){
+            the_value_of_sparkline87 = $.extend(true, {}, _data_);
+            var the_value87 = [];
+
+            $.each(data_to_graph[87], function (key, value) {
+                if(value==""){
+                    the_value87.push(0);    
+                } else{
+                    the_value87.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline87['datasets'][0]['data'] = the_value87;
+
+            $(".Content_87_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline87,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 88th graph
+        if( $('.Content_88_sparkline').length ){
+            the_value_of_sparkline88 = $.extend(true, {}, _data_);
+            var the_value88 = [];
+
+            $.each(data_to_graph[88], function (key, value) {
+                if(value==""){
+                    the_value88.push(0);    
+                } else{
+                    the_value88.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline88['datasets'][0]['data'] = the_value88;
+
+            $(".Content_88_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline88,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 89th graph
+        if( $('.Content_89_sparkline').length ){
+            the_value_of_sparkline89 = $.extend(true, {}, _data_);
+            var the_value89 = [];
+
+            $.each(data_to_graph[89], function (key, value) {
+                if(value==""){
+                    the_value89.push(0);    
+                } else{
+                    the_value89.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline89['datasets'][0]['data'] = the_value89;
+
+            $(".Content_89_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline89,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 90th graph
+        if( $('.Content_90_sparkline').length ){
+            the_value_of_sparkline90 = $.extend(true, {}, _data_);
+            var the_value90 = [];
+
+            $.each(data_to_graph[90], function (key, value) {
+                if(value==""){
+                    the_value90.push(0);    
+                } else{
+                    the_value90.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline90['datasets'][0]['data'] = the_value90;
+
+            $(".Content_90_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline90,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 91th graph
+        if( $('.Content_91_sparkline').length ){
+            the_value_of_sparkline91 = $.extend(true, {}, _data_);
+            var the_value91 = [];
+
+            $.each(data_to_graph[91], function (key, value) {
+                if(value==""){
+                    the_value91.push(0);    
+                } else{
+                    the_value91.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline91['datasets'][0]['data'] = the_value91;
+
+            $(".Content_91_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline91,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 92th graph
+        if( $('.Content_92_sparkline').length ){
+            the_value_of_sparkline92 = $.extend(true, {}, _data_);
+            var the_value92 = [];
+
+            $.each(data_to_graph[92], function (key, value) {
+                if(value==""){
+                    the_value92.push(0);    
+                } else{
+                    the_value92.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline92['datasets'][0]['data'] = the_value92;
+
+            $(".Content_92_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline92,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 93th graph
+        if( $('.Content_93_sparkline').length ){
+            the_value_of_sparkline93 = $.extend(true, {}, _data_);
+            var the_value93 = [];
+
+            $.each(data_to_graph[93], function (key, value) {
+                if(value==""){
+                    the_value93.push(0);    
+                } else{
+                    the_value93.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline93['datasets'][0]['data'] = the_value93;
+
+            $(".Content_93_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline93,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 94th graph
+        if( $('.Content_94_sparkline').length ){
+            the_value_of_sparkline94 = $.extend(true, {}, _data_);
+            var the_value94 = [];
+
+            $.each(data_to_graph[94], function (key, value) {
+                if(value==""){
+                    the_value94.push(0);    
+                } else{
+                    the_value94.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline94['datasets'][0]['data'] = the_value94;
+
+            $(".Content_94_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline94,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 95th graph
+        if( $('.Content_95_sparkline').length ){
+            the_value_of_sparkline95 = $.extend(true, {}, _data_);
+            var the_value95 = [];
+
+            $.each(data_to_graph[95], function (key, value) {
+                if(value==""){
+                    the_value95.push(0);    
+                } else{
+                    the_value95.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline95['datasets'][0]['data'] = the_value95;
+
+            $(".Content_95_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline95,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 96th graph
+        if( $('.Content_96_sparkline').length ){
+            the_value_of_sparkline96 = $.extend(true, {}, _data_);
+            var the_value96 = [];
+
+            $.each(data_to_graph[96], function (key, value) {
+                if(value==""){
+                    the_value96.push(0);    
+                } else{
+                    the_value96.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline96['datasets'][0]['data'] = the_value96;
+
+            $(".Content_96_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline96,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 97th graph
+        if( $('.Content_97_sparkline').length ){
+            the_value_of_sparkline97 = $.extend(true, {}, _data_);
+            var the_value97 = [];
+
+            $.each(data_to_graph[97], function (key, value) {
+                if(value==""){
+                    the_value97.push(0);    
+                } else{
+                    the_value97.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline97['datasets'][0]['data'] = the_value97;
+
+            $(".Content_97_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline97,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 98th graph
+        if( $('.Content_98_sparkline').length ){
+            the_value_of_sparkline98 = $.extend(true, {}, _data_);
+            var the_value98 = [];
+
+            $.each(data_to_graph[98], function (key, value) {
+                if(value==""){
+                    the_value98.push(0);    
+                } else{
+                    the_value98.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline98['datasets'][0]['data'] = the_value98;
+
+            $(".Content_98_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline98,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+
+        // 99th graph
+        if( $('.Content_99_sparkline').length ){
+            the_value_of_sparkline99 = $.extend(true, {}, _data_);
+            var the_value99 = [];
+
+            $.each(data_to_graph[99], function (key, value) {
+                if(value==""){
+                    the_value99.push(0);    
+                } else{
+                    the_value99.push(parseFloat(value));
+                }
+            });
+
+            the_value_of_sparkline99['datasets'][0]['data'] = the_value99;
+
+            $(".Content_99_sparkline").each(function () {
+                var ctx = $(this).get(0).getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: the_value_of_sparkline99,
+                    options: sparklinestyle
+                });
+            });
+        }
+            
+    }
+</script>

@@ -1,0 +1,350 @@
+<div>
+	<ul class="list-group filterby" id="filter-company">
+		<li class="list-group-item hidden" contenteditable="false">Graph by</li>
+		<li class="list-group-item avtive filter-by-li filter_negative_clr" id="Main_Graph"  dir="auto" style="color: #c12056;">
+			STOCK PRICE
+		</li>
+		<li class="list-group-item filter-by-li" id="qtrly_result" onclick="Wo_GraphPostBy('qtrly_result', 'standalone_');" dir="auto" style="color: 6b376b;">
+			QTRLY RESULTS
+		</li>
+		<li class="list-group-item filter-by-li" id="annual_result" onclick="Wo_GraphPostBy('annual_result', 'standalone_');" dir="auto" style="color: #4caf50;">
+			ANNUAL RESULTS
+		</li>
+		<li class="list-group-item filter-by-li" id="financial_ratios"  onclick="Wo_GraphPostBy('financial_ratios', 'standalone_');" dir="auto" style="color: #2396f3;">
+			FINANCIAL RATIOS
+		</li>
+		<li class="list-group-item filter-by-li" id="PL" onclick="Wo_GraphPostBy('PL', 'standalone_');" dir="auto" style="color: #cc8317;">
+			PROFIT & LOSS
+		</li>
+		<li class="list-group-item filter-by-li" id="balance_sheet" onclick="Wo_GraphPostBy('balance_sheet', 'standalone_');" dir="auto" style="color: #2396f3;">
+			BALANCE SHEET
+		</li>
+		<li class="list-group-item filter-by-li" id="cash_flow" onclick="Wo_GraphPostBy('cash_flow', 'standalone_');" dir="auto" style="color: #4caf50;">
+			CASH FLOW
+		</li>
+		<li class="list-group-item filter-by-li" id="competitors" onclick="Wo_GraphPostBy('competitors', 'standalone_');" dir="auto" style="color: #6b376b;">
+			COMPETITORS
+		</li>
+		<li class="list-group-item filter-by-li" id="other_info" onclick="Wo_GraphPostBy('other_info', 'standalone_');" dir="auto" style="color: #c12056;">
+			Other Info
+		</li>
+	</ul>
+	<ul class="list-group filterby" id="filter-button" style="background-color: #f9f9f9; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.0);">
+		<li class="list-group-item hidden" contenteditable="false">Graph by</li>
+		<li class="list-group-item filter-by-li hidden" id="standalone_" onclick="Wo_GraphPostBy('it_is_sub', 'standalone_');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px;">
+			<b>STANDALONE</b>
+		</li>
+		<li class="list-group-item filter-by-li hidden" id="consolidated_" onclick="Wo_GraphPostBy('it_is_sub', 'consolidated_');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px;">
+			<b>CONSOLIDATED</b>
+		</li>
+		<li class="list-group-item avtive filter-by-li filter_negative_clr" id="intraday" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px;">
+			<b>INTRADAY</b>
+		</li>
+		<li class="list-group-item filter-by-li" id="historical" onclick="Wo_GraphPostBy('Main_Graph', 'historical');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000; border-radius: 5px;">
+			<b>HISTORICAL</b>
+		</li>
+		<li class="list-group-item hidden" id="p_e" onclick="theTimeLine('p_e');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); float: right; color: #000; border-radius: 5px;">
+			<b>PRICE TO EARNING</b>
+		</li>
+		<li class="list-group-item hidden" id="price_" onclick="theTimeLine('price');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); float: right; color: #000; border-radius: 5px;">
+			<b>PRICE</b>
+		</li>
+		<li class="list-group-item hidden" id="graph_" onclick="graph_table('graph');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); float: right; color: #000; border-radius: 5px;">
+			<b>GRAPH</b>
+		</li>
+		<li class="list-group-item hidden" id="table_" onclick="graph_table('table');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); float: right; color: #000; border-radius: 5px;">
+			<b>TABLE</b>
+		</li>
+	</ul>
+	<ul class="list-group filterby hidden the_time_list" id="filter-button" style="background-color: #f9f9f9; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.0);">
+		<li class="list-group-item hidden" contenteditable="false">Graph by</li>
+		<li class="list-group-item filter-by-li" id="10D" onclick="theTimeLine('10D');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px; width: 3%;">
+			<b>10D</b>
+		</li>
+		<li class="list-group-item filter-by-li" id="1M" onclick="theTimeLine('1M');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px; width: 3%">
+			<b>1M</b>
+		</li>
+		<li class="list-group-item filter-by-li" id="1Yr" onclick="theTimeLine('1Yr');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px; width: 3%">
+			<b>1Yr</b>
+		</li>
+		<li class="list-group-item filter-by-li" id="YTD" onclick="theTimeLine('YTD');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px; width: 3%">
+			<b>YTD</b>
+		</li>
+		<li class="list-group-item filter-by-li" id="MAX" onclick="theTimeLine('MAX');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px; width: 4%">
+			<b>MAX</b>
+		</li>
+	</ul>
+	<div id='finance_content'>
+		<div id='main_cahrt'>
+			<?php echo Wo_LoadPage('charts/mainchart');?>
+		</div>
+		<?php echo Wo_LoadPage('charts/extracharts');?>
+	</div>
+</div>
+
+<?php echo Wo_LoadPage('stock_quotes/apis/finance_data');?>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.js"></script>
+<script>
+var company_fincode = <?php echo $wo['company_data']['fincode']; ?>;
+var company_fformat = <?php echo "'" . $wo['company_data']['fformat'] . "'"; ?>;
+var old = "Main_Graph";
+var old_sub = "intraday";
+var dateOption_ = 'M';
+var dateCount_ = '1';
+var price_to_get__ = 'price';
+var data_to_show__ = 'graph';
+
+function Wo_GraphPostBy(to_show, sub_show){
+
+	var extra_load = true;
+	
+	if(to_show != 'Main_Graph'){
+		$("#standalone_").removeClass("hidden");
+		$("#consolidated_").removeClass("hidden");
+		if(data_to_show__=='graph'){
+			$("#table_").removeClass("hidden");
+		} else{
+			$("#graph_").removeClass("hidden");
+		}
+
+		$("#intraday").addClass("hidden");
+		$("#historical").addClass("hidden");
+		$(".the_time_list").addClass("hidden");
+		if(price_to_get__ == 'price'){
+			$("#p_e").addClass("hidden");
+		} else{
+			$("#price_").addClass("hidden");
+		}
+	} else{
+		if (old == 'Main_Graph' && to_show == 'Main_Graph'){
+			extra_load = false;
+		}
+		$("#standalone_").addClass("hidden");
+		$("#consolidated_").addClass("hidden");
+		if(data_to_show__=='graph'){
+			$("#table_").addClass("hidden");
+		} else{
+			$("#graph_").addClass("hidden");
+		}
+
+		$("#intraday").removeClass("hidden");
+		$("#historical").removeClass("hidden");
+	}
+
+	console.log('to_show_prev: ' + to_show);
+	if(to_show != 'it_is_sub'){
+		$('#' + to_show).prop("onclick", null);
+		$('#' + sub_show).prop("onclick", null);
+
+		$('#' + old).attr("onClick", 'Wo_GraphPostBy(\'' + old + '\', \'' + old_sub + '\');');
+		if(old!='Main_Graph'){
+			$('#' + old_sub).attr("onClick", 'Wo_GraphPostBy(\'' + 'it_is_sub' + '\', \'' + old_sub + '\');');
+		}else{
+			$('#' + old_sub).attr("onClick", 'Wo_GraphPostBy(\'' + 'Main_Graph' + '\', \'' + old_sub + '\');');
+		}
+		data_to_show__='graph';
+		if (to_show != 'Main_Graph'){
+			$("#graph_").addClass("hidden");
+			$("#table_").removeClass("hidden");
+		}
+		old = to_show;
+	} else{
+		
+		$('#' + sub_show).prop("onclick", null);
+		if(old!='Main_Graph'){
+			$('#' + old_sub).attr("onClick", 'Wo_GraphPostBy(\'' + 'it_is_sub' + '\', \'' + old_sub + '\');');
+		}else{
+			$('#' + old_sub).attr("onClick", 'Wo_GraphPostBy(\'' + 'Main_Graph' + '\', \'' + old_sub + '\');');
+		}
+	}
+
+
+	console.log('old: ' + old);
+	console.log('to_show: ' + to_show);
+	console.log('old_sub: ' + old_sub);
+	console.log('sub_show: ' + sub_show);
+	console.log('extra_load: ' + extra_load);
+
+	
+	old_sub = sub_show;
+
+	if (old==='annual_result'){
+		data = financeData(company_fincode, 'annual', company_fformat, sub_show);
+	} else if (old==='qtrly_result'){
+		data = financeData(company_fincode, 'qtrly', company_fformat, sub_show);
+	} else if (old==='financial_ratios'){
+		data = financeData(company_fincode, 'finance', company_fformat, sub_show);
+	} else if (old==='PL'){
+		data = financeData(company_fincode, 'profit_loss', company_fformat, sub_show);
+	} else{
+		if(extra_load==true){
+			const to_exchange = `<div id='main_cahrt'>
+									<?php echo Wo_LoadPage('charts/mainchart');?>
+								</div>
+								<?php echo Wo_LoadPage('charts/extracharts');?>`
+			$('#finance_content').html(to_exchange);
+			if (old_sub == 'historical'){
+				to_load_main_quote_graph(company_fincode, 'H', 'Y', '1', price_to_get__);
+				to_load_extra_quote_graph(company_fincode, company_fformat);
+				if(price_to_get__ == 'price'){
+					$("#p_e").removeClass("hidden");
+				} else{
+					$("#price_").removeClass("hidden");
+				}
+				$(".the_time_list").removeClass("hidden");
+
+			} else{
+				to_load_main_quote_graph(company_fincode, 'I', '', '', 'price');
+				to_load_extra_quote_graph(company_fincode, company_fformat);
+
+				if(price_to_get__ == 'price'){
+					$("#p_e").addClass("hidden");
+				} else{
+					$("#price_").addClass("hidden");
+				}
+				$(".the_time_list").addClass("hidden");
+			}
+		} else{
+
+			const to_exchange = '<canvas id="dual-line" height="101" width="483" class="chartjs-render-monitor" style="display: block; width: 483px; height: 201px;"></canvas>';
+
+			$('#chartasd').html(to_exchange);
+
+			if (old_sub == 'historical'){
+				to_load_main_quote_graph(company_fincode, 'H', 'Y', '1', price_to_get__);
+				if(price_to_get__ == 'price'){
+					$("#p_e").removeClass("hidden");
+				} else{
+					$("#price_").removeClass("hidden");
+				}
+				$(".the_time_list").removeClass("hidden");
+
+			} else{
+				to_load_main_quote_graph(company_fincode, 'I', '', '', 'price');
+				if(price_to_get__ == 'price'){
+					$("#p_e").addClass("hidden");
+				} else{
+					$("#price_").addClass("hidden");
+				}
+				$(".the_time_list").addClass("hidden");
+
+			}
+		}
+	}
+	if(old!="Main_Graph"){
+		if(data_to_show__!='graph'){
+			get_table(data);
+		} else{
+			graphing_table_data(data, old);
+		}
+	}
+}
+
+function graph_table(data_to_show){
+	data_to_show__ = data_to_show;
+	console.log('Data to Show: ' + data_to_show__);
+	console.log('Current Tab: ' + old);
+	console.log('Current Sub Tab: ' + old_sub);
+	if(data_to_show__!='graph'){
+		$("#table_").addClass("hidden");
+		$("#graph_").removeClass("hidden");
+		get_table(data);
+	} else{
+		$("#graph_").addClass("hidden");
+		$("#table_").removeClass("hidden");
+		graphing_table_data(data, old);
+	}
+}
+
+function theTimeLine(time){
+	const to_exchange = '<canvas id="dual-line" height="101" width="483" class="chartjs-render-monitor" style="display: block; width: 483px; height: 201px;"></canvas>';
+	$('#chartasd').html(to_exchange);
+	if(time=='10D'){
+		dateOption_ = 'D';
+		dateCount_ = '10';
+		to_load_main_quote_graph(company_fincode, 'H', 'D', '10', price_to_get__);
+	} else if(time=="1M"){
+		dateOption_ = 'M';
+		dateCount_ = '1';
+		to_load_main_quote_graph(company_fincode, 'H', 'M', '1', price_to_get__);
+	} else if(time=="1Yr"){
+		dateOption_ = 'Y';
+		dateCount_ = '1';
+		to_load_main_quote_graph(company_fincode, 'H', 'Y', '1', price_to_get__);
+	} else if(time=="YTD"){
+		dateOption_ = 'YTD';
+		dateCount_ = '';
+		to_load_main_quote_graph(company_fincode, 'H', 'YTD', '', price_to_get__);
+	} else if(time=="MAX"){
+		dateOption_ = 'Y';
+		dateCount_ = '10';
+		to_load_main_quote_graph(company_fincode, 'H', 'Y', '10', price_to_get__);
+	} else if(time=="p_e"){
+		price_to_get__ = 'pe';
+		$("#p_e").addClass("hidden");
+		$("#price_").removeClass("hidden");
+		to_load_main_quote_graph(company_fincode, 'H', dateOption_, dateCount_, price_to_get__);
+	} else if(time=="price"){
+		price_to_get__ = 'price';
+		$("#p_e").removeClass("hidden");
+		$("#price_").addClass("hidden");
+		to_load_main_quote_graph(company_fincode, 'H', dateOption_, dateCount_, price_to_get__);
+	}
+}
+
+
+function get_table(data){
+	data_ = data.data['finance_data'];
+	
+	table_heading = '<tr>';
+
+	table_heading += '<th>Particulers</th>';
+
+	for(var idx in data.data.Dates){
+		table_heading += '<th>' + data.data.Dates[idx].toString() + '</th>';
+	}
+	table_heading += '</tr>';
+
+	table_data = '';
+	for(i = 0; i < data_.length; i++) {
+
+		var table_data_to_append = '';
+		var empty_count = 0;
+
+		table_data_to_append += '<tr>';
+		table_data_to_append += '<td><b>' + data_[i]['description'] + '</b></td>';
+
+		for(j in data_[i]){
+			if(j !== "description"){
+				to_add = data_[i][j];
+				
+				if(to_add !== ""){
+					to_add = parseFloat(to_add).toFixed(2);
+				} else{
+					empty_count += 1;
+					to_add = '-';
+				}
+				table_data_to_append += '<td>' + to_add + '</td>';
+			}
+		}
+		table_data_to_append += '</tr>';
+
+		if(empty_count == 12){
+			table_data_to_append = '';
+		}
+
+		table_data += table_data_to_append;
+		
+	}
+
+	table = `<div class="container">
+				<table class="table table-hover table-striped">
+					<thead>` + table_heading + `</thead>
+					<tbody>` + table_data + `</tbody>
+				</table>
+			</div>`;
+
+	$('#finance_content').html("<div style='background-color: white;'>"+table+"</div>");
+}
+</script>
