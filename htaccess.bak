@@ -27,6 +27,8 @@ RewriteRule ^games$ index.php?link1=games [NC,QSA]
 RewriteRule ^new-game$ index.php?link1=new-game [NC,QSA]
 RewriteRule ^go-pro$ index.php?link1=go-pro [NC,QSA]
 RewriteRule ^oops$ index.php?link1=oops [NC,QSA]
+RewriteRule ^create-portfolio(/?|)$ index.php?link1=create-portfolio [QSA]
+RewriteRule ^portfolio(/?|)$ index.php?link1=portfolio [QSA]
 RewriteRule ^user-activation$ index.php?link1=user-activation [NC,QSA]
 RewriteRule ^hashtag/([^\/]+)(\/|)$ index.php?link1=hashtag&hash=$1 [NC,QSA]
 RewriteRule ^follow-requests/(.*)$ index.php?link1=follow-requests[NC,QSA]
@@ -228,7 +230,7 @@ ExpiresByType application/pdf "access plus 1 month"
 ExpiresByType text/x-javascript "access plus 1 month"
 ExpiresByType application/x-shockwave-flash "access plus 1 month"
 ExpiresByType image/x-icon "access plus 1 year"
-ExpiresDefault "access plus 2 days"
+ExpiresDefault "access plus 1 month"
 </IfModule>
 ## EXPIRES CACHING ##
 

@@ -8065,3 +8065,8 @@ function Wo_StockPriceCachingWDownloadNDelete($fincode, $timestamp, $fetched_tim
 
     return $data;
 }
+function Wo_Portfolio_URL(){
+    global $wo;
+
+    return 'hi';
+}

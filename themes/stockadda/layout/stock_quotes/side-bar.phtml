@@ -1,6 +1,4 @@
 <div class="col-md-4">
-			<!-- removed if ($wo['loggedin']) condition -->
-		<?php /* if ($wo['loggedin']): */?>
             <?php echo Wo_LoadPage('charts/sidechart');?>
 			<ul class="wow_content negg_padd list-unstyled" style="padding: 2px 0px;">
 				<li class="list-group-item hidden"><?php echo $wo['lang']['rating']; ?></li>
@@ -39,7 +37,6 @@
 					<span><?php echo  number_format($wo['company_data']['rating'], 1, '.', ' '); ?></span>
 				</li>
 			</ul>
-		<?php /* endif; */ ?>
 		<?php echo Wo_LoadPage('stock_quotes/Additional_Info')?>
 		<?php if(!empty($wo['company_data']['page_description'])) {  ?>
 			<div class="page-margin wow_content">

@@ -1,0 +1,183 @@
+<div class="time-of-year">
+    <div class="centerText" style="align-content: center; text-align: center;">
+        <span><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Today's High Low</strong></span>
+        <canvas id="dailycanvas1" height="30"></canvas>
+        <span style="float: left;">1543.65</span>
+        <span style="float: right;">1582.35</span>
+        <div class="tooltip">High: 1543.65 <br /> Low: 1582.35 <br /> Current: 1573.60</div>
+    </div>
+</div>
+<div class="time-of-year">
+    <div class="centerText" style="align-content: center; text-align: center;">
+        <span><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Today's High Low</strong></span>
+        <canvas id="dailycanvas2" height="30"></canvas>
+        <span style="float: left;">1543.65</span>
+        <span style="float: right;">1582.35</span>
+        <div class="tooltip">High: 1543.65 <br /> Low: 1582.35 <br /> Current: 1573.60</div>
+    </div>
+</div>
+<div class="time-of-year">
+    <div class="centerText" style="align-content: center; text-align: center;">
+        <span><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Today's High Low</strong></span>
+        <canvas id="dailycanvas3" height="30"></canvas>
+        <span style="float: left;">1543.65</span>
+        <span style="float: right;">1582.35</span>
+        <div class="tooltip">High: 1543.65 <br /> Low: 1582.35 <br /> Current: 1573.60</div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        (function(DayHL)
+            {
+                'use strict';
+                // DayHL.LinearGauge = DayHL.LinearGauge || {};
+                DayHL.LinearGauge = function(canvas,color,inputLow,inputHigh,value)
+                {
+                    this.canvas = canvas;
+                    this.color = color;
+                    this.inputLow = inputLow;
+                    this.inputHigh = inputHigh;
+                    this.canvasWidth = Number(canvas.getAttribute("Width"));
+                    this.canvasHeight = Number(canvas.getAttribute("height"));
+                    this.endPoint = ((value - this.inputLow) / (this.inputHigh - this.inputLow)) * 
+                              (this.canvasWidth - 0) + 0;
+
+                }
+                DayHL.LinearGauge.prototype = {
+                    constructor: DayHL.LinearGauge,
+                    translateRange: function(
+                        Input , inputHigh , inputLow , outputHigh , OutputLow
+                    ){
+                        inputHigh = inputHigh ? inputHigh : this.inputHigh;
+                        inputLow = inputLow ? inputLow : this.inputLow;
+
+                        outputHigh =  outputHigh ? outputHigh : 1;
+                        OutputLow = OutputLow ? OutputLow : 0;  
+
+                        return ((Input - inputLow) / (inputHigh - inputLow)) * 
+                              (outputHigh - OutputLow) + OutputLow;
+                    },
+                    draw: function(stops)
+                    {
+                        var ctx = this.canvas.getContext("2d");
+                        var gradient = ctx.createLinearGradient(
+                            0, 0, this.canvasWidth, 0
+                        );
+
+                        for (var i = 0; i < stops.length; i++)
+                        {
+                            gradient.addColorStop(
+                                this.translateRange(stops[i][0]),
+                                stops[i][1]
+                            );
+                        }
+                        ctx.fillStyle = gradient;  
+                        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+                        return this;
+                    },
+                    animate: function()
+                    {
+                        var ctx = canvas.getContext("2d");
+                        var height = this.canvasHeight/3;
+                        ctx.strokeStyle = this.color ? this.color : '#8ED6FF';
+                        ctx.fillStyle= this.color ? this.color : '#8ED6FF';
+                        ctx.lineWidth = 10;
+                        $('.tooltip').css({"left":this.endPoint-153});
+                        ctx.beginPath();
+                        ctx.moveTo(
+                            this.endPoint-3,
+                            2
+                        );
+                        ctx.lineTo(
+                            this.endPoint+4,
+                            height
+                        );
+                        ctx.lineTo(
+                            this.endPoint-2,
+                            height
+                        );
+                        ctx.moveTo(
+                            this.endPoint+3,
+                            2
+                        );
+                        ctx.lineTo(
+                            this.endPoint-4,
+                            height
+                        );
+                        ctx.lineTo(
+                            this.endPoint+2,
+                            height
+                        );
+
+                        // ctx.closePath();
+                        ctx.stroke();
+                        ctx.fill();
+                        return this;
+                    },
+
+                }
+            }(window.DayHL = window.DayHL || {}));
+
+            var canvas = document.getElementById('dailycanvas1');
+
+            var dailycenterpoint = parseFloat("1563");
+
+            var dailystops = [
+                [1543.65, "red"],
+                [dailycenterpoint, "#ffc107"],
+                [1582.35, "green"]
+            ];
+
+            dailyfitToContainer(canvas);
+
+            function dailyfitToContainer(canvas)
+            {
+                canvas.style.width ='100%';
+                canvas.width  = canvas.offsetWidth;
+            }
+
+            new DayHL.LinearGauge(canvas,'#8ED6FF',1543.65,1582.35,1573.60).draw(dailystops).animate();
+
+
+            var canvas = document.getElementById('dailycanvas2');
+
+            var dailycenterpoint = parseFloat("1563");
+
+            var dailystops = [
+                [1543.65, "red"],
+                [dailycenterpoint, "#ffc107"],
+                [1582.35, "green"]
+            ];
+
+            dailyfitToContainer(canvas);
+
+            function dailyfitToContainer(canvas)
+            {
+                canvas.style.width ='100%';
+                canvas.width  = canvas.offsetWidth;
+            }
+
+            new DayHL.LinearGauge(canvas,'#8ED6FF',1543.65,1582.35,1573.60).draw(dailystops).animate();
+
+
+            var canvas = document.getElementById('dailycanvas3');
+
+            var dailycenterpoint = parseFloat("1563");
+
+            var dailystops = [
+                [1543.65, "red"],
+                [dailycenterpoint, "#ffc107"],
+                [1582.35, "green"]
+            ];
+
+            dailyfitToContainer(canvas);
+
+            function dailyfitToContainer(canvas)
+            {
+                canvas.style.width ='100%';
+                canvas.width  = canvas.offsetWidth;
+            }
+
+            new DayHL.LinearGauge(canvas,'#8ED6FF',1543.65,1582.35,1573.60).draw(dailystops).animate();
+        })
+</script>

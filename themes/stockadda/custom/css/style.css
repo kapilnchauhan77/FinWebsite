@@ -2,37 +2,194 @@
 
 Add here your custom css styles Example: p { text-align: center; color: red; } 
 
-
 */
-@media (min-width: 768px) {
-    .container {
-        width: 97%;
-    }
+
+.header-fixed1000, .header-fixed1200 { max-width: 95%!important;}
+.container { width: 95%!important;}
+@media (min-width:992px) {
+.leftcol {width: 17.36666667%!important;}
+.middlecol {width: 57.333333%!important;}
+.rightcol.sett_page, .rightcol {width: 25.3%!important;}
+.nav.navbar-nav li {margin-top: 7px!important;}
+.navbar-default {background: #4d91ea!important;border: none!important;box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2)!important;height: 55px!important;}
+ul#filterby-post {top: 54px!important;}
 }
-@media (min-width: 992px) {
-    .container {
-        width: 97%;
-    }
+.brand.header-brand img {width:211px!important;}
+.navbar-default {background: #4d91ea!important;}
+.dropdown-toggle.sixteen-font-size.btn-main {background-color:#ef970b!important;border-color:#010101!important;border-radius: 3px !important;}
+#night_mode_toggle svg {height: 20px;width: 20px;}
+.navbar-default .dropdown-menu.ani-acc-menu > li > a:hover {background-color:#4d91ea!important;}
+ul.profile-completion-bar .completion-bar div.completion-bar-wrapper {background:rgba(77, 145, 234, 0.5)!important;}
+ul.profile-completion-bar .completion-bar div.completion-bar-status {background:rgba(77, 145, 234, 0.8)!important;}
+.search-container .search-input {border-radius:3px !important;}
+.headicon{padding: 3px 0 0 0!important;}
+.new-update-alert {background-color: #EF970B!important;}
+.wo_following_btn {background: linear-gradient(to right,#ef970b 0,#ef970b 100%) !important;}
+#wo_sidebar_users .btn-default {border-radius:3px !important;}
+.wo_settings_page .avatar-holder {background-color: #4d91ea !important;}
+.wo_settings_page .avatar-holder::after {background-image: none!important;}
+.form-control::placeholder {color: #fff!important;}
+.search-container .search-input{border-color: #ef970b !important;}
+.cc-color-override-1603882670 .cc-btn {background-color: rgb(239, 151, 11)!important;}
+.page-margin {margin-top: 40px!important;}
+
+.publisher-box .publisher-box-footer .poster-left-buttons .btn {width:145px;}
+.publisher-box .form-control {background-color: #4d91ea;border-radius: 3px 3px 0px 0px;}
+.publisher-box .post-avatar{width:35px;height:35px;border-radius:50%;position:absolute;left:10px;top:10px;z-index:22}
+.publisher-box textarea.postText{padding:16px 55px;line-height:1.628571;height:55px;color: #ffffff !important;}
+.publisher-box .publisher-hidden-option input{color:#fff;border-radius:0;border:none}
+
+#wo_comment_combo.comment-toggle .textarea, #wo_comment_combo .textarea {background-color: #4d91ea!important}
+
+#photo-form .create-album,#poll-form .delete-poll{transition:all .2s ease-in-out;font-size:12px;color:#fff;font-weight:700}
+#poll-form .delete-poll{display:inline-block;background:#a84849;border-radius:3px;padding:2px 5px 3px;margin:0 10px 0px;cursor:pointer}
+#poll-form .delete-poll:hover{background:#814a4b}
+ul#filter-company {position: sticky;top: 45px;z-index: 9;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);border-radius: 4px;}
+ul#filter-button {position: sticky;top: 45px;z-index: 9;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);border-radius: 4px;}
+#filter-company li{display:inline-block;float:left;width:11.11%;height:35px;padding:5px 10px;text-align:center}
+#filter-company li svg{width:20px;height:20px;display:block;margin:2px auto 1px;}
+#filter-button li{display:inline-block;float:left;width:11.11%;height:35px;padding:5px 10px;text-align:center}
+#filter-button li svg{width:20px;height:20px;display:block;margin:2px auto 1px;}
+#filter-company .avtive{border-bottom:2px solid;background:#f9f9f9;transition:all .1s;border-left:0;border-color:currentColor!important}
+#filter-button .avtive{background:#f9f9f9;transition:all .1s;border-left:0;border-color:currentColor!important}
+#wo_comment_combo.comment-toggle .textarea{border-color:#fff;color:#fff;max-height:100%}
+#filter-company .filter_negative_clr, #filter-company .filter_negative_clr svg {color: #333333;}
+#filter-button .filter_negative_clr, #filter-button .filter_negative_clr svg {color: #fff;}
+.wo_poke_users .poke_info {margin-right: 130px;}
+
+
+/* Gauges */
+
+.time-of-year {
+    color: #555;
+    font-family: Garamond;
+    font-size: 24px;
+    padding: 15px 20px;
+    position: relative;
+    text-align: center;
+    -webkit-transform: translateZ(0); /* webkit flicker fix */
+    -webkit-font-smoothing: antialiased; /* webkit text rendering fix */
 }
-@media (min-width: 1200px) {
-    .container {
-        width: 97%;
-    }
+
+.time-of-year .tooltip {
+    background: #333;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 15px;
+    top: 100%;
+    font-size: 20px;
+    display: block;
+    opacity: 0;
+    padding: 15px;
+    pointer-events: none;
+    position: absolute;
+    width: 320px;
+    z-index: 1102;
+    -webkit-transform: translateY(10px);
+        -moz-transform: translateY(10px);
+        -ms-transform: translateY(10px);
+        -o-transform: translateY(10px);
+            transform: translateY(10px);
+    -webkit-transition: all .7s ease-out;
+        -moz-transition: all .7s ease-out;
+        -ms-transition: all .7s ease-out;
+        -o-transition: all .7s ease-out;
+            transition: all .7s ease-out;
 }
-.header-fixed1000, .header-fixed1200 {
-	max-width: 97%;
+
+/* Yellow triangle */
+.time-of-year .tooltip:after {
+    border-left: solid transparent 10px;
+    border-right: solid transparent 10px;
+    border-bottom: solid #333 10px;
+    top: -10px;
+    content: " ";
+    height: 0;
+    left: 50%;
+    margin-left: -13px;
+    position: absolute;
+    width: 0;
 }
-.navbar-default, .header-fixed1000 > .container-fluid {
-	height:65px!important;
+
+
+.time-of-year:hover .tooltip {
+    opacity: 1;
+    pointer-events: auto;
+    -webkit-transform: translateY(0px);
+        -moz-transform: translateY(0px);
+        -ms-transform: translateY(0px);
+        -o-transform: translateY(0px);
+            transform: translateY(0px);
 }
-.content-container {
-    margin-top: 65px!important;
+
+.switchx {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    left: 3%;
+    margin-left: 175px;
+    bottom: 12px;
 }
-.brand.header-brand img {
-	width:200px!important;
+
+.switchx input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
-.btn-main {
-    color: #ffffff;
-    background-color: #ff9600!important;
-    border-color: #ff9600!important;
+
+.sliderx {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: red;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.sliderx:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .sliderx {
+    background-color: green;
+}
+
+input:focus + .sliderx {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .sliderx:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliderxs */
+.sliderx.round {
+    border-radius: 34px;
+}
+
+.sliderx.round:before {
+    border-radius: 50%;
+}
+
+/* IE can just show/hide with no transition */
+.lte8 .time-of-year .tooltip {
+    display: none;
+}
+
+.lte8 .time-of-year:hover .tooltip {
+    display: block;
 }

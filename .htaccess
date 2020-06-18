@@ -175,6 +175,9 @@ RewriteRule ^oauth$ index.php?link1=oauth [NC,QSA]
 RewriteRule ^boosted-pages$ index.php?link1=boosted-pages [NC,QSA]
 RewriteRule ^boosted-posts$ index.php?link1=boosted-posts [NC,QSA]
 
+# *** SA PORTFOLIO ***
+RewriteRule ^portfolio(/?|)$ index.php?link1=portfolio [QSA]
+RewriteRule ^create-portfolio(/?|)$ index.php?link1=create-portfolio [QSA]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

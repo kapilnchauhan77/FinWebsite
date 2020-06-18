@@ -167,6 +167,8 @@ $wo['site_pages'] = array(
     'pages',
     // SA INSERT
     'stock_quotes',
+    'create-portfolio',
+    'portfolio',
     //END INSERT
     'create-group',
     'create-page',

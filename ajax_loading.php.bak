@@ -125,6 +125,11 @@ if ($wo['config']['membership_system'] == 1) {
                 case 'create-page':
                     include('sources/create_page.php');
                     break;
+                // SA ADDITION FOR CREATE PORTFOLIO
+                case 'create-portfolio':
+                    include('sources/create_portfolio.php');
+                    break;
+                // END ADDITION
                 case 'setting':
                     include('sources/setting.php');
                     break;
@@ -144,7 +149,11 @@ if ($wo['config']['membership_system'] == 1) {
 				case 'stock_quotes':
                     include('sources/stock_quotes.php');
                     break;
-                //END ADDITION
+				// SA ADDITION FOR PORTFOLIO
+				case 'portfolio':
+                    include('sources/portfolio.php');
+                    break;
+                // END ADDITION
                 case 'post':
                     include('sources/story.php');
                     break;
@@ -422,6 +431,10 @@ if ($wo['config']['membership_system'] == 1) {
 				case 'stock_quotes':
                     include('sources/stock_quotes.php');
                     break;
+                // SA ADDITION FOR PORTFOLIO
+                case 'portfolio':
+                    include('sources/portfolio.php');
+                    break;
                 //END ADDITION
             }
         }
@@ -506,6 +519,10 @@ if ($wo['config']['membership_system'] == 1) {
 				case 'stock_quotes':
                     include('sources/stock_quotes.php');
                     break;
+                // SA ADDITION FOR PORTFOLIO
+                case 'portfolio':
+                    include('sources/portfolio.php');
+                    break;
                 //END ADDITION
             }
         }
@@ -588,6 +605,10 @@ if ($wo['config']['membership_system'] == 1) {
 				case 'stock_quotes':
                     include('sources/stock_quotes.php');
                     break;
+            // SA ADDITION FOR PORTFOLIO
+            case 'portfolio':
+                include('sources/portfolio.php');
+                break;
             //END ADDITION
         }
     }
@@ -681,6 +702,11 @@ else{
         case 'create-page':
             include('sources/create_page.php');
             break;
+        // SA ADDITION FOR CREATE PORTFOLIO
+        case 'create-portfolio':
+            include('sources/create_portfolio.php');
+            break;
+        // END ADDITION
         case 'setting':
             include('sources/setting.php');
             break;
@@ -972,6 +998,10 @@ else{
 		// SA ADDITION FOR STOCK QUOTE
 		case 'stock_quotes':
             include('sources/stock_quotes.php');
+            break;
+        // SA ADDITION FOR PORTFOLIO
+        case 'portfolio':
+            include('sources/portfolio.php');
             break;
         //END ADDITION
     }
@@ -1342,6 +1372,8 @@ if ($wo['redirect'] == 1) {
 
 $data['url'] = Wo_SeoLink('index.php' . $url);
 ?>
+<script>console.log('<?php echo json_encode($data);?>')</script>
+
 <input type="hidden" id="json-data" value='<?php echo htmlspecialchars(json_encode($data));?>'>
 <?php
 echo $wo['content'];

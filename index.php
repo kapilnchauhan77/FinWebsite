@@ -452,11 +452,17 @@ if ($wo['config']['membership_system'] == 1) {
                 case 'live':
                     include('sources/live.php');
                     break;
-				// SA ADDITION FOR STOCK QUOTE
+				// SA ADDITION FOR STOCK QUOTE AND PORTFOLIO
 				case 'stock_quotes':
                     include('sources/stock_quotes.php');
                     break;
-                //END ADDITION
+                case 'create-portfolio':
+                    include('sources/create_portfolio.php');
+                    break;
+                case 'portfolio':
+                    include('sources/portfolio.php');
+                    break;
+                // END ADDITION
             }
         }
         else{
@@ -993,9 +999,15 @@ else{
         case 'live':
             include('sources/live.php');
             break;
-        // SA ADDITION FOR STOCK QUOTE
+        // SA ADDITION FOR STOCK QUOTE AND PORTFOLIO
 		case 'stock_quotes':
             include('sources/stock_quotes.php');
+            break;
+        case 'create-portfolio':
+            include('sources/create_portfolio.php');
+            break;
+        case 'portfolio':
+            include('sources/portfolio.php');
             break;
         //END ADDITION
     }

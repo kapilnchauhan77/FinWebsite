@@ -1,6 +1,6 @@
 <script>
 	$(document).ready(function() {
-if (typeof(Storage) !== "undefined") {
+		if (typeof(Storage) !== "undefined") {
 			var company_fincode = <?php echo $wo['company_data']['fincode']; ?>;
 			var company_price_expired = false;
 			full_data = localStorage.getItem(company_fincode + "_company_price");
