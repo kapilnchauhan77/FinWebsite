@@ -11,15 +11,15 @@
 // MySQL Hostname
 $sql_db_host = "localhost";
 // MySQL Database User
-$sql_db_user = "wowondernew";
+$sql_db_user = "root";
 // MySQL Database Password
-$sql_db_pass = "wowondernew";
+$sql_db_pass = "";
 // MySQL Database Name
-$sql_db_name = "wowondernew";
+$sql_db_name = "stockadda";
 
 // Site URL
-$site_url = "http://localhost/wowondernew"; // e.g (http://example.com)
+$site_url = "http://localhost/saddanew"; // e.g (http://example.com)
 
 // Purchase code
-$purchase_code = "2578756f-12b6-411d-8d31-aa6bc978735e"; // Your purchase code, don't give it to anyone. 
+$purchase_code = "empty1234-12b6-411d-8d31-aa6bc978735e"; // Your purchase code, don't give it to anyone. 
 ?>
