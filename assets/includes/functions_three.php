@@ -1,13 +1,4 @@
 <?php
-// +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com   
-// +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2016 WoWonder. All rights reserved.
-// +------------------------------------------------------------------------+
 /* Script Main Functions (File 3) */
 
 function Wo_RegisterPoint($post_id, $type, $action = '+',$user_id = 0){
@@ -21,14 +12,14 @@ function Wo_RegisterPoint($post_id, $type, $action = '+',$user_id = 0){
     if (empty($type)) {
         return false;
     }
-    
+
     if (!empty($user_id) && is_numeric($user_id) && $user_id > 0) {
         $user_id = Wo_Secure($user_id);
     }
     else{
         $user_id = Wo_Secure( $wo["user"]["id"] );
         if (empty($user_id) || !is_numeric($user_id) || $user_id < 1) {
-            return fasle;
+            return false;
         }
     }
     if (empty($wo["user"]["point_day_expire"])) {
@@ -87,10 +78,10 @@ function Wo_RegisterPoint($post_id, $type, $action = '+',$user_id = 0){
             break;
     }
 
-    if( $points == 0 ){ 
+    if( $points == 0 ){
         return false;
     }
-    
+
     $wallet = $points / $dollar_to_point_cost;
 
     $user_data = Wo_UserData($user_id);
@@ -118,7 +109,7 @@ function Wo_RegisterPoint($post_id, $type, $action = '+',$user_id = 0){
         $balance_amount = max(($user_data['balance'] - $wallet),0);
     }
 
-    
+
 
     $query_one = "";
     if ($wo['config']['point_allow_withdrawal'] == 1 ){
@@ -253,13 +244,13 @@ function Wo_ProductImageData($data = array()) {
         $subquery               = " `id` <> " . $data['after_image_id'] . " AND `id` < " . $data['after_image_id'];
         $order_by               = 'DESC';
     }
-    
+
     else if (!empty($data['before_image_id']) && is_numeric($data['before_image_id'])) {
         $data['before_image_id'] = Wo_Secure($data['before_image_id']);
         $subquery                = " `id` <> " . $data['before_image_id'] . " AND `id` > " . $data['before_image_id'];
         $order_by                = 'ASC';
     }
-    
+
     else {
         $subquery = " `id` = '{$id}'";
     }
@@ -455,9 +446,9 @@ function Wo_GetProducts($filter_data = array()) {
             $query_one .= " AND `user_id` = '{$user_id}'";
         }
 
-        $query_one  = "SELECT `id`, `user_id`, ( {$unit} * acos(cos(radians('$user_lat'))  * 
-        cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) + 
-        sin(radians('$user_lat')) * sin(radians(lat ))) ) AS distance 
+        $query_one  = "SELECT `id`, `user_id`, ( {$unit} * acos(cos(radians('$user_lat'))  *
+        cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) +
+        sin(radians('$user_lat')) * sin(radians(lat ))) ) AS distance
         FROM " . T_PRODUCTS . " WHERE `lat` <> 0 AND `lng` <> 0 $query_one
         HAVING distance < '$distance'";
     }
@@ -470,7 +461,7 @@ function Wo_GetProducts($filter_data = array()) {
     else{
         $query_one .= " ORDER BY `id` DESC";
     }
-    
+
     if (!empty($filter_data['limit'])) {
         if (is_numeric($filter_data['limit'])) {
             $limit = Wo_Secure($filter_data['limit']);
@@ -1232,8 +1223,8 @@ function Wo_AddBlogCommentLikes($id, $blog) {
     $user    = $wo['user']['id'];
     @Wo_RemoveBlogCommentDisLikes($id);
     if ($comment && !empty($comment) && !Wo_IsBlogCommentLikeExists($id)) {
-        $sql   = "INSERT INTO " . T_BM_LIKES . " 
-                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`blog_id`) 
+        $sql   = "INSERT INTO " . T_BM_LIKES . "
+                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`blog_id`)
                         VALUES (NULL, '$id', '0', '0', '0', '$user','$blog')";
         $query = mysqli_query($sqlConnect, $sql);
         if ($query) {
@@ -1255,8 +1246,8 @@ function Wo_AddBlogCommReplyLikes($id, $blog) {
     $result  = false;
     $user    = $wo['user']['id'];
     if ($comment && !empty($comment) && !Wo_IsBlogCommentReplyLikeExists($id)) {
-        $sql   = "INSERT INTO " . T_BM_LIKES . " 
-                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`, `movie_commreply_id`, `user_id`, `blog_id`) 
+        $sql   = "INSERT INTO " . T_BM_LIKES . "
+                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`, `movie_commreply_id`, `user_id`, `blog_id`)
                         VALUES (NULL, '0', '$id','0','0', '$user','$blog')";
         $query = mysqli_query($sqlConnect, $sql);
         if ($query) {
@@ -2274,7 +2265,7 @@ function Wo_NotificationWebPushNotifier() {
                     // } else {
                     //     $ids = array($to_data['device_id']);
                     // }
-                    
+
 
                     if (!empty($to_data['web_device_id']) && empty($to_data['ios_n_device_id']) && empty($to_data['android_n_device_id'])) {
                         if ($wo['config']['web_push'] == 0) {
@@ -2282,7 +2273,7 @@ function Wo_NotificationWebPushNotifier() {
                         }
                     }
                     $send_array                                 = array();
-                    
+
                     $lang                                       = $wo['lang'] = Wo_LangsFromDB($to_data['language']);
                     $sql_get_notification_for_push['type_text'] = '';
                     $notificationText                           = $sql_get_notification_for_push['text'];
@@ -2390,7 +2381,7 @@ function Wo_NotificationWebPushNotifier() {
                             $page                                       = Wo_PageData(Wo_PageIdFromPagename($page_id));
                             $sql_get_notification_for_push['type_text'] = str_replace('{page_name}', $page['name'], $wo['lang']['accepted_invited_page']);
                         }
-                        
+
                         if ($sql_get_notification_for_push['type'] == 'invited_page') {
                             $page_id                                    = @end(explode('/', $sql_get_notification_for_push['url']));
                             $page                                       = Wo_PageData(Wo_PageIdFromPagename($page_id));
@@ -2409,7 +2400,7 @@ function Wo_NotificationWebPushNotifier() {
                         if ($sql_get_notification_for_push['type'] == 'requested_to_join_group') {
                             $sql_get_notification_for_push['type_text'] = $wo['lang']['requested_to_join_group'];
                         }
-                        
+
                         if ($sql_get_notification_for_push['type'] == 'interested_event') {
                             $event_data                                 = Wo_EventData($sql_get_notification_for_push['event_id']);
                             $sql_get_notification_for_push['type_text'] = str_replace('{event_name}', $event_data['name'], $wo['lang']['is_interested']);
@@ -2432,7 +2423,7 @@ function Wo_NotificationWebPushNotifier() {
                                 $sql_get_notification_for_push['type_text'] = $wo['lang']['accepted_follow_request'];
                             }
                         }
-                        
+
                         if ($sql_get_notification_for_push['type'] == 'admin_notification') {
                             $sql_get_notification_for_push['type_text'] = $sql_get_notification_for_push['text'];
                             $sql_get_notification_for_push['url']       = $sql_get_notification_for_push['full_link'];
@@ -2482,7 +2473,7 @@ function Wo_NotificationWebPushNotifier() {
                         $send_array['notification']['notification_title'] = $wo['user']['name'];
                         $send_array['notification']['notification_image'] = $wo['user']['avatar'];
                         $send_array['notification']['notification_data']['user_id'] = $user_id;
-                        
+
                         $send       = Wo_SendPushNotification($send_array, 'web');
                     }
                 }
@@ -2782,7 +2773,7 @@ function Wo_AddEventInvitedUsers($event_id, $user_id) {
     $invited_id = Wo_Secure($user_id);
     $inviter_id = $wo['user']['id'];
     $event_id   = Wo_Secure($event_id);
-    $sql        = "INSERT INTO " . T_EVENTS_INV . " (`id`, `event_id`, `inviter_id`,`invited_id`) 
+    $sql        = "INSERT INTO " . T_EVENTS_INV . " (`id`, `event_id`, `inviter_id`,`invited_id`)
                                       VALUES (NULL, '$event_id', '$inviter_id','$invited_id')";
     return mysqli_query($sqlConnect, $sql);
 }
@@ -2864,20 +2855,20 @@ function Wo_GetEvents($args = array()) {
     $total   = "";
     $offset  = $args['offset'];
     $limit   = $args['limit'];
-    
+
     if ($offset > 0) {
         $sub_q .= " AND `id` < {$offset} AND `id` <> {$offset}  ";
     }
     if ($limit && is_numeric($limit)) {
         $total = " LIMIT $limit  ";
     }
-    
+
     $sql = "SELECT * FROM " . T_EVENTS;
     if ($wo['config']['events_visibility'] == 1) {
         $user    = $wo['user']['id'];
         if (empty($args['is_admin'])) {
-            $sql .= " WHERE `id` NOT IN 
-        (SELECT `event_id` FROM " . T_EVENTS_GOING . " WHERE `user_id` = '$user') 
+            $sql .= " WHERE `id` NOT IN
+        (SELECT `event_id` FROM " . T_EVENTS_GOING . " WHERE `user_id` = '$user')
         AND `id` NOT IN (SELECT `event_id` FROM " . T_EVENTS_INT . " WHERE `user_id` = '$user') AND `end_date` >= CURDATE() {$sub_q} ORDER BY `id` DESC {$total} ";
         }
     }
@@ -2904,8 +2895,8 @@ function Wo_GetSuggestedEvents($args = array()) {
     $args    = array_merge($options, $args);
     $limit   = $args['limit'];
     $user    = $wo['user']['id'];
-    $sql     = "SELECT * FROM " . T_EVENTS . " WHERE `id` NOT IN 
-    (SELECT `event_id` FROM " . T_EVENTS_GOING . " WHERE `user_id` = '$user') 
+    $sql     = "SELECT * FROM " . T_EVENTS . " WHERE `id` NOT IN
+    (SELECT `event_id` FROM " . T_EVENTS_GOING . " WHERE `user_id` = '$user')
     AND `id` NOT IN (SELECT `event_id` FROM " . T_EVENTS_INT . " WHERE `user_id` = '$user') ORDER BY RAND()";
     if ($limit && is_numeric($limit)) {
         $sql .= " LIMIT $limit  ";
@@ -3258,8 +3249,8 @@ function Wo_AddBlogCommReplyDisLikes($id, $blog) {
     $result  = false;
     $user    = $wo['user']['id'];
     if ($comment && !empty($comment) && !Wo_IsBlogCommentReplyDisLikeExists($id)) {
-        $sql   = "INSERT INTO " . T_BM_DISLIKES . " 
-                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`blog_id`) 
+        $sql   = "INSERT INTO " . T_BM_DISLIKES . "
+                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`blog_id`)
                         VALUES (NULL, '0', '$id','0','0', '$user','$blog')";
         $query = mysqli_query($sqlConnect, $sql);
         if ($query) {
@@ -3283,8 +3274,8 @@ function Wo_AddBlogCommentDisLikes($id, $blog) {
     $user    = $wo['user']['id'];
     @Wo_RemoveBlogCommentLikes($id);
     if ($comment && !empty($comment) && !Wo_IsBlogCommentDisLikeExists($id)) {
-        $sql   = "INSERT INTO " . T_BM_DISLIKES . " 
-                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`blog_id`) 
+        $sql   = "INSERT INTO " . T_BM_DISLIKES . "
+                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`blog_id`)
                         VALUES (NULL, '$id', '0','0','0', '$user','$blog')";
         $query = mysqli_query($sqlConnect, $sql);
         if ($query) {
@@ -3399,9 +3390,9 @@ function Wo_SearchFilms($key) {
     // }
     $data  = array();
     $key   = Wo_Secure($key);
-    $sql   = "SELECT  *  FROM 
-             " . T_MOVIES . "  
-             WHERE `name` LIKE '%$key%' 
+    $sql   = "SELECT  *  FROM
+             " . T_MOVIES . "
+             WHERE `name` LIKE '%$key%'
               OR `description` LIKE '%$key%'
                OR `genre` LIKE '%$key%'
                 OR `stars` LIKE '%$key%'
@@ -3782,8 +3773,8 @@ function Wo_AddMovieCommentLikes($id, $movie) {
     $result  = false;
     @Wo_RemoveMovieCommentDisLikes($id);
     if ($comment && !empty($comment) && !Wo_IsMovieCommentLikeExists($id)) {
-        $sql   = "INSERT INTO " . T_BM_LIKES . " 
-                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`movie_id`) 
+        $sql   = "INSERT INTO " . T_BM_LIKES . "
+                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`movie_id`)
                         VALUES (NULL, '0', '0', '$id', '0', '$user','$movie')";
         $query = mysqli_query($sqlConnect, $sql);
         if ($query) {
@@ -3806,8 +3797,8 @@ function Wo_AddMovieCommentDisLikes($id, $movie) {
     $user    = $wo['user']['id'];
     @Wo_RemoveMovieCommentLikes($id);
     if ($comment && !empty($comment) && !Wo_IsMovieCommentDisLikeExists($id)) {
-        $sql   = "INSERT INTO " . T_BM_DISLIKES . " 
-                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`movie_id`) 
+        $sql   = "INSERT INTO " . T_BM_DISLIKES . "
+                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`movie_id`)
                         VALUES (NULL, '0', '0','$id','0', '$user','$movie')";
         $query = mysqli_query($sqlConnect, $sql);
         if ($query) {
@@ -3829,8 +3820,8 @@ function Wo_AddMovieCommReplyLikes($id, $movie) {
     $result  = false;
     $user    = $wo['user']['id'];
     if ($comment && !empty($comment) && !Wo_IsMovieCommentReplyLikeExists($id)) {
-        $sql   = "INSERT INTO " . T_BM_LIKES . " 
-                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`, `movie_commreply_id`, `user_id`,`movie_id`) 
+        $sql   = "INSERT INTO " . T_BM_LIKES . "
+                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`, `movie_commreply_id`, `user_id`,`movie_id`)
                         VALUES (NULL, '0', '0','0','$id', '$user','$movie')";
         $query = mysqli_query($sqlConnect, $sql);
         if ($query) {
@@ -3853,8 +3844,8 @@ function Wo_AddMovieCommReplyDisLikes($id, $movie) {
     $result  = false;
     $user    = $wo['user']['id'];
     if ($comment && !empty($comment) && !Wo_IsMovieCommentReplyDisLikeExists($id)) {
-        $sql   = "INSERT INTO " . T_BM_DISLIKES . " 
-                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`movie_id`) 
+        $sql   = "INSERT INTO " . T_BM_DISLIKES . "
+                    (`id`, `blog_comm_id`,`blog_commreply_id`, `movie_comm_id`,`movie_commreply_id`, `user_id`,`movie_id`)
                         VALUES (NULL, '0', '0','0','$id', '$user','$movie')";
         $query = mysqli_query($sqlConnect, $sql);
         if ($query) {
@@ -3880,7 +3871,7 @@ function Wo_GetSideBarAds() {
         $query_one .= " AND `id` NOT IN ({$con_list}) ";
     }
     $start = date('Y-m-d');
-    $sql   = "SELECT * FROM  " . T_USER_ADS . " 
+    $sql   = "SELECT * FROM  " . T_USER_ADS . "
     WHERE `user_id` IN (SELECT `user_id` FROM " . T_USERS . " WHERE `wallet` > 0)
         AND `status` = '1' AND `appears` = 'sidebar' AND
         (`gender` = '$user_gender' OR `gender` = 'all')  AND `audience` LIKE '%$user_country%'
@@ -4007,10 +3998,10 @@ function Wo_GetMyAds($args = array()) {
     if ($id && $id > 0 && is_numeric($id)) {
         $query_one .= " AND `id` = '$id' ";
     }
-    $sql   = "SELECT `id` FROM  
-                " . T_USER_ADS . " 
-                    WHERE `user_id` = '$user_id' 
-                        {$query_one} ORDER BY `id` 
+    $sql   = "SELECT `id` FROM
+                " . T_USER_ADS . "
+                    WHERE `user_id` = '$user_id'
+                        {$query_one} ORDER BY `id`
                             DESC LIMIT ".$limit;
     $query = mysqli_query($sqlConnect, $sql);
     while ($fetched_data = mysqli_fetch_assoc($query)) {
@@ -4041,7 +4032,7 @@ function Wo_GetMytransactions($args = array()) {
     if (!empty($args['user_id'])) {
         $user_id   = Wo_Secure($args['user_id']);
     }
-    
+
     $data      = array();
     if ($offset > 0) {
         $query_one .= " AND `id` < {$offset} AND `id` <> {$offset} ";
@@ -4089,7 +4080,7 @@ function Wo_GetPostAds($last_id = 0) {
     if (!empty($wo['ad-con']) && !empty($wo['ad-con']['ads'])) {
         $con_list     = implode(',', $wo['ad-con']['ads']);
     }
-    
+
     if ($last_id && $last_id > 0) {
         $query_one .= " AND `id` < '$last_id' AND `id` <> '$last_id' ";
     }
@@ -4097,7 +4088,7 @@ function Wo_GetPostAds($last_id = 0) {
         $query_one .= " AND `id` NOT IN ({$con_list}) ";
     }
     $start = date('Y-m-d');
-    $sql          = "SELECT * FROM  " . T_USER_ADS . " 
+    $sql          = "SELECT * FROM  " . T_USER_ADS . "
     WHERE `user_id` IN (SELECT `user_id` FROM " . T_USERS . " WHERE `wallet` > 0)
         AND `status` = '1' AND `appears` = 'post' AND
         (`gender` = '$user_gender' OR `gender` = 'all')  AND `audience` LIKE '%$user_country%'
@@ -4116,7 +4107,7 @@ function Wo_GetPostAds($last_id = 0) {
             $fetched_data['user_data']['avatar'] = $page['avatar'];
         }
         $data                      = $fetched_data;
-        
+
     }
     return $data;
 }
@@ -4633,7 +4624,7 @@ function Wo_SharePost($id = false) {
         $post_data = mysqli_fetch_assoc($post);
     }
 
-        
+
     if ($post) {
         $post_data['id']          = 0;
         $post_data['post_id']     = 0;
@@ -4713,12 +4704,12 @@ function Wo_GenirateSiteMap($updating = 'daily') {
     if ($wo['config']['movies'] == 1) {
         $sitemap->addItem('movies', '0.5', $updating, 'Today');
     }
-    
+
     $sitemap->addItem('terms/about-us', '0.1', 'never');
     $sitemap->addItem('contact-us', '0.1', 'never');
     $sitemap->addItem('terms/privacy-policy', '0.1', 'yearly');
     $sitemap->addItem('terms/terms', '0.1', 'yearly');
-    
+
     $sitemap->createSitemapIndex($site . '/xml/', 'Today');
     return true;
 }
@@ -4791,16 +4782,16 @@ function Wo_FriendPrivacy($user_id = false, $friend_privacy = false) {
         if ($friend_privacy == 0) {
             return true;
         } elseif ($friend_privacy == 1) {
-            
-            $sql       = "SELECT `id` FROM " . T_FOLLOWERS . " 
-                    WHERE  `follower_id`  = {$user_id} 
-                    AND    `following_id` = {$loggedin_user} 
+
+            $sql       = "SELECT `id` FROM " . T_FOLLOWERS . "
+                    WHERE  `follower_id`  = {$user_id}
+                    AND    `following_id` = {$loggedin_user}
                     AND    `active`       = '1'";
             $data_rows = mysqli_query($sqlConnect, $sql);
             return mysqli_num_rows($data_rows) > 0;
         } elseif ($friend_privacy == 2) {
-            $sql       = "SELECT `id` FROM " . T_FOLLOWERS . " 
-                    WHERE  `follower_id`  = {$loggedin_user} 
+            $sql       = "SELECT `id` FROM " . T_FOLLOWERS . "
+                    WHERE  `follower_id`  = {$loggedin_user}
                     AND    `following_id` = {$user_id}
                     AND    `active`       = '1'";
             $data_rows = mysqli_query($sqlConnect, $sql);
@@ -4983,7 +4974,7 @@ function Wo_CreateGChat($name = false, $parts = array()) {
                 else{
                     $sub_sql = "INSERT INTO " . T_GROUP_CHAT_USERS . " (`id`,`user_id`,`group_id`) VALUES (null,'$part_id','$id')";
                 }
-                
+
                 @mysqli_query($sqlConnect, $sub_sql);
             }
         }
@@ -5017,7 +5008,7 @@ function Wo_GroupTabData($id = false,$update_seen = true) {
     if ($update_seen == true) {
         @Wo_UpdateGChatLastSeen($id);
     }
-    
+
     if ($query && mysqli_num_rows($query) > 0) {
         $data             = mysqli_fetch_assoc($query);
         $data['avatar'] = Wo_GetMedia($data['avatar']);
@@ -5077,8 +5068,8 @@ function Wo_GetChatGroups($after_id = false) {
     if ($after_id && is_numeric($after_id) && $after_id > 0) {
         $sub_sql = " AND `group_id` > {$after_id} AND `group_id` <> {$after_id} ";
     }
-    $sql   = "SELECT * FROM " . T_GROUP_CHAT . " 
-                WHERE (`user_id` = {$user} OR `group_id` IN 
+    $sql   = "SELECT * FROM " . T_GROUP_CHAT . "
+                WHERE (`user_id` = {$user} OR `group_id` IN
                    (SELECT `group_id` FROM Wo_GroupChatUsers  WHERE `user_id` = {$user} AND active = 1)) {$sub_sql} ORDER BY `time` DESC";
     $query = mysqli_query($sqlConnect, $sql);
     while ($fetched_data = mysqli_fetch_assoc($query)) {
@@ -5101,8 +5092,8 @@ function Wo_GetChatGroupData($id = false) {
     $user    = Wo_Secure($wo['user']['id']);
     $id      = Wo_Secure($id);
     $data    = array();
-    $sql   = "SELECT * FROM " . T_GROUP_CHAT . " 
-                WHERE (`user_id` = {$user} OR `group_id` IN 
+    $sql   = "SELECT * FROM " . T_GROUP_CHAT . "
+                WHERE (`user_id` = {$user} OR `group_id` IN
                    (SELECT `group_id` FROM Wo_GroupChatUsers  WHERE `user_id` = {$user})) AND `group_id` = {$id}";
     $query = mysqli_query($sqlConnect, $sql);
     while ($fetched_data = mysqli_fetch_assoc($query)) {
@@ -5511,8 +5502,8 @@ function Wo_IsRelationRequestExists($from_id = false, $to_id = false, $type = fa
     }
     $to_id   = Wo_Secure($to_id);
     $from_id = Wo_Secure($from_id);
-    $sql     = "SELECT `id` FROM " . T_REL_SHIP . " 
-                WHERE (`from_id` = '$from_id' AND `to_id` = '$to_id') 
+    $sql     = "SELECT `id` FROM " . T_REL_SHIP . "
+                WHERE (`from_id` = '$from_id' AND `to_id` = '$to_id')
                 OR (`to_id` = '$from_id' AND `from_id` = '$to_id') AND `active` = '0' AND `relationship` = '$type'";
     $data    = mysqli_query($sqlConnect, $sql);
     return mysqli_num_rows($data) > 0;
@@ -5644,10 +5635,10 @@ function GetUserAge($birthday = false) {
         if ($years) {
             $user_age = $age->y . ' ' . $wo['lang']['years_old'];
         }
-        
+
     }
     catch (Exception $e) {
-        
+
     }
     return $user_age;
 }
@@ -5731,9 +5722,9 @@ function Wo_GetNearbyUsers($args = array()) {
         $sub_sql .= " AND `gender` = '$gender' ";
     }
     $sql   = "
-    SELECT `user_id`, ( {$unit} * acos(cos(radians('$user_lat'))  * 
-    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) + 
-    sin(radians('$user_lat')) * sin(radians(lat ))) ) AS distance 
+    SELECT `user_id`, ( {$unit} * acos(cos(radians('$user_lat'))  *
+    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) +
+    sin(radians('$user_lat')) * sin(radians(lat ))) ) AS distance
     FROM $t_users WHERE `user_id` <> '$user'   {$sub_sql}
     AND `user_id` NOT IN (SELECT `follower_id` FROM $t_followers WHERE `follower_id` <> {$user} AND `following_id` = {$user} AND `active` = '1')
     AND `user_id` NOT IN (SELECT `following_id` FROM $t_followers WHERE `follower_id` = {$user} AND `following_id` <> {$user} AND `active` = '1')
@@ -5747,7 +5738,7 @@ function Wo_GetNearbyUsers($args = array()) {
         if ($fetched_data['user_data']['share_my_location'] == 1) {
             $data[] = $fetched_data;
         }
-        
+
     }
     return $data;
 }
@@ -5808,9 +5799,9 @@ function Wo_GetNearbyUsersCount($args = array()) {
         $sub_sql .= " AND `gender` = '$gender' ";
     }
     $sql   = "
-    SELECT COUNT(user_id), ( {$unit} * acos(cos(radians('$user_lat'))  * 
-    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) + 
-    sin(radians('$user_lat')) * sin(radians(lat ))) ) AS distance 
+    SELECT COUNT(user_id), ( {$unit} * acos(cos(radians('$user_lat'))  *
+    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) +
+    sin(radians('$user_lat')) * sin(radians(lat ))) ) AS distance
     FROM $t_users WHERE `user_id` <> '$user'   {$sub_sql}
     AND `user_id` NOT IN (SELECT `follower_id` FROM $t_followers WHERE `follower_id` <> {$user} AND `following_id` = {$user} AND `active` = '1')
     AND `user_id` NOT IN (SELECT `following_id` FROM $t_followers WHERE `follower_id` = {$user} AND `following_id` <> {$user} AND `active` = '1')
@@ -5999,7 +5990,7 @@ function Wo_UpdateUserDetails($user_id = 0, $me = false, $time = true, $get_data
                     $mutual_ids[] = $user['user_id'];
                 }
             }
-                
+
 
             $get_likes_ids = Wo_GetLikes($wo['user_profile']['user_id'], 'profile', 9);
             $likes_ids = array();
@@ -6012,7 +6003,7 @@ function Wo_UpdateUserDetails($user_id = 0, $me = false, $time = true, $get_data
             foreach ($get_groups_ids as $key => $group) {
                 $groups_ids[] = $group['id'];
             }
-            
+
             $sidebar_data = array(
                 'following_data' => $following_ids,
                 'followers_data' => $followers_ids,
@@ -6022,7 +6013,7 @@ function Wo_UpdateUserDetails($user_id = 0, $me = false, $time = true, $get_data
             );
             $sidebar_data = json_encode($sidebar_data);
         }
-        
+
         $user_id = $wo['user_profile']['user_id'];
         $details = json_encode($final_data);
 
@@ -6031,7 +6022,7 @@ function Wo_UpdateUserDetails($user_id = 0, $me = false, $time = true, $get_data
         } else {
             $query = mysqli_query($sqlConnect, "UPDATE "  . T_USERS . " SET `last_data_update` = '$time_now', `details` = '$details' WHERE user_id = '$user_id'");
         }
-        
+
         if ($query && $get_data == true) {
             return Wo_UserData($wo['user_profile']['user_id']);
         }
@@ -6263,7 +6254,7 @@ function Wo_VerfiyIP($username = '') {
                 $wo['email']['city'] = $getIpInfo['city'];
                 $wo['email']['date'] = date("Y-m-d h:i:sa");
                 $update_code =  $db->where('user_id', $getuser['user_id'])->update(T_USERS, array('email_code' => $hash_code));
-                $email_body = Wo_LoadPage("emails/unusual-login"); 
+                $email_body = Wo_LoadPage("emails/unusual-login");
                 $send_message_data       = array(
                     'from_email' => $wo['config']['siteEmail'],
                     'from_name' => $wo['config']['siteName'],
@@ -6356,7 +6347,7 @@ function Wo_SharePostOn($id = false,$type_id,$type) {
                     $media = $fetched_data['image'];
                     mysqli_query($sqlConnect, "INSERT INTO " . T_ALBUMS_MEDIA . " (`post_id`,`image`) VALUES ({$last}, '{$media}')");
                 }
-            } 
+            }
         }
         $query2                   = mysqli_query($sqlConnect, "UPDATE " . T_POSTS . " SET `post_id` = {$last} WHERE `id` = {$last}");
         if ($query1 && $query2) {
@@ -6365,7 +6356,7 @@ function Wo_SharePostOn($id = false,$type_id,$type) {
     }
     return false;
 }
-// manage packages 
+// manage packages
 function Wo_GetProInfo($type)
 {
     global $sqlConnect, $wo;
@@ -6401,7 +6392,7 @@ function Wo_updateProInfo($update_data)
         return false;
     }
 }
-// manage packages 
+// manage packages
 function Wo_DeleteAllUserPosts($user_id)
 {
     global $sqlConnect, $wo;
@@ -6463,7 +6454,7 @@ function Wo_GetPageJobs($page_id)
             // if (!empty($post)) {
             //     $data[$key]['story'] = Wo_PostData($post->id);
             // }
-            
+
             $data[$key]['page'] = $page;
         }
     }
@@ -6509,7 +6500,7 @@ function Wo_GetJobById($job_id)
         $query_one = " SELECT `id` FROM " . T_POSTS . " WHERE job_id = '{$job_id}'";
         $sql = mysqli_query($sqlConnect, $query_one);
         $fetched_data = mysqli_fetch_assoc($sql);
-        
+
         $jobs['url'] = Wo_SeoLink('index.php?link1=post&id=' . $fetched_data['id']);
         $jobs['apply_count'] = $job_apply;
     }
@@ -6583,9 +6574,9 @@ function Wo_GetAllJobs($filter_data = array()) {
         }
 
 
-        $query_one  = "SELECT `id`, `user_id`, ( {$unit} * acos(cos(radians('$user_lat'))  * 
-        cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) + 
-        sin(radians('$user_lat')) * sin(radians(lat ))) ) AS distance 
+        $query_one  = "SELECT `id`, `user_id`, ( {$unit} * acos(cos(radians('$user_lat'))  *
+        cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) +
+        sin(radians('$user_lat')) * sin(radians(lat ))) ) AS distance
         FROM " . T_JOB . " WHERE `lat` <> 0 AND `lng` <> 0 $query_one
         HAVING distance < '$distance'";
     }
@@ -6598,14 +6589,14 @@ function Wo_GetAllJobs($filter_data = array()) {
     // else{
         $query_one .= " ORDER BY `id` DESC";
     //}
-    
+
     if (!empty($filter_data['limit'])) {
         if (is_numeric($filter_data['limit'])) {
             $limit = Wo_Secure($filter_data['limit']);
             $query_one .= " LIMIT {$limit}";
         }
     }
-    
+
     $sql = mysqli_query($sqlConnect, $query_one);
     while ($fetched_data = mysqli_fetch_assoc($sql)) {
         $job           = Wo_GetJobById($fetched_data['id']);
@@ -6646,13 +6637,13 @@ function Wo_GetApplyJob($info = array())
 
 
     if (!empty($jobs)) {
-        
+
         foreach ($jobs as $key => $value) {
             $data[$key] = (array) $value;
             $data[$key]['job_info'] = Wo_GetJobById($value->job_id);
             $data[$key]['user_data'] = Wo_UserData($value->user_id);
         }
-        
+
         // $jobs['page'] = $page;
         // $apply = $db->where('user_id',$wo['user']['id'])->where('job_id',$job_id)->getValue(T_JOB_APPLY,'COUNT(*)');
         // $jobs['apply'] = ($apply > 0) ? true : false;
@@ -6757,7 +6748,7 @@ function Wo_GetCommonUsers($args = array()) {
     //print_r($sql);
     $query = mysqli_query($sqlConnect, $sql);
     if ($query) {
-        
+
         while ($fetched_data = mysqli_fetch_assoc($query)) {
             $fetched_data['user_data']        = Wo_UserData($fetched_data['user_id']);
             $fetched_data['user_data']['age'] = Wo_GetUserCountryName($fetched_data['user_data']);
@@ -6768,23 +6759,23 @@ function Wo_GetCommonUsers($args = array()) {
             if (!empty($wo['user']['relationship_id']) && !empty($fetched_data['user_data']['relationship_id']) && $wo['user']['relationship_id'] == $fetched_data['user_data']['relationship_id']) {
                 $fetched_data['common_things'] = $fetched_data['common_things'] + 1;
             }
-            
+
             if (!empty($wo['user']['school']) && !empty($fetched_data['user_data']['school']) && $wo['user']['school'] == $fetched_data['user_data']['school']) {
                 $fetched_data['common_things'] = $fetched_data['common_things'] + 1;
             }
-            
+
             if (!empty($wo['user']['working']) && !empty($fetched_data['user_data']['working']) && $wo['user']['working'] == $fetched_data['user_data']['working']) {
                 $fetched_data['common_things'] = $fetched_data['common_things'] + 1;
             }
-            
+
             if (!empty($wo['user']['country_id']) && !empty($fetched_data['user_data']['country_id']) && $wo['user']['country_id'] == $fetched_data['user_data']['country_id']) {
                 $fetched_data['common_things'] = $fetched_data['common_things'] + 1;
             }
-            
+
             if (!empty($wo['user']['city']) && !empty($fetched_data['user_data']['city']) && $wo['user']['city'] == $fetched_data['user_data']['city']) {
                 $fetched_data['common_things'] = $fetched_data['common_things'] + 1;
             }
-            
+
             if (!empty($wo['user']['birthday']) && !empty($fetched_data['user_data']['birthday']) && $wo['user']['birthday'] == $fetched_data['user_data']['birthday'] && $wo['user']['birthday'] != '0000-00-00' && $fetched_data['user_data']['birthday'] != '0000-00-00') {
                 $fetched_data['common_things'] = $fetched_data['common_things'] + 1;
             }
@@ -6793,7 +6784,7 @@ function Wo_GetCommonUsers($args = array()) {
             if ($fetched_data['user_data']['share_my_location'] == 1) {
                 $data[] = $fetched_data;
             }
-            
+
         }
     }
     return $data;
@@ -6850,7 +6841,7 @@ function GetFundingById($id,$type = 'id')
     else{
         $funding = $db->where('id',$id)->getOne(T_FUNDING);
     }
-    
+
     if (!empty($funding)) {
 
         $funding->image = Wo_GetMedia($funding->image);
@@ -7002,16 +6993,16 @@ function Wo_GetAllOffers($filter_data = array()) {
         $query_one .= " AND `user_id` = '{$user_id}'";
     }
 
-    
+
     $query_one .= " ORDER BY `id` DESC";
-    
+
     if (!empty($filter_data['limit'])) {
         if (is_numeric($filter_data['limit'])) {
             $limit = Wo_Secure($filter_data['limit']);
             $query_one .= " LIMIT {$limit}";
         }
     }
-    
+
     $sql = mysqli_query($sqlConnect, $query_one);
     while ($fetched_data = mysqli_fetch_assoc($sql)) {
         $offer           = Wo_GetOfferById($fetched_data['id']);
@@ -7063,15 +7054,15 @@ function Wo_GetNearbyShops($args = array()) {
     }
     $sql   = "
     SELECT `page_id`,`product_id` FROM ".T_POSTS." WHERE `product_id` > '0' AND `page_id` > '0'  {$sub_sql}
-    AND `product_id` IN (SELECT `id` FROM ".T_PRODUCTS." WHERE ( {$unit} * acos(cos(radians('$user_lat'))  * 
-    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) + 
+    AND `product_id` IN (SELECT `id` FROM ".T_PRODUCTS." WHERE ( {$unit} * acos(cos(radians('$user_lat'))  *
+    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) +
     sin(radians('$user_lat')) * sin(radians(lat ))) ) < '$distance' {$sub_sql2}) GROUP BY `page_id` ORDER BY `page_id` DESC LIMIT 0, $limit ";
     $query = mysqli_query($sqlConnect, $sql);
     while ($fetched_data = mysqli_fetch_assoc($query)) {
         $fetched_data['page_data']        = Wo_PageData($fetched_data['page_id']);
         $fetched_data['product']          =  Wo_GetProduct($fetched_data['product_id']);
         $data[] = $fetched_data;
-        
+
     }
     return $data;
 }
@@ -7106,8 +7097,8 @@ function Wo_GetNearbyShopsCount($args = array()) {
     }
     $sql   = "
     SELECT `page_id` FROM ".T_POSTS." WHERE `product_id` > '0' AND `page_id` > '0'  {$sub_sql}
-    AND `product_id` IN (SELECT `id` FROM ".T_PRODUCTS." WHERE ( {$unit} * acos(cos(radians('$user_lat'))  * 
-    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) + 
+    AND `product_id` IN (SELECT `id` FROM ".T_PRODUCTS." WHERE ( {$unit} * acos(cos(radians('$user_lat'))  *
+    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) +
     sin(radians('$user_lat')) * sin(radians(lat ))) ) < '$distance' {$sub_sql2}) GROUP BY `page_id`";
     $query = mysqli_query($sqlConnect, $sql);
     return mysqli_num_rows($query);
@@ -7151,15 +7142,15 @@ function Wo_GetNearbyBusiness($args = array()) {
     }
     $sql   = "
     SELECT `page_id`,`job_id` FROM ".T_POSTS." WHERE `job_id` > '0' AND `page_id` > '0'  {$sub_sql}
-    AND `job_id` IN (SELECT `id` FROM ".T_JOB." WHERE ( {$unit} * acos(cos(radians('$user_lat'))  * 
-    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) + 
+    AND `job_id` IN (SELECT `id` FROM ".T_JOB." WHERE ( {$unit} * acos(cos(radians('$user_lat'))  *
+    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) +
     sin(radians('$user_lat')) * sin(radians(lat ))) ) < '$distance' {$sub_sql2}) GROUP BY `page_id` ORDER BY `page_id` DESC LIMIT 0, $limit ";
     $query = mysqli_query($sqlConnect, $sql);
     while ($fetched_data = mysqli_fetch_assoc($query)) {
         $fetched_data['page_data']        = Wo_PageData($fetched_data['page_id']);
         $fetched_data['job']          =  Wo_GetJobById($fetched_data['job_id']);
         $data[] = $fetched_data;
-        
+
     }
     return $data;
 }
@@ -7193,8 +7184,8 @@ function Wo_GetNearbyBusinessCount($args = array()) {
     }
     $sql   = "
     SELECT `page_id` FROM ".T_POSTS." WHERE `job_id` > '0' AND `page_id` > '0'  {$sub_sql}
-    AND `job_id` IN (SELECT `id` FROM ".T_JOB." WHERE ( {$unit} * acos(cos(radians('$user_lat'))  * 
-    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) + 
+    AND `job_id` IN (SELECT `id` FROM ".T_JOB." WHERE ( {$unit} * acos(cos(radians('$user_lat'))  *
+    cos(radians(lat)) * cos(radians(lng) - radians('$user_lng')) +
     sin(radians('$user_lat')) * sin(radians(lat ))) ) < '$distance' {$sub_sql2}) GROUP BY `page_id`";
     $query = mysqli_query($sqlConnect, $sql);
     return mysqli_num_rows($query);
@@ -7550,7 +7541,7 @@ function StartCloudRecording($vendor,$region,$bucket,$accessKey,$secretKey,$cnam
                 "'.date('Y').'",
                 "'.date('m').'"
               ]
-        }   
+        }
     }
 } ');
     // curl_setopt($ch, CURLOPT_POSTFIELDS,'{
@@ -7560,8 +7551,8 @@ function StartCloudRecording($vendor,$region,$bucket,$accessKey,$secretKey,$cnam
     //         "recordingConfig": {
     //             "maxIdleTime": 30,
     //             "streamTypes": 2,
-    //             "channelType": 1, 
-    //             "videoStreamType": 1, 
+    //             "channelType": 1,
+    //             "videoStreamType": 1,
     //             "subscribeUidGroup": 0,
     //             "maxIdleTime": 30000
     //         },
@@ -7571,9 +7562,9 @@ function StartCloudRecording($vendor,$region,$bucket,$accessKey,$secretKey,$cnam
     //             "bucket":"'.$bucket.'",
     //             "accessKey":"'.$accessKey.'",
     //             "secretKey":"'.$secretKey.'"
-    //         }   
+    //         }
     //     }
-    // } 
+    // }
     // ');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $response  = curl_exec($ch);
@@ -7587,7 +7578,7 @@ function StartCloudRecording($vendor,$region,$bucket,$accessKey,$secretKey,$cnam
 }
 function StopCloudRecording($data)
 {
-    global $sqlConnect, $wo,$db;
+    global $wo, $db;
     if (empty($data) || $wo['config']['agora_live_video'] != 1 || empty($data['resourceId']) || empty($data['sid']) || empty($data['cname']) || empty($data['uid']) || empty($data['post_id'])) {
         return false;
     }
@@ -7615,38 +7606,36 @@ function StopCloudRecording($data)
 
 //Custom Functions
 function Wo_GetCompanies($page_num = 0, $pageFilter = "All") {
-    global $sqlConnect, $wo;
+    global $sqlConnect;
 
     $data       = array();
     $page_num   = Wo_Secure($page_num);
     $pageFilter = Wo_Secure($pageFilter);
     if($pageFilter !== "All"){
         if($pageFilter !== "0-9"){
-            $query_text = "SELECT `fincode` FROM " . T_COMPANIES . " 
-                WHERE `s_name` LIKE '{$pageFilter}%' LIMIT {$page_num}, 15";
+            $query_text = "SELECT `fincode` FROM " . T_COMPANIES . " WHERE `s_name` LIKE '{$pageFilter}%' LIMIT {$page_num}, 15;";
         } else{
-            $query_text = "SELECT `fincode` FROM " . T_COMPANIES . " 
-                WHERE `s_name` regexp '^[0-9]+' LIMIT {$page_num}, 15";
+            $query_text = "SELECT `fincode` FROM " . T_COMPANIES . " WHERE `s_name` regexp '^[0-9]+' LIMIT {$page_num}, 15;";
         };
     } else{
-        $query_text = "SELECT `fincode` FROM " . T_COMPANIES . " 
-            LIMIT {$page_num}, 15";
+        $query_text = "SELECT `fincode` FROM " . T_COMPANIES . " LIMIT {$page_num}, 15;";
     };
     $query_one  = mysqli_query($sqlConnect, $query_text);
     while ($fetched_data = mysqli_fetch_assoc($query_one)) {
         if (is_array($fetched_data)) {
             $data[] = Wo_CompanyCaching($fetched_data['fincode']);
-        }; 
+        };
     };
 
     return $data;
 }
 function Wo_CompanyCaching($fincode){
     global $wo, $sqlConnect, $cache;
-
-    $data           = array();
+    if(empty($fincode)){
+        return false;
+    }
     $fincode        = Wo_Secure($fincode);
-    $query_text = "SELECT `fincode`, `compname`, `s_name`, `ind_name`, `scripcode`, `symbol`, `isin`, `fformat` FROM " . T_COMPANIES . " 
+    $query_text = "SELECT `fincode`, `compname`, `s_name`, `ind_name`, `scripcode`, `symbol`, `isin`, `fformat` FROM " . T_COMPANIES . "
     WHERE `fincode` = {$fincode}";
     $hashed_fincode = md5($fincode);
     if ($wo['config']['cacheSystem'] == 1) {
@@ -7667,7 +7656,7 @@ function Wo_CompanyCaching($fincode){
 
     return $fetched_data;
 }
-function get_extra_graph_data($fincode = 0, $extra_g_d){
+function get_extra_graph_data($fincode = 0, $extra_g_d, $fformat){
     global $sqlConnect, $cache;
 
     $data           = array();
@@ -7675,6 +7664,7 @@ function get_extra_graph_data($fincode = 0, $extra_g_d){
     $fincode        = Wo_Secure($fincode);
     $hashed_fincode = md5($fincode);
     $final_data = $cache->read($hashed_fincode . $fformat . '_Extra_Graph_Data.tmp');
+
     if (empty($data)) {
 
         $query_text = "SELECT `y1`, `y2`, `y3`, `y4`, `y5`, `y6`, `y7`, `y8`, `y9`, `y10`, `y11`, `y12` FROM  finance_dates WHERE fincode = " . $fincode . " LIMIT 1;";
@@ -7692,7 +7682,7 @@ function get_extra_graph_data($fincode = 0, $extra_g_d){
             "extra_finance_data" => $data,
             "Dates" => $dates_
         );
-        
+
         $cache->write($hashed_fincode . $fformat . '_Extra_Graph_Data.tmp', $final_data);
     }
 
@@ -7742,7 +7732,7 @@ function get_financial_data($fincode = 0, $tab_data = 'qtrly', $fformat = 'BNK',
             "finance_data" => $data,
             "Dates" => $dates_
         );
-        
+
         $cache->write($hashed_fincode . $tab_data . $type_to_get . '_Finance_Data.tmp', $data);
     }
 
@@ -7769,21 +7759,21 @@ function get_full_financial_data($fetched_data, $tab_data, $type_to_get, $fincod
 }
 function Wo_CompanyGraphAPICall($fincode = 0, $type = 'I', $DateOption = '', $exchange='BSE', $DateCount = '', $StartDate = '', $EndDate = ''){
     $url = 'http://company.accordwebservices.com/Company/GetNSEBSESingleGraph?Type='. $type .'&FINCODE='. $fincode .'&STK='. $exchange .'&DateOption='. $DateOption .'&DateCount='. $DateCount .'&StartDate='. $StartDate .'&EndDate='. $EndDate .'&token=So9q86WSaEBQERJJD3jRry2CxfpXdIVC';
-    
+
     $ch = curl_init();
-    
+
     //Set the URL that you want to GET by using the CURLOPT_URL option.
     curl_setopt($ch, CURLOPT_URL, $url);
-    
+
     //Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    
+
     //Set CURLOPT_FOLLOWLOCATION to true to follow redirects.
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    
+
     //Execute the request.
     $data = curl_exec($ch);
-    
+
     //Close the cURL handle.
     curl_close($ch);
 
@@ -7818,7 +7808,7 @@ function Wo_GetCompanyGraphPrice($fincode = 0, $timestamp = 0, $type = 'I', $Dat
     if ($wo['config']['cacheSystem'] == 1) {
         $data = $cache->read($hashed_fincode . '_COMPANY_Graph_'. $type .'_'. $DateOption .'_'. $DateCount .'_'. $StartDate .'_'. $EndDate .'_Price.tmp');
         if (empty($data)) {
-            $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_INTRADAYGRAPHTIME . " 
+            $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_INTRADAYGRAPHTIME . "
             WHERE `fincode` = '{$fincode}' LIMIT 1";
             $query_one  = mysqli_query($sqlConnect, $query_text);
             $fetched_data = mysqli_fetch_assoc($query_one);
@@ -7833,10 +7823,10 @@ function Wo_GetCompanyGraphPrice($fincode = 0, $timestamp = 0, $type = 'I', $Dat
             }
             $data = Wo_GetCompanyGraphPriceFromAPI($fincode, $type, $DateOption, $fetched_data['exchange'], $DateCount, $StartDate, $EndDate);
             $cache->write($hashed_fincode . '_COMPANY_Graph_'. $type .'_'. $DateOption .'_'. $DateCount .'_'. $StartDate .'_'. $EndDate .'_Price.tmp', $data);
-        } 
+        }
         else{
             if ($type == 'I'){
-                $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_INTRADAYGRAPHTIME . " 
+                $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_INTRADAYGRAPHTIME . "
                 WHERE `fincode` = '{$fincode}' LIMIT 1";
                 $query_one  = mysqli_query($sqlConnect, $query_text);
                 $fetched_data = mysqli_fetch_assoc($query_one);
@@ -7852,10 +7842,10 @@ function Wo_GetCompanyGraphPrice($fincode = 0, $timestamp = 0, $type = 'I', $Dat
                     $data = Wo_GetCompanyGraphPriceFromAPI($fincode, $type, $DateOption, $fetched_data['exchange'], $DateCount, $StartDate, $EndDate);
                     $cache->write($hashed_fincode . '_COMPANY_Graph_'. $type .'_'. $DateOption .'_'. $DateCount .'_'. $StartDate .'_'. $EndDate .'_Price.tmp', $data);
                 }
-            } 
+            }
             // TODO Delete Historical Cache
             // else{
-            //     $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_INTRADAYGRAPHTIME . " 
+            //     $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_INTRADAYGRAPHTIME . "
             //     WHERE `fincode` = '{$fincode}' LIMIT 1";
             //     $query_one  = mysqli_query($sqlConnect, $query_text);
             //     $fetched_data = mysqli_fetch_assoc($query_one);
@@ -7873,9 +7863,9 @@ function Wo_GetCompanyGraphPrice($fincode = 0, $timestamp = 0, $type = 'I', $Dat
             //     }
             // }
         }
-    } 
+    }
     else{
-        $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_INTRADAYGRAPHTIME . " 
+        $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_INTRADAYGRAPHTIME . "
             WHERE `fincode` = '{$fincode}' LIMIT 1";
         $query_one  = mysqli_query($sqlConnect, $query_text);
         $fetched_data = mysqli_fetch_assoc($query_one);
@@ -7892,16 +7882,16 @@ function Wo_GetCompanyGraphPrice($fincode = 0, $timestamp = 0, $type = 'I', $Dat
     }
     if (empty($data)) {
         return array();
-    }        
+    }
     return $data;
 }
 function Wo_GetCompanyPrice($fincode = 0, $timestamp = 1){
-    global $sqlConnect, $wo;
-    
+    global $sqlConnect;
+
     $data       = array();
     $fincode   = Wo_Secure($fincode);
     $timestamp = Wo_Secure($timestamp);
-    $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_PRICETIME . " 
+    $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_PRICETIME . "
         WHERE `fincode` = '{$fincode}' LIMIT 1";
     $query_one  = mysqli_query($sqlConnect, $query_text);
     $fetched_data = mysqli_fetch_assoc($query_one);
@@ -7914,7 +7904,7 @@ function Wo_GetCompanyPrice($fincode = 0, $timestamp = 1){
     }else {
         $fincode = (string)$fincode;
         $data = Wo_StockPriceCaching($fincode);
-    }; 
+    };
     return $data;
 
 }
@@ -7932,7 +7922,7 @@ function Wo_StockPriceCaching($fincode){
 
             $query_text = "SELECT * FROM " . T_STOCKPRICES . " WHERE `fincode` = '{$fincode}'";
             $query  = mysqli_query($sqlConnect, $query_text);
-            
+
             if (!$query) {
                 return mysqli_error($sqlConnect);
             }
@@ -7946,7 +7936,7 @@ function Wo_StockPriceCaching($fincode){
     } else {
         $query_text = "SELECT * FROM " . T_STOCKPRICES . " WHERE `fincode` = '{$fincode}'";
         $query  = mysqli_query($sqlConnect, $query_text);
-        
+
         if (!$query) {
             return mysqli_error($sqlConnect);
         }
@@ -7962,31 +7952,31 @@ function Wo_StockPriceCaching($fincode){
     return $data;
 }
 function Wo_GetCompanyPriceFromAPI($fincode, $timestamp, $fetched_timestamp){
-    global $wo, $sqlConnect;
+    global $sqlConnect;
     $url = 'http://company.accordwebservices.com/Company/GetQuoteFinder?FinCode='. $fincode .'&token=So9q86WSaEBQERJJD3jRry2CxfpXdIVC';
-    
+
     //Change this
 
     //Initialize cURL.
     $ch = curl_init();
-    
+
     //Set the URL that you want to GET by using the CURLOPT_URL option.
     curl_setopt($ch, CURLOPT_URL, $url);
-    
+
     //Set CURLOPT_RETURNTRANSFER so that the content is returned as a variable.
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    
+
     //Set CURLOPT_FOLLOWLOCATION to true to follow redirects.
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    
+
     //Execute the request.
     $data = curl_exec($ch);
-    
+
     //Close the cURL handle.
     curl_close($ch);
 
     $data = json_decode($data, true)['Table'][0];
-    
+
     $query_text = "UPDATE " . T_PRICETIME . " SET `unix_timestamp` =  {$timestamp} WHERE `fincode` = '{$fincode}' LIMIT 1";
     $query  = mysqli_query($sqlConnect, $query_text);
     if (!$query) {
@@ -8027,7 +8017,7 @@ function Wo_GetCompanyPriceFromAPI($fincode, $timestamp, $fetched_timestamp){
         $query_text = "UPDATE " . T_STOCKPRICES . " SET `last_price` = '{$last_price}', `change_` = '{$change}', `pcnt_change` = '{$pcnt_change}', `open_price` = '{$open_price}', `prev_close_price` = '{$prev_close_price}', `volume` = '{$volume}', `high` = '{$high}', `low` = '{$low}', `week_high` = '{$week_high}', `week_low` = '{$week_low}', `mcap` = '{$mcap}', `pe` = '{$pe}', `pe_cons` = '{$pe_cons}', `book_val` = '{$book_val}', `face_val` = '{$face_val}', `price_book` = '{$price_book}', `cash_eps` = '{$cash_eps}', `epsc` = '{$epsc}', `price_earning` = '{$price_earning}', `enterprise_val` = '{$enterprise_val}', `ev_ebitda` = '{$ev_ebitda}', `ev_sales` = '{$ev_sales}', `div_yield` = '{$div_yield}', `mcap_sales` = '{$mcap_sales}', `price_sales` = '{$price_sales}' WHERE `fincode` = '{$fincode}' LIMIT 1";
         $query  = mysqli_query($sqlConnect, $query_text);
     };
-    
+
     if (!$query) {
         return mysqli_error($sqlConnect);
     };
@@ -8037,7 +8027,7 @@ function Wo_GetCompanyPriceFromAPI($fincode, $timestamp, $fetched_timestamp){
     return $data;
 }
 function Wo_StockPriceCachingWDownloadNDelete($fincode, $timestamp, $fetched_timestamp){
-    global $wo, $sqlConnect, $cache;
+    global $wo, $cache;
 
     if (empty($fincode) || !is_numeric($fincode) || $fincode < 0) {
         return false;
@@ -8046,7 +8036,7 @@ function Wo_StockPriceCachingWDownloadNDelete($fincode, $timestamp, $fetched_tim
     $hashed_fincode = md5($fincode);
     if ($wo['config']['cacheSystem'] == 1) {
         $data = $cache->read($hashed_fincode . '_COMPANY_Price.tmp');
-        
+
         if (empty($data)) {
             $data = Wo_GetCompanyPriceFromAPI($fincode, $timestamp, $fetched_timestamp);
             $cache->write($hashed_fincode . '_COMPANY_Price.tmp', $data);
@@ -8065,8 +8055,96 @@ function Wo_StockPriceCachingWDownloadNDelete($fincode, $timestamp, $fetched_tim
 
     return $data;
 }
-function Wo_Portfolio_URL(){
-    global $wo;
+function Wo_CreatePortfolio($data){
+    global $wo, $sqlConnect;
 
-    return 'hi';
+    $portfolio_title = $data['portfolio_title'];
+    $portfolio_url = $data['portfolio_name'];
+    $portfolio_description = $data['portfolio_description'];
+    $privacy_level = $data['privacy_level'];
+    $timestamp = $data['timestamp'];
+    $userId = $wo['user']['user_id'];
+
+    $query_text = "UPDATE " . T_USERS . " SET portfolio_count = portfolio_count + 1 WHERE user_id = {$userId} LIMIT 1";
+    $query  = mysqli_query($sqlConnect, $query_text);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    $query_text = "INSERT INTO " . T_PORTFOLIO . " (`user_id`, `portfolio_name`, `portfolio_url`, `timestamp_created`, `no_of_stocks`, `privacy_level`) VALUES ({$userId}, '{$portfolio_title}', '{$portfolio_url}' ,{$timestamp}, 0, {$privacy_level})";
+    $query  = mysqli_query($sqlConnect, $query_text);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    $query_text = "INSERT INTO " . T_PORTFOLIO_DESC . " (`portfolio_description`) VALUES ('{$portfolio_description}')";
+    $query  = mysqli_query($sqlConnect, $query_text);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    return true;
+}
+function Wo_GetMyPortfolios() {
+    global $sqlConnect, $wo;
+
+    $uid        =  $wo['user']['user_id'];
+    $data       = array();
+    $query_text = "SELECT `portfolio_id` FROM " . T_PORTFOLIO . "
+        WHERE `user_id` = {$uid}";
+    $query_one  = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($query_one)) {
+        if (is_array($fetched_data)) {
+            $data[] = Wo_PortfolioCaching($fetched_data['portfolio_id'], false);
+        };
+    };
+
+    return $data;
+}
+function Wo_PortfolioCaching($portfolio_id, $get_desc){
+    global $wo, $sqlConnect, $cache;
+
+    $portfolio_id        = Wo_Secure($portfolio_id);
+    $query_text = "SELECT `portfolio_id`, `portfolio_name`, `portfolio_url`, `invested_value`, `current_value`, `PL`, `PL_PER`, `timestamp_created`, `no_of_stocks`, `daily_rank`, `overall_rank`, `privacy_level` FROM " . T_PORTFOLIO . "
+        WHERE `portfolio_id` = {$portfolio_id}";
+    $hashed_portfolio_id = md5($portfolio_id);
+    if ($wo['config']['cacheSystem'] == 1) {
+        $fetched_data = $cache->read($hashed_portfolio_id . '_PORTFOLIO_Data.tmp');
+        if (empty($fetched_data)) {
+            $sql          = mysqli_query($sqlConnect, $query_text);
+            $fetched_data = mysqli_fetch_assoc($sql);
+            $cache->write($hashed_portfolio_id . '_PORTFOLIO_Data.tmp', $fetched_data);
+        }
+    } else {
+        $sql          = mysqli_query($sqlConnect, $query_text);
+        $fetched_data = mysqli_fetch_assoc($sql);
+        }
+    if (empty($fetched_data)) {
+        return array();
+    }
+    $fetched_data['url'] = Wo_SeoLink('index.php?link1=timeline&u=' . $fetched_data['portfolio_url']);
+    $fetched_data['raw_url'] = '?link1=timeline&u=' . $fetched_data['portfolio_url'];
+
+
+    if ($get_desc == true){
+        $query_text = "SELECT `portfolio_description` FROM " . T_PORTFOLIO . "
+            WHERE `portfolio_id` = {$portfolio_id}";
+        $sql          = mysqli_query($sqlConnect, $query_text);
+        $fetched_data['portfolio_description'] = mysqli_fetch_assoc($sql)['portfolio_description'];
+    }
+
+    return $fetched_data;
+}
+function Wo_getPortfolioURL(){
+    global $wo, $sqlConnect;
+
+    $uid          = Wo_Secure($wo['user']['user_id']);
+    $query_text   = "SELECT `portfolio_count` FROM " . T_USERS . " WHERE user_id = {$uid};";
+    $query_one    = mysqli_query($sqlConnect, $query_text);
+    $fetched_data = mysqli_fetch_assoc($query_one);
+
+    return 'portfolio_' . $wo['user']['user_id'] . '_' . $fetched_data['portfolio_count'];
 }

@@ -201,7 +201,7 @@ function Wo_Login($username, $password) {
     } else {
         $login_password = Wo_Secure($hash($password));
     }
-    
+
     $query          = mysqli_query($sqlConnect, "SELECT COUNT(`user_id`) FROM " . T_USERS . " WHERE (`username` = '{$username}' OR `email` = '{$username}' OR `phone_number` = '{$username}') AND `password` = '{$login_password}'");
     if (Wo_Sql_Result($query, 0) == 1) {
         if ($hash == 'sha1' || $hash == 'md5') {
@@ -452,11 +452,11 @@ function Wo_IsOnwer($user_id) {
     if (Wo_IsAdmin($logged_user_id) === false) {
         if ($user_id == $logged_user_id) {
             return true;
-        } 
+        }
         else {
             return false;
         }
-    } 
+    }
 
     else {
         return true;
@@ -552,7 +552,7 @@ function Wo_UserData($user_id, $password = true) {
     $fetched_data['working_link'] = (strpos($fetched_data['working_link'], 'http') === false && !empty($fetched_data['working_link'])) ? 'http://' . $fetched_data['working_link'] : $fetched_data['working_link'];
     $fetched_data['lastseen_unix_time'] = $fetched_data['lastseen'];
     $fetched_data['lastseen_status'] = ($fetched_data['lastseen'] > (time() - 60)) ? 'on' : 'off';
-    
+
     return $fetched_data;
 }
 
@@ -579,11 +579,11 @@ function Wo_UserStatus($user_id, $lastseen, $type = '') {
     if ($lastseen < $time) {
         if ($type == 'profile') {
             $status = '<span class="small-last-seen"><span style="font-size:12px; color:#777;">' . Wo_Time_Elapsed_String($lastseen) . '</span></span>';
-        } 
+        }
         else {
             $status = '<span class="small-last-seen">' . Wo_Time_Elapsed_String($lastseen) . '</span>';
         }
-    } 
+    }
 
     else {
         $status = '<span class="online-text"> ' . $wo['lang']['online'] . ' </span>';
@@ -791,7 +791,7 @@ function Wo_DeleteUser($user_id) {
 
             if (file_exists($fund->image)) {
                 try {
-                    unlink($fund->image);   
+                    unlink($fund->image);
                 }
                 catch (Exception $e) {
                 }
@@ -905,7 +905,7 @@ function Wo_DeleteUser($user_id) {
         }
     }
 
-    
+
 
 
     $query_one = mysqli_query($sqlConnect, "DELETE FROM " . T_USERS . " WHERE `user_id` = {$user_id}");
@@ -986,7 +986,7 @@ function Wo_UpdateUserData($user_id, $update_data, $unverify = false) {
     $user_id = Wo_Secure($user_id);
     $is_mod = Wo_IsModerator();
     $is_admin = Wo_IsAdmin();
-    
+
     if ($is_admin === false && $is_mod === false) {
         if ($wo['user']['user_id'] != $user_id) {
             return false;
@@ -1192,7 +1192,7 @@ function Wo_UploadImage($file, $name, $type, $type_file, $user_id = 0, $placemen
                         ));
                     }
                 }
-                    
+
             }
             if ($update_data == true) {
                 Wo_Resize_Crop_Image(918, 300, $filename, $filename, 80);
@@ -1213,7 +1213,7 @@ function Wo_UploadImage($file, $name, $type, $type_file, $user_id = 0, $placemen
         else{
             $user_data            = Wo_UserData($image_data['user_id']);
         }
-        
+
         $image_data_d         = array();
         @$image_data_d['avatar'] = $user_data['avatar'];
         if (move_uploaded_file($file, $filename)) {
@@ -1830,7 +1830,7 @@ function Wo_CountMutualFriends($user_id, $active = true) {
         $sub_sql = "AND `active` = '1'";
     }
     $logged_user_id = Wo_Secure($wo['user']['user_id']);
-    
+
     $query_text = "SELECT f1.following_id
 FROM " . T_FOLLOWERS . " f1 INNER JOIN " . T_FOLLOWERS . " f2
   ON f1.following_id = f2.following_id
@@ -2229,7 +2229,7 @@ function Wo_GetNotifyButton($user_id = 0) {
         }
     }
     return '';
-        
+
 }
 function Wo_GetFollowNotifyUsers($user_id = 0) {
     global $wo,$sqlConnect;
@@ -2250,7 +2250,7 @@ function Wo_GetFollowNotifyUsers($user_id = 0) {
 
 function Wo_RegisterNotification($data = array()) {
     global $wo, $sqlConnect;
-    
+
     if (empty($data['session_id'])) {
         if ($wo['loggedin'] == false) {
             return false;
@@ -2276,7 +2276,7 @@ function Wo_RegisterNotification($data = array()) {
     }
     if ($data['notifier_id'] == $wo['user']['user_id']) {
         $notifier = $wo['user'];
-    } 
+    }
     else {
         $data['notifier_id'] = Wo_Secure($data['notifier_id']);
         $notifier            = Wo_UserData($data['notifier_id']);
@@ -2332,7 +2332,7 @@ function Wo_RegisterNotification($data = array()) {
     $page_notifcation_query2 = '';
 
     $send_notification = true;
-    
+
     if (!empty($recipient['notification_settings'])) {
         //$old = unserialize(html_entity_decode($recipient['notification_settings']));
         $recipient['notification_settings'] = (Array) json_decode(html_entity_decode($recipient['notification_settings']));
@@ -2469,7 +2469,7 @@ function Wo_RegisterNotification($data = array()) {
         if (!empty($data['post_id'])) {
             $post_data = Wo_PostData($data['post_id']);
         }
-        
+
         $my_id = $wo['user']['user_id'];
         if (!empty($post_data['page_id'])) {
             $admin_post_id = $post_data['id'];
@@ -2496,7 +2496,7 @@ function Wo_RegisterNotification($data = array()) {
             $query_admins = "INSERT INTO " . T_NOTIFICATION . " (`recipient_id`, `notifier_id`, `post_id`, `comment_id`, `reply_id`, `type`, `type2`, `text`, `url`, `time`) VALUES ";
             $sql_query_three = mysqli_query($sqlConnect, $query_admins . $implode_query);
         }
-        
+
         if ($sql_query_three) {
             if ($wo['config']['emailNotification'] == 1 && $recipient['emailNotification'] == 1) {
 
@@ -2696,6 +2696,12 @@ function Wo_GetSearch($search_qeury) {
     while ($fetched_data = mysqli_fetch_assoc($query)) {
         $data[] = Wo_PageData($fetched_data['page_id']);
     }
+    // SA ADDITION FOR MAKING STOCK_QUOTES SEARCHABLE
+    $query = mysqli_query($sqlConnect, " SELECT `fincode` FROM " . T_COMPANIES . " WHERE ((`compname` LIKE '%$search_qeury%') OR (`hse_name` LIKE '%$search_qeury%') OR (`ind_name` LIKE '%$search_qeury%') OR (`scripcode` LIKE '%$search_qeury%') OR (`isin` LIKE '%$search_qeury%')) LIMIT 3");
+    while ($fetched_data = mysqli_fetch_assoc($query)) {
+        $data[] = Wo_CompanyCaching($fetched_data['fincode']);
+    }
+    // END OF ADDITION
     $query = mysqli_query($sqlConnect, " SELECT `id` FROM " . T_GROUPS . " WHERE ((`group_name` LIKE '%$search_qeury%') OR `group_title` LIKE '%$search_qeury%') AND `active` = '1' LIMIT 3");
     while ($fetched_data = mysqli_fetch_assoc($query)) {
         $data[] = Wo_GroupData($fetched_data['id']);
@@ -2899,7 +2905,7 @@ function Wo_GetMessagesUsers($user_id, $searchQuery = '', $limit = 50, $new = fa
             if (!empty($user)) {
                 if (!empty($sql_fetch_one['time'])) {
                     $user['chat_time'] = $sql_fetch_one['time'];
-                    
+
                 }
                 $user['message'] = $sql_fetch_one;
                 $data[] = $user;
@@ -2977,7 +2983,7 @@ function Wo_GetMessagesUsersAPP2($fetch_array = array()) {
                 }
                 $data[] = $new_data;
             }
-            
+
         }
     }
     return $data;
@@ -3008,11 +3014,11 @@ function Wo_GetPageChatList($user_id,$limit = 50, $new = false, $update = 0) {
             if (!in_array($to_id.','.$from_id.','.$sql_fetch_one['page_id'], $ids) && !in_array($from_id.','.$to_id.','.$sql_fetch_one['page_id'], $ids)) {
                 $ids[] = $to_id.','.$from_id.','.$sql_fetch_one['page_id'];
                 $ids[] = $from_id.','.$to_id.','.$sql_fetch_one['page_id'];
-            
+
                 $last_message = $db->rawQuery("SELECT * FROM " . T_MESSAGES . " WHERE ( (`to_id` = '$to_id' AND `from_id` = '$from_id') OR (`to_id` = '$from_id' AND `from_id` = '$to_id') ) AND `page_id` = '".$sql_fetch_one['page_id']."' ORDER BY `time` DESC LIMIT 1");
                 $last_message = ToArray($last_message);
                 $sql_fetch_one = $last_message[0];
-                
+
                 if ($sql_fetch_one['from_id'] == $user_id) {
                     $user = Wo_UserData($sql_fetch_one['to_id']);
                     if (!empty($user)) {
@@ -3076,7 +3082,7 @@ function Wo_GetMessages($data = array(), $limit = 50) {
     if ($query_limit_from < 1) {
         $query_limit_from = 0;
     }
-    
+
     if (isset($limit)) {
         $query_one .= " ORDER BY `id` ASC LIMIT {$query_limit_from}, 50";
     }
@@ -3671,7 +3677,7 @@ function Wo_CreateUserChat($user_id = 0, $from_id = 0,$page_id = 0) {
         else{
             $query_two = mysqli_query($sqlConnect, "INSERT INTO " . T_U_CHATS . " (`user_id`, `conversation_user_id`, `time`) VALUES ('$logged_user_id', '$user_id', '$time')");
         }
-        
+
         if ($query_two) {
             $query_one__       = mysqli_query($sqlConnect, "SELECT COUNT(`id`) as count FROM " . T_U_CHATS . " WHERE `conversation_user_id` = '$logged_user_id' AND `user_id` = '$user_id' $added_query ");
             $query_one_fetch__ = mysqli_fetch_assoc($query_one__);
@@ -3682,7 +3688,7 @@ function Wo_CreateUserChat($user_id = 0, $from_id = 0,$page_id = 0) {
                 else{
                     $query_three = mysqli_query($sqlConnect, "INSERT INTO " . T_U_CHATS . " (`user_id`, `conversation_user_id`, `time`) VALUES ('$user_id', '$logged_user_id', '$time')");
                 }
-                
+
             }
             return true;
         }
@@ -3883,7 +3889,7 @@ function Wo_MarkupAPI($text, $link = true, $hashtag = true, $mention = true,$pos
                 $match         = Wo_Secure($match);
                 $match_user    = Wo_UserData($match);
                 $match_search  = '@[' . $match . ']';
-                
+
                 if (isset($match_user['user_id'])) {
                     $match_replace = '<span class="hash" onclick="InjectAPI(\'{&quot;type&quot; : &quot;mention&quot;, &quot;user_id&quot;:&quot;' . $match_user['user_id'] . '&quot;}\');">' . $match_user['name'] . '</span>';
                     $text = str_replace($match_search, $match_replace, $text);
@@ -3932,7 +3938,7 @@ function Wo_MarkupAPI($text, $link = true, $hashtag = true, $mention = true,$pos
             $match_i++;
         }
     }
-    
+
     return $text;
 }
 function Wo_Markup($text, $link = true, $hashtag = true, $mention = true,$post_id = 0,$comment_id = 0,$reply_id = 0) {
@@ -4060,7 +4066,7 @@ function Wo_EditMarkup($text, $link = true, $hashtag = true, $mention = true,$po
             $match_i++;
         }
     }
-    
+
     return $text;
 }
 function Wo_Emo($string = '') {
@@ -4241,7 +4247,7 @@ function Wo_ShareFile($data = array(), $type = 0, $crop = true) {
     if (Wo_IsAdmin()) {
         $mime_types = explode(',', str_replace(' ', '', $wo['config']['mime_types'] . ',application/json,application/octet-stream,image/svg+xml'));
     }
-    
+
     if (!in_array($data['type'], $mime_types)) {
         return false;
     }
@@ -4268,7 +4274,7 @@ function Wo_ShareFile($data = array(), $type = 0, $crop = true) {
                             if (($wo['config']['amazone_s3'] == 1 || $wo['config']['ftp_upload'] == 1 || $wo['config']['spaces'] == 1 || $wo['config']['cloud_upload'] == 1) && !empty($last_file)) {
                                 $upload_s3 = Wo_UploadToS3($last_file);
                             }
-                        } 
+                        }
                     }
                 } else {
                     if (!isset($data['compress']) && $second_file != 'gif') {
@@ -4366,7 +4372,7 @@ function Wo_DisplaySharedFile($media, $placement = '', $cache = false) {
         if ($file_extension == 'mp4' || $file_extension == 'mkv' || $file_extension == 'avi' || $file_extension == 'webm' || $file_extension == 'mov' || $file_extension == 'm3u8') {
             if ($placement == 'message' || $placement == 'chat') {
                 $media_file .= Wo_LoadPage('players/chat-video');
-            } 
+            }
             else {
                 $t_users    = T_USERS;
                 $lats_ad_id = (!empty($_GET['ad_id']) && is_numeric($_GET['ad_id'])) ? $_GET['ad_id'] : false;
@@ -4388,7 +4394,7 @@ function Wo_DisplaySharedFile($media, $placement = '', $cache = false) {
                     $usr_country = $wo['user']['country_id'];
                     $db->where(" `audience` LIKE '%$usr_country%' ");
                 }
-                   
+
                 $start = date('Y-m-d');
                 $video_ad = $db->where("((start = '') OR (start <= '{$start}' && end >= '{$start}'))")->where("((budget = 0) OR (spent < budget))")->orderBy('RAND()')->getOne(T_USER_ADS);
                 if (!empty($video_ad)) {
@@ -4411,7 +4417,7 @@ function Wo_DisplaySharedFile($media, $placement = '', $cache = false) {
                     $media_file       .= Wo_LoadPage('players/video');
                 }
 
-                
+
             }
         }
         $last_file_view = '';
@@ -4500,7 +4506,7 @@ function Wo_RegisterPost($re_data = array('recipient_id' => 0)) {
     $is_there_video = false;
     $playtube_root  = preg_quote($wo['config']['playtube_url']);
     $deepsound_root  = preg_quote($wo['config']['deepsound_url']);
-    
+
     if (empty($re_data['user_id']) or $re_data['user_id'] == 0) {
         $re_data['user_id'] = $wo['user']['user_id'];
     }
@@ -4625,10 +4631,10 @@ function Wo_RegisterPost($re_data = array('recipient_id' => 0)) {
                     } else {
                         $re_data['postText'] = str_replace($match_search, $match_replace, $re_data['postText']);
                     }
-                    $hashtag_query     = "UPDATE " . T_HASHTAGS . " SET 
-                    `last_trend_time` = " . time() . ", 
+                    $hashtag_query     = "UPDATE " . T_HASHTAGS . " SET
+                    `last_trend_time` = " . time() . ",
                     `trend_use_num`   = " . ($hashdata['trend_use_num'] + 1) . ",
-                    `expire`          = '" . date('Y-m-d', strtotime(date('Y-m-d') . " +1week")) . "'       
+                    `expire`          = '" . date('Y-m-d', strtotime(date('Y-m-d') . " +1week")) . "'
                     WHERE `id` = " . $hashdata['id'];
                     $hashtag_sql_query = mysqli_query($sqlConnect, $hashtag_query);
                 }
@@ -4857,7 +4863,7 @@ function Wo_PostData($post_id, $placement = '', $limited = '',$comments_limit = 
             $fetched_data['publisher'] = Wo_UserData($fetched_data['user_id']);
             $fetched_data['page_info'] = Wo_PageData($fetched_data['page_id']);
         }
-        
+
     } else {
         $fetched_data['publisher'] = Wo_UserData($fetched_data['user_id']);
     }
@@ -5030,7 +5036,7 @@ function Wo_PostData($post_id, $placement = '', $limited = '',$comments_limit = 
     else{
         $story['get_post_comments'] = ($story['comments_status'] == 1) ? Wo_GetPostComments($story['id'], $story['limit_comments']) : array();
     }
-    
+
     $story['photo_album']       = array();
     if (!empty($story['album_name'])) {
         $parent_id            = ($story['parent_id'] > 0) ? $story['parent_id'] : $story['id'];
@@ -5063,7 +5069,7 @@ function Wo_PostData($post_id, $placement = '', $limited = '',$comments_limit = 
             $option = $db->where('post_id',$post_id)->where('user_id',$wo['user']['id'])->getOne(T_VOTES,'option_id');
             $story['voted_id'] = $option->option_id;
         }
-        
+
 
     }
     if ($wo['loggedin'] == true) {
@@ -5099,11 +5105,11 @@ function Wo_PostData($post_id, $placement = '', $limited = '',$comments_limit = 
     }
     $story['job'] = array();
     if (!empty($story['job_id'])) {
-        $story['job'] = Wo_GetJobById($story['job_id']); 
+        $story['job'] = Wo_GetJobById($story['job_id']);
     }
     $story['offer'] = array();
     if (!empty($story['offer_id'])) {
-        $story['offer'] = Wo_GetOfferById($story['offer_id']); 
+        $story['offer'] = Wo_GetOfferById($story['offer_id']);
     }
     $story['fund'] = array();
     if (!empty($story['fund_raise_id'])) {
@@ -5141,7 +5147,7 @@ function Wo_PostData($post_id, $placement = '', $limited = '',$comments_limit = 
         $story['is_still_live'] = true;
         $story['live_sub_users'] = $db->where('post_id',$story['id'])->where('time',time()-6,'>=')->getValue(T_LIVE_SUB,'COUNT(*)');
     }
-    
+
     return $story;
 }
 function Wo_CountPostShare($post_id) {
@@ -5242,7 +5248,7 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'comp_id' => 0, 'after_
     if (empty($data['filter_by'])) {
         $data['filter_by'] = 'all';
     }
-   
+
     $subquery_one = " `id` > 0 ";
     if (!empty($data['after_post_id']) && is_numeric($data['after_post_id']) && $data['after_post_id'] > 0) {
         $data['after_post_id'] = Wo_Secure($data['after_post_id']);
@@ -5289,7 +5295,7 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'comp_id' => 0, 'after_
                 $query_text .= " AND (`postFile` LIKE '%_file%' AND `postFile` NOT LIKE '%_video%' AND `postFile` NOT LIKE '%_avatar%' AND `postFile` NOT LIKE '%_soundFile%' AND `postFile` NOT LIKE '%_image%')";
                 break;
             case 'photos':
-                $query_text .= " AND (`postFile` LIKE '%_image%' OR `postFile` LIKE '%_avatar%' OR `postFile` LIKE '%_cover%' OR multi_image = '1' OR album_name <> '') "; 
+                $query_text .= " AND (`postFile` LIKE '%_image%' OR `postFile` LIKE '%_avatar%' OR `postFile` LIKE '%_cover%' OR multi_image = '1' OR album_name <> '') ";
                 break;
             case 'music':
                 $query_text .= " AND (`postSoundCloud` <> '' OR `postFile` LIKE '%_soundFile%')";
@@ -5306,17 +5312,17 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'comp_id' => 0, 'after_
                 break;
             // End of custom Insert
         }
-        
+
         // Start Edited, but i think its not required. delete after discussion (Orginal below)
         // if (!$wo['loggedin'] || $Wo_publisher['user_id'] != $wo['user']['id']) {
         //    $query_text .= " AND `postPrivacy` <> '3'";
         // }
         // $query_text .= " AND `postPrivacy` <> '4' ";
-        
+
         $query_text .= " AND `postPrivacy` <> '3'";
-        
+
         // End of Edit
-        
+
     } else if (isset($Wo_page_publisher['page_id'])) {
         $page_id = Wo_Secure($Wo_page_publisher['page_id']);
         $query_text .= " AND (`page_id` = {$page_id}) AND `id` NOT IN (SELECT `post_id` from " . T_PINNED_POSTS . " WHERE `page_id` = {$page_id})";
@@ -5357,10 +5363,10 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'comp_id' => 0, 'after_
         //if (!$wo['loggedin'] || $Wo_page_publisher['user_id'] != $wo['user']['id']) {
         //    $query_text .= " AND `postPrivacy` <> '3'";
         //}
-        
+
         $query_text .= " AND `postPrivacy` <> '3'";
         // End of Edit
-        
+
         // SA START INSERT FOR COMPANY QUOTES
         } else if (isset($Wo_company_publisher['fincode'])) {
         $page_id = Wo_Secure($Wo_company_publisher['fincode']);
@@ -5390,9 +5396,9 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'comp_id' => 0, 'after_
                 break;
         }
         $query_text .= " AND `postPrivacy` <> '3'";
-        
+
         // END OF CUSTOM INSERT
-        
+
     } else if (isset($Wo_group_publisher['id'])) {
         $group_id = Wo_Secure($Wo_group_publisher['id']);
         $query_text .= " AND (`group_id` = {$group_id}) AND `id` NOT IN (SELECT `post_id` from " . T_PINNED_POSTS . " WHERE `group_id` = {$group_id})";
@@ -5427,7 +5433,7 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'comp_id' => 0, 'after_
         //}
         $query_text .= " AND `postPrivacy` <> '3'";
         // END OF edit INSERT
-        
+
     } else if (isset($Wo_event_publisher['id'])) {
         $event_id = Wo_Secure($Wo_event_publisher['id']);
         $query_text .= " AND (`event_id` = {$event_id}) AND `id` NOT IN (SELECT `post_id` from " . T_PINNED_POSTS . " WHERE `event_id` = {$event_id})";
@@ -5473,7 +5479,7 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'comp_id' => 0, 'after_
             }
         }
         $add_filter_query = false;
-        
+
         if ($wo['config']['order_posts_by'] == 0) {
             if ($wo['user']['order_posts_by'] == 1) {
                 $add_filter_query = true;
@@ -5531,7 +5537,7 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'comp_id' => 0, 'after_
             // End of custom Insert
         }
     }
-    
+
     //// IN DEVELOPERS FILE THE BELOW FUNCTION HAS BEEN DELETED, I'VE LET IT REMAIN.  THIS I THINK GIVES ABILITY TO POST ANONYMOUSLY. DISCUSS
     if (empty($data['anonymous']) || $data['anonymous'] != true) {
         $query_text .= " AND `postPrivacy` <> '4' ";
@@ -5540,13 +5546,13 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'comp_id' => 0, 'after_
     if ($data['filter_by'] != 'job' && empty($Wo_page_publisher['page_id'])) {
         $query_text .= " AND `job_id` = '0' ";
     }
-    
-    
+
+
     $user = ($wo['loggedin']) ? $wo['user']['id'] : 0;
     if ((!isset($data['publisher_id']) || $data['publisher_id'] == $user) && empty($Wo_page_publisher['page_id'])  && empty($Wo_group_publisher['id'])) {
         $query_text .= " AND `shared_from` <>  {$user}";
     }
-    
+
     $query_text .= " AND `id` NOT IN (SELECT `post_id` FROM " . T_HIDDEN_POSTS . " WHERE `user_id` = {$user})";
     if ($wo['config']['job_system'] != 1) {
         $query_text .= " AND `job_id` = '0' ";
@@ -5592,30 +5598,30 @@ function Wo_GetPosts($data = array('filter_by' => 'all', 'comp_id' => 0, 'after_
         if ( ( isset( $data['after_post_id'] ) && $data['after_post_id'] > 0 ) && $data['lasttotal'] > 0 && $data['dt'] > 0 ) {
             $id = Wo_Secure($data['after_post_id']);
             $total = Wo_Secure($data['lasttotal']);
-            
+
             $sq = " p.id <> " . $id . " AND p.time >= " . $hour . "
                     AND (
                         ( $commentscount + $likes_count ) < $total
-                        AND 
-                        ( $commentscount + $likes_count ) > 0 
+                        AND
+                        ( $commentscount + $likes_count ) > 0
                     ) ";
         }else{
             $sq = "p.id > 0 AND p.time >= " . $hour;
         }
 
-        $query_text = "SELECT p.id AS `id`, 
-                            $commentscount AS comments_count, 
-                            $likes_count AS likes_count, 
-                            ( $commentscount + $likes_count ) AS Total, 
-                            p.time AS `time` 
-                    FROM   ".T_POSTS." p 
+        $query_text = "SELECT p.id AS `id`,
+                            $commentscount AS comments_count,
+                            $likes_count AS likes_count,
+                            ( $commentscount + $likes_count ) AS Total,
+                            p.time AS `time`
+                    FROM   ".T_POSTS." p
                     WHERE
                             $sq
-                    ORDER  BY total DESC 
+                    ORDER  BY total DESC
                     LIMIT {$limit}";
     }
     $data = array();
-    
+
     $sql  = mysqli_query($sqlConnect, $query_text);
     $ids = array();
     while ($fetched_data = mysqli_fetch_assoc($sql)) {
@@ -5682,12 +5688,12 @@ function Wo_DeletePost($post_id = 0,$type = '') {
         //     $delete_from_s3 = Wo_DeleteFromToS3($media_2);
         //     $delete_from_s3 = Wo_DeleteFromToS3($post_image->image);
         // }
-        
+
         // delete shared posts
         //if (!empty($post_info->parent_id)) {
         mysqli_query($sqlConnect, "DELETE FROM " . T_POSTS . " WHERE `parent_id` = {$post_id}");
         //}
-        // delete shared posts 
+        // delete shared posts
 
         $is_this_post_shared = Wo_IsThisPostShared($post_id);
         $is_post_shared = Wo_IsPostShared($post_id);
@@ -5706,7 +5712,7 @@ function Wo_DeletePost($post_id = 0,$type = '') {
                     @unlink($job['image']);
                     Wo_DeleteFromToS3($job['image']);
                 }
-                
+
             }
             mysqli_query($sqlConnect, "DELETE FROM " . T_JOB . " WHERE `id` = {$job_id}");
             mysqli_query($sqlConnect, "DELETE FROM " . T_JOB_APPLY . " WHERE `job_id` = {$job_id}");
@@ -5762,7 +5768,7 @@ function Wo_DeletePost($post_id = 0,$type = '') {
             }
             else if($wo['config']['amazone_s3'] == 1 || $wo['config']['ftp_upload'] == 1){
                 @Wo_DeleteFromToS3($fetched_data['postFileThumb']);
-            }   
+            }
         }
         if (!empty($fetched_data['postRecord']) && !$is_post_shared && !$is_this_post_shared) {
             if (file_exists($fetched_data['postRecord'])) {
@@ -5770,7 +5776,7 @@ function Wo_DeletePost($post_id = 0,$type = '') {
             }
             else if($wo['config']['amazone_s3'] == 1 || $wo['config']['ftp_upload'] == 1){
                 @Wo_DeleteFromToS3($fetched_data['postRecord']);
-            }   
+            }
         }
         if (isset($fetched_data['postLinkImage']) && !empty($fetched_data['postLinkImage']) && !$is_post_shared && !$is_this_post_shared) {
             @unlink($fetched_data['postLinkImage']);
@@ -5788,7 +5794,7 @@ function Wo_DeletePost($post_id = 0,$type = '') {
                 $delete_from_s3 = Wo_DeleteFromToS3($fetched_delete_data['image']);
             }
         }
-        
+
 
         $query_two_2 = mysqli_query($sqlConnect, "SELECT `id` FROM " . T_COMMENTS . " WHERE `post_id` = {$post_id}");
         while ($fetched_data = mysqli_fetch_assoc($query_two_2)) {
@@ -5830,7 +5836,7 @@ function Wo_DeletePost($post_id = 0,$type = '') {
         $query_delete .= mysqli_query($sqlConnect, "DELETE FROM " . T_REACTIONS . " WHERE `post_id` = '{$post_id}'");
         $query_delete .= mysqli_query($sqlConnect, "DELETE FROM " . T_LIVE_SUB . " WHERE `post_id` = '{$post_id}'");
 
-        
+
 
         $query_get_images = mysqli_query($sqlConnect, "SELECT * FROM " . T_ALBUMS_MEDIA . " WHERE `post_id` = {$post_id} OR `parent_id` = {$post_id}");
         if ($query_get_images) {
@@ -6273,7 +6279,7 @@ function Wo_GetActivities($data = array('after_activity_id' => 0, 'before_activi
         $data['before_activity_id'] = Wo_Secure($data['before_activity_id']);
         $subquery_one               = " `id` > " . $data['before_activity_id'] . " AND `id` <> " . $data['before_activity_id'];
     }
-    
+
     $query_text = "SELECT `id` FROM " . T_ACTIVITIES . " WHERE {$subquery_one}";
     if (!empty($data['me'])) {
         $query_text .= " AND user_id = '{$wo['user']['user_id']}'";
@@ -6526,7 +6532,7 @@ function Wo_IsReacted($object_id, $user_id, $col = "post",$type = '') {
     else{
         $query_one     = "SELECT `id` FROM " . T_REACTIONS . " WHERE `{$col}_id` = {$object_id} AND `user_id` = {$user_id}";
     }
-    
+
     $sql_query_one = mysqli_query($sqlConnect, $query_one);
     if (mysqli_num_rows($sql_query_one) >= 1) {
         return true;
@@ -6581,7 +6587,7 @@ function Wo_GetReactedTextIcon($object_id, $user_id, $col = "post") {
 
 
 
-        
+
             // switch ($sql_fetch_one['reaction']) {
             //     case 1:
             //         $reaction_icon = '<div class="inline_post_emoji no_anim"><div class="emoji emoji--like"><div class="emoji__hand"><div class="emoji__thumb"></div></div></div></div>';
@@ -6613,7 +6619,7 @@ function Wo_GetReactedTextIcon($object_id, $user_id, $col = "post") {
             if (!empty($wo['reactions_types'][$sql_fetch_one['reaction']]['sunshine_small_icon'])) {
                 $reaction_icon = '<div class="inline_post_emoji"><img class="" src="' . $wo['reactions_types'][$sql_fetch_one['reaction']]['sunshine_small_icon'] . '" alt="' . $wo['reactions_types'][$sql_fetch_one['reaction']]['name'] . '"></div>';
             }
-        
+
             // switch ($sql_fetch_one['reaction']) {
             //     case 'Like':
             //         $reaction_icon = '<div class="inline_post_emoji"><img class="" src="' . $wo['config']['theme_url'] . '/reaction/like-sm.png" alt="' . $wo['lang']['like'] . '"></div>';
@@ -6676,7 +6682,7 @@ function Wo_GetPostReactions($object_id, $col = "post",$type = '') {
    else{
        $query_one     = "SELECT `reaction` FROM " . T_REACTIONS . " WHERE `{$col}_id` = {$object_id}";
    }
-   
+
    $sql_query_one = mysqli_query($sqlConnect, $query_one);
    while ($fetched_data = mysqli_fetch_assoc($sql_query_one)) {
        $reactions[$fetched_data['reaction']] = $fetched_data['reaction'];
@@ -6691,7 +6697,7 @@ function Wo_GetPostReactions($object_id, $col = "post",$type = '') {
         else{
             $first = "<span class=\"how_reacted like-btn-".strtolower($key)."\" id=\"_".$col.$object_id."\" onclick=\"Wo_OpenPostReactedUsers(".$object_id.",'".strtolower($key)."','".$col."');\">";
         }
-        
+
 
         if (!file_exists('./themes/' . $wo['config']['theme'] . '/reaction/like-sm.png')) {
 
@@ -6730,7 +6736,7 @@ function Wo_GetPostReactions($object_id, $col = "post",$type = '') {
             if (!empty($wo['reactions_types'][$key]['sunshine_small_icon'])) {
                 $reactions_html .= $first."<div class='inline_post_count_emoji'><img src='{$wo['reactions_types'][$key]['sunshine_small_icon']}' alt=\"" . $wo['reactions_types'][$key]['name'] . "\"></div></span>";
             }
-           
+
            // switch (strtolower($key)) {
            //     case 1:
            //         $reactions_html .= $first."<div class='inline_post_count_emoji'><img src='{$wo['config']['theme_url']}/reaction/like-sm.png' alt=\"" . $wo['lang']['like'] . "\"></div></span>";
@@ -6847,7 +6853,7 @@ function Wo_AddLikes($post_id) {
         $sql_query_one    = mysqli_query($sqlConnect, $query_one);
         if ($sql_query_one) {
 
-            //Register point level system for unlikes 
+            //Register point level system for unlikes
             Wo_RegisterPoint($post_id, "likes", "-");
 
             return 'unliked';
@@ -7359,7 +7365,7 @@ function Wo_RegisterPostComment($data = array()) {
     if ($getPost['comments_status'] == 0) {
         return false;
     }
-    
+
     if (!empty($data['text'])) {
         if ($wo['config']['maxCharacters'] > 0 && 10000 > $wo['config']['maxCharacters']) {
             if (mb_strlen($data['text']) - 10 > $wo['config']['maxCharacters']) {
@@ -7498,7 +7504,7 @@ function Wo_RegisterPostComment($data = array()) {
         if ($getPost['user_id'] != $wo['user']['id']) {
             Wo_RegisterPoint(Wo_Secure($data['post_id']), "comments");
         }
-        
+
         return $inserted_comment_id;
     }
 }
@@ -7520,8 +7526,8 @@ function Wo_GetGroupsListAPP($fetch_array = array()) {
         $limit = Wo_Secure($fetch_array['limit']);
     }
 
-    $sql   = "SELECT * FROM " . T_GROUP_CHAT . " 
-                WHERE (`user_id` = {$user} OR `group_id` IN 
+    $sql   = "SELECT * FROM " . T_GROUP_CHAT . "
+                WHERE (`user_id` = {$user} OR `group_id` IN
                    (SELECT `group_id` FROM Wo_GroupChatUsers  WHERE `user_id` = {$user} AND `active` = 1)) {$offset_query}  ORDER BY `time` DESC LIMIT {$limit}";
     $query = mysqli_query($sqlConnect, $sql);
     while ($fetched_data = mysqli_fetch_assoc($query)) {
@@ -7587,7 +7593,7 @@ function Wo_GetPostCommentsSort($post_id = 0, $limit = 5,$type = 'latest') {
         else{
             $query = "SELECT COUNT(*) AS count,`comment_id` AS id FROM " . T_COMMENT_LIKES . " WHERE `post_id` = {$post_id} AND `user_id` NOT IN (SELECT `blocked` FROM " . T_BLOCKS . " WHERE `blocker` = '{$logged_user_id}') AND `user_id` NOT IN (SELECT `blocker` FROM " . T_BLOCKS . " WHERE `blocked` = '{$logged_user_id}') GROUP BY `comment_id` ORDER BY count DESC";
         }
-        
+
     }
     else{
         $query = "SELECT `id` FROM " . T_COMMENTS . " WHERE `post_id` = {$post_id} AND `user_id` NOT IN (SELECT `blocked` FROM " . T_BLOCKS . " WHERE `blocker` = '{$logged_user_id}') AND `user_id` NOT IN (SELECT `blocker` FROM " . T_BLOCKS . " WHERE `blocked` = '{$logged_user_id}') ORDER BY `id` ASC";
@@ -7649,7 +7655,7 @@ function Wo_GetPostComments($post_id = 0, $limit = 5, $offset = 0) {
     }
     return $data;
 }
-// API 
+// API
 function Wo_GetPostCommentsAPI($post_id = 0, $limit = 5, $offset = 0) {
     global $sqlConnect, $wo;
     if (empty($post_id) || !is_numeric($post_id) || $post_id < 0) {
@@ -7700,7 +7706,7 @@ function Wo_GetCommentRepliesAPI($comment_id = 0, $limit = 5, $order_by = 'ASC',
     }
     return $data;
 }
-// API 
+// API
 function Wo_GetPostComment($comment_id = 0) {
     global $wo, $sqlConnect;
     if (empty($comment_id) || !is_numeric($comment_id) || $comment_id < 0) {
@@ -8014,7 +8020,7 @@ function Wo_UpdatePost($data = array()) {
                     );
                     Wo_RegisterNotification($notification_data_array);
                 }
-                
+
             }
         }
         $query                    = mysqli_query($sqlConnect, "SELECT `postText` FROM " . T_POSTS . " WHERE `id` = {$post_id}");
@@ -8095,14 +8101,14 @@ function Wo_UpdateChatColor($user_id = 0, $conversation_user_id = 0, $color = ''
         if ($user_id == $conversation_user_id) {
             $user_id = $page['user_id'];
         }
-        
+
         $query_one            = mysqli_query($sqlConnect, "SELECT COUNT(`id`) as count FROM " . T_U_CHATS . " WHERE `conversation_user_id` = '$user_id' AND `user_id` = '$conversation_user_id' AND `page_id` = '$page_id'");
         $set_color_query = "  AND `page_id` = '$page_id' ";
     }
     else{
         $query_one            = mysqli_query($sqlConnect, "SELECT COUNT(`id`) as count FROM " . T_U_CHATS . " WHERE `conversation_user_id` = '$user_id' AND `user_id` = '$conversation_user_id'");
     }
-    
+
     $query_one_fetch      = mysqli_fetch_assoc($query_one);
     if ($query_one_fetch['count'] == 0) {
         if (!empty($page_id)) {
@@ -8112,7 +8118,7 @@ function Wo_UpdateChatColor($user_id = 0, $conversation_user_id = 0, $color = ''
             $update_ = Wo_CreateUserChat($conversation_user_id, $user_id);
         }
     }
-    $query        = "UPDATE " . T_U_CHATS . " SET `color` = '$color' 
+    $query        = "UPDATE " . T_U_CHATS . " SET `color` = '$color'
             WHERE (`user_id` = '$user_id' AND `conversation_user_id` = '$conversation_user_id' $set_color_query)
             OR (`user_id` = '$conversation_user_id' AND `conversation_user_id` = '$user_id' $set_color_query)";
     $sql_queryset = mysqli_query($sqlConnect, $query);
@@ -8153,7 +8159,7 @@ function Wo_ProfileCompletion(){
     if (!empty($wo['user']['address'])) {
         $data[5] = 20;
     }
-    
+
     return $data;
 }
 
@@ -8229,7 +8235,7 @@ function Wo_GetMessagesPagesAPP($fetch_array = array()) {
                 $new_data['message'] = $sql_fetch_one;
                 $data[] = $new_data;
             }
-            
+
         }
     }
     return $data;

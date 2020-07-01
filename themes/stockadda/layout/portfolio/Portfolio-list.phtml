@@ -1,25 +1,32 @@
 <div class="page_list row boosted_pages">
 	<div class="col-xs-8 col-md-10" style="padding-bottom:5px">
-		<a href="<?php echo $wo['company']['url'];?>" data-ajax="?link1=timeline&u=<?php echo str_replace(" ", "_", $wo['company']['s_name']);?>">
-			<span class="page_title"><?php echo $wo['company']['s_name']; ?></span>
-		</a>	
+	<script>console.log("<?php echo $wo['portfolio']['url'];?>")</script>
+		<a href="<?php echo $wo['portfolio']['url'];?>" data-ajax="<?php echo  $wo['portfolio']['raw_url'];?>">
+			<span class="page_title"><?php echo $wo['portfolio']['portfolio_name']; ?></span>
+		</a>
 		<div class="page_info">
 			<ul>
 				<li>
-					View <?php echo $wo['company']['compname']; ?>'s Live Quote, Qtrly Results, Fin Ratios, Bal Sheet, P&L and much more...
+					View <?php echo $wo['portfolio']['portfolio_name']; ?>'s Live Quote, Qtrly Results, Fin Ratios, Bal Sheet, P&L and much more...
 				</li>
 				<li>
 				<div style="color: #4d91ea;">
 					<small>
-						<?php if (!empty($wo['company']['scripcode'])):?>
-						<span>BSE: <?php echo $wo['company']['scripcode']; ?></span>
+						<?php if (!empty($wo['portfolio']['no_of_stocks'])):?>
+						<span>BSE: <?php echo $wo['portfolio']['no_of_stocks']; ?></span>
+						<span>NSE: <?php echo $wo['portfolio']['no_of_stocks']; ?></span>
+						<span>Sector: <?php echo $wo['portfolio']['no_of_stocks']; ?></span>
+						<span>No of Stocks: <?php echo $wo['portfolio']['no_of_stocks']; ?></span>
+						<?php else:?>
+						<span>Invested Value: 0&#8377;</span>
+						<span>&nbsp;|&nbsp;</span>
+						<span>Current Value: 0&#8377;</span>
+						<span>&nbsp;|&nbsp;</span>
+						<span>No of Stocks: 0</span>
+						<span>&nbsp;|&nbsp;</span>
+						<span>Portfolio Age: 0</span>
 						<?php endif; ?>
-						<?php if (!empty($wo['company']['symbol'])):?>
-						<span>NSE: <?php echo $wo['company']['symbol']; ?></span>
-						<?php endif; ?>
-						<?php if (!empty($wo['company']['ind_name'])):?>
-						<span>Sector: <?php echo $wo['company']['ind_name']; ?></span>
-						<?php endif; ?>
+
 					</small>
 				</div>
 				</li>

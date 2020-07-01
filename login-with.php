@@ -76,6 +76,7 @@ if (isset($_GET['provider']) && in_array($_GET['provider'], $types)) {
                     $imported_image = $wo['userDefaultAvatar'];
                 }
                 $password = rand(1111, 9999);
+                // SA ADD portfolio_count
                 $re_data      = array(
                     'username' => Wo_Secure($user_uniq_id, 0),
                     'email' => Wo_Secure($user_email, 0),
@@ -83,6 +84,8 @@ if (isset($_GET['provider']) && in_array($_GET['provider'], $types)) {
                     'email_code' => Wo_Secure(md5(rand(1111, 9999) . time()), 0),
                     'first_name' => Wo_Secure($name),
                     'last_name' => Wo_Secure($user_profile->lastName),
+                    'user_id' => Wo_Secure($user_profile->user_id),
+                    'portfolio_count' => Wo_Secure($user_profile->portfolio_count),
                     'avatar' => Wo_Secure($imported_image),
                     'src' => Wo_Secure($provider),
                     'startup_image' => 1,

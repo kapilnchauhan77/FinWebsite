@@ -3,14 +3,14 @@
 // | @author Deen Doughouz (DoughouzForest)
 // | @author_url 1: http://www.wowonder.com
 // | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com   
+// | @author_email: wowondersocial@gmail.com
 // +------------------------------------------------------------------------+
 // | WoWonder - The Ultimate Social Networking Platform
 // | Copyright (c) 2016 WoWonder. All rights reserved.
 // +------------------------------------------------------------------------+
 /* Script Main Functions (File 2) */
 // functions_tww.php
-require_once('app_start.php'); 
+require_once('app_start.php');
 use Twilio\Rest\Client;
 if (!empty($wo['config']['adult_images_file'])) {
     putenv('GOOGLE_APPLICATION_CREDENTIALS='.$wo['config']['adult_images_file']);
@@ -39,7 +39,7 @@ function Wo_ReportPost($post_data = array()) {
     if( isset( $post_data['comment_id'] ) ){
         $comment_id = Wo_Secure($post_data['comment_id']);
     }
-    
+
     if( $post_id !== 0 ){
         if (Wo_IsPostRepotred($post_id, $user_id)) {
             $query_one     = "DELETE FROM " . T_REPORTS . " WHERE `post_id` = {$post_id} AND `user_id` = {$user_id}";
@@ -66,7 +66,7 @@ function Wo_ReportPost($post_data = array()) {
     if ($sql_query_two) {
         return 'report';
     }
-    
+
 }
 function Wo_CountUnseenReports() {
     global $wo, $sqlConnect;
@@ -123,13 +123,13 @@ function Wo_GetReports() {
             $fetched_data['reporter'] = Wo_UserData($fetched_data['user_id']);
             $fetched_data['group']    = Wo_GroupData($fetched_data['group_id']);
             $fetched_data['type']     = 'group';
-            $data[]                   = $fetched_data; 
+            $data[]                   = $fetched_data;
         }
         else if($fetched_data['comment_id'] != 0){
             $fetched_data['reporter'] = Wo_UserData($fetched_data['user_id']);
             $fetched_data['comment']  = Wo_GetPostComment($fetched_data['comment_id']);
             $fetched_data['type']     = 'comment';
-            $data[]                   = $fetched_data; 
+            $data[]                   = $fetched_data;
         }
     }
     return $data;
@@ -517,7 +517,7 @@ function Wo_AddCommentLikes($comment_id, $text = '') {
     if (empty($comment_timeline_id)) {
         return false;
     }
-    
+
     $comment_data = Wo_GetPostComment($comment_id);
     $text = Wo_Secure($comment_data['text']);
     if (isset($text) && !empty($text)) {
@@ -602,7 +602,7 @@ function Wo_AddCommentWonders($comment_id, $text = '') {
     if (empty($comment_user_id)) {
         return false;
     }
-    
+
     $comment_data = Wo_GetPostComment($comment_id);
     $text = Wo_Secure($comment_data['text']);
     if (isset($text) && !empty($text)) {
@@ -1517,8 +1517,8 @@ function Wo_GetMyPages($user_id = false) {
     $user_id    = Wo_Secure($user_id);
     if (!$user_id || !is_numeric($user_id) || $user_id < 1) {
         $user_id  = Wo_Secure($wo['user']['user_id']);
-    }  
-    $query_text = "SELECT `page_id` FROM " . T_PAGES . " 
+    }
+    $query_text = "SELECT `page_id` FROM " . T_PAGES . "
                    WHERE `user_id` = {$user_id} OR `page_id` IN (SELECT `page_id` FROM ".T_PAGE_ADMINS."
                    WHERE `user_id` = {$user_id})";
     $query_one  = mysqli_query($sqlConnect, $query_text);
@@ -1547,7 +1547,7 @@ function Wo_GetMyPagesAPI($limit = 0,$offset = 0) {
         $offset    = Wo_Secure($offset);
         $offset_query = " `page_id` < $offset AND ";
     }
-    $query_text = "SELECT `page_id` FROM " . T_PAGES . " 
+    $query_text = "SELECT `page_id` FROM " . T_PAGES . "
                    WHERE $offset_query (`user_id` = {$user_id} OR `page_id` IN (SELECT `page_id` FROM ".T_PAGE_ADMINS."
                    WHERE `user_id` = {$user_id})) ORDER BY `page_id` DESC $limit_query";
     $query_one  = mysqli_query($sqlConnect, $query_text);
@@ -1612,7 +1612,7 @@ function Wo_GetAllowedGroupPages($group_id)
     if (!empty($fetched_data)) {
         foreach ($fetched_data as $key => $value) {
             if (in_array($key, array_keys($array)) && $value == 1) {
-                $data[] = $array[$key]; 
+                $data[] = $array[$key];
             }
         }
     }
@@ -1669,7 +1669,7 @@ function Wo_GetAllowedPages($page_id)
     if (!empty($fetched_data)) {
         foreach ($fetched_data as $key => $value) {
             if (in_array($key, array_keys($array)) && $value == 1) {
-                $data[] = $array[$key]; 
+                $data[] = $array[$key];
             }
         }
     }
@@ -1707,7 +1707,6 @@ function Wo_PageData($page_id = 0) {
     if (empty($page_id) || !is_numeric($page_id) || $page_id < 0) {
         return false;
     }
-    $data           = array();
     $page_id        = Wo_Secure($page_id);
     $query_one      = "SELECT * FROM " . T_PAGES . " WHERE `page_id` = {$page_id}";
     $hashed_page_Id = md5($page_id);
@@ -2330,10 +2329,10 @@ function Wo_GetMyGroups() {
     }
     $data       = array();
     $user_id    = Wo_Secure($wo['user']['user_id']);
-    $query_text = "SELECT `id` FROM " . T_GROUPS . " WHERE `user_id` = {$user_id} 
+    $query_text = "SELECT `id` FROM " . T_GROUPS . " WHERE `user_id` = {$user_id}
                    OR `id` IN (SELECT `group_id` FROM ".T_GROUP_ADMINS." WHERE `user_id` = {$user_id})";
     $query_one  = mysqli_query($sqlConnect, $query_text);
-   
+
     while ($fetched_data = mysqli_fetch_assoc($query_one)) {
         if (is_array($fetched_data)) {
             $data[] = Wo_GroupData($fetched_data['id']);
@@ -2364,10 +2363,10 @@ function Wo_GetMyGroupsAPI($limit = 0,$offset = 0,$sort = '') {
         $sort    = Wo_Secure($sort);
         $sort_query = " ORDER BY `id` $sort ";
     }
-    $query_text = "SELECT `id` FROM " . T_GROUPS . " WHERE $offset_query (`user_id` = {$user_id} 
+    $query_text = "SELECT `id` FROM " . T_GROUPS . " WHERE $offset_query (`user_id` = {$user_id}
                    OR `id` IN (SELECT `group_id` FROM ".T_GROUP_ADMINS." WHERE `user_id` = {$user_id})) $sort_query $limit_query ";
     $query_one  = mysqli_query($sqlConnect, $query_text);
-   
+
     while ($fetched_data = mysqli_fetch_assoc($query_one)) {
         if (is_array($fetched_data)) {
             $data[] = Wo_GroupData($fetched_data['id']);
@@ -2452,7 +2451,7 @@ function Wo_GroupData($group_id = 0) {
         }
     }
 
-    
+
     return $fetched_data;
 }
 function Wo_GroupActive($group_name) {
@@ -3342,57 +3341,69 @@ function Wo_GetMyGames($limit = 0,$offset = 0) {
     return $data;
 }
 function Wo_IsNameExist($username, $active = 0) {
-   global $wo, $sqlConnect;
-   $data = array();
-   if (empty($username)) {
-       return false;
-   }
-   $active_text = '';
-   if ($active == 1) {
-       $active_text = "AND `active` = '1'";
-   }
-   $username     = Wo_Secure($username);
-    
-   $query   = mysqli_query($sqlConnect, "SELECT COUNT(`user_id`) as users FROM " . T_USERS . " WHERE `username` = '{$username}' {$active_text}");
-   $fetched_data = mysqli_fetch_assoc($query);
-   if ($fetched_data['users'] == 1) {
-       return array(
-           true,
-           'type' => 'user'
-       );
-   }
-    $query   = mysqli_query($sqlConnect, "SELECT COUNT(`page_id`) as pages FROM " . T_PAGES . " WHERE `page_name` = '{$username}' {$active_text}");
-   $fetched_data = mysqli_fetch_assoc($query);
-    if ($fetched_data['pages'] == 1) {
-       return array(
-           true,
-           'type' => 'page'
-       );
-   }
-    $query   = mysqli_query($sqlConnect, "SELECT COUNT(`id`) as usergroups FROM " . T_GROUPS . " WHERE `group_name` = '{$username}' {$active_text}") or die(mysqli_error($sqlConnect));
-   $fetched_data = mysqli_fetch_assoc($query);
-    if ($fetched_data['usergroups'] > 0) {
-       return array(
-           true,
-           'type' => 'group'
-       );
-   }
-   // CUSTOM ADDITION FOR STOCK QUOTES
-   $username = str_replace("_", " ", $username);
-   $query   = mysqli_query($sqlConnect, "SELECT `fincode` as company FROM " . T_COMPANIES . " WHERE `s_name` = '{$username}'") or die(mysqli_error($sqlConnect));
-   $fetched_data = mysqli_fetch_assoc($query);
+    global $wo, $sqlConnect;
+    $data = array();
+    if (empty($username)) {
+        return false;
+    }
+    $active_text = '';
+    if ($active == 1) {
+        $active_text = "AND `active` = '1'";
+    }
+    $username     = Wo_Secure($username);
+
+    // CUSTOM ADDITION FOR STOCK QUOTES AND PORTFOLIO
+    if (strpos($username, 'portfolio_') == 0) {
+    $query   = mysqli_query($sqlConnect, "SELECT `portfolio_id` FROM " . T_PORTFOLIO . " WHERE `portfolio_url` = '{$username}'");
+    $fetched_data = mysqli_fetch_assoc($query);
+    if (!empty($fetched_data)) {
+        return array(
+                true,
+                'type' => 'portfolio',
+                'portfolio_id' => $fetched_data['portfolio_id']
+            );
+    }
+    }
+
+    $comp_username = str_replace("_", " ", $username);
+    $query   = mysqli_query($sqlConnect, "SELECT `fincode` as company FROM " . T_COMPANIES . " WHERE `s_name` = '{$comp_username}'") or die(mysqli_error($sqlConnect));
+    $fetched_data = mysqli_fetch_assoc($query);
     if (!empty($fetched_data['company'])) {
         return array(
            true,
            'type' => 'company',
            'fincode' => $fetched_data['company']
        );
-   }   
-   //END OF CUSTOM ADDITION
-   
-   return array(
-       false
-   );
+    }
+    //END OF CUSTOM ADDITION
+    $query   = mysqli_query($sqlConnect, "SELECT COUNT(`user_id`) as users FROM " . T_USERS . " WHERE `username` = '{$username}' {$active_text}");
+    $fetched_data = mysqli_fetch_assoc($query);
+    if ($fetched_data['users'] == 1) {
+        return array(
+            true,
+            'type' => 'user'
+        );
+    }
+    $query   = mysqli_query($sqlConnect, "SELECT COUNT(`page_id`) as pages FROM " . T_PAGES . " WHERE `page_name` = '{$username}' {$active_text}");
+    $fetched_data = mysqli_fetch_assoc($query);
+    if ($fetched_data['pages'] == 1) {
+        return array(
+            true,
+            'type' => 'page'
+        );
+    }
+    $query   = mysqli_query($sqlConnect, "SELECT COUNT(`id`) as usergroups FROM " . T_GROUPS . " WHERE `group_name` = '{$username}' {$active_text}") or die(mysqli_error($sqlConnect));
+    $fetched_data = mysqli_fetch_assoc($query);
+    if ($fetched_data['usergroups'] > 0) {
+        return array(
+            true,
+            'type' => 'group'
+        );
+    }
+
+    return array(
+        false
+    );
 }
 function Wo_IsPhoneExist($phone) {
     global $wo, $sqlConnect;
@@ -3567,7 +3578,7 @@ function Wo_GetAlbumPhotos($post_id) {
     if ($sql2) {
         while ($f_data = mysqli_fetch_assoc($sql2)) {
             $images_data[] = $f_data;
-            
+
         }
     }
 
@@ -3626,7 +3637,7 @@ function Wo_DeleteImageFromAlbum($post_id, $id) {
     }
     $id           = Wo_Secure($id);
     $post_id      = Wo_Secure($post_id);
-    
+
     $query_2 = mysqli_query($sqlConnect, "SELECT * FROM " . T_ALBUMS_MEDIA . " WHERE `post_id` = {$post_id} AND `id` = {$id}");
     if ($query_2) {
         $fetched_data = mysqli_fetch_assoc($query_2);
@@ -4024,6 +4035,12 @@ function Wo_GetSearchAdv($search_qeury, $type, $offset = 0, $limit = 0) {
         while ($fetched_data = mysqli_fetch_assoc($query)) {
             $data[] = Wo_PageData($fetched_data['page_id']);
         }
+    } elseif ($type == 'stock_quotes') {
+        $query = mysqli_query($sqlConnect, " SELECT `fincode` FROM " . T_COMPANIES . " WHERE ((`compname` LIKE '%$search_qeury%') OR (`hse_name` LIKE '%$search_qeury%') OR (`ind_name` LIKE '%$search_qeury%') OR (`scripcode` LIKE '%$search_qeury%') OR (`isin` LIKE '%$search_qeury%')) LIMIT 10");
+
+        while ($fetched_data = mysqli_fetch_assoc($query)) {
+            $data[] = Wo_CompanyCaching($fetched_data['fincode']);
+        }
     } elseif ($type == 'games') {
         $limit_ = 10;
         if (!empty($limit)) {
@@ -4090,7 +4107,7 @@ function Wo_AddCommentReplyWonders($reply_id, $text = '') {
     if (empty($comment_user_id)) {
         return false;
     }
-    
+
     $reply_data = Wo_GetCommentReply($reply_id);
     $text = Wo_Secure($reply_data['text']);
     if (isset($text) && !empty($text)) {
@@ -4876,7 +4893,7 @@ function Wo_SendSMSMessage($to, $message) {
         $mobileNumber = $to;
         //Sender ID,While using route4 sender id should be 6 characters long.
         $senderId = uniqid();
-        //Define route 
+        //Define route
         $route = "4";
         //Prepare you post parameters
         $postData = array(
@@ -5140,13 +5157,13 @@ function Wo_PayPal($type = 'week', $type2 = '') {
 
         try {
             $output = $plan->create($paypal);
-            
+
         } catch (Exception $ex) {
             //ResultPrinter::printError("Created Plan", "Plan", null, $request, $ex);
-            
+
         }
         // ResultPrinter::printResult("Created Plan", "Plan", $output->getId(), $request, $output);
-        // exit();  
+        // exit();
         $p_currency =  (!empty($wo['currencies'][$wo['config']['paypal_currency']]['symbol'])) ? $wo['currencies'][$wo['config']['paypal_currency']]['symbol'] : '$';
 
         // if ($pt->config->payment_currency == 'EUR') {
@@ -6254,7 +6271,7 @@ function detect_safe_search($path)
         }
         elseif ($data->responses[0]->safeSearchAnnotation->adult == 'LIKELY' || $data->responses[0]->safeSearchAnnotation->adult == 'VERY_LIKELY'){
             return false;
-        } 
+        }
         else{
             return true;
         }
@@ -6299,7 +6316,7 @@ function Wo_SearchFor($search_qeury, $type, $offset = 0) {
     }
     return $data;
 }
-// manage packages 
+// manage packages
 function Wo_GetAllProInfo()
 {
     global $sqlConnect, $wo;
@@ -6319,7 +6336,7 @@ function Wo_GetAllProInfo()
     }
     return false;
 }
-// manage packages 
+// manage packages
 function Wo_GetReactionsTypes($type = 'page')
 {
     global $sqlConnect, $wo;
@@ -6506,7 +6523,7 @@ function Wo_GetReactionsTypes($type = 'page')
 
                 // }
             }
-            
+
             $data[$fetched_data['id']] = $fetched_data;
         }
 
@@ -6710,7 +6727,7 @@ function Wo_GetCustomFields($type = 'all') {
     if ($type != 'all' && in_array($type, $placements)) {
         $where = "WHERE `placement` = '{$type}' ";
     }
-    
+
     $query_one = "SELECT * FROM " . T_CUSTOM_FIELDS . " {$where} ORDER BY `id` ASC";
     $sql       = mysqli_query($sqlConnect, $query_one);
     if ($sql) {
@@ -6858,12 +6875,10 @@ function Wo_GetSignalButton($fincode = 0, $signal = 'buy') {
     if (Wo_IsPageOnwer($fincode)) {
         return false;
     }
-    $comapany = $wo['signal'] = Wo_CompanyCaching($fincode);
     if (!isset($wo['signal']['fincode'])) {
         return false;
     }
     $fincode        = Wo_Secure($fincode);
-    $logged_user_id = Wo_Secure($wo['user']['user_id']);
     $buy_button    = 'custom_buttons/buy';
     $sell_button  = 'custom_buttons/sell';
     if ($signal === 'buy') {
@@ -6875,8 +6890,6 @@ function Wo_GetSignalButton($fincode = 0, $signal = 'buy') {
 
 //Custom Functions PUBLISHER BOX FOR ??? ADD COMMENT
 function Wo_GetCompanyPostPublisherBox($fincode = 0) {
-    global $wo;
-
     if (!is_numeric($fincode) or $fincode < 1 or !is_numeric($fincode)) {
         return false;
     }

@@ -17,7 +17,7 @@
 						<input id="portfolio_title" name="portfolio_title" type="text">
 						<span class="help-block">Your portflio title</span>
 					</div>
-                    <input id="portfolio_name" name="portfolio_name" type="hidden" value="<?php echo Wo_Portfolio_URL();?>">
+                    <input id="portfolio_name" name="portfolio_name" type="hidden" value="<?php echo Wo_getPortfolioURL();?>">
 					<div class="wow_form_fields">
 						<label for="portfolio_description">Portfolio Description</label>
 						<textarea name="portfolio_description" id="portfolio_description" rows="3"></textarea>
@@ -31,11 +31,15 @@
                         </label>
 						<span class="help-block">Turning this option on will make your portfolio public.<br/> You can further select who can view your portfolio below.</span>
                     </div>
+                    <!-- SA START TEST -->
+                    <script>console.log('<?php echo json_encode($wo['user']);?>')</script>
+                    <script>console.log('<?php echo Wo_getPortfolioURL();?>')</script>
+                    <!-- END TEST -->
                     <!-- Public -->
                     <div id="public_option_selected_1" class="wow_form_fields">
                         <label for="portfolio_viewable_by_all" style="display: block; position: relative; top: 24px;">Viewable By All</label>
                         <label class="switchx">
-                            <input id="portfolio_viewable_by_all" name="portfolio_viewable_by_all" type="checkbox">
+                            <input id="portfolio_viewable_by_all" name="portfolio_viewable_by_all" type="checkbox" class="check_to_uncheck">
                             <span class="sliderx round"></span>
                         </label>
 						<span class="help-block">Select if you want your portfolio to be viewable<br/>by everyone.</span>
@@ -43,7 +47,7 @@
                     <div id="public_option_selected_2" class="wow_form_fields">
                         <label for="portfolio_viewable_by_followers" style="display: block; position: relative; top: 24px;">Viewable Only by Followers</label>
                         <label class="switchx">
-                            <input id="portfolio_viewable_by_followers" name="portfolio_viewable_by_followers" type="checkbox" checked>
+                            <input id="portfolio_viewable_by_followers" name="portfolio_viewable_by_followers" type="checkbox" class="check_to_uncheck" checked>
                             <span class="sliderx round"></span>
                         </label>
 						<span class="help-block">Select if you want your portfolio to be viewable<br/>only by your followers.</span>
@@ -51,7 +55,7 @@
                     <div id="public_option_selected_3" class="wow_form_fields">
                         <label for="portfolio_viewable_by_payers" style="display: block; position: relative; top: 24px;">Premium (Paid Access)</label>
                         <label class="switchx">
-                            <input id="portfolio_viewable_by_payers" name="portfolio_viewable_by_payers" type="checkbox">
+                            <input id="portfolio_viewable_by_payers" name="portfolio_viewable_by_payers" type="checkbox" class="check_to_uncheck">
                             <span class="sliderx round"></span>
                         </label>
 						<span class="help-block">Select if you want your portfolio to be viewable<br/>only by members who pay and subscribe to your service.</span>
@@ -76,7 +80,7 @@
                     <!-- Terms -->
                     <br/>
                     <div class="terms">
-						<input type="checkbox" name="accept_terms" id="accept_terms" onchange="activateButton(this)">
+						<input type="checkbox" name="accept_terms" id="accept_terms">
 						<label for="accept_terms"> 
                             By creating your portfolio, you agree to our <a href="<?php echo Wo_SeoLink('index.php?link1=terms&type=terms');?>"><?php echo $wo['lang']['terms_of_use'] ?></a> & <a href="<?php echo Wo_SeoLink('index.php?link1=terms&type=privacy-policy');?>"><?php echo $wo['lang']['privacy_policy'] ?></a>
 						</label>
@@ -100,9 +104,11 @@
 </div>
 <!-- .page-margin -->
 <script type="text/javascript">
+    $('input.check_to_uncheck').on('change', function() {
+        $('input.check_to_uncheck').not(this).prop('checked', false);  
+    });
     function toggleCheckbox(element)
     {
-        console.log(element.checked);
         if(element.checked === true){
             $( "#public_option_selected_1" ).removeClass( "hidden" );
             $( "#public_option_selected_2" ).removeClass( "hidden" );
@@ -121,15 +127,18 @@
 
     $(function() {
         $('form.create-portfolio-form').ajaxForm({
-            url: Wo_Ajax_Requests_File() + '?f=portfolios&s=create_portfolio',
+            url: Wo_Ajax_Requests_File() + '?f=portfolios&s=create_portfolio&t=' + Math.round((new Date()).getTime() / 1000),
             beforeSend: function() {
                 $('.create-portfolio-form').find('.add_wow_loader').addClass('btn-loading');
             },
             success: function(data) {
                 scrollToTop();
                 if (data.status == 200) {
+        	    localStorage.setItem("to_see", JSON.stringify(data));
                 window.location.href = data.location;
+                console.log(data);
                 } else {
+                    console.log(data);
                     var errors = data.errors.join("<br>");
                     $('.app-general-alert').html('<div class="alert alert-danger">' + errors + '</div>');
                     $('.alert-danger').fadeIn(300);

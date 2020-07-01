@@ -214,6 +214,7 @@ if (!empty($_GET['url'])) {
 				<input type="hidden" name="post_color" id="post_color_input">
 			</div>
 			<?php } ?>
+      
 			
 			<!--Uploaded Image-->
 			<div class="<?php echo Wo_RightToLeft('pull-left');?>">
@@ -1153,7 +1154,7 @@ function Wo_AddAnswer() {
   });
   var last_answer_id = (Number(answer_id) + 1);
   if (last_answer_id < 9) {
-     $('.answers').append('<input name="answer[]" type="text" class="form-control" placeholder="<?php echo $wo['lang']['answer'] ?> ' + last_answer_id + '">');
+     $('.answers').append('<input name="answer[]" type="text" class="form-control" id="answer-' + last_answer_id + '" placeholder="<?php echo $wo['lang']['answer'] ?> ' + last_answer_id + '">');
      if (last_answer_id == 8) {
       $('#add_answer').hide();
      }
@@ -1161,8 +1162,34 @@ function Wo_AddAnswer() {
   } else {
      $('#add_answer').hide();
   }
-  
+  // SA ADD
+  if (last_answer_id == 3){
+	  $('#poll-form').append('<div class="delete-poll" onclick="Wo_RemoveAnswer();" id="remove_answer"><div class="create-text">Remove Answer</div></div>')
+  }
+  // END ADD
 }
+
+// SA ADD
+function Wo_RemoveAnswer() {
+  answer_id = 0;
+  $('.answers').find('input').each(function (index_id) {
+     answer_id = Number(index_id) + 1;
+  });
+  var last_answer_id = (Number(answer_id));
+  if (last_answer_id > 2) {
+	  console.log(last_answer_id);
+	 $("#answer-"+ last_answer_id).remove();
+	 if (last_answer_id === 3) {
+		$('#remove_answer').remove();
+	  }
+	  if (last_answer_id === 8) {
+		$('#add_answer').show();
+	  }
+  } else {
+		$('#remove_answer').hide();
+  }
+}
+// END ADD
 
 function Wo_HidePosInfo() {
   $(".postText").attr('opened', '0');

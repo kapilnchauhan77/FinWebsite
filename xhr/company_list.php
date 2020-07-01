@@ -1,9 +1,10 @@
-<?php 
+<?php
 if ($f == 'company_list') {
     $page_num = $_GET['page_num'];
     $pageFilter = $_GET['page_filter'];
     if (!empty($page_num) && !empty($pageFilter) && Wo_CheckMainSession($hash_id) === true) {
         $companies = Wo_GetCompanies(($page_num-1)*15, $pageFilter);
+        $the_query = $companies[0];
         if (count($companies) > 0) {
             $html_snippets = '';
             foreach ($companies as $wo['company']) {

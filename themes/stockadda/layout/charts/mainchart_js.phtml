@@ -232,7 +232,7 @@
                 // console.log(DateOption);
                 full_data = localStorage.getItem(company_fincode + type_ + DateOption + DateCount + price_to_get + "_company_graph_price");
                 // console.log(company_fincode + type_ + DateOption + DateCount + price_to_get + "_company_graph_price");
-                if (full_data !== null){ 
+                if (full_data !== null){
                     full_data = JSON.parse(full_data);
                     if (new Date().getTime() > full_data.expiry) {
                         company_graph_price_expired  = true;
@@ -284,7 +284,7 @@
                                 volumeValue.push(value.volume);
                             });
                         }
-                        
+
                         if (price_to_get == "pe"){
                             chartData = {
                                 labels: dateLabel,
@@ -487,7 +487,7 @@
                 var company_extra_graph_price_expired = false;
                 var full_data = null;
                 full_data = localStorage.getItem(company_fincode + company_fformat + "company_extra_graph_price");
-                if (full_data !== null){ 
+                if (full_data !== null){
                     full_data = JSON.parse(full_data);
                     if (new Date().getTime() > full_data.expiry) {
                         company_extra_graph_price_expired  = true;
@@ -506,6 +506,7 @@
                         f:'extra_graphs_data',
                         fincode: company_fincode,
                         extra_g_d: extra_g_d,
+                        fformat: company_fformat
                     },
                     success: function (d) {
                         // console.log('hi');
@@ -545,7 +546,7 @@
                                 }
                             });
                             Book_NAV_Share_sparkline['datasets'][0]['data'] = Book_NAV_Share_Value;
-                                                
+
                             InterestSpread_sparkline = $.extend(true, {}, _data_);
                             var InterestSpread_Value = [];
                             $.each(d.data.extra_finance_data.consolidated_InterestSpread, function (key, value) {
@@ -601,7 +602,7 @@
                                 }
                             });
                             Book_NAV_Share_sparkline['datasets'][0]['data'] = Book_NAV_Share_Value;
-                                                
+
                             EBITDA_Margin_sparkline = $.extend(true, {}, _data_);
                             var EBITDA_Margin_Value = [];
                             $.each(d.data.extra_finance_data.consolidated_CoreEBITDAMargin, function (key, value) {
@@ -722,7 +723,7 @@
                         }
                     });
                     Book_NAV_Share_sparkline['datasets'][0]['data'] = Book_NAV_Share_Value;
-                                        
+
                     InterestSpread_sparkline = $.extend(true, {}, _data_);
                     var InterestSpread_Value = [];
                     $.each(d.data.extra_finance_data.consolidated_InterestSpread, function (key, value) {
@@ -778,7 +779,7 @@
                         }
                     });
                     Book_NAV_Share_sparkline['datasets'][0]['data'] = Book_NAV_Share_Value;
-                                        
+
                     EBITDA_Margin_sparkline = $.extend(true, {}, _data_);
                     var EBITDA_Margin_Value = [];
                     $.each(d.data.extra_finance_data.consolidated_CoreEBITDAMargin, function (key, value) {
@@ -972,7 +973,7 @@
             description_ideal = profit_loss_graphs;
         }
 
-        for (var index = 0; index < data.data.finance_data.length; index++) { 
+        for (var index = 0; index < data.data.finance_data.length; index++) {
             if (description_ideal.includes(data.data.finance_data[index].description)){
                 description_to_graph.push(data.data.finance_data[index].description);
                 data_to_graph.push([
@@ -1070,7 +1071,7 @@
                 graph_table_html_to_add += `<div class="row" style="position: relative; top: ` + (15 + (column_count / 3)*18) + `px;">`;
                 close_row_div = true;
             }
-            
+
             graph_table_html_to_add += `<div id="Content_`+ column_count +`" class="col-12 col-md-4">
                                             <div class="card cardscreen cardsmall" data-aos="fade-up" data-aos-delay="`+((column_count%3)*50)+`" style='background-color: white; border-radius: 4px; box-shadow: 1px 1px 1px 1px #eee;'>
                                                 <b><h4 style="padding-left:5%; padding-top:2%; font-weight: 600;">`+ val +`</h4></b>
@@ -1080,12 +1081,12 @@
                                                 <br/>
                                             </div>
                                         </div>`;
-            
+
             column_count += 1;
         });
 
         graph_table_html_to_add += `</div>`;
-        
+
         $('#finance_content').html(graph_table_html_to_add);
 
         // 0th graph
@@ -1095,7 +1096,7 @@
 
             $.each(data_to_graph[0], function (key, value) {
                 if(value==""){
-                    the_value0.push(0);    
+                    the_value0.push(0);
                 } else{
                     the_value0.push(parseFloat(value));
                 }
@@ -1112,7 +1113,7 @@
                 });
             });
         }
-        
+
         // 1st graph
         if( $('.Content_1_sparkline').length ){
             the_value_of_sparkline1 = $.extend(true, {}, _data_);
@@ -1120,7 +1121,7 @@
 
             $.each(data_to_graph[1], function (key, value) {
                 if(value==""){
-                    the_value1.push(0);    
+                    the_value1.push(0);
                 } else{
                     the_value1.push(parseFloat(value));
                 }
@@ -1137,7 +1138,7 @@
                 });
             });
         }
-        
+
         // 2nd graph
         if( $('.Content_2_sparkline').length ){
             the_value_of_sparkline2 = $.extend(true, {}, _data_);
@@ -1145,7 +1146,7 @@
 
             $.each(data_to_graph[2], function (key, value) {
                 if(value==""){
-                    the_value2.push(0);    
+                    the_value2.push(0);
                 } else{
                     the_value2.push(parseFloat(value));
                 }
@@ -1162,7 +1163,7 @@
                 });
             });
         }
-        
+
         // 3rd graph
         if( $('.Content_3_sparkline').length ){
             the_value_of_sparkline3 = $.extend(true, {}, _data_);
@@ -1170,7 +1171,7 @@
 
             $.each(data_to_graph[3], function (key, value) {
                 if(value==""){
-                    the_value3.push(0);    
+                    the_value3.push(0);
                 } else{
                     the_value3.push(parseFloat(value));
                 }
@@ -1186,8 +1187,8 @@
                     options: sparklinestyle
                 });
             });
-        }       
-        
+        }
+
 
         // 4th graph
         if( $('.Content_4_sparkline').length ){
@@ -1196,7 +1197,7 @@
 
             $.each(data_to_graph[4], function (key, value) {
                 if(value==""){
-                    the_value4.push(0);    
+                    the_value4.push(0);
                 } else{
                     the_value4.push(parseFloat(value));
                 }
@@ -1213,7 +1214,7 @@
                 });
             });
         }
-        
+
         // 5th graph
         if( $('.Content_5_sparkline').length ){
             the_value_of_sparkline5 = $.extend(true, {}, _data_);
@@ -1221,7 +1222,7 @@
 
             $.each(data_to_graph[5], function (key, value) {
                 if(value==""){
-                    the_value5.push(0);    
+                    the_value5.push(0);
                 } else{
                     the_value5.push(parseFloat(value));
                 }
@@ -1238,7 +1239,7 @@
                 });
             });
         }
-            
+
 
         // 6th graph
         if( $('.Content_6_sparkline').length ){
@@ -1247,7 +1248,7 @@
 
             $.each(data_to_graph[6], function (key, value) {
                 if(value==""){
-                    the_value6.push(0);    
+                    the_value6.push(0);
                 } else{
                     the_value6.push(parseFloat(value));
                 }
@@ -1264,7 +1265,7 @@
                 });
             });
         }
-            
+
 
         // 7th graph
         if( $('.Content_7_sparkline').length ){
@@ -1273,7 +1274,7 @@
 
             $.each(data_to_graph[7], function (key, value) {
                 if(value==""){
-                    the_value7.push(0);    
+                    the_value7.push(0);
                 } else{
                     the_value7.push(parseFloat(value));
                 }
@@ -1290,7 +1291,7 @@
                 });
             });
         }
-            
+
 
         // 8th graph
         if( $('.Content_8_sparkline').length ){
@@ -1299,7 +1300,7 @@
 
             $.each(data_to_graph[8], function (key, value) {
                 if(value==""){
-                    the_value8.push(0);    
+                    the_value8.push(0);
                 } else{
                     the_value8.push(parseFloat(value));
                 }
@@ -1316,7 +1317,7 @@
                 });
             });
         }
-            
+
 
         // 9th graph
         if( $('.Content_9_sparkline').length ){
@@ -1325,7 +1326,7 @@
 
             $.each(data_to_graph[9], function (key, value) {
                 if(value==""){
-                    the_value9.push(0);    
+                    the_value9.push(0);
                 } else{
                     the_value9.push(parseFloat(value));
                 }
@@ -1342,7 +1343,7 @@
                 });
             });
         }
-            
+
 
         // 10th graph
         if( $('.Content_10_sparkline').length ){
@@ -1351,7 +1352,7 @@
 
             $.each(data_to_graph[10], function (key, value) {
                 if(value==""){
-                    the_value10.push(0);    
+                    the_value10.push(0);
                 } else{
                     the_value10.push(parseFloat(value));
                 }
@@ -1368,7 +1369,7 @@
                 });
             });
         }
-            
+
 
         // 11th graph
         if( $('.Content_11_sparkline').length ){
@@ -1377,7 +1378,7 @@
 
             $.each(data_to_graph[11], function (key, value) {
                 if(value==""){
-                    the_value11.push(0);    
+                    the_value11.push(0);
                 } else{
                     the_value11.push(parseFloat(value));
                 }
@@ -1394,7 +1395,7 @@
                 });
             });
         }
-            
+
 
         // 12th graph
         if( $('.Content_12_sparkline').length ){
@@ -1403,7 +1404,7 @@
 
             $.each(data_to_graph[12], function (key, value) {
                 if(value==""){
-                    the_value12.push(0);    
+                    the_value12.push(0);
                 } else{
                     the_value12.push(parseFloat(value));
                 }
@@ -1420,7 +1421,7 @@
                 });
             });
         }
-            
+
 
         // 13th graph
         if( $('.Content_13_sparkline').length ){
@@ -1429,7 +1430,7 @@
 
             $.each(data_to_graph[13], function (key, value) {
                 if(value==""){
-                    the_value13.push(0);    
+                    the_value13.push(0);
                 } else{
                     the_value13.push(parseFloat(value));
                 }
@@ -1446,7 +1447,7 @@
                 });
             });
         }
-            
+
 
         // 14th graph
         if( $('.Content_14_sparkline').length ){
@@ -1455,7 +1456,7 @@
 
             $.each(data_to_graph[14], function (key, value) {
                 if(value==""){
-                    the_value14.push(0);    
+                    the_value14.push(0);
                 } else{
                     the_value14.push(parseFloat(value));
                 }
@@ -1472,7 +1473,7 @@
                 });
             });
         }
-            
+
 
         // 15th graph
         if( $('.Content_15_sparkline').length ){
@@ -1481,7 +1482,7 @@
 
             $.each(data_to_graph[15], function (key, value) {
                 if(value==""){
-                    the_value15.push(0);    
+                    the_value15.push(0);
                 } else{
                     the_value15.push(parseFloat(value));
                 }
@@ -1498,7 +1499,7 @@
                 });
             });
         }
-            
+
 
         // 16th graph
         if( $('.Content_16_sparkline').length ){
@@ -1507,7 +1508,7 @@
 
             $.each(data_to_graph[16], function (key, value) {
                 if(value==""){
-                    the_value16.push(0);    
+                    the_value16.push(0);
                 } else{
                     the_value16.push(parseFloat(value));
                 }
@@ -1524,7 +1525,7 @@
                 });
             });
         }
-            
+
 
         // 17th graph
         if( $('.Content_17_sparkline').length ){
@@ -1533,7 +1534,7 @@
 
             $.each(data_to_graph[17], function (key, value) {
                 if(value==""){
-                    the_value17.push(0);    
+                    the_value17.push(0);
                 } else{
                     the_value17.push(parseFloat(value));
                 }
@@ -1550,7 +1551,7 @@
                 });
             });
         }
-            
+
 
         // 18th graph
         if( $('.Content_18_sparkline').length ){
@@ -1559,7 +1560,7 @@
 
             $.each(data_to_graph[18], function (key, value) {
                 if(value==""){
-                    the_value18.push(0);    
+                    the_value18.push(0);
                 } else{
                     the_value18.push(parseFloat(value));
                 }
@@ -1576,7 +1577,7 @@
                 });
             });
         }
-            
+
 
         // 19th graph
         if( $('.Content_19_sparkline').length ){
@@ -1585,7 +1586,7 @@
 
             $.each(data_to_graph[19], function (key, value) {
                 if(value==""){
-                    the_value19.push(0);    
+                    the_value19.push(0);
                 } else{
                     the_value19.push(parseFloat(value));
                 }
@@ -1602,7 +1603,7 @@
                 });
             });
         }
-            
+
 
         // 20th graph
         if( $('.Content_20_sparkline').length ){
@@ -1611,7 +1612,7 @@
 
             $.each(data_to_graph[20], function (key, value) {
                 if(value==""){
-                    the_value20.push(0);    
+                    the_value20.push(0);
                 } else{
                     the_value20.push(parseFloat(value));
                 }
@@ -1628,7 +1629,7 @@
                 });
             });
         }
-            
+
 
         // 21th graph
         if( $('.Content_21_sparkline').length ){
@@ -1637,7 +1638,7 @@
 
             $.each(data_to_graph[21], function (key, value) {
                 if(value==""){
-                    the_value21.push(0);    
+                    the_value21.push(0);
                 } else{
                     the_value21.push(parseFloat(value));
                 }
@@ -1654,7 +1655,7 @@
                 });
             });
         }
-            
+
 
         // 22th graph
         if( $('.Content_22_sparkline').length ){
@@ -1663,7 +1664,7 @@
 
             $.each(data_to_graph[22], function (key, value) {
                 if(value==""){
-                    the_value22.push(0);    
+                    the_value22.push(0);
                 } else{
                     the_value22.push(parseFloat(value));
                 }
@@ -1680,7 +1681,7 @@
                 });
             });
         }
-            
+
 
         // 23th graph
         if( $('.Content_23_sparkline').length ){
@@ -1689,7 +1690,7 @@
 
             $.each(data_to_graph[23], function (key, value) {
                 if(value==""){
-                    the_value23.push(0);    
+                    the_value23.push(0);
                 } else{
                     the_value23.push(parseFloat(value));
                 }
@@ -1706,7 +1707,7 @@
                 });
             });
         }
-            
+
 
         // 24th graph
         if( $('.Content_24_sparkline').length ){
@@ -1715,7 +1716,7 @@
 
             $.each(data_to_graph[24], function (key, value) {
                 if(value==""){
-                    the_value24.push(0);    
+                    the_value24.push(0);
                 } else{
                     the_value24.push(parseFloat(value));
                 }
@@ -1732,7 +1733,7 @@
                 });
             });
         }
-            
+
 
         // 25th graph
         if( $('.Content_25_sparkline').length ){
@@ -1741,7 +1742,7 @@
 
             $.each(data_to_graph[25], function (key, value) {
                 if(value==""){
-                    the_value25.push(0);    
+                    the_value25.push(0);
                 } else{
                     the_value25.push(parseFloat(value));
                 }
@@ -1758,7 +1759,7 @@
                 });
             });
         }
-            
+
 
         // 26th graph
         if( $('.Content_26_sparkline').length ){
@@ -1767,7 +1768,7 @@
 
             $.each(data_to_graph[26], function (key, value) {
                 if(value==""){
-                    the_value26.push(0);    
+                    the_value26.push(0);
                 } else{
                     the_value26.push(parseFloat(value));
                 }
@@ -1784,7 +1785,7 @@
                 });
             });
         }
-            
+
 
         // 27th graph
         if( $('.Content_27_sparkline').length ){
@@ -1793,7 +1794,7 @@
 
             $.each(data_to_graph[27], function (key, value) {
                 if(value==""){
-                    the_value27.push(0);    
+                    the_value27.push(0);
                 } else{
                     the_value27.push(parseFloat(value));
                 }
@@ -1810,7 +1811,7 @@
                 });
             });
         }
-            
+
 
         // 28th graph
         if( $('.Content_28_sparkline').length ){
@@ -1819,7 +1820,7 @@
 
             $.each(data_to_graph[28], function (key, value) {
                 if(value==""){
-                    the_value28.push(0);    
+                    the_value28.push(0);
                 } else{
                     the_value28.push(parseFloat(value));
                 }
@@ -1836,7 +1837,7 @@
                 });
             });
         }
-            
+
 
         // 29th graph
         if( $('.Content_29_sparkline').length ){
@@ -1845,7 +1846,7 @@
 
             $.each(data_to_graph[29], function (key, value) {
                 if(value==""){
-                    the_value29.push(0);    
+                    the_value29.push(0);
                 } else{
                     the_value29.push(parseFloat(value));
                 }
@@ -1862,7 +1863,7 @@
                 });
             });
         }
-            
+
 
         // 30th graph
         if( $('.Content_30_sparkline').length ){
@@ -1871,7 +1872,7 @@
 
             $.each(data_to_graph[30], function (key, value) {
                 if(value==""){
-                    the_value30.push(0);    
+                    the_value30.push(0);
                 } else{
                     the_value30.push(parseFloat(value));
                 }
@@ -1888,7 +1889,7 @@
                 });
             });
         }
-            
+
 
         // 31th graph
         if( $('.Content_31_sparkline').length ){
@@ -1897,7 +1898,7 @@
 
             $.each(data_to_graph[31], function (key, value) {
                 if(value==""){
-                    the_value31.push(0);    
+                    the_value31.push(0);
                 } else{
                     the_value31.push(parseFloat(value));
                 }
@@ -1914,7 +1915,7 @@
                 });
             });
         }
-            
+
 
         // 32th graph
         if( $('.Content_32_sparkline').length ){
@@ -1923,7 +1924,7 @@
 
             $.each(data_to_graph[32], function (key, value) {
                 if(value==""){
-                    the_value32.push(0);    
+                    the_value32.push(0);
                 } else{
                     the_value32.push(parseFloat(value));
                 }
@@ -1940,7 +1941,7 @@
                 });
             });
         }
-            
+
 
         // 33th graph
         if( $('.Content_33_sparkline').length ){
@@ -1949,7 +1950,7 @@
 
             $.each(data_to_graph[33], function (key, value) {
                 if(value==""){
-                    the_value33.push(0);    
+                    the_value33.push(0);
                 } else{
                     the_value33.push(parseFloat(value));
                 }
@@ -1966,7 +1967,7 @@
                 });
             });
         }
-            
+
 
         // 34th graph
         if( $('.Content_34_sparkline').length ){
@@ -1975,7 +1976,7 @@
 
             $.each(data_to_graph[34], function (key, value) {
                 if(value==""){
-                    the_value34.push(0);    
+                    the_value34.push(0);
                 } else{
                     the_value34.push(parseFloat(value));
                 }
@@ -1992,7 +1993,7 @@
                 });
             });
         }
-            
+
 
         // 35th graph
         if( $('.Content_35_sparkline').length ){
@@ -2001,7 +2002,7 @@
 
             $.each(data_to_graph[35], function (key, value) {
                 if(value==""){
-                    the_value35.push(0);    
+                    the_value35.push(0);
                 } else{
                     the_value35.push(parseFloat(value));
                 }
@@ -2018,7 +2019,7 @@
                 });
             });
         }
-            
+
 
         // 36th graph
         if( $('.Content_36_sparkline').length ){
@@ -2027,7 +2028,7 @@
 
             $.each(data_to_graph[36], function (key, value) {
                 if(value==""){
-                    the_value36.push(0);    
+                    the_value36.push(0);
                 } else{
                     the_value36.push(parseFloat(value));
                 }
@@ -2044,7 +2045,7 @@
                 });
             });
         }
-            
+
 
         // 37th graph
         if( $('.Content_37_sparkline').length ){
@@ -2053,7 +2054,7 @@
 
             $.each(data_to_graph[37], function (key, value) {
                 if(value==""){
-                    the_value37.push(0);    
+                    the_value37.push(0);
                 } else{
                     the_value37.push(parseFloat(value));
                 }
@@ -2070,7 +2071,7 @@
                 });
             });
         }
-            
+
 
         // 38th graph
         if( $('.Content_38_sparkline').length ){
@@ -2079,7 +2080,7 @@
 
             $.each(data_to_graph[38], function (key, value) {
                 if(value==""){
-                    the_value38.push(0);    
+                    the_value38.push(0);
                 } else{
                     the_value38.push(parseFloat(value));
                 }
@@ -2096,7 +2097,7 @@
                 });
             });
         }
-            
+
 
         // 39th graph
         if( $('.Content_39_sparkline').length ){
@@ -2105,7 +2106,7 @@
 
             $.each(data_to_graph[39], function (key, value) {
                 if(value==""){
-                    the_value39.push(0);    
+                    the_value39.push(0);
                 } else{
                     the_value39.push(parseFloat(value));
                 }
@@ -2122,7 +2123,7 @@
                 });
             });
         }
-            
+
 
         // 40th graph
         if( $('.Content_40_sparkline').length ){
@@ -2131,7 +2132,7 @@
 
             $.each(data_to_graph[40], function (key, value) {
                 if(value==""){
-                    the_value40.push(0);    
+                    the_value40.push(0);
                 } else{
                     the_value40.push(parseFloat(value));
                 }
@@ -2148,7 +2149,7 @@
                 });
             });
         }
-            
+
 
         // 41th graph
         if( $('.Content_41_sparkline').length ){
@@ -2157,7 +2158,7 @@
 
             $.each(data_to_graph[41], function (key, value) {
                 if(value==""){
-                    the_value41.push(0);    
+                    the_value41.push(0);
                 } else{
                     the_value41.push(parseFloat(value));
                 }
@@ -2174,7 +2175,7 @@
                 });
             });
         }
-            
+
 
         // 42th graph
         if( $('.Content_42_sparkline').length ){
@@ -2183,7 +2184,7 @@
 
             $.each(data_to_graph[42], function (key, value) {
                 if(value==""){
-                    the_value42.push(0);    
+                    the_value42.push(0);
                 } else{
                     the_value42.push(parseFloat(value));
                 }
@@ -2200,7 +2201,7 @@
                 });
             });
         }
-            
+
 
         // 43th graph
         if( $('.Content_43_sparkline').length ){
@@ -2209,7 +2210,7 @@
 
             $.each(data_to_graph[43], function (key, value) {
                 if(value==""){
-                    the_value43.push(0);    
+                    the_value43.push(0);
                 } else{
                     the_value43.push(parseFloat(value));
                 }
@@ -2226,7 +2227,7 @@
                 });
             });
         }
-            
+
 
         // 44th graph
         if( $('.Content_44_sparkline').length ){
@@ -2235,7 +2236,7 @@
 
             $.each(data_to_graph[44], function (key, value) {
                 if(value==""){
-                    the_value44.push(0);    
+                    the_value44.push(0);
                 } else{
                     the_value44.push(parseFloat(value));
                 }
@@ -2252,7 +2253,7 @@
                 });
             });
         }
-            
+
 
         // 45th graph
         if( $('.Content_45_sparkline').length ){
@@ -2261,7 +2262,7 @@
 
             $.each(data_to_graph[45], function (key, value) {
                 if(value==""){
-                    the_value45.push(0);    
+                    the_value45.push(0);
                 } else{
                     the_value45.push(parseFloat(value));
                 }
@@ -2278,7 +2279,7 @@
                 });
             });
         }
-            
+
 
         // 46th graph
         if( $('.Content_46_sparkline').length ){
@@ -2287,7 +2288,7 @@
 
             $.each(data_to_graph[46], function (key, value) {
                 if(value==""){
-                    the_value46.push(0);    
+                    the_value46.push(0);
                 } else{
                     the_value46.push(parseFloat(value));
                 }
@@ -2304,7 +2305,7 @@
                 });
             });
         }
-            
+
 
         // 47th graph
         if( $('.Content_47_sparkline').length ){
@@ -2313,7 +2314,7 @@
 
             $.each(data_to_graph[47], function (key, value) {
                 if(value==""){
-                    the_value47.push(0);    
+                    the_value47.push(0);
                 } else{
                     the_value47.push(parseFloat(value));
                 }
@@ -2330,7 +2331,7 @@
                 });
             });
         }
-            
+
 
         // 48th graph
         if( $('.Content_48_sparkline').length ){
@@ -2339,7 +2340,7 @@
 
             $.each(data_to_graph[48], function (key, value) {
                 if(value==""){
-                    the_value48.push(0);    
+                    the_value48.push(0);
                 } else{
                     the_value48.push(parseFloat(value));
                 }
@@ -2356,7 +2357,7 @@
                 });
             });
         }
-            
+
 
         // 49th graph
         if( $('.Content_49_sparkline').length ){
@@ -2365,7 +2366,7 @@
 
             $.each(data_to_graph[49], function (key, value) {
                 if(value==""){
-                    the_value49.push(0);    
+                    the_value49.push(0);
                 } else{
                     the_value49.push(parseFloat(value));
                 }
@@ -2382,7 +2383,7 @@
                 });
             });
         }
-            
+
 
         // 50th graph
         if( $('.Content_50_sparkline').length ){
@@ -2391,7 +2392,7 @@
 
             $.each(data_to_graph[50], function (key, value) {
                 if(value==""){
-                    the_value50.push(0);    
+                    the_value50.push(0);
                 } else{
                     the_value50.push(parseFloat(value));
                 }
@@ -2408,7 +2409,7 @@
                 });
             });
         }
-            
+
 
         // 51th graph
         if( $('.Content_51_sparkline').length ){
@@ -2417,7 +2418,7 @@
 
             $.each(data_to_graph[51], function (key, value) {
                 if(value==""){
-                    the_value51.push(0);    
+                    the_value51.push(0);
                 } else{
                     the_value51.push(parseFloat(value));
                 }
@@ -2434,7 +2435,7 @@
                 });
             });
         }
-            
+
 
         // 52th graph
         if( $('.Content_52_sparkline').length ){
@@ -2443,7 +2444,7 @@
 
             $.each(data_to_graph[52], function (key, value) {
                 if(value==""){
-                    the_value52.push(0);    
+                    the_value52.push(0);
                 } else{
                     the_value52.push(parseFloat(value));
                 }
@@ -2460,7 +2461,7 @@
                 });
             });
         }
-            
+
 
         // 53th graph
         if( $('.Content_53_sparkline').length ){
@@ -2469,7 +2470,7 @@
 
             $.each(data_to_graph[53], function (key, value) {
                 if(value==""){
-                    the_value53.push(0);    
+                    the_value53.push(0);
                 } else{
                     the_value53.push(parseFloat(value));
                 }
@@ -2486,7 +2487,7 @@
                 });
             });
         }
-            
+
 
         // 54th graph
         if( $('.Content_54_sparkline').length ){
@@ -2495,7 +2496,7 @@
 
             $.each(data_to_graph[54], function (key, value) {
                 if(value==""){
-                    the_value54.push(0);    
+                    the_value54.push(0);
                 } else{
                     the_value54.push(parseFloat(value));
                 }
@@ -2512,7 +2513,7 @@
                 });
             });
         }
-            
+
 
         // 55th graph
         if( $('.Content_55_sparkline').length ){
@@ -2521,7 +2522,7 @@
 
             $.each(data_to_graph[55], function (key, value) {
                 if(value==""){
-                    the_value55.push(0);    
+                    the_value55.push(0);
                 } else{
                     the_value55.push(parseFloat(value));
                 }
@@ -2538,7 +2539,7 @@
                 });
             });
         }
-            
+
 
         // 56th graph
         if( $('.Content_56_sparkline').length ){
@@ -2547,7 +2548,7 @@
 
             $.each(data_to_graph[56], function (key, value) {
                 if(value==""){
-                    the_value56.push(0);    
+                    the_value56.push(0);
                 } else{
                     the_value56.push(parseFloat(value));
                 }
@@ -2564,7 +2565,7 @@
                 });
             });
         }
-            
+
 
         // 57th graph
         if( $('.Content_57_sparkline').length ){
@@ -2573,7 +2574,7 @@
 
             $.each(data_to_graph[57], function (key, value) {
                 if(value==""){
-                    the_value57.push(0);    
+                    the_value57.push(0);
                 } else{
                     the_value57.push(parseFloat(value));
                 }
@@ -2590,7 +2591,7 @@
                 });
             });
         }
-            
+
 
         // 58th graph
         if( $('.Content_58_sparkline').length ){
@@ -2599,7 +2600,7 @@
 
             $.each(data_to_graph[58], function (key, value) {
                 if(value==""){
-                    the_value58.push(0);    
+                    the_value58.push(0);
                 } else{
                     the_value58.push(parseFloat(value));
                 }
@@ -2616,7 +2617,7 @@
                 });
             });
         }
-            
+
 
         // 59th graph
         if( $('.Content_59_sparkline').length ){
@@ -2625,7 +2626,7 @@
 
             $.each(data_to_graph[59], function (key, value) {
                 if(value==""){
-                    the_value59.push(0);    
+                    the_value59.push(0);
                 } else{
                     the_value59.push(parseFloat(value));
                 }
@@ -2642,7 +2643,7 @@
                 });
             });
         }
-            
+
 
         // 60th graph
         if( $('.Content_60_sparkline').length ){
@@ -2651,7 +2652,7 @@
 
             $.each(data_to_graph[60], function (key, value) {
                 if(value==""){
-                    the_value60.push(0);    
+                    the_value60.push(0);
                 } else{
                     the_value60.push(parseFloat(value));
                 }
@@ -2668,7 +2669,7 @@
                 });
             });
         }
-            
+
 
         // 61th graph
         if( $('.Content_61_sparkline').length ){
@@ -2677,7 +2678,7 @@
 
             $.each(data_to_graph[61], function (key, value) {
                 if(value==""){
-                    the_value61.push(0);    
+                    the_value61.push(0);
                 } else{
                     the_value61.push(parseFloat(value));
                 }
@@ -2694,7 +2695,7 @@
                 });
             });
         }
-            
+
 
         // 62th graph
         if( $('.Content_62_sparkline').length ){
@@ -2703,7 +2704,7 @@
 
             $.each(data_to_graph[62], function (key, value) {
                 if(value==""){
-                    the_value62.push(0);    
+                    the_value62.push(0);
                 } else{
                     the_value62.push(parseFloat(value));
                 }
@@ -2720,7 +2721,7 @@
                 });
             });
         }
-            
+
 
         // 63th graph
         if( $('.Content_63_sparkline').length ){
@@ -2729,7 +2730,7 @@
 
             $.each(data_to_graph[63], function (key, value) {
                 if(value==""){
-                    the_value63.push(0);    
+                    the_value63.push(0);
                 } else{
                     the_value63.push(parseFloat(value));
                 }
@@ -2746,7 +2747,7 @@
                 });
             });
         }
-            
+
 
         // 64th graph
         if( $('.Content_64_sparkline').length ){
@@ -2755,7 +2756,7 @@
 
             $.each(data_to_graph[64], function (key, value) {
                 if(value==""){
-                    the_value64.push(0);    
+                    the_value64.push(0);
                 } else{
                     the_value64.push(parseFloat(value));
                 }
@@ -2772,7 +2773,7 @@
                 });
             });
         }
-            
+
 
         // 65th graph
         if( $('.Content_65_sparkline').length ){
@@ -2781,7 +2782,7 @@
 
             $.each(data_to_graph[65], function (key, value) {
                 if(value==""){
-                    the_value65.push(0);    
+                    the_value65.push(0);
                 } else{
                     the_value65.push(parseFloat(value));
                 }
@@ -2798,7 +2799,7 @@
                 });
             });
         }
-            
+
 
         // 66th graph
         if( $('.Content_66_sparkline').length ){
@@ -2807,7 +2808,7 @@
 
             $.each(data_to_graph[66], function (key, value) {
                 if(value==""){
-                    the_value66.push(0);    
+                    the_value66.push(0);
                 } else{
                     the_value66.push(parseFloat(value));
                 }
@@ -2824,7 +2825,7 @@
                 });
             });
         }
-            
+
 
         // 67th graph
         if( $('.Content_67_sparkline').length ){
@@ -2833,7 +2834,7 @@
 
             $.each(data_to_graph[67], function (key, value) {
                 if(value==""){
-                    the_value67.push(0);    
+                    the_value67.push(0);
                 } else{
                     the_value67.push(parseFloat(value));
                 }
@@ -2850,7 +2851,7 @@
                 });
             });
         }
-            
+
 
         // 68th graph
         if( $('.Content_68_sparkline').length ){
@@ -2859,7 +2860,7 @@
 
             $.each(data_to_graph[68], function (key, value) {
                 if(value==""){
-                    the_value68.push(0);    
+                    the_value68.push(0);
                 } else{
                     the_value68.push(parseFloat(value));
                 }
@@ -2876,7 +2877,7 @@
                 });
             });
         }
-            
+
 
         // 69th graph
         if( $('.Content_69_sparkline').length ){
@@ -2885,7 +2886,7 @@
 
             $.each(data_to_graph[69], function (key, value) {
                 if(value==""){
-                    the_value69.push(0);    
+                    the_value69.push(0);
                 } else{
                     the_value69.push(parseFloat(value));
                 }
@@ -2902,7 +2903,7 @@
                 });
             });
         }
-            
+
 
         // 70th graph
         if( $('.Content_70_sparkline').length ){
@@ -2911,7 +2912,7 @@
 
             $.each(data_to_graph[70], function (key, value) {
                 if(value==""){
-                    the_value70.push(0);    
+                    the_value70.push(0);
                 } else{
                     the_value70.push(parseFloat(value));
                 }
@@ -2928,7 +2929,7 @@
                 });
             });
         }
-            
+
 
         // 71th graph
         if( $('.Content_71_sparkline').length ){
@@ -2937,7 +2938,7 @@
 
             $.each(data_to_graph[71], function (key, value) {
                 if(value==""){
-                    the_value71.push(0);    
+                    the_value71.push(0);
                 } else{
                     the_value71.push(parseFloat(value));
                 }
@@ -2954,7 +2955,7 @@
                 });
             });
         }
-            
+
 
         // 72th graph
         if( $('.Content_72_sparkline').length ){
@@ -2963,7 +2964,7 @@
 
             $.each(data_to_graph[72], function (key, value) {
                 if(value==""){
-                    the_value72.push(0);    
+                    the_value72.push(0);
                 } else{
                     the_value72.push(parseFloat(value));
                 }
@@ -2980,7 +2981,7 @@
                 });
             });
         }
-            
+
 
         // 73th graph
         if( $('.Content_73_sparkline').length ){
@@ -2989,7 +2990,7 @@
 
             $.each(data_to_graph[73], function (key, value) {
                 if(value==""){
-                    the_value73.push(0);    
+                    the_value73.push(0);
                 } else{
                     the_value73.push(parseFloat(value));
                 }
@@ -3006,7 +3007,7 @@
                 });
             });
         }
-            
+
 
         // 74th graph
         if( $('.Content_74_sparkline').length ){
@@ -3015,7 +3016,7 @@
 
             $.each(data_to_graph[74], function (key, value) {
                 if(value==""){
-                    the_value74.push(0);    
+                    the_value74.push(0);
                 } else{
                     the_value74.push(parseFloat(value));
                 }
@@ -3032,7 +3033,7 @@
                 });
             });
         }
-            
+
 
         // 75th graph
         if( $('.Content_75_sparkline').length ){
@@ -3041,7 +3042,7 @@
 
             $.each(data_to_graph[75], function (key, value) {
                 if(value==""){
-                    the_value75.push(0);    
+                    the_value75.push(0);
                 } else{
                     the_value75.push(parseFloat(value));
                 }
@@ -3058,7 +3059,7 @@
                 });
             });
         }
-            
+
 
         // 76th graph
         if( $('.Content_76_sparkline').length ){
@@ -3067,7 +3068,7 @@
 
             $.each(data_to_graph[76], function (key, value) {
                 if(value==""){
-                    the_value76.push(0);    
+                    the_value76.push(0);
                 } else{
                     the_value76.push(parseFloat(value));
                 }
@@ -3084,7 +3085,7 @@
                 });
             });
         }
-            
+
 
         // 77th graph
         if( $('.Content_77_sparkline').length ){
@@ -3093,7 +3094,7 @@
 
             $.each(data_to_graph[77], function (key, value) {
                 if(value==""){
-                    the_value77.push(0);    
+                    the_value77.push(0);
                 } else{
                     the_value77.push(parseFloat(value));
                 }
@@ -3110,7 +3111,7 @@
                 });
             });
         }
-            
+
 
         // 78th graph
         if( $('.Content_78_sparkline').length ){
@@ -3119,7 +3120,7 @@
 
             $.each(data_to_graph[78], function (key, value) {
                 if(value==""){
-                    the_value78.push(0);    
+                    the_value78.push(0);
                 } else{
                     the_value78.push(parseFloat(value));
                 }
@@ -3136,7 +3137,7 @@
                 });
             });
         }
-            
+
 
         // 79th graph
         if( $('.Content_79_sparkline').length ){
@@ -3145,7 +3146,7 @@
 
             $.each(data_to_graph[79], function (key, value) {
                 if(value==""){
-                    the_value79.push(0);    
+                    the_value79.push(0);
                 } else{
                     the_value79.push(parseFloat(value));
                 }
@@ -3162,7 +3163,7 @@
                 });
             });
         }
-            
+
 
         // 80th graph
         if( $('.Content_80_sparkline').length ){
@@ -3171,7 +3172,7 @@
 
             $.each(data_to_graph[80], function (key, value) {
                 if(value==""){
-                    the_value80.push(0);    
+                    the_value80.push(0);
                 } else{
                     the_value80.push(parseFloat(value));
                 }
@@ -3188,7 +3189,7 @@
                 });
             });
         }
-            
+
 
         // 81th graph
         if( $('.Content_81_sparkline').length ){
@@ -3197,7 +3198,7 @@
 
             $.each(data_to_graph[81], function (key, value) {
                 if(value==""){
-                    the_value81.push(0);    
+                    the_value81.push(0);
                 } else{
                     the_value81.push(parseFloat(value));
                 }
@@ -3214,7 +3215,7 @@
                 });
             });
         }
-            
+
 
         // 82th graph
         if( $('.Content_82_sparkline').length ){
@@ -3223,7 +3224,7 @@
 
             $.each(data_to_graph[82], function (key, value) {
                 if(value==""){
-                    the_value82.push(0);    
+                    the_value82.push(0);
                 } else{
                     the_value82.push(parseFloat(value));
                 }
@@ -3240,7 +3241,7 @@
                 });
             });
         }
-            
+
 
         // 83th graph
         if( $('.Content_83_sparkline').length ){
@@ -3249,7 +3250,7 @@
 
             $.each(data_to_graph[83], function (key, value) {
                 if(value==""){
-                    the_value83.push(0);    
+                    the_value83.push(0);
                 } else{
                     the_value83.push(parseFloat(value));
                 }
@@ -3266,7 +3267,7 @@
                 });
             });
         }
-            
+
 
         // 84th graph
         if( $('.Content_84_sparkline').length ){
@@ -3275,7 +3276,7 @@
 
             $.each(data_to_graph[84], function (key, value) {
                 if(value==""){
-                    the_value84.push(0);    
+                    the_value84.push(0);
                 } else{
                     the_value84.push(parseFloat(value));
                 }
@@ -3292,7 +3293,7 @@
                 });
             });
         }
-            
+
 
         // 85th graph
         if( $('.Content_85_sparkline').length ){
@@ -3301,7 +3302,7 @@
 
             $.each(data_to_graph[85], function (key, value) {
                 if(value==""){
-                    the_value85.push(0);    
+                    the_value85.push(0);
                 } else{
                     the_value85.push(parseFloat(value));
                 }
@@ -3318,7 +3319,7 @@
                 });
             });
         }
-            
+
 
         // 86th graph
         if( $('.Content_86_sparkline').length ){
@@ -3327,7 +3328,7 @@
 
             $.each(data_to_graph[86], function (key, value) {
                 if(value==""){
-                    the_value86.push(0);    
+                    the_value86.push(0);
                 } else{
                     the_value86.push(parseFloat(value));
                 }
@@ -3344,7 +3345,7 @@
                 });
             });
         }
-            
+
 
         // 87th graph
         if( $('.Content_87_sparkline').length ){
@@ -3353,7 +3354,7 @@
 
             $.each(data_to_graph[87], function (key, value) {
                 if(value==""){
-                    the_value87.push(0);    
+                    the_value87.push(0);
                 } else{
                     the_value87.push(parseFloat(value));
                 }
@@ -3370,7 +3371,7 @@
                 });
             });
         }
-            
+
 
         // 88th graph
         if( $('.Content_88_sparkline').length ){
@@ -3379,7 +3380,7 @@
 
             $.each(data_to_graph[88], function (key, value) {
                 if(value==""){
-                    the_value88.push(0);    
+                    the_value88.push(0);
                 } else{
                     the_value88.push(parseFloat(value));
                 }
@@ -3396,7 +3397,7 @@
                 });
             });
         }
-            
+
 
         // 89th graph
         if( $('.Content_89_sparkline').length ){
@@ -3405,7 +3406,7 @@
 
             $.each(data_to_graph[89], function (key, value) {
                 if(value==""){
-                    the_value89.push(0);    
+                    the_value89.push(0);
                 } else{
                     the_value89.push(parseFloat(value));
                 }
@@ -3422,7 +3423,7 @@
                 });
             });
         }
-            
+
 
         // 90th graph
         if( $('.Content_90_sparkline').length ){
@@ -3431,7 +3432,7 @@
 
             $.each(data_to_graph[90], function (key, value) {
                 if(value==""){
-                    the_value90.push(0);    
+                    the_value90.push(0);
                 } else{
                     the_value90.push(parseFloat(value));
                 }
@@ -3448,7 +3449,7 @@
                 });
             });
         }
-            
+
 
         // 91th graph
         if( $('.Content_91_sparkline').length ){
@@ -3457,7 +3458,7 @@
 
             $.each(data_to_graph[91], function (key, value) {
                 if(value==""){
-                    the_value91.push(0);    
+                    the_value91.push(0);
                 } else{
                     the_value91.push(parseFloat(value));
                 }
@@ -3474,7 +3475,7 @@
                 });
             });
         }
-            
+
 
         // 92th graph
         if( $('.Content_92_sparkline').length ){
@@ -3483,7 +3484,7 @@
 
             $.each(data_to_graph[92], function (key, value) {
                 if(value==""){
-                    the_value92.push(0);    
+                    the_value92.push(0);
                 } else{
                     the_value92.push(parseFloat(value));
                 }
@@ -3500,7 +3501,7 @@
                 });
             });
         }
-            
+
 
         // 93th graph
         if( $('.Content_93_sparkline').length ){
@@ -3509,7 +3510,7 @@
 
             $.each(data_to_graph[93], function (key, value) {
                 if(value==""){
-                    the_value93.push(0);    
+                    the_value93.push(0);
                 } else{
                     the_value93.push(parseFloat(value));
                 }
@@ -3526,7 +3527,7 @@
                 });
             });
         }
-            
+
 
         // 94th graph
         if( $('.Content_94_sparkline').length ){
@@ -3535,7 +3536,7 @@
 
             $.each(data_to_graph[94], function (key, value) {
                 if(value==""){
-                    the_value94.push(0);    
+                    the_value94.push(0);
                 } else{
                     the_value94.push(parseFloat(value));
                 }
@@ -3552,7 +3553,7 @@
                 });
             });
         }
-            
+
 
         // 95th graph
         if( $('.Content_95_sparkline').length ){
@@ -3561,7 +3562,7 @@
 
             $.each(data_to_graph[95], function (key, value) {
                 if(value==""){
-                    the_value95.push(0);    
+                    the_value95.push(0);
                 } else{
                     the_value95.push(parseFloat(value));
                 }
@@ -3578,7 +3579,7 @@
                 });
             });
         }
-            
+
 
         // 96th graph
         if( $('.Content_96_sparkline').length ){
@@ -3587,7 +3588,7 @@
 
             $.each(data_to_graph[96], function (key, value) {
                 if(value==""){
-                    the_value96.push(0);    
+                    the_value96.push(0);
                 } else{
                     the_value96.push(parseFloat(value));
                 }
@@ -3604,7 +3605,7 @@
                 });
             });
         }
-            
+
 
         // 97th graph
         if( $('.Content_97_sparkline').length ){
@@ -3613,7 +3614,7 @@
 
             $.each(data_to_graph[97], function (key, value) {
                 if(value==""){
-                    the_value97.push(0);    
+                    the_value97.push(0);
                 } else{
                     the_value97.push(parseFloat(value));
                 }
@@ -3630,7 +3631,7 @@
                 });
             });
         }
-            
+
 
         // 98th graph
         if( $('.Content_98_sparkline').length ){
@@ -3639,7 +3640,7 @@
 
             $.each(data_to_graph[98], function (key, value) {
                 if(value==""){
-                    the_value98.push(0);    
+                    the_value98.push(0);
                 } else{
                     the_value98.push(parseFloat(value));
                 }
@@ -3656,7 +3657,7 @@
                 });
             });
         }
-            
+
 
         // 99th graph
         if( $('.Content_99_sparkline').length ){
@@ -3665,7 +3666,7 @@
 
             $.each(data_to_graph[99], function (key, value) {
                 if(value==""){
-                    the_value99.push(0);    
+                    the_value99.push(0);
                 } else{
                     the_value99.push(parseFloat(value));
                 }
@@ -3682,6 +3683,6 @@
                 });
             });
         }
-            
+
     }
 </script>

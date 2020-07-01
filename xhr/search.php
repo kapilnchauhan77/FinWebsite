@@ -1,4 +1,4 @@
-<?php 
+<?php
 if ($f == "search") {
     $data = array(
         'status' => 200,
@@ -10,8 +10,10 @@ if ($f == "search") {
         }
     }
     if ($s == 'normal' && isset($_GET['query'])) {
+        $data['query'] = array();
         foreach (Wo_GetSearch($_GET['query']) as $wo['result']) {
             $data['html'] .= Wo_LoadPage('header/search');
+            // $data['query'][] = $wo['result'];
         }
     }
     if ($s == 'hash' && isset($_GET['query'])) {
@@ -24,7 +26,6 @@ if ($f == "search") {
             if (!empty($wo['result'])) {
                 $data['html'] .= Wo_LoadPage('header/search');
             }
-            
         }
     }
     header("Content-type: application/json");

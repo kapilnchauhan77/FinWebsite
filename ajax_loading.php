@@ -602,9 +602,9 @@ if ($wo['config']['membership_system'] == 1) {
                 include('sources/term.php');
                 break;
 			// SA ADDITION FOR STOCK QUOTE
-				case 'stock_quotes':
-                    include('sources/stock_quotes.php');
-                    break;
+            case 'stock_quotes':
+                include('sources/stock_quotes.php');
+                break;
             // SA ADDITION FOR PORTFOLIO
             case 'portfolio':
                 include('sources/portfolio.php');

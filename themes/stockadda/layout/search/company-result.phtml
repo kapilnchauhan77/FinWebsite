@@ -1,0 +1,29 @@
+<div class="col-xs-12 col-sm-6" style="padding-bottom:5px">
+    <div class="page_list row">
+		<a href="<?php echo $wo['result']['url'];?>" data-ajax="?link1=timeline&u=<?php echo str_replace(" ", "_", $wo['result']['s_name']);?>">
+			<span class="page_title"><?php echo $wo['result']['s_name']; ?></span>
+		</a>
+		<div class="page_info">
+			<ul>
+				<li>
+					View <?php echo $wo['result']['compname']; ?>'s Live Quote, Qtrly Results, Fin Ratios, Bal Sheet, P&L and much more...
+				</li>
+				<li>
+				<div style="color: #4d91ea;">
+					<small>
+						<?php if (!empty($wo['result']['scripcode'])):?>
+						<span>BSE: <?php echo $wo['result']['scripcode']; ?></span>
+						<?php endif; ?>
+						<?php if (!empty($wo['result']['symbol'])):?>
+						<span>NSE: <?php echo $wo['result']['symbol']; ?></span>
+						<?php endif; ?>
+						<?php if (!empty($wo['result']['ind_name'])):?>
+						<span>Sector: <?php echo $wo['result']['ind_name']; ?></span>
+						<?php endif; ?>
+					</small>
+				</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

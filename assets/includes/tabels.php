@@ -132,5 +132,7 @@ define('T_INTRADAYGRAPHTIME', 'stockintradaygraph_time');
 define('T_STOCKPRICES', 'stock_prices');
 define('T_QABNKP', 'bnk_particulars');
 define('T_QAMANP', 'man_particulars');
+define('T_PORTFOLIO', 'portfolios');
+define('T_PORTFOLIO_DESC', 'portfolio_desc_table');
 //END OF CUSTOM ADDITIONS
 ?>

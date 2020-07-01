@@ -1,10 +1,11 @@
-<?php 
+<?php
 if ($f == 'extra_graphs_data') {
     $fincode = $_GET['fincode'];
     $extra_g_d = $_GET['extra_g_d'];
+    $fformat = $_GET['fformat'];
 
     if (!empty($fincode)) {
-        $get_extra_graph_data = get_extra_graph_data($fincode, $extra_g_d);
+        $get_extra_graph_data = get_extra_graph_data($fincode, $extra_g_d, $fformat);
         if (!empty($get_extra_graph_data)) {
             $data = array(
                 'data' => $get_extra_graph_data,

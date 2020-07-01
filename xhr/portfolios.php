@@ -6,19 +6,24 @@ if ($f == 'portfolios') {
         }
         if (empty($_POST['portfolio_name']) || empty($_POST['portfolio_title']) || empty(Wo_Secure($_POST['portfolio_title'])) || Wo_CheckSession($hash_id) === false) {
             $errors[] = $error_icon . $wo['lang']['please_check_details'];
+        } else if (empty($_POST['accept_terms'])){
+            $errors[] = $error_icon . 'Please Accept the Terms and Conditions';
         } else {
             $is_exist = Wo_IsNameExist($_POST['portfolio_name'], 0);
             if (in_array(true, $is_exist)) {
-                $errors[] = $error_icon . $wo['lang']['page_name_exists'];
+                $errors[] = $error_icon . 'Portfolio Name Exists';
             }
             if (in_array($_POST['portfolio_name'], $wo['site_pages'])) {
-                $errors[] = $error_icon . $wo['lang']['page_name_invalid_characters'];
+                $errors[] = $error_icon . 'Portfolio Name has Invalid Characters!';
             }
             if (strlen($_POST['portfolio_name']) < 5 OR strlen($_POST['portfolio_name']) > 32) {
-                $errors[] = $error_icon . $wo['lang']['page_name_characters_length'];
+                $errors[] = $error_icon . 'Portfolio name too long!';
             }
             if (!preg_match('/^[\w]+$/', $_POST['portfolio_name'])) {
-                $errors[] = $error_icon . $wo['lang']['page_name_invalid_characters'];
+                $errors[] = $error_icon . 'Portfolio Name has Invalid Characters!';
+            }
+            if (strlen($_POST['portfolio_description']) > 200) {
+                $errors[] = $error_icon . 'Portfolio Description should be less than 200 characters';
             }
         }
         if (empty($errors)) {
@@ -31,12 +36,38 @@ if ($f == 'portfolios') {
                 }
             }
 
+            $privacy_level = 0;
+
+            // PRIVACY LEVELS - PUBLIC, VIEWABLE ALL: 0; PUBLIC, VIEWABLE ONLY FOLLOWERS: 1; PUBLIC, VIEWABLE PAID: 2; PRIVATE, EXCLUDE RANKINGS: 3; PRIVATE, HIDE SECTOR ALLOCATION: 4; PRIVATE, EXCLUDE RANKINGS + SECTOR ALLOCATION: 5
+            if ($_POST['portfolio_privacy'] == "on"){
+                if ($_POST['portfolio_viewable_by_all'] == "on"){
+                    $privacy_level = 0;
+                }
+                else if ($_POST['portfolio_viewable_by_followers'] == "on"){
+                    $privacy_level = 1;
+                }
+                else {
+                    $privacy_level = 2;
+                }
+            }
+            else {
+                if ($_POST['portfolio_sector_allocation_viewable'] != "on"){
+                    $privacy_level = 3;
+                }
+                else if ($_POST['portfolio_rankings_exclusion'] != "on"){
+                    $privacy_level = 4;
+                }
+                else{
+                    $privacy_level = 5;
+                }
+            }
+
             $re_page_data  = array(
                 'portfolio_name' => Wo_Secure($_POST['portfolio_name']),
-                'user_id' => Wo_Secure($wo['user']['user_id']),
                 'portfolio_title' => Wo_Secure($_POST['portfolio_title']),
                 'portfolio_description' => Wo_Secure($_POST['portfolio_description']),
-                'active' => '1'
+                'privacy_level' => Wo_Secure($privacy_level),
+                'timestamp' => Wo_Secure($_GET['t'])
             );
             if (!empty($fields)) {
                 foreach ($fields as $key => $field) {
@@ -54,11 +85,14 @@ if ($f == 'portfolios') {
                 }
             }
 
-            $register_page = Wo_RegisterPage($re_page_data);
-            if ($register_page) {
+            $portfolioCreated = Wo_CreatePortfolio($re_page_data);
+            if ($portfolioCreated) {
                 $data = array(
                     'status' => 200,
-                    'location' => Wo_SeoLink('index.php?link1=timeline&u=' . Wo_Secure($_POST['page_name']))
+                    // 'location' => Wo_SeoLink('index.php?link1=timeline&u=' . Wo_Secure($_POST['page_name'])),
+                    'location' => "http://localhost/saddanew/portfolio",
+                    $re_page_data,
+                    $portfolioCreated
                 );
             }
         }

@@ -25,6 +25,7 @@ RewriteRule ^upgraded$ index.php?link1=upgraded [NC,QSA]
 RewriteRule ^get_news_feed$ index.php?link1=get_news_feed [NC,QSA]
 ## Added for Stock Quote
 RewriteRule ^stock_quotes(/?|)$ index.php?link1=stock_quotes [QSA]
+RewriteRule ^portfolio(/?|)$ index.php?link1=portfolio [QSA]
 ##END ADDITION
 RewriteRule ^games$ index.php?link1=games [NC,QSA]
 RewriteRule ^new-game$ index.php?link1=new-game [NC,QSA]

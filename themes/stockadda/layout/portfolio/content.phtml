@@ -1,54 +1,55 @@
-<div class="row page-margin wo_page_profile" data-page="company" data-id="<?php echo $wo['company_data']['s_name'];?>">
+<div class="row page-margin wo_page_profile" data-page="company" data-id="<?php echo $wo['portfolio_data']['portfolio_name'];?>">
 	<div class="profile-container">
 		<div class="page-info-cont row">
-			<div class="col-xs-12 col-sm-9 col-md-8 first_row">
+		<div class="col-xs-12 col-sm-9 col-md-8 first_row">
 				<div class="info">
 					<div class="title" style="margin: 0">
-						<a href="<?php echo$wo['company_data']['url'];?>" data-ajax="?link1=timeline&u=<?php echo str_replace(" ", "_", $wo['company_data']['s_name']);?>" style="font-size: 50px;"><?php echo$wo['company_data']['compname']; ?></a>
+						<a href="<?php echo $wo['portfolio_data']['url'];?>" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>" style="font-size: 50px;"><?php echo $wo['portfolio_data']['portfolio_name']; ?></a>
 					</div>
-					<div>
-					
-					<small style="position: relative; top: -10px; color: grey">
-						<span>BSE: <?php echo $wo['company_data']['scripcode']; ?>&nbsp; |</span>
-						<span>&nbsp;NSE: <?php echo $wo['company_data']['symbol']; ?>&nbsp; |</span>
-						<span>&nbsp;ISIN: <?php echo $wo['company_data']['isin']; ?>&nbsp; |</span>
-						<span>&nbsp;Industry: <?php echo $wo['company_data']['ind_name']; ?></span>
-					</small>
-					</div>
-					<div id="prices">
-							<div style="margin-top: 0%; font-size: 30px; color: grey;">
-								&#8377;<span style="font-size: 55px;">000.00</span>
-								<svg width="35px" height="35px" viewBox="100 25 1792 2192" xmlns="http://www.w3.org/2000/svg">
-									<path fill="grey" d="M1412 895q0-27-18-45l-362-362-91-91q-18-18-45-18t-45 18l-91 91-362 362q-18 18-18 45t18 45l91 91q18 18 45 18t45-18l189-189v502q0 26 19 45t45 19h128q26 0 45-19t19-45v-502l189 189q19 19 45 19t45-19l91-91q18-18 18-45zm252 1q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"/>
-								</svg>0.00&nbsp;(0.00%)&nbsp;<span style="color: grey; font-size: 25px;">BSE</span>
-							</div>
-					</div>
-				</div>
-			</div>
-			
-			<!-- <?php echo Wo_LoadPage('stock_quotes/gauges/high_low_gauge');?> -->
 
-			<div class="col-sm-3 col-md-4 last_row">
-				<div class="options-buttons <?php echo Wo_RightToLeft('pull-left');?> ">
-					<span class="user-follow-button page-like-btn">
-						<?php echo Wo_GetSignalButton($fincode = $wo['company_data']['fincode'], $signal = 'buy');?>
-					</span>
-					<span class="user-follow-button page-message-btn"><?php echo Wo_GetSignalButton($fincode = $wo['company_data']['fincode'], $signal = 'sell');?></span>
-				</div>
-			</div>
-			
-			<div class="page_navbar" style="margin-top: 1%;">
-				<div style="text-align: center; color: grey;" id="OHLC">
-					<b>
-						<div class="col-md-2">
-							<span style="font-weight: 700; color: black;">Open</span><br>000.00
-						</div>
-						<div class="col-md-2">
-							<span style="font-weight: 700; color: black;">Prev Close</span><br>000.00
-						</div>
-						<div class="col-md-2">
-							<span style="font-weight: 700; color: black;">Volume</span><br>000
-						</div>
+                    <script>console.log('<?php echo json_encode($wo['portfolio_data']); ?>')</script>
+                    <?php if ($wo['portfoio_data']['no_of_stocks'] > 0) { ?>
+                        <div>
+                        <small style="position: relative; top: -10px; color: grey">
+                            <span>Current Value: <?php echo $wo['portfolio_data']['portfolio_name']; ?>&nbsp; |</span>
+                            <span>&nbsp;Overall Gain: <?php echo $wo['portfolio_data']['portfolio_name']; ?>&nbsp; |</span>
+                            <span>&nbsp;Day's Gain: <?php echo $wo['portfolio_data']['portfolio_name']; ?>&nbsp; |</span>
+                            <span>&nbsp;PF Weight: <?php echo $wo['portfolio_data']['portfolio_name']; ?></span>
+                        </small>
+                        </div>
+
+                        <div id="prices">
+                            <div style="margin-top: 0%; font-size: 30px; color: grey;">
+                                &#8377;<span style="font-size: 55px;">000.00</span>
+                                <svg width="35px" height="35px" viewBox="100 25 1792 2192" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="grey" d="M1412 895q0-27-18-45l-362-362-91-91q-18-18-45-18t-45 18l-91 91-362 362q-18 18-18 45t18 45l91 91q18 18 45 18t45-18l189-189v502q0 26 19 45t45 19h128q26 0 45-19t19-45v-502l189 189q19 19 45 19t45-19l91-91q18-18 18-45zm252 1q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"/>
+                                </svg>0.00&nbsp;(0.00%)&nbsp;<span style="color: grey; font-size: 25px;">BSE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3 col-md-4 last_row">
+                    <div class="options-buttons <?php echo Wo_RightToLeft('pull-left');?> ">
+                        <span class="user-follow-button page-like-btn">
+                            <?php echo Wo_GetSignalButton($fincode = $wo['portfolio_data']['portfolio_name'], $signal = 'buy');?>
+                        </span>
+                        <span class="user-follow-button page-message-btn"><?php echo Wo_GetSignalButton($fincode = $wo['portfolio_data']['portfolio_name'], $signal = 'sell');?></span>
+                    </div>
+                </div>
+
+                <div class="page_navbar" style="margin-top: 1%;">
+                    <div style="text-align: center; color: grey;" id="OHLC">
+                        <b>
+                            <div class="col-md-2">
+                                <span style="font-weight: 700; color: black;">Open</span><br>000.00
+                            </div>
+                            <div class="col-md-2">
+                                <span style="font-weight: 700; color: black;">Prev Close</span><br>000.00
+                            </div>
+                            <div class="col-md-2">
+                                <span style="font-weight: 700; color: black;">Volume</span><br>000
+                            </div>
 
 						<div class="col-md-3">
 							<span style="font-weight: 700; color: black;">Day's Range</span><br>
@@ -65,130 +66,125 @@
 					</b>
 				</div>
 			</div>
-			<div style="text-align: center; color: grey; margin-top: -1%;" id="additional_things">
-				<b>
-					<div class="col-md-2">
-						<br><br><div style="text-align: right; padding: 0% 10%;">
-						<span style="font-weight: 700; color: black; float: left;">Mkt Cap (Cr)</span>&nbsp;000.00
-						<br><span style="font-weight: 700; color: black; float: left;">PE</span>&nbsp;0.00
-						<br><span style="font-weight: 700; color: black; float: left;">PE(Cons)</span>&nbsp;0.00
-						</div>
-					</div>
-					<div class="col-md-2">
-						<br><br><div style="text-align: right; padding:0% 10%;">
-						<span style="font-weight: 700; color: black; float: left;">Book Value</span>&nbsp;000.00
-						<br><span style="font-weight: 700; color: black; float: left;">Face Value</span>&nbsp;00
-						<br><span style="font-weight: 700; color: black; float: left;">Price/Book (MRQ)</span>&nbsp;0.00
-						</div>
-					</div>
-					<div class="col-md-2">
-						<br><br><div style="text-align: right; padding:0% 10%;">
-						<span style="font-weight: 700; color: black; float: left;">Cash EPS</span>&nbsp;00.00
-						<br><span style="font-weight: 700; color: black; float: left;">EPSc</span>&nbsp;00.00
-						<br><span style="font-weight: 700; color: black; float: left;">Price/Earning (TTM)</span>&nbsp;0.00
-						</div>
-					</div>
-					<div class="col-md-3">
-						<br><br><div style="text-align: right; padding:0% 10%;">
-						<span style="font-weight: 700; color: black; float: left;">Enterprise Val (Cr)</span>&nbsp;000.00
-						<br><span style="font-weight: 700; color: black; float: left;">EV/EBITDA</span>&nbsp;0.00
-						<br><span style="font-weight: 700; color: black; float: left;">EV/Sales</span>&nbsp;0.00
-						</div>
-					</div>
-					<div class="col-md-3">
-						<br><br><div style="text-align: right; padding:0% 10%;">
-						<span style="font-weight: 700; color: black; float: left;">Div Yield</span>&nbsp;0.00
-						<br><span style="font-weight: 700; color: black; float: left;">Mcap to Sales</span>&nbsp;0.00
-						<br><span style="font-weight: 700; color: black; float: left;">Price/Sales</span>&nbsp;0.0000
-						</div>
-					</div>
-				</b>
-			</div>
-		</div>  
-	</div>
+                <div style="text-align: center; color: grey; margin-top: -1%;" id="additional_things">
+                    <b>
+                        <div class="col-md-2">
+                            <br><br><div style="text-align: right; padding: 0% 10%;">
+                            <span style="font-weight: 700; color: black; float: left;">Mkt Cap (Cr)</span>&nbsp;000.00
+                            <br><span style="font-weight: 700; color: black; float: left;">PE</span>&nbsp;0.00
+                            <br><span style="font-weight: 700; color: black; float: left;">PE(Cons)</span>&nbsp;0.00
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <br><br><div style="text-align: right; padding:0% 10%;">
+                            <span style="font-weight: 700; color: black; float: left;">Book Value</span>&nbsp;000.00
+                            <br><span style="font-weight: 700; color: black; float: left;">Face Value</span>&nbsp;00
+                            <br><span style="font-weight: 700; color: black; float: left;">Price/Book (MRQ)</span>&nbsp;0.00
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <br><br><div style="text-align: right; padding:0% 10%;">
+                            <span style="font-weight: 700; color: black; float: left;">Cash EPS</span>&nbsp;00.00
+                            <br><span style="font-weight: 700; color: black; float: left;">EPSc</span>&nbsp;00.00
+                            <br><span style="font-weight: 700; color: black; float: left;">Price/Earning (TTM)</span>&nbsp;0.00
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <br><br><div style="text-align: right; padding:0% 10%;">
+                            <span style="font-weight: 700; color: black; float: left;">Enterprise Val (Cr)</span>&nbsp;000.00
+                            <br><span style="font-weight: 700; color: black; float: left;">EV/EBITDA</span>&nbsp;0.00
+                            <br><span style="font-weight: 700; color: black; float: left;">EV/Sales</span>&nbsp;0.00
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <br><br><div style="text-align: right; padding:0% 10%;">
+                            <span style="font-weight: 700; color: black; float: left;">Div Yield</span>&nbsp;0.00
+                            <br><span style="font-weight: 700; color: black; float: left;">Mcap to Sales</span>&nbsp;0.00
+                            <br><span style="font-weight: 700; color: black; float: left;">Price/Sales</span>&nbsp;0.0000
+                            </div>
+                        </div>
+                    </b>
+                </div>
+            </div'hi'>
+        </div>
 
-	<div class="row wo_user_profile" style="margin: -33px 0px 20px 33.333%;">
-			<label class="col-md-1 "></label>
-			<div class="user-bottom-nav col-md-10" style="width: 33.333%;">
-				<ul>
-					<li>
-						<a href="<?php echo Wo_SeoLink('index.php?link1=timeline&u=' . str_replace(' ', '_', $wo['company_data']['s_name']) . '');?>" data-ajax="?link1=timeline&u=<?php echo str_replace(' ', '_', $wo['company_data']['s_name'])?>" id="finance">
-							<span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M5 3A2 2 0 0 0 3 5H5M7 3V5H9V3M11 3V5H13V3M15 3V5H17V3M19 3V5H21A2 2 0 0 0 19 3M3 7V9H5V7M7 7V11H11V7M13 7V11H17V7M19 7V9H21V7M3 11V13H5V11M19 11V13H21V11M7 13V17H11V13M13 13V17H17V13M3 15V17H5V15M19 15V17H21V15M3 19A2 2 0 0 0 5 21V19M7 19V21H9V19M11 19V21H13V19M15 19V21H17V19M19 19V21A2 2 0 0 0 21 19Z" fill="currentColor"></path></svg></span>
-							<span>Financial Charts</span>
-						</a>
-					</li>
-					<li>
-						<a href="<?php echo Wo_SeoLink('index.php?link1=timeline&u=' . str_replace(' ', '_', $wo['company_data']['s_name']) . '&type=announcements');?>" data-ajax="?link1=timeline&u=<?php echo str_replace(' ', '_', $wo['company_data']['s_name']);?>&type=announcements" id="announcements">
-							<span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
-							<span><?php echo $wo['lang']['timeline'];?></span>
-						</a>
-					</li>
-				</ul>
-			</div>
-			<label class="col-md-1 "></label>
-		</div>
-		<?php
-            if (!isset($_GET['type'])) {	
-				echo Wo_LoadPage('stock_quotes/graph_filter');
-		    }else { ?>
-		<div class="col-md-8">
-		
-		<?php echo Wo_GetCompanyPostPublisherBox($wo['company_data']['fincode']); ?>
-		
-		<?php echo Wo_LoadPage('story/filter-by'); ?>
-		
-		<div id="posts" data-story-company="<?php echo$wo['company_data']['fincode'];?>">
-			<div class="pinned-post-container">
-				<?php
-					$pinedstory = Wo_GetPinnedPost($wo['company_data']['fincode'], 'page');
-					if (count($pinedstory) == 1) {
-						foreach ($pinedstory  as $wo['story']) {
-							echo Wo_LoadPage('story/content');
-						}
-					}
-				?> 
-			</div>
-			<?php
-				$stories = Wo_GetPosts(array('filter_by' => 'all', 'comp_id' =>$wo['company_data']['fincode'],'placement' => 'multi_image_post')); 
-				if (count($stories) == 0 && count($pinedstory) == 0) {
-					echo Wo_LoadPage('story/company-no-stories');
-				} else {
-					foreach ($stories as $wo['story']) {
-						echo Wo_LoadPage('story/content');
-					}
-				}
-			?>
-		</div>
-		<?php if (count($stories) > 0) {  ?>
-			<div class="load-more pointer" id="load-more-posts" onclick="Wo_GetMorePosts();">
-				<span class="btn btn-default"><i class="fa fa-chevron-circle-down progress-icon" data-icon="chevron-circle-down"></i> <?php echo $wo['lang']['load_more_posts']; ?><span>
-			</div>
-		<?php } ?>
-		<div id="load-more-filter">
-			<span class="filter-by-more hidden" data-filter-by="all"></span>
-		</div>
-	</div>
-	<?php echo Wo_LoadPage('stock_quotes/side-bar'); ?>
-		<?php } ?>
-</div>
-	
-<?php echo Wo_LoadPage('stock_quotes/apis/company_price_api');?>
-<?php echo Wo_LoadPage('stock_quotes/graphs_to_show');?>
+        <div class="row wo_user_profile" style="margin: -33px 0px 20px 33.333%;">
+                <label class="col-md-1 "></label>
+                <div class="user-bottom-nav col-md-10" style="width: 33.333%;">
+                    <ul>
+                        <li>
+                            <a href="<?php echo Wo_SeoLink('index.php?link1=timeline&u=' . str_replace(' ', '_', $wo['portfolio_data']['portfolio_name']) . '');?>" data-ajax="?link1=timeline&u=<?php echo str_replace(' ', '_', $wo['portfolio_data']['portfolio_title'])?>" id="finance">
+                                <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M5 3A2 2 0 0 0 3 5H5M7 3V5H9V3M11 3V5H13V3M15 3V5H17V3M19 3V5H21A2 2 0 0 0 19 3M3 7V9H5V7M7 7V11H11V7M13 7V11H17V7M19 7V9H21V7M3 11V13H5V11M19 11V13H21V11M7 13V17H11V13M13 13V17H17V13M3 15V17H5V15M19 15V17H21V15M3 19A2 2 0 0 0 5 21V19M7 19V21H9V19M11 19V21H13V19M15 19V21H17V19M19 19V21A2 2 0 0 0 21 19Z" fill="currentColor"></path></svg></span>
+                                <span>Financial Charts</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<?php echo Wo_SeoLink('index.php?link1=timeline&u=' . str_replace(' ', '_', $wo['portfolio_data']['portfolio_name']) . '&type=announcements');?>" data-ajax="?link1=timeline&u=<?php echo str_replace(' ', '_', $wo['portfolio_data']['portfolio_title']);?>&type=announcements" id="announcements">
+                                <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
+                                <span><?php echo $wo['lang']['timeline'];?></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <label class="col-md-1 "></label>
+            </div>
+            <?php
+                if (!isset($_GET['type'])) {
+                    echo 'hi';
+                }else { ?>
+                    <div class="col-md-8">
+
+                <?php echo Wo_GetCompanyPostPublisherBox($wo['portfolio_data']['portfolio_name']); ?>
+
+                <?php echo Wo_LoadPage('story/filter-by'); ?>
+
+                <div id="posts" data-story-company="<?php echo$wo['portfolio_data']['portfolio_name'];?>">
+                    <div class="pinned-post-container">
+                            <?php
+                                    $pinedstory = Wo_GetPinnedPost($wo['portfolio_data']['portfolio_name'], 'page');
+                                    if (count($pinedstory) == 1) {
+                                        foreach ($pinedstory  as $wo['story']) {
+                                            echo Wo_LoadPage('story/content');
+                                        }
+                                    }
+                                ?>
+                            </div>
+                            <?php
+                                $stories = Wo_GetPosts(array('filter_by' => 'all', 'comp_id' =>$wo['portfolio_data']['portfolio_name'],'placement' => 'multi_image_post'));
+                                if (count($stories) == 0 && count($pinedstory) == 0) {
+                                    echo Wo_LoadPage('story/company-no-stories');
+                                } else {
+                                    foreach ($stories as $wo['story']) {
+                                        echo Wo_LoadPage('story/content');
+                                    }
+                                }
+                            ?>
+                        </div>
+                        <?php if (count($stories) > 0) {  ?>
+                            <div class="load-more pointer" id="load-more-posts" onclick="Wo_GetMorePosts();">
+                                <span class="btn btn-default"><i class="fa fa-chevron-circle-down progress-icon" data-icon="chevron-circle-down"></i> <?php echo $wo['lang']['load_more_posts']; ?><span>
+                            </div>
+                        <?php } ?>
+                    <div id="load-more-filter">
+                        <span class="filter-by-more hidden" data-filter-by="all"></span>
+                    </div>
+                </div>
+                <?php echo Wo_LoadPage('stock_quotes/side-bar'); ?>
+            <?php } ?>
+        <?php } else {
+            echo 'hi';
+        }?>
+    </div>
 
 <!-- JS Pages functions -->
 <script src="<?php echo $wo['config']['theme_url'];?>/javascript/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
-<?php echo Wo_LoadPage('charts/mainchart_js');?>
 <script type="text/javascript">
 
 	$(document).ready(function() {
-		var company_fincode = "";
-		var company_fformat = "";
-		to_load_main_quote_graph(company_fincode, 'I', '', '', 'price');
-		to_load_extra_quote_graph(company_fincode, company_fformat);
 
-		var url = window.location.pathname;
-		// now grab every link from the navigation
-		if(url.includes("announcements")){
+        var url = window.location.pathname;
+        // now grab every link from the navigation
+        if(url.includes("announcements")){
 			$('#announcements').addClass('menuactive');
 		} else{
 			$('#finance').addClass('menuactive');
