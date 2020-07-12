@@ -7,7 +7,7 @@
 						<a href="<?php echo$wo['company_data']['url'];?>" data-ajax="?link1=timeline&u=<?php echo str_replace(" ", "_", $wo['company_data']['s_name']);?>" style="font-size: 50px;"><?php echo$wo['company_data']['compname']; ?></a>
 					</div>
 					<div>
-					
+
 					<small style="position: relative; top: -10px; color: grey">
 						<span>BSE: <?php echo $wo['company_data']['scripcode']; ?>&nbsp; |</span>
 						<span>&nbsp;NSE: <?php echo $wo['company_data']['symbol']; ?>&nbsp; |</span>
@@ -25,7 +25,7 @@
 					</div>
 				</div>
 			</div>
-			
+
 			<!-- <?php echo Wo_LoadPage('stock_quotes/gauges/high_low_gauge');?> -->
 
 			<div class="col-sm-3 col-md-4 last_row">
@@ -36,7 +36,7 @@
 					<span class="user-follow-button page-message-btn"><?php echo Wo_GetSignalButton($fincode = $wo['company_data']['fincode'], $signal = 'sell');?></span>
 				</div>
 			</div>
-			
+
 			<div class="page_navbar" style="margin-top: 1%;">
 				<div style="text-align: center; color: grey;" id="OHLC">
 					<b>
@@ -104,7 +104,7 @@
 					</div>
 				</b>
 			</div>
-		</div>  
+		</div>
 	</div>
 
 	<div class="row wo_user_profile" style="margin: -33px 0px 20px 33.333%;">
@@ -128,15 +128,15 @@
 			<label class="col-md-1 "></label>
 		</div>
 		<?php
-            if (!isset($_GET['type'])) {	
+            if (!isset($_GET['type'])) {
 				echo Wo_LoadPage('stock_quotes/graph_filter');
 		    }else { ?>
 		<div class="col-md-8">
-		
+
 		<?php echo Wo_GetCompanyPostPublisherBox($wo['company_data']['fincode']); ?>
-		
+
 		<?php echo Wo_LoadPage('story/filter-by'); ?>
-		
+
 		<div id="posts" data-story-company="<?php echo$wo['company_data']['fincode'];?>">
 			<div class="pinned-post-container">
 				<?php
@@ -146,10 +146,10 @@
 							echo Wo_LoadPage('story/content');
 						}
 					}
-				?> 
+				?>
 			</div>
 			<?php
-				$stories = Wo_GetPosts(array('filter_by' => 'all', 'comp_id' =>$wo['company_data']['fincode'],'placement' => 'multi_image_post')); 
+				$stories = Wo_GetPosts(array('filter_by' => 'all', 'comp_id' =>$wo['company_data']['fincode'],'placement' => 'multi_image_post'));
 				if (count($stories) == 0 && count($pinedstory) == 0) {
 					echo Wo_LoadPage('story/company-no-stories');
 				} else {
@@ -171,7 +171,7 @@
 	<?php echo Wo_LoadPage('stock_quotes/side-bar'); ?>
 		<?php } ?>
 </div>
-	
+
 <?php echo Wo_LoadPage('stock_quotes/apis/company_price_api');?>
 <?php echo Wo_LoadPage('stock_quotes/graphs_to_show');?>
 

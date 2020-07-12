@@ -1,21 +1,24 @@
-<div class="row page-margin wo_page_profile" data-page="company" data-id="<?php echo $wo['portfolio_data']['portfolio_name'];?>">
-	<div class="profile-container">
-		<div class="page-info-cont row">
-		<div class="col-xs-12 col-sm-9 col-md-8 first_row">
-				<div class="info">
-					<div class="title" style="margin: 0">
-						<a href="<?php echo $wo['portfolio_data']['url'];?>" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>" style="font-size: 50px;"><?php echo $wo['portfolio_data']['portfolio_name']; ?></a>
-					</div>
+<script>console.log('<?php echo json_encode($wo['portfolio_data']); ?>')</script>
+<?php if ($wo['portfolio_data']['no_of_stocks'] > 0) { ?>
 
-                    <script>console.log('<?php echo json_encode($wo['portfolio_data']); ?>')</script>
-                    <?php if ($wo['portfoio_data']['no_of_stocks'] > 0) { ?>
+    <div class="row pafge-margin wo_page_profile" data-page="company" data-id="<?php echo $wo['portfolio_data']['portfolio_name'];?>">
+        <div class="profile-container">
+            <div class="page-info-cont row">
+
+                <div class="col-xs-12 col-sm-9 col-md-8 first_row">
+                    <div class="info">
+
+                        <div class="title" style="margin: 0">
+                            <a href="<?php echo $wo['portfolio_data']['url'];?>" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>" style="font-size: 50px;"><?php echo $wo['portfolio_data']['portfolio_name']; ?></a>
+                        </div>
+
                         <div>
-                        <small style="position: relative; top: -10px; color: grey">
-                            <span>Current Value: <?php echo $wo['portfolio_data']['portfolio_name']; ?>&nbsp; |</span>
-                            <span>&nbsp;Overall Gain: <?php echo $wo['portfolio_data']['portfolio_name']; ?>&nbsp; |</span>
-                            <span>&nbsp;Day's Gain: <?php echo $wo['portfolio_data']['portfolio_name']; ?>&nbsp; |</span>
-                            <span>&nbsp;PF Weight: <?php echo $wo['portfolio_data']['portfolio_name']; ?></span>
-                        </small>
+                            <small style="position: relative; top: -10px; color: grey">
+                                <span>Current Value: <?php echo $wo['portfolio_data']['portfolio_name']; ?>&nbsp; |</span>
+                                <span>&nbsp;Overall Gain: <?php echo $wo['portfolio_data']['portfolio_name']; ?>&nbsp; |</span>
+                                <span>&nbsp;Day's Gain: <?php echo $wo['portfolio_data']['portfolio_name']; ?>&nbsp; |</span>
+                                <span>&nbsp;PF Weight: <?php echo $wo['portfolio_data']['portfolio_name']; ?></span>
+                            </small>
                         </div>
 
                         <div id="prices">
@@ -26,19 +29,23 @@
                                 </svg>0.00&nbsp;(0.00%)&nbsp;<span style="color: grey; font-size: 25px;">BSE</span>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
                 <div class="col-sm-3 col-md-4 last_row">
+
                     <div class="options-buttons <?php echo Wo_RightToLeft('pull-left');?> ">
                         <span class="user-follow-button page-like-btn">
                             <?php echo Wo_GetSignalButton($fincode = $wo['portfolio_data']['portfolio_name'], $signal = 'buy');?>
                         </span>
                         <span class="user-follow-button page-message-btn"><?php echo Wo_GetSignalButton($fincode = $wo['portfolio_data']['portfolio_name'], $signal = 'sell');?></span>
                     </div>
+
                 </div>
 
                 <div class="page_navbar" style="margin-top: 1%;">
+
                     <div style="text-align: center; color: grey;" id="OHLC">
                         <b>
                             <div class="col-md-2">
@@ -51,21 +58,23 @@
                                 <span style="font-weight: 700; color: black;">Volume</span><br>000
                             </div>
 
-						<div class="col-md-3">
-							<span style="font-weight: 700; color: black;">Day's Range</span><br>
-							<span>000.00</span>
-							<span>-</span>
-							<span>000.00</span>
-						</div>
-						<div class="col-md-3">
-							<span style="font-weight: 700; color: black;">52 Wk Range</span><br>
-							<span>000.00</span>
-							<span>-</span>
-							<span>000.00</span>
-						</div>
-					</b>
-				</div>
-			</div>
+                            <div class="col-md-3">
+                                <span style="font-weight: 700; color: black;">Day's Range</span><br>
+                                <span>000.00</span>
+                                <span>-</span>
+                                <span>000.00</span>
+                            </div>
+                            <div class="col-md-3">
+                                <span style="font-weight: 700; color: black;">52 Wk Range</span><br>
+                                <span>000.00</span>
+                                <span>-</span>
+                                <span>000.00</span>
+                            </div>
+                        </b>
+                    </div>
+
+                </div>
+
                 <div style="text-align: center; color: grey; margin-top: -1%;" id="additional_things">
                     <b>
                         <div class="col-md-2">
@@ -83,10 +92,11 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <br><br><div style="text-align: right; padding:0% 10%;">
-                            <span style="font-weight: 700; color: black; float: left;">Cash EPS</span>&nbsp;00.00
-                            <br><span style="font-weight: 700; color: black; float: left;">EPSc</span>&nbsp;00.00
-                            <br><span style="font-weight: 700; color: black; float: left;">Price/Earning (TTM)</span>&nbsp;0.00
+                            <br><br>
+                            <div style="text-align: right; padding:0% 10%;">
+                                <span style="font-weight: 700; color: black; float: left;">Cash EPS</span>&nbsp;00.00
+                                <br><span style="font-weight: 700; color: black; float: left;">EPSc</span>&nbsp;00.00
+                                <br><span style="font-weight: 700; color: black; float: left;">Price/Earning (TTM)</span>&nbsp;0.00
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -105,10 +115,10 @@
                         </div>
                     </b>
                 </div>
-            </div'hi'>
-        </div>
 
-        <div class="row wo_user_profile" style="margin: -33px 0px 20px 33.333%;">
+            </div>
+
+            <div class="row wo_user_profile" style="margin: -33px 0px 20px 33.333%;">
                 <label class="col-md-1 "></label>
                 <div class="user-bottom-nav col-md-10" style="width: 33.333%;">
                     <ul>
@@ -128,68 +138,256 @@
                 </div>
                 <label class="col-md-1 "></label>
             </div>
-            <?php
-                if (!isset($_GET['type'])) {
-                    echo 'hi';
-                }else { ?>
+<?php
+if (!isset($_GET['type'])) {
+    echo 'hi';
+}else { ?>
                     <div class="col-md-8">
 
-                <?php echo Wo_GetCompanyPostPublisherBox($wo['portfolio_data']['portfolio_name']); ?>
+                        <?php echo Wo_GetCompanyPostPublisherBox($wo['portfolio_data']['portfolio_name']); ?>
 
-                <?php echo Wo_LoadPage('story/filter-by'); ?>
+                        <?php echo Wo_LoadPage('story/filter-by'); ?>
 
-                <div id="posts" data-story-company="<?php echo$wo['portfolio_data']['portfolio_name'];?>">
-                    <div class="pinned-post-container">
-                            <?php
-                                    $pinedstory = Wo_GetPinnedPost($wo['portfolio_data']['portfolio_name'], 'page');
-                                    if (count($pinedstory) == 1) {
-                                        foreach ($pinedstory  as $wo['story']) {
-                                            echo Wo_LoadPage('story/content');
-                                        }
-                                    }
-                                ?>
+                        <div id="posts" data-story-company="<?php echo$wo['portfolio_data']['portfolio_name'];?>">
+
+                            <div class="pinned-post-container">
+<?php
+    $pinedstory = Wo_GetPinnedPost($wo['portfolio_data']['portfolio_name'], 'page');
+if (count($pinedstory) == 1) {
+    foreach ($pinedstory  as $wo['story']) {
+        echo Wo_LoadPage('story/content');
+    }
+}
+?>
                             </div>
-                            <?php
-                                $stories = Wo_GetPosts(array('filter_by' => 'all', 'comp_id' =>$wo['portfolio_data']['portfolio_name'],'placement' => 'multi_image_post'));
-                                if (count($stories) == 0 && count($pinedstory) == 0) {
-                                    echo Wo_LoadPage('story/company-no-stories');
-                                } else {
-                                    foreach ($stories as $wo['story']) {
-                                        echo Wo_LoadPage('story/content');
-                                    }
-                                }
-                            ?>
+
+<?php
+$stories = Wo_GetPosts(array('filter_by' => 'all', 'comp_id' =>$wo['portfolio_data']['portfolio_name'],'placement' => 'multi_image_post'));
+if (count($stories) == 0 && count($pinedstory) == 0) {
+    echo Wo_LoadPage('story/company-no-stories');
+} else {
+    foreach ($stories as $wo['story']) {
+        echo Wo_LoadPage('story/content');
+    }
+}
+?>
                         </div>
+
                         <?php if (count($stories) > 0) {  ?>
                             <div class="load-more pointer" id="load-more-posts" onclick="Wo_GetMorePosts();">
                                 <span class="btn btn-default"><i class="fa fa-chevron-circle-down progress-icon" data-icon="chevron-circle-down"></i> <?php echo $wo['lang']['load_more_posts']; ?><span>
                             </div>
                         <?php } ?>
-                    <div id="load-more-filter">
-                        <span class="filter-by-more hidden" data-filter-by="all"></span>
+
+                        <div id="load-more-filter">
+                            <span class="filter-by-more hidden" data-filter-by="all"></span>
+                        </div>
+
+                    </div>
+                    <?php echo Wo_LoadPage('stock_quotes/side-bar'); ?>
+            <?php } ?>
+        </div>
+    </div>
+
+<?php } else { ?>
+
+    <div style="background-color: white; display:flex; height: 93.5vh; width: 100%; justify-content: center; align-items: center; text-align: center; border-radius: 3px; margin-bottom:0px;">
+        <div class="container" style="display: inline-block;">
+
+            <div class="row" >
+                <div class="col-md-12">
+                    <div class="title" style="margin: 0; font-weight: 700; color: #3e3e3e; text-transform: capitalize;font-size:3em">
+                        No Stocks found in <?php echo (strpos(strtolower($wo['portfolio_data']['portfolio_name']), 'portfolio') !== false) ? $wo['portfolio_data']['portfolio_name'] : 'Portfolio - ' . $wo['portfolio_data']['portfolio_name']; ?>
+
+                        <script>
+                            console.log(<?php echo json_encode($wo['portfolio_data']); ?>);
+                        </script>
+
                     </div>
                 </div>
-                <?php echo Wo_LoadPage('stock_quotes/side-bar'); ?>
-            <?php } ?>
-        <?php } else {
-            echo 'hi';
-        }?>
+            </div>
+
+            <div class="row">
+
+                <div id="stock_container" class="col-md-12">
+                    <div class="stock_dropdown stock-search-container">
+
+                        <div id="first_stock_add" class="stock_search" role="search">
+
+                            <span class="stock_tooltip" data-toggle="tooltip" data-placement="bottom" title="Search and add Stocks">
+                                <input class="stock_input" data-toggle="stock_dropdown" type="text" onkeyup="Wo_StockSearchResult(this.value)">
+                            </span>
+
+                            <span id="stock_document_import_upload">
+                                |
+                                <span class="stock_document_import" data-toggle="tooltip" data-placement="bottom" title="Import or Upload Portfolio"></span>
+                            </span>
+
+                        </div>
+
+                        <div class="stock-quote-dropdown-menu search-dropdown-container" style="display:inline-block;left:auto;margin-top: 10px;margin-left: -6.4%;width: auto;" role="menu">
+                          <div class="stock-search-dropdown-result"></div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="stock_quote_table_search" class="col-md-12 hidden">
+                   <table class="table table-hover table-striped">
+
+                       <thead>
+                           <tr>
+                               <th style="text-align: center;">Stock Name</th>
+                               <th style="text-align: center;">Transaction Date</th>
+                               <th style="text-align: center;">Transaction Price</th>
+                               <th style="text-align: center;">Quantity</th>
+                               <th style="text-align: center;">Action</th>
+                           </tr>
+                       </thead>
+
+                       <tbody id="table_stock_quote_search_body"></tbody>
+
+                   </table>
+
+                   <span class="stock_search_submit" data-toggle="tooltip" data-placement="bottom" onclick="pushStockDataToBackend()" title="Add Stocks to Portfolio"></span>
+
+                   <div class="stock_dropdown stock-search-container" style="float: left;">
+
+                       <div id="extra_stock_seaches" class="stock_search" role="search">
+
+                           <span class="stock_tooltip" data-toggle="tooltip" data-placement="bottom" title="Search and add Stocks">
+                               <input class="stock_input" data-toggle="stock_dropdown" type="text" onkeyup="Wo_StockSearchResult(this.value)">
+                           </span>
+
+                       </div>
+
+                       <div class="stock-quote-dropdown-menu search-dropdown-container" style="display:inline-block;left:auto;margin-top: 10px;margin-left: -6.3%;width: auto;" role="menu">
+                         <div class="stock-search-dropdown-result"></div>
+                       </div>
+
+                   </div>
+
+                </div>
+
+            </div>
+
+        </div>
     </div>
+
+<?php }; ?>
 
 <!-- JS Pages functions -->
 <script src="<?php echo $wo['config']['theme_url'];?>/javascript/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
 <script type="text/javascript">
 
-	$(document).ready(function() {
+    Date.prototype.toDateInputValue = (function() {
+        var local = new Date(this);
+        local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        return local.toJSON().slice(0,10);
+    });
 
-        var url = window.location.pathname;
-        // now grab every link from the navigation
-        if(url.includes("announcements")){
-			$('#announcements').addClass('menuactive');
-		} else{
-			$('#finance').addClass('menuactive');
-		};
+    var StockSearchContainer = $('.stock-search-container');
+    var StockSearchResult = $('.stock-search-dropdown-result');
+    var stock_quotes_to_add = new Array();
 
-	});
+    function Wo_StockSearchResult(query) {
+        if (query != '') {
+            Wo_progressIconLoader(StockSearchContainer.find('.stock_search'));
+            StockSearchContainer.addClass('open');
+            $.get(Wo_Ajax_Requests_File(), {f: 'search', s: 'stock_quote', query: query}, function(data) {
+                if (data.status == 200) {
+                    if (data.html.length == 0) {
+                        StockSearchResult.html('<span class="center-text">' + " <?php echo $wo['lang']['no_result']; ?>" + '<span>');
+                    } else {
+                        StockSearchResult.html(data.html);
+                    }
+                }
+                Wo_progressIconLoader(StockSearchContainer.find('#stock_search'));
+            });
+            $(document).click(function() {
+                StockSearchContainer.removeClass('open');
+            });
+        } else {
+            StockSearchContainer.removeClass('open');
+        }
+    }
+
+    function AddStockToTable(fincode, comp_name){
+        if (!stock_quotes_to_add.length){
+            $('#stock_container').addClass('hidden');
+            $('#stock_quote_table_search').removeClass('hidden');
+        }
+        table_body_data_to_add = `<tr id=`+ fincode +` style="height:39px">
+                                     <td id="stock_name" class="stock_quote_name_search">` + comp_name + `</td>
+                                     <td><input id="stock_transaction_date" type="date" name="transaction_date" /></td>
+                                     <td>
+                                         <span class="stock_quote_transac_price_div">
+                                             <input id="stock_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" />
+                                         </span>
+                                     </td>
+                                     <td><input id="stock_qty" type="number" min="0" value="0" step="any" name="quantity" style="height:39px;" /></td>
+                                     <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteStockQuoteFromSearch(`+ fincode +`)"></i></td>
+                                  </tr>`;
+
+        stock_quotes_to_add.push(fincode);
+
+        $('#table_stock_quote_search_body').append(table_body_data_to_add);
+    }
+
+    function deleteStockQuoteFromSearch(fincode){
+        stock_quotes_to_add.splice(stock_quotes_to_add.indexOf(fincode), 1);
+        if (!(stock_quotes_to_add.length)){
+            $('#stock_container').removeClass('hidden');
+            $('#stock_quote_table_search').addClass('hidden');
+        }
+        console.log(stock_quotes_to_add.length);
+        $("#"+fincode).remove();
+    }
+
+    function pushStockDataToBackend(){
+        var stock_array_to_send = new Array();
+
+        stock_quotes_to_add.forEach(function (fincode, index_stock){
+            if ($("#"+fincode+" #stock_transaction_date").val() === ""){
+                $("#"+fincode+" #stock_transaction_date").val(new Date().toDateInputValue());
+            }
+
+            stockInfo = {
+
+                    stock_fincode: parseInt(fincode),
+                    stock_transaction_date: new Date($("#"+fincode+" #stock_transaction_date").val()).getTime()/1000,
+                    stock_transaction_price: parseFloat($("#"+fincode+" #stock_transaction_price").val()),
+                    stock_transaction_qty: parseFloat($("#"+fincode+" #stock_qty").val())
+
+                        };
+
+            //console.log(stockInfo);
+            stock_array_to_send.push(stockInfo);
+        });
+
+        $.ajax({
+            url: Wo_Ajax_Requests_File(),
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                f:'portfolio_data',
+                stock_array: stock_array_to_send,
+                no_of_stocks: stock_array_to_send.length,
+                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+            },
+                success: function(data) {
+                    if (data['status'] == 200){
+                        console.log(data);
+                        history.go(0);
+                    }
+                    else{
+                        console.log(data);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                }
+        });
+    }
 
 </script>

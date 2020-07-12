@@ -26,7 +26,7 @@
 			COMPETITORS
 		</li>
 		<li class="list-group-item filter-by-li" id="other_info" onclick="Wo_GraphPostBy('other_info', 'standalone_');" dir="auto" style="color: #c12056;">
-			Other Info
+			OTHER INFO
 		</li>
 	</ul>
 	<ul class="list-group filterby" id="filter-button" style="background-color: #f9f9f9; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.0);">
@@ -37,17 +37,17 @@
 		<li class="list-group-item filter-by-li hidden" id="consolidated_" onclick="Wo_GraphPostBy('it_is_sub', 'consolidated_');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px;">
 			<b>VIEW CONSOLIDATED</b>
 		</li>
-		<li class="list-group-item avtive filter-by-li filter_negative_clr" id="intraday" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px;">
-			<b>INTRADAY</b>
+		<li class="list-group-item avtive filter-by-li filter_negative_clr hidden" id="intraday" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px;">
+			<b>VIEW INTRADAY GRAPH</b>
 		</li>
 		<li class="list-group-item filter-by-li" id="historical" onclick="Wo_GraphPostBy('Main_Graph', 'historical');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000; border-radius: 5px;">
-			<b>HISTORICAL</b>
+			<b>VIEW HISTORICAL GRAPH</b>
 		</li>
 		<li class="list-group-item hidden" id="p_e" onclick="theTimeLine('p_e');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); float: right; color: #000; border-radius: 5px;">
-			<b>PRICE TO EARNING</b>
+			<b>VIEW PE GRAPH</b>
 		</li>
 		<li class="list-group-item hidden" id="price_" onclick="theTimeLine('price');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); float: right; color: #000; border-radius: 5px;">
-			<b>PRICE</b>
+			<b>VIEW P|V GRAPH</b>
 		</li>
 		<li class="list-group-item hidden" id="graph_" onclick="graph_table('graph');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); float: right; color: #000; border-radius: 5px;">
 			<b>VIEW GRAPHS</b>
@@ -99,7 +99,7 @@ var current_type_to_not_show_data = 'standalone_';
 function Wo_GraphPostBy(to_show, sub_show){
 
 	var extra_load = true;
-	
+
 	if(to_show != 'Main_Graph'){
 		if (current_type_to_not_show_data == "consolidated_"){
 			$("#standalone_").removeClass("hidden");
@@ -168,9 +168,9 @@ function Wo_GraphPostBy(to_show, sub_show){
 			}
 		}
 		old = to_show;
-		
+
 	} else{
-		
+
 		$('#' + sub_show).prop("onclick", null);
 		if(old!='Main_Graph'){
 			$('#' + old_sub).attr("onClick", 'Wo_GraphPostBy(\'' + 'it_is_sub' + '\', \'' + old_sub + '\');');
@@ -187,7 +187,7 @@ function Wo_GraphPostBy(to_show, sub_show){
 			$('#' + old_sub).attr("onClick", 'Wo_GraphPostBy(\'' + 'Main_Graph' + '\', \'' + old_sub + '\');');
 		}
 
-		
+
 	}
 
 
@@ -198,7 +198,7 @@ function Wo_GraphPostBy(to_show, sub_show){
 	console.log('extra_load: ' + extra_load);
 	console.log('current_type_to_not_show_data: ' + current_type_to_not_show_data);
 
-	
+
 	old_sub = sub_show;
 
 	if (old==='annual_result'){
@@ -225,6 +225,8 @@ function Wo_GraphPostBy(to_show, sub_show){
 					$("#price_").removeClass("hidden");
 				}
 				$(".the_time_list").removeClass("hidden");
+                $("#historical").addClass("hidden");
+                $("#intraday").removeClass("hidden");
 
 			} else{
 				to_load_main_quote_graph(company_fincode, 'I', '', '', 'price');
@@ -236,6 +238,8 @@ function Wo_GraphPostBy(to_show, sub_show){
 					$("#price_").addClass("hidden");
 				}
 				$(".the_time_list").addClass("hidden");
+                $("#intraday").addClass("hidden");
+                $("#historical").removeClass("hidden");
 			}
 		} else{
 
@@ -251,6 +255,8 @@ function Wo_GraphPostBy(to_show, sub_show){
 					$("#price_").removeClass("hidden");
 				}
 				$(".the_time_list").removeClass("hidden");
+                $("#historical").addClass("hidden");
+                $("#intraday").removeClass("hidden");
 
 			} else{
 				to_load_main_quote_graph(company_fincode, 'I', '', '', 'price');
@@ -260,6 +266,8 @@ function Wo_GraphPostBy(to_show, sub_show){
 					$("#price_").addClass("hidden");
 				}
 				$(".the_time_list").addClass("hidden");
+                $("#intraday").addClass("hidden");
+                $("#historical").removeClass("hidden");
 
 			}
 		}
@@ -325,10 +333,9 @@ function theTimeLine(time){
 	}
 }
 
-
 function get_table(data){
 	data_ = data.data['finance_data'];
-	
+
 	table_heading = '<tr>';
 
 	table_heading += '<th>Particulers</th>';
@@ -350,7 +357,7 @@ function get_table(data){
 		for(j in data_[i]){
 			if(j !== "description"){
 				to_add = data_[i][j];
-				
+
 				if(to_add !== ""){
 					to_add = parseFloat(to_add).toFixed(2);
 				} else{
@@ -367,7 +374,7 @@ function get_table(data){
 		}
 
 		table_data += table_data_to_append;
-		
+
 	}
 
 	table = `<div class="container">

@@ -528,7 +528,7 @@ textarea.postText{border:none;padding-top:12px;padding-left:50px;height:45px;box
 .publisher-box #camera-button-btn{border:none;padding:0;color:#5b5b5b;width:35px;height:35px;border-radius:50%;background:#fff;line-height:35px;box-shadow:none}
 .publisher-box #camera-button-btn svg.feather{margin-top:-1px;width:20px;height:20px}
 .publisher-box .btn-default {padding:4px 8px}
-.publisher-box .btn-mat.btn-go-live {padding: 0;margin: 0 5px;} 
+.publisher-box .btn-mat.btn-go-live {padding: 0;margin: 0 5px;}
 .publisher-box #publisher-button {line-height: 35px;min-width: 100px;}
 .publisher-box .publisher-hidden-option #percent{position:relative;left:auto;color:#444!important}
 .publisher-box .publisher-hidden-option #progress .progress,.publisher-box .publisher-hidden-option #progress .progress .progress-bar{height:4px;border-radius:0}
@@ -1300,7 +1300,7 @@ ul#filterby-post {position: sticky;top: 45px;z-index: 9;box-shadow: 0 1px 3px rg
 .options .total-votes svg {width: 14px;height: 14px;margin-top: -2px;}
 .wo_votes.active .poll-option {color: #2196f3;}
 .wo_votes.active .poll-option > span svg {opacity: 1;}
-	
+
 #toggle,.affiliates-link{text-align:center}
 .affiliates-link .affiliates-desc{margin-top:10px}
 .affiliates-link .affiliates-desc a{color:green!important}
@@ -2546,7 +2546,7 @@ to {background-position: top right  }
 .animated_8 {-webkit-animation-duration: 0.4s;animation-duration: 0.4s;}
 .animated_10 {-webkit-animation-duration: 0.5s;animation-duration: 0.5s;}
 .animated_12 {-webkit-animation-duration: 0.6s;animation-duration: 0.6s;}*/
-  
+
 .emoji {width: 120px;height: 120px;background: #FFDA6A;border-radius: 50%;position: relative;transform: scale(0.325);top: -76%;right: 76%;}
 
 .emoji__face, .emoji__eyebrows, .emoji__eyes, .emoji__mouth, .emoji__tongue, .emoji__heart, .emoji__hand, .emoji__thumb {position: absolute;}
@@ -2767,7 +2767,7 @@ to {background-position: top right  }
 .no_anim .emoji--wow .emoji__eyebrows {top: 15px;}
 .no_anim .emoji--sad .emoji__eyes:after {display: block;left: -35px;-webkit-transform: rotate(45deg) scale(2);transform: rotate(45deg) scale(2);}
 .no_anim .emoji--like .emoji__hand, .no_anim .emoji--like .emoji__thumb, .no_anim .emoji--love .emoji__heart, .no_anim .emoji--haha .emoji__face, .no_anim .emoji--haha .emoji__mouth, .no_anim .emoji--wow .emoji__face, .no_anim .emoji--wow .emoji__eyebrows, .no_anim .emoji--wow .emoji__mouth, .no_anim .emoji--sad .emoji__face, .no_anim .emoji--sad .emoji__mouth, .no_anim .emoji--sad .emoji__eyes:after, .no_anim .emoji--angry, .no_anim .emoji--angry .emoji__face, .no_anim .emoji--angry .emoji__mouth {animation: none;}
- 
+
 .inline_post_count_emoji {width: 16px;height: 16px;display: inline-block;}
 .inline_post_count_emoji .emoji {transform: scale(0.1333);top: -324%;right: 324%;}
 .like-btn-text-like {color:rgb(88, 144, 255);}
@@ -3770,7 +3770,7 @@ svg {vertical-align: middle;}
 
 
 
-	
+
 
 
 

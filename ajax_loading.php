@@ -1,9 +1,9 @@
-<?php 
+<?php
 // +------------------------------------------------------------------------+
 // | @author Deen Doughouz (DoughouzForest)
 // | @author_url 1: http://www.wowonder.com
 // | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com   
+// | @author_email: wowondersocial@gmail.com
 // +------------------------------------------------------------------------+
 // | WoWonder - The Ultimate Social Networking Platform
 // | Copyright (c) 2017 WoWonder. All rights reserved.
@@ -49,7 +49,7 @@ if ($wo['config']['membership_system'] == 1) {
                     break;
                 case 'video-call-api':
                     include('sources/video_call_api.php');
-                    break;    
+                    break;
                 case 'home':
                     include('sources/home.php');
                     break;
@@ -61,16 +61,16 @@ if ($wo['config']['membership_system'] == 1) {
                     break;
                 case 'confirm-sms':
                     include('sources/confirm_sms.php');
-                    break;   
+                    break;
                 case 'confirm-sms-password':
                     include('sources/confirm_sms_password.php');
-                    break;   
+                    break;
                 case 'forgot-password':
                     include('sources/forgot_password.php');
-                    break;    
+                    break;
                 case 'reset-password':
                     include('sources/reset_password.php');
-                    break;    
+                    break;
                 case 'start-up':
                     include('sources/start_up.php');
                     break;
@@ -204,16 +204,16 @@ if ($wo['config']['membership_system'] == 1) {
                     break;
                 case 'new-product':
                     include('sources/new_product.php');
-                    break; 
+                    break;
                 case 'edit-product':
                     include('sources/edit_product.php');
-                    break;  
+                    break;
                 case 'products':
                     include('sources/products.php');
-                    break;   
+                    break;
                 case 'my-products':
                     include('sources/my_products.php');
-                    break;    
+                    break;
                 case 'site-pages':
                     include('sources/site_pages.php');
                     break;
@@ -454,16 +454,16 @@ if ($wo['config']['membership_system'] == 1) {
                     break;
                 case 'confirm-sms':
                     include('sources/confirm_sms.php');
-                    break;   
+                    break;
                 case 'confirm-sms-password':
                     include('sources/confirm_sms_password.php');
-                    break;   
+                    break;
                 case 'forgot-password':
                     include('sources/forgot_password.php');
-                    break;    
+                    break;
                 case 'reset-password':
                     include('sources/reset_password.php');
-                    break;   
+                    break;
                 case 'activate':
                     include('sources/activate.php');
                     break;
@@ -540,16 +540,16 @@ if ($wo['config']['membership_system'] == 1) {
                 break;
             case 'confirm-sms':
                 include('sources/confirm_sms.php');
-                break;   
+                break;
             case 'confirm-sms-password':
                 include('sources/confirm_sms_password.php');
-                break;   
+                break;
             case 'forgot-password':
                 include('sources/forgot_password.php');
-                break;    
+                break;
             case 'reset-password':
                 include('sources/reset_password.php');
-                break;   
+                break;
             case 'activate':
                 include('sources/activate.php');
                 break;
@@ -626,7 +626,7 @@ else{
             break;
         case 'video-call-api':
             include('sources/video_call_api.php');
-            break;    
+            break;
         case 'home':
             include('sources/home.php');
             break;
@@ -638,16 +638,16 @@ else{
             break;
         case 'confirm-sms':
             include('sources/confirm_sms.php');
-            break;   
+            break;
         case 'confirm-sms-password':
             include('sources/confirm_sms_password.php');
-            break;   
+            break;
         case 'forgot-password':
             include('sources/forgot_password.php');
-            break;    
+            break;
         case 'reset-password':
             include('sources/reset_password.php');
-            break;    
+            break;
         case 'start-up':
             include('sources/start_up.php');
             break;
@@ -772,16 +772,16 @@ else{
             break;
         case 'new-product':
             include('sources/new_product.php');
-            break; 
+            break;
         case 'edit-product':
             include('sources/edit_product.php');
-            break;  
+            break;
         case 'products':
             include('sources/products.php');
-            break;   
+            break;
         case 'my-products':
             include('sources/my_products.php');
-            break;    
+            break;
         case 'site-pages':
             include('sources/site_pages.php');
             break;
@@ -1135,16 +1135,16 @@ else{
 //         break;
 //     case 'new-product':
 //         include('sources/new_product.php');
-//         break; 
+//         break;
 //     case 'edit-product':
 //         include('sources/edit_product.php');
-//         break;  
+//         break;
 //     case 'products':
 //         include('sources/products.php');
-//         break;      
+//         break;
 //     case 'my-products':
 //         include('sources/my_products.php');
-//         break;    
+//         break;
 //     case 'site-pages':
 //         include('sources/site_pages.php');
 //         break;
@@ -1350,7 +1350,7 @@ if ($wo['page'] == 'timeline' && $wo['loggedin'] == true && $wo['config']['css_u
       $data['is_css_file'] = 1;
       $data['css_file'] = '<link rel="stylesheet" class="styled-profile" href="' . Wo_GetMedia($wo['user_profile']['css_file']) . '">';
       $data['css_file_header'] = $wo['css_file_header'];
-    } 
+    }
 }
 
 $data['is_footer'] = 0;
@@ -1372,9 +1372,13 @@ if ($wo['redirect'] == 1) {
 
 $data['url'] = Wo_SeoLink('index.php' . $url);
 ?>
-<script>console.log('<?php echo json_encode($data);?>')</script>
+
+
+    <script>
+            console.log('<?php echo json_encode($data);?>')
+    </script>
 
 <input type="hidden" id="json-data" value='<?php echo htmlspecialchars(json_encode($data));?>'>
 <?php
-echo $wo['content'];
+    echo $wo['content'];
 ?>

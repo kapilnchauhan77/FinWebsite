@@ -1,13 +1,4 @@
-<?php 
-// +--------------------------------------\----------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com   
-// +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2017 WoWonder. All rights reserved.
-// +------------------------------------------------------------------------+
+<?php
 require_once('assets/init.php');
 
 if ($wo['loggedin'] == true) {
@@ -19,12 +10,12 @@ if ($wo['loggedin'] == true) {
     // $url = parse_url($wo['config']['site_url']);
     // if (!empty($url)) {
     //     if ($url['scheme'] == 'http') {
-    //         if ($http_url != 'http://' . $url['host']) { 
+    //         if ($http_url != 'http://' . $url['host']) {
     //            header('Location: ' . $wo['config']['site_url']);
     //            exit();
     //         }
     //     } else {
-    //         if ($http_url != 'https://' . $url['host']) { 
+    //         if ($http_url != 'https://' . $url['host']) {
     //            header('Location: ' . $wo['config']['site_url']);
     //            exit();
     //         }
@@ -68,7 +59,7 @@ if ($wo['config']['maintenance_mode'] == 1) {
         if (Wo_IsAdmin() === false) {
             $page = 'maintenance';
         }
-    } 
+    }
 }
 if (!empty($_GET['m'])) {
     $page = 'welcome';
@@ -88,7 +79,7 @@ if ($wo['config']['membership_system'] == 1) {
                     break;
                 case 'video-call-api':
                     include('sources/video_call_api.php');
-                    break;    
+                    break;
                 case 'home':
                     include('sources/home.php');
                     break;
@@ -100,16 +91,16 @@ if ($wo['config']['membership_system'] == 1) {
                     break;
                 case 'confirm-sms':
                     include('sources/confirm_sms.php');
-                    break;   
+                    break;
                 case 'confirm-sms-password':
                     include('sources/confirm_sms_password.php');
-                    break;   
+                    break;
                 case 'forgot-password':
                     include('sources/forgot_password.php');
-                    break;    
+                    break;
                 case 'reset-password':
                     include('sources/reset_password.php');
-                    break;    
+                    break;
                 case 'start-up':
                     include('sources/start_up.php');
                     break;
@@ -229,16 +220,16 @@ if ($wo['config']['membership_system'] == 1) {
                     break;
                 case 'new-product':
                     include('sources/new_product.php');
-                    break; 
+                    break;
                 case 'edit-product':
                     include('sources/edit_product.php');
-                    break;  
+                    break;
                 case 'products':
                     include('sources/products.php');
-                    break;   
+                    break;
                 case 'my-products':
                     include('sources/my_products.php');
-                    break;    
+                    break;
                 case 'site-pages':
                     include('sources/site_pages.php');
                     break;
@@ -481,16 +472,16 @@ if ($wo['config']['membership_system'] == 1) {
                     break;
                 case 'confirm-sms':
                     include('sources/confirm_sms.php');
-                    break;   
+                    break;
                 case 'confirm-sms-password':
                     include('sources/confirm_sms_password.php');
-                    break;   
+                    break;
                 case 'forgot-password':
                     include('sources/forgot_password.php');
-                    break;    
+                    break;
                 case 'reset-password':
                     include('sources/reset_password.php');
-                    break;   
+                    break;
                 case 'activate':
                     include('sources/activate.php');
                     break;
@@ -558,16 +549,16 @@ if ($wo['config']['membership_system'] == 1) {
                 break;
             case 'confirm-sms':
                 include('sources/confirm_sms.php');
-                break;   
+                break;
             case 'confirm-sms-password':
                 include('sources/confirm_sms_password.php');
-                break;   
+                break;
             case 'forgot-password':
                 include('sources/forgot_password.php');
-                break;    
+                break;
             case 'reset-password':
                 include('sources/reset_password.php');
-                break;   
+                break;
             case 'activate':
                 include('sources/activate.php');
                 break;
@@ -635,7 +626,7 @@ else{
             break;
         case 'video-call-api':
             include('sources/video_call_api.php');
-            break;    
+            break;
         case 'home':
             include('sources/home.php');
             break;
@@ -647,16 +638,16 @@ else{
             break;
         case 'confirm-sms':
             include('sources/confirm_sms.php');
-            break;   
+            break;
         case 'confirm-sms-password':
             include('sources/confirm_sms_password.php');
-            break;   
+            break;
         case 'forgot-password':
             include('sources/forgot_password.php');
-            break;    
+            break;
         case 'reset-password':
             include('sources/reset_password.php');
-            break;    
+            break;
         case 'start-up':
             include('sources/start_up.php');
             break;
@@ -776,16 +767,16 @@ else{
             break;
         case 'new-product':
             include('sources/new_product.php');
-            break; 
+            break;
         case 'edit-product':
             include('sources/edit_product.php');
-            break;  
+            break;
         case 'products':
             include('sources/products.php');
-            break;   
+            break;
         case 'my-products':
             include('sources/my_products.php');
-            break;    
+            break;
         case 'site-pages':
             include('sources/site_pages.php');
             break;

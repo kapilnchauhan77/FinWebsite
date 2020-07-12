@@ -7914,7 +7914,6 @@ function Wo_StockPriceCaching($fincode){
         return false;
     };
 
-
     $hashed_fincode = md5($fincode);
     if ($wo['config']['cacheSystem'] == 1) {
         $data = $cache->read($hashed_fincode . '_COMPANY_Price.tmp');
@@ -8110,18 +8109,10 @@ function Wo_PortfolioCaching($portfolio_id, $get_desc){
     $portfolio_id        = Wo_Secure($portfolio_id);
     $query_text = "SELECT `portfolio_id`, `portfolio_name`, `portfolio_url`, `invested_value`, `current_value`, `PL`, `PL_PER`, `timestamp_created`, `no_of_stocks`, `daily_rank`, `overall_rank`, `privacy_level` FROM " . T_PORTFOLIO . "
         WHERE `portfolio_id` = {$portfolio_id}";
-    $hashed_portfolio_id = md5($portfolio_id);
-    if ($wo['config']['cacheSystem'] == 1) {
-        $fetched_data = $cache->read($hashed_portfolio_id . '_PORTFOLIO_Data.tmp');
-        if (empty($fetched_data)) {
-            $sql          = mysqli_query($sqlConnect, $query_text);
-            $fetched_data = mysqli_fetch_assoc($sql);
-            $cache->write($hashed_portfolio_id . '_PORTFOLIO_Data.tmp', $fetched_data);
-        }
-    } else {
-        $sql          = mysqli_query($sqlConnect, $query_text);
-        $fetched_data = mysqli_fetch_assoc($sql);
-        }
+
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    $fetched_data = mysqli_fetch_assoc($sql);
+
     if (empty($fetched_data)) {
         return array();
     }
@@ -8147,4 +8138,36 @@ function Wo_getPortfolioURL(){
     $fetched_data = mysqli_fetch_assoc($query_one);
 
     return 'portfolio_' . $wo['user']['user_id'] . '_' . $fetched_data['portfolio_count'];
+}
+function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
+    global $wo, $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+    $no_of_stocks = $wo['portfolio_data']['no_of_stocks'] + $no_of_stocks;
+
+    foreach ($stock_quote_data as $stock_quote_datum) {
+
+        $stock_fincode = Wo_Secure($stock_quote_datum['stock_fincode']);
+        $stock_transaction_date = Wo_Secure($stock_quote_datum['stock_transaction_date']);
+        $stock_transaction_price = Wo_Secure($stock_quote_datum['stock_transaction_price']);
+        $stock_transaction_qty = Wo_Secure($stock_quote_datum['stock_transaction_qty']);
+
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`) VALUES ({$portfolio_id}, {$stock_fincode}, {$stock_transaction_date}, {$stock_transaction_price}, {$stock_transaction_qty})";
+        $query     = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+    }
+
+    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `no_of_stocks` = {$no_of_stocks} WHERE `portfolio_id` = {$portfolio_id}";
+    $query     = mysqli_query($sqlConnect, $query_one);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    $wo['portfolio_data']['no_of_stocks'] = $no_of_stocks;
+
+    return true;
 }

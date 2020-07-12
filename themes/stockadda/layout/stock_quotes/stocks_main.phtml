@@ -84,7 +84,6 @@
 				<div class="clear"></div>
 			</div>
 				<nav>
-
 					<ul class="pagination">
 						<li class="page-item disabled" id="Previous">
 						<a class="page-link" href="javascript:void(0);" onClick="previous(1)">
@@ -109,9 +108,9 @@
 	</div>
 </div>
 <script>
+
 	function previous(page_num=1, pageFilter="All"){
 		$("#loaded").remove();
-        console.log(page_num);
 		if(page_num!==1){
 			first_page_num = page_num - 1;
 			second_page_num = page_num;
@@ -147,6 +146,7 @@
 		  });
 		}
 	}
+
 	function next(page_num=3, pageFilter="All"){
 		$("#loaded").remove();
         console.log(page_num);
@@ -175,6 +175,7 @@
   		});
 		};
 	}
+
     function first(page_num=1, pageFilter="All"){
 		$("#loaded").remove();
         console.log(page_num);
@@ -208,6 +209,7 @@
 			}
   		});
 	};
+
 	function second(page_num=2, pageFilter="All"){
 		$("#loaded").remove();
 		first_page_num = page_num - 1;
@@ -239,6 +241,7 @@
 			}
   		});
 	};
+
 	function third(page_num=3, pageFilter="All"){
 		$("#loaded").remove();
 		first_page_num = page_num - 1;
@@ -270,6 +273,7 @@
 			}
   		});
 	};
+
 	function changePage(pageFilter="All"){
 			$("#loaded").remove();
 			$("li").removeClass("active");
@@ -289,4 +293,5 @@
 				}
 			});
 	};
+
 </script>

@@ -16,6 +16,12 @@ if ($f == "search") {
             // $data['query'][] = $wo['result'];
         }
     }
+    if ($s == 'stock_quote' && isset($_GET['query'])) {
+        $data['query'] = array();
+        foreach (SA_GetStock_Quote_Search($_GET['query']) as $wo['result']) {
+            $data['html'] .= Wo_LoadPage('portfolio/stock_search_selection');
+        }
+    }
     if ($s == 'hash' && isset($_GET['query'])) {
         foreach (Wo_GetSerachHash($_GET['query']) as $wo['result']) {
             $data['html'] .= Wo_LoadPage('header/hashtags-result');

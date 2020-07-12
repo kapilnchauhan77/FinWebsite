@@ -4036,8 +4036,7 @@ function Wo_GetSearchAdv($search_qeury, $type, $offset = 0, $limit = 0) {
             $data[] = Wo_PageData($fetched_data['page_id']);
         }
     } elseif ($type == 'stock_quotes') {
-        $query = mysqli_query($sqlConnect, " SELECT `fincode` FROM " . T_COMPANIES . " WHERE ((`compname` LIKE '%$search_qeury%') OR (`hse_name` LIKE '%$search_qeury%') OR (`ind_name` LIKE '%$search_qeury%') OR (`scripcode` LIKE '%$search_qeury%') OR (`isin` LIKE '%$search_qeury%')) LIMIT 10");
-
+        $query = mysqli_query($sqlConnect, " SELECT `fincode` FROM " . T_COMPANIES . " WHERE ((`compname` like '%$search_qeury%') OR (`symbol` LIKE '%$search_qeury%') OR (`compname` like '%$search_qeury%') OR (`scripcode` LIKE '%$search_qeury%') OR (`isin` LIKE '%$search_qeury%')) LIMIT 10");
         while ($fetched_data = mysqli_fetch_assoc($query)) {
             $data[] = Wo_CompanyCaching($fetched_data['fincode']);
         }

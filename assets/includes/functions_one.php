@@ -1,13 +1,4 @@
 <?php
-// +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com
-// +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2016 WoWonder. All rights reserved.
-// +------------------------------------------------------------------------+
 /* Script Main Functions (File 1) */
 function Wo_GetTerms() {
     global $sqlConnect;
@@ -2697,7 +2688,7 @@ function Wo_GetSearch($search_qeury) {
         $data[] = Wo_PageData($fetched_data['page_id']);
     }
     // SA ADDITION FOR MAKING STOCK_QUOTES SEARCHABLE
-    $query = mysqli_query($sqlConnect, " SELECT `fincode` FROM " . T_COMPANIES . " WHERE ((`compname` LIKE '%$search_qeury%') OR (`hse_name` LIKE '%$search_qeury%') OR (`ind_name` LIKE '%$search_qeury%') OR (`scripcode` LIKE '%$search_qeury%') OR (`isin` LIKE '%$search_qeury%')) LIMIT 3");
+    $query = mysqli_query($sqlConnect, " SELECT `fincode` FROM " . T_COMPANIES . " WHERE ((`compname` LIKE '%$search_qeury%') OR (`symbol` LIKE '%$search_qeury%') OR (`scripcode` LIKE '%$search_qeury%') OR (`isin` LIKE '%$search_qeury%')) LIMIT 3");
     while ($fetched_data = mysqli_fetch_assoc($query)) {
         $data[] = Wo_CompanyCaching($fetched_data['fincode']);
     }
@@ -8414,4 +8405,16 @@ function WoCanLogin() {
     }
     $db->where('time',time()-(60 * $wo['config']['lock_time'] * 2),'<')->delete(T_BAD_LOGIN);
     return true;
+}
+
+// SA CUSTOM FUNCTIONS
+function SA_GetStock_Quote_Search($search_qeury) {
+    global $sqlConnect, $wo;
+    $search_qeury = Wo_Secure($search_qeury);
+    $data         = array();
+    $query = mysqli_query($sqlConnect, " SELECT `fincode` FROM " . T_COMPANIES . " WHERE ((`compname` LIKE '%$search_qeury%') OR (`symbol` LIKE '%$search_qeury%') OR (`scripcode` LIKE '%$search_qeury%') OR (`isin` LIKE '%$search_qeury%')) LIMIT 3");
+    while ($fetched_data = mysqli_fetch_assoc($query)) {
+        $data[] = Wo_CompanyCaching($fetched_data['fincode']);
+    }
+    return $data;
 }

@@ -1,9 +1,10 @@
-<?php 
+<?php
 if ($f == 'register_recent_search') {
     $array_type = array(
         'user',
         'page',
-        'group'
+        'group',
+        'stock_quote'
     );
     if (!empty($_GET['id']) && !empty($_GET['type'])) {
         if (in_array($_GET['type'], $array_type)) {

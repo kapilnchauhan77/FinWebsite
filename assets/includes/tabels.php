@@ -1,13 +1,4 @@
 <?php
-// +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com   
-// +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2016 WoWonder. All rights reserved.
-// +------------------------------------------------------------------------+
 define('T_USERS','Wo_Users');
 define('T_COUNTRIES', 'Wo_Countries');
 define('T_FOLLOWERS', 'Wo_Followers');
@@ -134,5 +125,6 @@ define('T_QABNKP', 'bnk_particulars');
 define('T_QAMANP', 'man_particulars');
 define('T_PORTFOLIO', 'portfolios');
 define('T_PORTFOLIO_DESC', 'portfolio_desc_table');
+define('T_PORTFOLIO_STOCKS', 'stocks_in_portfolio');
 //END OF CUSTOM ADDITIONS
 ?>

@@ -1,6 +1,6 @@
-/* 
+/*
 
-Add here your custom css styles Example: p { text-align: center; color: red; } 
+Add here your custom css styles Example: p { text-align: center; color: red; }
 
 */
 
@@ -44,11 +44,11 @@ ul.profile-completion-bar .completion-bar div.completion-bar-status {background:
 #photo-form .create-album,#poll-form .delete-poll{transition:all .2s ease-in-out;font-size:12px;color:#fff;font-weight:700}
 #poll-form .delete-poll{display:inline-block;background:#a84849;border-radius:3px;padding:2px 5px 3px;margin:0 10px 0px;cursor:pointer}
 #poll-form .delete-poll:hover{background:#814a4b}
-ul#filter-company {position: sticky;top: 45px;z-index: 9;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);border-radius: 4px;}
-ul#filter-button {position: sticky;top: 45px;z-index: 9;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);border-radius: 4px;}
-#filter-company li{display:inline-block;float:left;width:11.11%;height:35px;padding:5px 10px;text-align:center}
+ul#filter-company {position: sticky;top: 45px;z-index: 10;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);border-radius: 4px;}
+ul#filter-button {position: sticky;top: 45px;z-index: 10;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);border-radius: 4px;}
+#filter-company li{display:block;float:left;width:11.11%;height:35px;padding:5px 10px;text-align:center}
 #filter-company li svg{width:20px;height:20px;display:block;margin:2px auto 1px;}
-#filter-button li{display:inline-block;float:left;width:11.11%;height:35px;padding:5px 10px;text-align:center}
+#filter-button li{display:block;float:left;width:11.11%;height:35px;padding:5px 10px;text-align:center}
 #filter-button li svg{width:20px;height:20px;display:block;margin:2px auto 1px;}
 #filter-company .avtive{border-bottom:2px solid;background:#f9f9f9;transition:all .1s;border-left:0;border-color:currentColor!important}
 #filter-button .avtive{background:#f9f9f9;transition:all .1s;border-left:0;border-color:currentColor!important}
@@ -68,6 +68,7 @@ ul#filter-button {position: sticky;top: 45px;z-index: 9;box-shadow: 0 1px 3px rg
     position: relative;
     text-align: center;
     -webkit-transform: translateZ(0); /* webkit flicker fix */
+    transform: translateZ(0);
     -webkit-font-smoothing: antialiased; /* webkit text rendering fix */
 }
 
@@ -132,7 +133,7 @@ ul#filter-button {position: sticky;top: 45px;z-index: 9;box-shadow: 0 1px 3px rg
     bottom: 12px;
 }
 
-.switchx input { 
+.switchx input {
     opacity: 0;
     width: 0;
     height: 0;
@@ -192,4 +193,273 @@ input:checked + .sliderx:before {
 
 .lte8 .time-of-year:hover .tooltip {
     display: block;
+}
+
+/* Portfolio Informats */
+
+/* Tooltip Opacity Change */
+.tooltip-inner {
+  background-color: #000000 !important;
+  border-color: #000000;
+}
+
+.tooltip.top .tooltip-arrow {
+  border-top-color: #000000;
+}
+
+.tooltip.right .tooltip-arrow {
+  border-right-color: #000000;
+}
+
+.tooltip.bottom .tooltip-arrow {
+  border-bottom-color: #000000;
+}
+
+.tooltip.left .tooltip-arrow {
+  border-left-color: #000000;
+}
+
+/* Stock Seach Bar */
+.search-container .search-input{transition:all .3s;border-radius:2em;border-color:transparent;width:360px;height:30px;color:#777;box-shadow:none;padding-left:25px;background:0 0}
+.search-container .search-input:focus{background:#fff;color:#333}
+.search-container .inner-addon .glyphicon{padding:0!important;color:#666!important;margin:5px 0 5px 5px;width:16px;height:16px}
+.stock-search-dropdown-result .center-text{margin-top:5px}
+.stock-search-dropdown-result li{margin:5px 0;padding-left:0}
+.stock-search-dropdown-result li:first-child{margin-top:0;padding-left:0}
+.stock-search-dropdown-result li:last-child{margin-bottom:0;padding-left:0}
+.stock-search-dropdown-result li a{display:inline-block;padding:3px 10px 8px;width: 100%;transition:all .1s ease-in-out;text-decoration:none}
+.stock-search-dropdown-result li a:hover{background:rgba(0,0,0,.05)}
+.stock-search-dropdown-result .search-user-name{font-size:14px;margin-bottom:4px;margin-top:2px;font-family:verdana;display:inline-block}
+.stock-search-dropdown-result .search-user-lastseen{font-size:11px;color:#999}
+.stock-search-dropdown-result .search-user-avatar img{border-radius:50%;width:40px;height:40px;box-shadow:0 0 0 1px rgba(0,0,0,.06);margin:2px 10px 0 0}
+.stock-search-dropdown-result li .search_result_badge{border:1px solid #03A9F4;color:#03A9F4;padding:1px 5px 1.5px;text-transform:uppercase;font-size:9px;margin-left:5px;font-weight:700;letter-spacing:.6px;border-radius:3px}
+.stock-quote-dropdown-menu:not(.notfi-dropdown):not([role=combobox]) {border-radius: 5px;box-shadow: 0 1px 4px rgba(0, 0, 0, 0.23);padding: 8px 0;transform: scale3d(.8,.8,1);transform-origin: right top;display: block;opacity: 0;visibility: hidden;border: 0;}
+.stock-quote-dropdown-menu.toleft {transform-origin: left top !important;}
+.open>.stock-quote-dropdown-menu:not(.notfi-dropdown):not([role=combobox]) {transition: opacity 150ms cubic-bezier(0.4, 0.0, 0.2, 1) 0ms,transform 150ms cubic-bezier(0.4, 0.0, 0.2, 1) 0ms;transform: scale3d(1,1,1);opacity: 1;visibility: visible;}
+.stock-quote-dropdown-menu:not(.notfi-dropdown) > li > a {padding: 0 16px;line-height: 32px;}
+
+.stock_quote_transac_price_div:hover::after,
+.stock_quote_transac_price_div:focus-within::after {
+  position: relative;
+  right: 2.8em;
+}
+
+/* handle Firefox (arrows always shown) */
+@supports (-moz-appearance:none) {
+  .stock_quote_transac_price_div::after {
+    position: relative;
+    right: 2.8em;
+  }
+}
+
+/* set the unit abbreviation for each unit class */
+.stock_quote_transac_price_div::after {
+  position: relative;
+  right: 1.4em;
+  content: '\20B9';
+}
+
+.stock_quote_name_search {
+    vertical-align: middle !important;
+    font-weight: 700;
+}
+
+.stock_search_delete_trash:hover{
+    color: red;
+    cursor: pointer;
+}
+
+.stock-quote-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    min-width: 180px;
+    padding: 5px 0;
+    font-size: 13px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box; /* border:1px solid #ccc; */ /* border:1px solid rgba(0,0,0,.15); */
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+}
+.stock_input {
+	outline: none;
+}
+.stock_input[type=text] {
+	-webkit-appearance: textfield;
+	-webkit-box-sizing: content-box;
+	box-sizing: content-box;
+	font-family: inherit;
+	font-size: 100%;
+}
+.stock_input::-webkit-search-decoration,
+.stock_input::-webkit-search-cancel-button {
+	display: none;
+}
+.stock_input[type=text] {
+	background: #ededed url(./themes/stockadda/icons/png/search-icon.png) no-repeat 9px center;
+	border: solid 1px #ccc;
+	padding: 9px 12px 9px 32px;
+	width: 55px;
+
+	-webkit-border-radius: 10em;
+	-moz-border-radius: 10em;
+	border-radius: 10em;
+
+	-webkit-transition: all .5s;
+	-moz-transition: all .5s;
+	transition: all .5s;
+}
+.stock_input[type=text]:focus {
+	width: 130px;
+	background-color: #fff;
+	border-color: #4d91ea;
+
+	-webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	-moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	box-shadow: 0 0 5px rgba(109,207,246,.5);
+}
+.stock_input:-moz-placeholder {
+	color: #999;
+}
+.stock_input::-webkit-input-placeholder {
+	color: #999;
+}
+
+.stock_search input[type=text] {
+	width: 15px;
+	padding-left: 10px;
+	color: transparent;
+	cursor: pointer;
+}
+.stock_search input[type=text]:hover {
+	background-color: #fff;
+	border-color: #4d91ea;
+
+	-webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	-moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	box-shadow: 0 0 5px rgba(109,207,246,.5);
+}
+.stock_search .stock_tooltip input[type=text]:focus {
+	width: 130px;
+	padding-left: 32px;
+	color: #000;
+	background-color: #fff;
+	cursor: auto;
+}
+.stock_search input:-moz-placeholder {
+	color: transparent;
+}
+.stock_search input::-webkit-input-placeholder {
+	color: transparent;
+}
+
+@media (max-width:990px) {
+    .search-container .search-input{width:200px}
+}
+
+/* Stock Doc Import */
+.stock_document_import {
+	outline: none;
+}
+.stock_document_import{
+	-webkit-appearance: textfield;
+	-webkit-box-sizing: content-box;
+	box-sizing: content-box;
+	font-family: inherit;
+	font-size: 100%;
+}
+.stock_document_import::-webkit-search-decoration,
+.stock_document_import::-webkit-search-cancel-button {
+	display: none;
+}
+.stock_document_import{
+    background: #ededed url(./themes/stockadda/icons/png/document_upload.png) no-repeat 9px center;
+	padding: 19px 10px 20px 27px;
+	border: solid 1px #ccc;
+	-webkit-border-radius: 10em;
+	-moz-border-radius: 10em;
+	border-radius: 10em;
+	background-color: #ededed;
+    position: absolute;
+    margin-left: 3px;
+}
+.stock_document_import {
+	width: 0px;
+	color: transparent;
+	cursor: pointer;
+}
+.stock_document_import:hover {
+	background-color: #fff;
+	border-color: #4d91ea;
+	-webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	-moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	box-shadow: 0 0 5px rgba(109,207,246,.5);
+}
+.stock_document_import:focus {
+	color: #000;
+	background-color: #fff;
+	cursor: auto;
+}
+.stock_document_import:-moz-placeholder {
+	color: transparent;
+}
+.stock_document_import::-webkit-input-placeholder {
+	color: transparent;
+}
+
+
+/* Stock Search Subimt */
+.stock_search_submit {
+	outline: none;
+}
+.stock_search_submit{
+	-webkit-appearance: textfield;
+	-webkit-box-sizing: content-box;
+	box-sizing: content-box;
+	font-family: inherit;
+	font-size: 100%;
+}
+.stock_search_submit::-webkit-search-decoration,
+.stock_search_submit::-webkit-search-cancel-button {
+	display: none;
+}
+.stock_search_submit{
+    background: #ededed url(./themes/stockadda/icons/png/submit_stock.png) no-repeat center;
+    background-size: 28px 25px;
+	padding: 19px 10px 20px 27px;
+	border: solid 1px #ccc;
+	-webkit-border-radius: 10em;
+	-moz-border-radius: 10em;
+	border-radius: 10em;
+	background-color: #ededed;
+    float: right;
+    margin-left: 3px;
+}
+.stock_search_submit {
+	width: 0px;
+	color: transparent;
+	cursor: pointer;
+}
+.stock_search_submit:hover {
+	background-color: #fff;
+	border-color: #4d91ea;
+	-webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	-moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	box-shadow: 0 0 5px rgba(109,207,246,.5);
+}
+.stock_search_submit:focus {
+	color: #000;
+	background-color: #fff;
+	cursor: auto;
+}
+.stock_search_submit:-moz-placeholder {
+	color: transparent;
+}
+.stock_search_submit::-webkit-input-placeholder {
+	color: transparent;
 }
