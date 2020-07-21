@@ -3341,8 +3341,7 @@ function Wo_GetMyGames($limit = 0,$offset = 0) {
     return $data;
 }
 function Wo_IsNameExist($username, $active = 0) {
-    global $wo, $sqlConnect;
-    $data = array();
+    global $sqlConnect;
     if (empty($username)) {
         return false;
     }
@@ -3354,15 +3353,15 @@ function Wo_IsNameExist($username, $active = 0) {
 
     // CUSTOM ADDITION FOR STOCK QUOTES AND PORTFOLIO
     if (strpos($username, 'portfolio_') == 0) {
-    $query   = mysqli_query($sqlConnect, "SELECT `portfolio_id` FROM " . T_PORTFOLIO . " WHERE `portfolio_url` = '{$username}'");
-    $fetched_data = mysqli_fetch_assoc($query);
-    if (!empty($fetched_data)) {
-        return array(
-                true,
-                'type' => 'portfolio',
-                'portfolio_id' => $fetched_data['portfolio_id']
-            );
-    }
+        $query   = mysqli_query($sqlConnect, "SELECT `portfolio_id` FROM " . T_PORTFOLIO . " WHERE `portfolio_url` = '{$username}'");
+        $fetched_data = mysqli_fetch_assoc($query);
+        if (!empty($fetched_data)) {
+            return array(
+                    true,
+                    'type' => 'portfolio',
+                    'portfolio_id' => $fetched_data['portfolio_id']
+                );
+        }
     }
 
     $comp_username = str_replace("_", " ", $username);

@@ -8104,10 +8104,10 @@ function Wo_GetMyPortfolios() {
     return $data;
 }
 function Wo_PortfolioCaching($portfolio_id, $get_desc){
-    global $wo, $sqlConnect, $cache;
+    global $sqlConnect, $wo;
 
     $portfolio_id        = Wo_Secure($portfolio_id);
-    $query_text = "SELECT `portfolio_id`, `portfolio_name`, `portfolio_url`, `invested_value`, `current_value`, `PL`, `PL_PER`, `timestamp_created`, `no_of_stocks`, `daily_rank`, `overall_rank`, `privacy_level` FROM " . T_PORTFOLIO . "
+    $query_text = "SELECT `portfolio_id`, `user_id`, `portfolio_name`, `portfolio_url`, `invested_value`, `current_value`, `PL`, `PL_PER`, `timestamp_created`, `no_of_stocks`, `daily_rank`, `overall_rank`, `privacy_level` FROM " . T_PORTFOLIO . "
         WHERE `portfolio_id` = {$portfolio_id}";
 
     $sql          = mysqli_query($sqlConnect, $query_text);
@@ -8116,9 +8116,52 @@ function Wo_PortfolioCaching($portfolio_id, $get_desc){
     if (empty($fetched_data)) {
         return array();
     }
+
+    switch ($fetched_data['privacy_level']) {
+        case 0:
+            break;
+        case 1:
+            if ($wo['user']['user_id'] == $fetched_data['user_id']){
+                break;
+            }
+            else if (Wo_IsFollowing($wo['user']['user_id'], $fetched_data['user_id'])){
+                break;
+            }
+            else {
+                return array();
+                break;
+            }
+        case 2:
+            // TODO: Paid Feature
+            break;
+        case 3:
+            if ($wo['user']['user_id'] == $fetched_data['user_id']){
+                break;
+            }
+            else {
+                return array();
+                break;
+            }
+        case 4:
+            if ($wo['user']['user_id'] == $fetched_data['user_id']){
+                break;
+            }
+            else {
+                return array();
+                break;
+            }
+        case 5:
+            if ($wo['user']['user_id'] == $fetched_data['user_id']){
+                break;
+            }
+            else {
+                return array();
+                break;
+            }
+    }
+
     $fetched_data['url'] = Wo_SeoLink('index.php?link1=timeline&u=' . $fetched_data['portfolio_url']);
     $fetched_data['raw_url'] = '?link1=timeline&u=' . $fetched_data['portfolio_url'];
-
 
     if ($get_desc == true){
         $query_text = "SELECT `portfolio_description` FROM " . T_PORTFOLIO . "
@@ -8170,4 +8213,39 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
     $wo['portfolio_data']['no_of_stocks'] = $no_of_stocks;
 
     return true;
+}
+function Wo_GetStocksInPortfolio($portfolio_id) {
+    global $sqlConnect;
+
+    $data       = array();
+    $query_text = "SELECT `stock_fincode` FROM " . T_PORTFOLIO_STOCKS . "
+        WHERE `portfolio_id` = {$portfolio_id}";
+    $query_one  = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($query_one)) {
+        if (is_array($fetched_data)) {
+            $data[] = Wo_CompanyCaching($fetched_data['stock_fincode']);
+        };
+    };
+
+    return $data;
+}
+function Wo_GetStockDetailInPortfolio($stock_fincode, $portfolio_id) {
+    global $sqlConnect;
+
+    $data       = array();
+    $stock_fincode = Wo_Secure($stock_fincode);
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_text = "SELECT `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty` FROM " . T_PORTFOLIO_STOCKS . "
+        WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id}";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    $data['stock_portfolio_data'] = mysqli_fetch_assoc($sql);
+
+    if (empty($data['stock_portfolio_data'])){
+        return array();
+    }
+
+    $data['stock_data'] = Wo_CompanyCaching($stock_fincode);
+
+    return $data;
 }

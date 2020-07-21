@@ -53,9 +53,27 @@ if (isset($_GET['u'])) {
         } else if ($check_user['type'] == 'portfolio') {
             $id                  = $portfolio_id = $check_user['portfolio_id'];
             $wo['portfolio_data']  = Wo_PortfolioCaching($portfolio_id, true);
-            $type                = 'portfolio';
-            $about               = $wo['portfolio_data']['portfolio_name'];
-            $name                = $wo['portfolio_data']['portfolio_name'];
+            if (empty($wo['portfolio_data'])){
+                header("Location: " . Wo_SeoLink('index.php?link1=404'));
+                exit();
+            }
+            if (isset($_GET['stock'])){
+               $wo['full_stock_data'] = Wo_GetStockDetailInPortfolio($_GET['stock'], $portfolio_id);
+               if (empty($wo['full_stock_data'])){
+                   header("Location: " . Wo_SeoLink('index.php?link1=404'));
+                   exit();
+               }
+               else{
+                   $type             = 'portfolioStocks';
+                   $about            = $wo['portfolio_data']['portfolio_name'] . ' - ' . $wo['full_stock_data']['stock_data']['compname'];
+                   $name             = $wo['portfolio_data']['portfolio_name'] . ' - ' . $wo['full_stock_data']['stock_data']['compname'];
+               }
+            }
+            else{
+                $type                = 'portfolio';
+                $about               = $wo['portfolio_data']['portfolio_name'];
+                $name                = $wo['portfolio_data']['portfolio_name'];
+            }
         }
         // END OF ADDITION
 
@@ -115,7 +133,7 @@ if ($type == 'timeline' && $wo['loggedin'] == true) {
        $con2 = 0;
        if (!isset($came_from)) {
            header("Location: " . $wo['config']['site_url']);
-           exit(); 
+           exit();
        } else {
            Wo_RedirectSmooth(Wo_SeoLink('index.php?link1=404'));
        }
