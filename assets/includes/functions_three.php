@@ -8241,6 +8241,41 @@ function Wo_GetStockDetailInPortfolio($stock_fincode, $portfolio_id) {
     $sql          = mysqli_query($sqlConnect, $query_text);
     $data['stock_portfolio_data'] = mysqli_fetch_assoc($sql);
 
+    $query_text = "SELECT `scripcode`, `symbol` FROM " . T_COMPANIES . "
+        WHERE `fincode` = {$stock_fincode}";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    $fetched_data = mysqli_fetch_assoc($sql);
+    $scripcode = $fetched_data['scripcode'];
+    if ($scripcode == ''){
+        $symbol = $fetched_data['symbol'];
+
+        $query_text = "SELECT * FROM " . T_STOCKDTLADJNSE . "
+            WHERE `nse` = {$symbol}";
+        $sql          = mysqli_query($sqlConnect, $query_text);
+        $data['price_detail_adjusted'] = mysqli_fetch_assoc($sql);
+
+        $query_text = "SELECT * FROM " . T_STOCKDTLINTNSE . "
+            WHERE `nse` = {$symbol}";
+        $sql          = mysqli_query($sqlConnect, $query_text);
+        $data['price_detail_intraday'] = mysqli_fetch_assoc($sql);
+
+        $data['company_broker'] = 'nse';
+    }
+    else{
+        $query_text = "SELECT * FROM " . T_STOCKDTLADJBSE . "
+            WHERE `bse` = {$scripcode}";
+        $sql          = mysqli_query($sqlConnect, $query_text);
+        $data['price_detail_adjusted'] = mysqli_fetch_assoc($sql);
+
+        $query_text = "SELECT * FROM " . T_STOCKDTLINTBSE . "
+            WHERE `bse` = {$scripcode}";
+        $sql          = mysqli_query($sqlConnect, $query_text);
+        $data['price_detail_intraday'] = mysqli_fetch_assoc($sql);
+
+
+        $data['company_broker'] = 'bse';
+    }
+
     if (empty($data['stock_portfolio_data'])){
         return array();
     }

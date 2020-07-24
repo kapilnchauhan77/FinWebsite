@@ -1,7 +1,7 @@
-<?php 
+<?php
 if ($f == 'portfolios') {
     if ($s == 'create_portfolio') {
-        if (!empty($_POST['portfolio_name']) && ($_POST['portfolio_name'] == 'wowonder' || $_POST['portfolio_name'] == 'sunshine' || $_POST['portfolio_name'] == $wo['config']['theme']) ) {
+        if (empty($_POST['portfolio_name'])) {
             $_POST['portfolio_name'] = "";
         }
         if (empty($_POST['portfolio_name']) || empty($_POST['portfolio_title']) || empty(Wo_Secure($_POST['portfolio_title'])) || Wo_CheckSession($hash_id) === false) {
@@ -90,7 +90,7 @@ if ($f == 'portfolios') {
                 $data = array(
                     'status' => 200,
                     // 'location' => Wo_SeoLink('index.php?link1=timeline&u=' . Wo_Secure($_POST['page_name'])),
-                    'location' => "http://localhost/saddanew/portfolio",
+                    'location' => $wo['config']['site_url'] . "/portfolio",
                     $re_page_data,
                     $portfolioCreated
                 );

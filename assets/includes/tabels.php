@@ -126,5 +126,9 @@ define('T_QAMANP', 'man_particulars');
 define('T_PORTFOLIO', 'portfolios');
 define('T_PORTFOLIO_DESC', 'portfolio_desc_table');
 define('T_PORTFOLIO_STOCKS', 'stocks_in_portfolio');
+define('T_STOCKDTLADJBSE', 'stock_prices_adjusted_ftp_bse');
+define('T_STOCKDTLADJNSE', 'stock_prices_adjusted_ftp_nse');
+define('T_STOCKDTLINTBSE', 'stock_prices_intraday_ftp_bse');
+define('T_STOCKDTLINTNSE', 'stock_prices_intraday_ftp_nse');
 //END OF CUSTOM ADDITIONS
 ?>
