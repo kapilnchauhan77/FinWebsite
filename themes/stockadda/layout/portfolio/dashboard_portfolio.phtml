@@ -20,34 +20,50 @@
 
             <div class="SA_row" style="margin-top: 1.5% !important;">
 
-                <!-- Current Value -->
-                <div class="SA_col-xl-3 SA_col-md-6 SA_mb-4">
-                    <div class="SA_card SA_border-left-primary SA_shadow SA_h-100 SA_py-2">
-                        <div class="SA_card-body">
-                            <div class="SA_row SA_no-gutters SA_align-items-center">
-                                <div class="SA_col SA_mr-2">
-                                    <div class="SA_text-xs SA_font-weight-bold SA_text-primary SA_text-uppercase SA_mb-1">Current Value</div>
-                                    <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;40,000</div>
-                                </div>
-                                <div class="SA_col-auto">
-                                    <i class="fa fa-calendar fa-2x SA_text-gray-300"></i>
+                <!-- Value -->
+                <div class="SA_col-7">
+                    <div class="SA_row">
+
+                        <div class="SA_col-3">
+                            <div class="SA_card SA_border-left-primary SA_shadow SA_h-100 SA_py-2">
+                                <div class="SA_card-body">
+                                    <div class="SA_row SA_no-gutters SA_align-items-center">
+                                        <div class="SA_col SA_mr-2">
+                                            <div class="SA_text-xs SA_font-weight-bold SA_text-primary SA_text-uppercase SA_mb-1">Current Value</div>
+                                            <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id='currentVal'>40,000</span></div>
+                                        </div>
+                                        <div class="SA_col-auto">
+                                            <i class="fa fa-calendar fa-2x SA_text-gray-300"></i>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Rankings -->
-                <div class="SA_col-xl-3 SA_col-md-6 SA_mb-4">
-                    <div class="SA_row">
-
-                        <div class="SA_col-6">
+                        <div class="SA_col-3">
                             <div class="SA_card SA_border-left-warning SA_shadow SA_h-100 SA_py-2">
+                                <div class="SA_card-body">
+                                    <div class="SA_row SA_no-gutters SA_align-items-center">
+                                        <div class="SA_col SA_mr-2">
+                                            <div class="SA_text-xs SA_font-weight-bold SA_text-warning SA_text-uppercase SA_mb-1">Invested Value</div>
+                                            <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<?php echo $wo['portfolio_data']['invested_value']?></div>
+                                        </div>
+                                        <div class="SA_col-auto">
+                                            <i class="fa fa-inr fa-2x SA_text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rankings -->
+                        <div class="SA_col-3">
+                            <div class="SA_card SA_border-left-info SA_shadow SA_h-100 SA_py-2">
                                 <div class="SA_card-body">
                                       <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                             <div class="SA_col SA_mr-2">
-                                              <div class="SA_text-xs SA_font-weight-bold SA_text-warning SA_text-uppercase SA_mb-1">Daily Rank</div>
+                                              <div class="SA_text-xs SA_font-weight-bold SA_text-info SA_text-uppercase SA_mb-1">Daily Rank</div>
                                               <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">32</div>
                                             </div>
 
@@ -60,13 +76,13 @@
                             </div>
                         </div>
 
-                        <div class="SA_col-6">
-                            <div class="SA_card SA_border-left-info SA_shadow SA_h-100 SA_py-2">
+                        <div class="SA_col-3">
+                            <div class="SA_card SA_border-left-secondary SA_shadow SA_h-100 SA_py-2">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                         <div class="SA_col SA_mr-2">
-                                          <div class="SA_text-xs SA_font-weight-bold SA_text-info SA_text-uppercase SA_mb-1">Overall Rank</div>
+                                          <div class="SA_text-xs SA_font-weight-bold SA_text-secondary SA_text-uppercase SA_mb-1">Overall Rank</div>
                                           <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">1132</div>
                                         </div>
 
@@ -82,63 +98,69 @@
                     </div>
                 </div>
 
-                <!-- Day's P&L -->
-                <div class="SA_col-xl-3 SA_col-md-6 SA_mb-4">
-                    <div class="SA_card SA_border-left-success SA_shadow SA_h-100">
-                        <div class="SA_card-body">
-                            <div class="SA_row SA_no-gutters SA_align-items-center">
 
-                                <div class="SA_col SA_mr-2">
-                                    <div class="SA_text-xs SA_font-weight-bold SA_text-success SA_text-uppercase SA_mb-1">Day's P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;&#8377;1332 </span> </div>
+                <div class="SA_col-5">
+                    <div class="SA_row">
 
+                        <!-- Day's P&L -->
+                        <div class="SA_col-6">
+                            <div class="SA_card SA_border-left-success SA_shadow SA_h-100">
+                                <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
-                                        <div class="SA_col-auto">
-                                            <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800">39%</div>
-                                        </div>
-                                        <div class="SA_col">
-                                            <div id="SA_progress-sm" class="SA_progress SA_mr-2">
-                                                <div class="SA_progress-bar SA_bg-success" role="progressbar" style="width: 39%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+
+                                        <div class="SA_col SA_mr-2">
+                                            <div class="SA_text-xs SA_font-weight-bold SA_text-success SA_text-uppercase SA_mb-1">Day's P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;&#8377;1332 </span> </div>
+
+                                            <div class="SA_row SA_no-gutters SA_align-items-center">
+                                                <div class="SA_col-auto">
+                                                    <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800">39%</div>
+                                                </div>
+                                                <div class="SA_col">
+                                                    <div id="SA_progress-sm" class="SA_progress SA_mr-2">
+                                                        <div class="SA_progress-bar SA_bg-success" role="progressbar" style="width: 39%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+
+                                        <div class="SA_col-auto">
+                                            <i class="fa fa-clipboard-list fa-2x SA_text-gray-300"></i>
+                                        </div>
+
                                     </div>
                                 </div>
-
-                                <div class="SA_col-auto">
-                                    <i class="fa fa-clipboard-list fa-2x SA_text-gray-300"></i>
-                                </div>
-
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Overall P&L -->
-                <div class="SA_col-xl-3 SA_col-md-6 SA_mb-4">
-                    <div class="SA_card SA_border-left-danger SA_shadow SA_h-100">
-                        <div class="SA_card-body">
-                            <div class="SA_row SA_no-gutters SA_align-items-center">
-
-                                <div class="SA_col SA_mr-2">
-
-                                    <div class="SA_text-xs SA_font-weight-bold SA_text-danger SA_text-uppercase SA_mb-1">Overall P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;-&#8377;302 </span> </div>
-
+                        <!-- Overall P&L -->
+                        <div class="SA_col-6">
+                            <div class="SA_card SA_border-left-danger SA_shadow SA_h-100">
+                                <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
-                                        <div class="SA_col-auto">
-                                              <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800">-10%</div>
-                                        </div>
-                                        <div class="SA_col">
-                                            <div id="SA_progress-sm" class="SA_progress SA_mr-2">
-                                                <div class="SA_progress-bar SA_bg-danger" role="progressbar" style="width: 10%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+
+                                        <div class="SA_col SA_mr-2">
+
+                                            <div class="SA_text-xs SA_font-weight-bold SA_text-danger SA_text-uppercase SA_mb-1">Overall P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;-&#8377;302 </span> </div>
+
+                                            <div class="SA_row SA_no-gutters SA_align-items-center">
+                                                <div class="SA_col-auto">
+                                                      <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800">-10%</div>
+                                                </div>
+                                                <div class="SA_col">
+                                                    <div id="SA_progress-sm" class="SA_progress SA_mr-2">
+                                                        <div class="SA_progress-bar SA_bg-danger" role="progressbar" style="width: 10%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
                                             </div>
+
                                         </div>
+
+                                        <div class="SA_col-auto">
+                                            <i class="fa fa-clipboard-list fa-2x SA_text-gray-300"></i>
+                                        </div>
+
                                     </div>
-
                                 </div>
-
-                                <div class="SA_col-auto">
-                                    <i class="fa fa-clipboard-list fa-2x SA_text-gray-300"></i>
-                                </div>
-
                             </div>
                         </div>
                     </div>
@@ -167,7 +189,7 @@
 
                     <li>
                         <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;type=equity" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;type=equity" id="stock_in_portfolio" class="menuactive">
-                            <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
+                        <span class="split-link"><?php echo $wo['portfolio_data']['no_of_stocks']; ?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
                             <span>Stocks</span>
                         </a>
                     </li>
@@ -196,7 +218,7 @@
                     </li>
                     <li>
                         <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;type=equity" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;type=equity" id="stock_in_portfolio">
-                            <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
+                            <span class="split-link"><?php echo $wo['portfolio_data']['no_of_stocks']; ?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
                             <span>Stocks</span>
                         </a>
                     </li>
@@ -568,12 +590,109 @@
 
 <script>
 
+    function findLocalItems (query) {
+      var i, results = [];
+      for (i in localStorage) {
+        if (localStorage.hasOwnProperty(i)) {
+          if (i.match(query) || (!query && typeof i === 'string')) {
+            value = JSON.parse(localStorage.getItem(i));
+            results.push(value);
+          }
+        }
+      }
+      return results;
+    }
+
+    function calculateTotalVals_display(data_of_all_stocks){
+       var adjustedValTotal = 0;
+       var intradayValTotal = 0;
+       var currentVal        = 0;
+
+       data_of_all_stocks.forEach(function (value) {
+           console.log(value);
+
+           if (value.price_detail_intraday == null) {
+               currentVal += parseInt(value.price_detail_adjusted.close);
+               adjustedValTotal += parseInt(value.price_detail_adjusted.close);
+           } else{
+               currentVal += parseInt(value.price_detail_intraday.close);
+               intradayValTotal += parseInt(value.price_detail_intraday.close);
+               adjustedValTotal += parseInt(value.price_detail_adjusted.close);
+           }
+       });
+
+       $('#currentVal').text(currentVal);
+
+       return [adjustedValTotal, intradayValTotal, currentVal];
+    }
+
     $( document ).ready(function() {
+
+       var get_data_from_server = false;
+       var data_of_all_stocks = new Array();
+       var adjustedValTotal, intradayValTotal, currentVal;
+
        $('link[rel=stylesheet][href~="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css?version=<?php echo $wo['config']['version']; ?>"]').remove();
        // $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/general-style-plugins.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
        $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/bootsrap-rtl.min.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
        $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/style_rtl.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
        // $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/style.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
+
+       if (typeof(Storage) == "undefined") {
+           get_data_from_server = true;
+       } else {
+           expiry_token = localStorage.getItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_time_token");
+           const dt = new Date();
+           if (dt.getTime() > expiry_token && dt.getDay() != 6 && dt.getDay != 0) {
+               get_data_from_server = true;
+           }
+           else{
+               data_of_all_stocks = findLocalItems(/^<?php echo $wo['portfolio_data']['portfolio_id']; ?>_\d{6,}_portfolio_stock$/i);
+               (data_of_all_stocks.length == 0) && (get_data_from_server = true);
+               console.log('Data localStorage:')
+               console.log(data_of_all_stocks)
+
+           }
+       }
+
+       if (get_data_from_server) {
+
+           $.ajax({
+               url: Wo_Ajax_Requests_File(),
+               type: 'GET',
+               dataType: 'json',
+               data: {
+                   f:'all_portfolio_stocks_extra_data',
+                   portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>
+               },
+                   })
+                   .done(function(data) {
+                       console.log('Data from server:')
+                       data_of_all_stocks = data.extraStockDataFullPortfolio;
+                       console.log(data_of_all_stocks);
+
+                       if (typeof(Storage) != "undefined") {
+                           localStorage.setItem(data.portfolio_id + "_time_token", new Date().getTime() + 210000)
+                           data_of_all_stocks.forEach(function (value){
+                               localStorage.setItem(data.portfolio_id + "_" + value.stock_fincode + "_portfolio_stock", JSON.stringify(value));
+                           })
+                       }
+
+                       [adjustedValTotal, intradayValTotal, currentVal] = calculateTotalVals_display(data_of_all_stocks);
+
+                       console.log("Current Value: " + currentVal);
+                       console.log("Adjusted Value: " + adjustedValTotal);
+                       console.log("Intraday Value: " + intradayValTotal);
+                   });
+
+       } else{
+           [adjustedValTotal, intradayValTotal, currentVal] = calculateTotalVals_display(data_of_all_stocks);
+
+           console.log("Current Value: " + currentVal);
+           console.log("Adjusted Value: " + adjustedValTotal);
+           console.log("Intraday Value: " + intradayValTotal);
+       }
+
     });
 
 </script>

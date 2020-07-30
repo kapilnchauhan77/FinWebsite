@@ -1,7 +1,8 @@
-<script>console.log(<?php echo json_encode($wo['full_stock_data']); ?>)</script>
+<script>console.log(<?php echo json_encode($wo['stock_data']); ?>)</script>
+<script>console.log(<?php echo json_encode($wo['portfolio_data']); ?>)</script>
 <script>console.log(<?php echo json_encode($_GET); ?>)</script>
 
-<div class="row page-margin wo_page_profile" data-page="portfolioStock" data-id="<?php echo $wo['full_stock_data']['stock_data']['compname'];?>">
+<div class="row page-margin wo_page_profile" data-page="portfolioStock" data-id="<?php echo $wo['stock_data']['compname'];?>">
     <div class="profile-container">
 		<div class="page-info-cont" style="margin-bottom: 0px !important;">
             <div class="row">
@@ -9,7 +10,7 @@
                 <div class="col-xs-12 col-sm-9 col-md-8 first_row">
                     <div class="info">
                         <div class="title" style="margin: 0">
-                            <a href="<?php echo $wo['full_stock_data']['stock_data']['url'];?>" data-ajax="?link1=timeline&u=<?php echo str_replace(" ", "_", $wo['full_stock_data']['stock_data']['s_name']);?>" style="font-size: 50px;"><?php echo $wo['full_stock_data']['stock_data']['compname'];?></a>
+                            <a href="<?php echo $wo['stock_data']['url'];?>" data-ajax="?link1=timeline&u=<?php echo str_replace(" ", "_", $wo['stock_data']['s_name']);?>" style="font-size: 50px;"><?php echo $wo['stock_data']['compname'];?></a>
                         </div>
 
                     </div>
@@ -25,17 +26,17 @@
             <div class="SA_row" style="margin-top: 1.5% !important;">
 
                 <!-- Rankings -->
-                <div class="SA_col-6">
+                <div class="SA_col-7">
                     <div class="SA_row">
 
-                        <div class="SA_col-4">
+                        <div class="SA_col-3">
                             <div class="SA_card SA_border-left-primary SA_shadow SA_h-100 SA_py-2">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                         <div class="SA_col SA_mr-2">
                                             <div class="SA_text-xs SA_font-weight-bold SA_text-primary SA_text-uppercase SA_mb-1">Current Stock Value</div>
-                                            <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;40,000</div>
+                                            <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="current_stock_value">40,000</span></div>
                                         </div>
 
                                         <div class="SA_col-auto">
@@ -47,14 +48,14 @@
                             </div>
                         </div>
 
-                        <div class="SA_col-4">
+                        <div class="SA_col-3">
                             <div class="SA_card SA_border-left-warning SA_shadow SA_h-100 SA_py-2">
                                 <div class="SA_card-body">
                                   <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                     <div class="SA_col SA_mr-2">
-                                      <div class="SA_text-xs SA_font-weight-bold SA_text-warning SA_text-uppercase SA_mb-1">Average Buying Price</div>
-                                      <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;32,000</div>
+                                      <div class="SA_text-xs SA_font-weight-bold SA_text-warning SA_text-uppercase SA_mb-1">Total Buying Price</div>
+                                      <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="total_buying_price">32,000</span></div>
                                     </div>
 
                                     <div class="SA_col-auto">
@@ -66,18 +67,37 @@
                             </div>
                         </div>
 
-                        <div class="SA_col-4">
+                        <div class="SA_col-3">
                             <div class="SA_card SA_border-left-info SA_shadow SA_h-100 SA_py-2">
+                                <div class="SA_card-body">
+                                  <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                    <div class="SA_col SA_mr-2">
+                                      <div class="SA_text-xs SA_font-weight-bold SA_text-info SA_text-uppercase SA_mb-1">Average Buying Price</div>
+                                      <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="average_buying_price">32,000</span></div>
+                                    </div>
+
+                                    <div class="SA_col-auto">
+                                      <i class="fa fa-inr fa-2x SA_text-gray-300"></i>
+                                    </div>
+
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="SA_col-3">
+                            <div class="SA_card SA_border-left-dark SA_shadow SA_h-100 SA_py-2">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                       <div class="SA_col SA_mr-2">
-                                        <div class="SA_text-xs SA_font-weight-bold SA_text-info SA_text-uppercase SA_mb-1">Stock Rank in Portfolio</div>
-                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">1132</div>
+                                        <div class="SA_text-xs SA_font-weight-bold SA_text-dark SA_text-uppercase SA_mb-1">Volume in Portfolio</div>
+                                        <div id="volume_in_portfolio" class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">1132</div>
                                       </div>
 
                                       <div class="SA_col-auto">
-                                        <i class="fa fa-trophy fa-2x SA_text-gray-300"></i>
+                                        <i class="fa fa-calculator fa-2x SA_text-gray-300"></i>
                                       </div>
 
                                     </div>
@@ -89,24 +109,24 @@
                 </div>
 
                 <!-- Day's P&L -->
-                <div class="SA_col-6">
+                <div class="SA_col-5">
                     <div class="SA_row">
 
                         <div class="SA_col-6">
-                            <div class="SA_card SA_border-left-success SA_shadow SA_h-100">
+                            <div id="daily_p_l_div" class="SA_card SA_border-left-secondary SA_shadow SA_h-100">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                         <div class="SA_col SA_mr-2">
-                                            <div class="SA_text-xs SA_font-weight-bold SA_text-success SA_text-uppercase SA_mb-1">Day's P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;&#8377;1332 </span> </div>
+                                            <div id="daily_p_l_text" class="SA_text-xs SA_font-weight-bold SA_text-secondary SA_text-uppercase SA_mb-1">Day's P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;&#8377;<span id="daily_p_l">1332</span></span> </div>
 
                                             <div class="SA_row SA_no-gutters SA_align-items-center">
                                                 <div class="SA_col-auto">
-                                                    <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800">39%</div>
+                                                    <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800"><span id="daily_p_l_per">39</span>%</div>
                                                 </div>
                                                 <div class="SA_col">
                                                     <div id="SA_progress-sm" class="SA_progress SA_mr-2">
-                                                        <div class="SA_progress-bar SA_bg-success" role="progressbar" style="width: 39%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        <div class="SA_progress-bar SA_bg-secondary" id="daily_p_l_progress" role="progressbar" style="width: 100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -123,21 +143,21 @@
 
                         <!-- Overall P&L -->
                         <div class="SA_col-6">
-                            <div class="SA_card SA_border-left-danger SA_shadow SA_h-100">
+                            <div id="overall_p_l_div" class="SA_card SA_border-left-secondary SA_shadow SA_h-100">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                         <div class="SA_col SA_mr-2">
 
-                                            <div class="SA_text-xs SA_font-weight-bold SA_text-danger SA_text-uppercase SA_mb-1">Overall P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;-&#8377;302 </span> </div>
+                                            <div id="overall_p_l_text" class="SA_text-xs SA_font-weight-bold SA_text-secondary SA_text-uppercase SA_mb-1">Overall P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;&#8377;<span id="overall_p_l">-302</span></span> </div>
 
                                             <div class="SA_row SA_no-gutters SA_align-items-center">
                                                 <div class="SA_col-auto">
-                                                      <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800">-10%</div>
+                                                      <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800"><span id="overall_p_l_per">-39.89</span>%</div>
                                                 </div>
                                                 <div class="SA_col">
                                                     <div id="SA_progress-sm" class="SA_progress SA_mr-2">
-                                                        <div class="SA_progress-bar SA_bg-danger" role="progressbar" style="width: 10%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        <div class="SA_progress-bar SA_bg-secondary" id="overall_p_l_progress" role="progressbar" style="width: 100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -168,13 +188,13 @@
         <div class="user-bottom-nav col-md-10" style="width: 33.333%;">
             <ul>
                 <li>
-                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;stock=<?php echo $wo['full_stock_data']['stock_data']['fincode'];?>" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;stock=<?php echo $wo['full_stock_data']['stock_data']['fincode'];?>" id="stock_in_portfolio">
+                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;stock=<?php echo $wo['stock_data']['fincode'];?>" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;stock=<?php echo $wo['stock_data']['fincode'];?>" id="stock_in_portfolio">
                         <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M5 3A2 2 0 0 0 3 5H5M7 3V5H9V3M11 3V5H13V3M15 3V5H17V3M19 3V5H21A2 2 0 0 0 19 3M3 7V9H5V7M7 7V11H11V7M13 7V11H17V7M19 7V9H21V7M3 11V13H5V11M19 11V13H21V11M7 13V17H11V13M13 13V17H17V13M3 15V17H5V15M19 15V17H21V15M3 19A2 2 0 0 0 5 21V19M7 19V21H9V19M11 19V21H13V19M15 19V21H17V19M19 19V21A2 2 0 0 0 21 19Z" fill="currentColor"></path></svg></span>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;stock=<?php echo $wo['full_stock_data']['stock_data']['fincode'];?>&amp;type=transactions" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;stock=<?php echo $wo['full_stock_data']['stock_data']['fincode'];?>&amp;type=transactions" id="stock_in_portfolio_transactions" class="menuactive">
+                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;stock=<?php echo $wo['stock_data']['fincode'];?>&amp;type=transactions" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;stock=<?php echo $wo['stock_data']['fincode'];?>&amp;type=transactions" id="stock_in_portfolio_transactions" class="menuactive">
                         <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
                         <span>Stock Transactions</span>
                     </a>
@@ -192,13 +212,13 @@
             <div class="user-bottom-nav col-md-10" style="width: 33.333%;">
                 <ul>
                     <li>
-                        <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;stock=<?php echo $wo['full_stock_data']['stock_data']['fincode'];?>" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;stock=<?php echo $wo['full_stock_data']['stock_data']['fincode'];?>" id="stock_in_portfolio" class="menuactive">
+                        <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;stock=<?php echo $wo['stock_data']['fincode'];?>" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;stock=<?php echo $wo['stock_data']['fincode'];?>" id="stock_in_portfolio" class="menuactive">
                             <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M5 3A2 2 0 0 0 3 5H5M7 3V5H9V3M11 3V5H13V3M15 3V5H17V3M19 3V5H21A2 2 0 0 0 19 3M3 7V9H5V7M7 7V11H11V7M13 7V11H17V7M19 7V9H21V7M3 11V13H5V11M19 11V13H21V11M7 13V17H11V13M13 13V17H17V13M3 15V17H5V15M19 15V17H21V15M3 19A2 2 0 0 0 5 21V19M7 19V21H9V19M11 19V21H13V19M15 19V21H17V19M19 19V21A2 2 0 0 0 21 19Z" fill="currentColor"></path></svg></span>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;stock=<?php echo $wo['full_stock_data']['stock_data']['fincode'];?>&amp;type=transactions" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;stock=<?php echo $wo['full_stock_data']['stock_data']['fincode'];?>&amp;type=transactions" id="stock_in_portfolio_transactions">
+                        <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;stock=<?php echo $wo['stock_data']['fincode'];?>&amp;type=transactions" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;stock=<?php echo $wo['stock_data']['fincode'];?>&amp;type=transactions" id="stock_in_portfolio_transactions">
                             <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
                             <span>Stock Transactions</span>
                         </a>
@@ -570,12 +590,133 @@
 
 <script>
 
+    function averageBuyingPrice({avg, n, total}, stock_portfolio_data) {
+        if (stock_portfolio_data.stock_transaction_qty < 0) {
+            return {avg, n, total};
+        }
+        return {
+            avg: (parseFloat(stock_portfolio_data.stock_transaction_price) + n * avg) / (n + parseFloat(stock_portfolio_data.stock_transaction_qty)),
+            n:   n + parseFloat(stock_portfolio_data.stock_transaction_qty),
+            total: total + parseFloat(stock_portfolio_data.stock_transaction_price),
+        };
+    }
+
+    function change_colors(tag, p_l_per){
+       $('#'+ tag +'_per').text(overall_p_l_per.toFixed(2));
+       $('#'+ tag +'_progress').attr('style', "width: " + Math.abs(overall_p_l_per.toFixed(2).toString()) + "%");
+       if (p_l_per > 0){
+           $('#'+ tag +'_div').removeClass('SA_border-left-danger');
+           $('#'+ tag +'_div').removeClass('SA_border-left-secondary');
+           $('#'+ tag +'_text').removeClass('SA_text-danger');
+           $('#'+ tag +'_text').removeClass('SA_text-secondary');
+           $('#'+ tag +'_progress').removeClass('SA_bg-danger');
+           $('#'+ tag +'_progress').removeClass('SA_bg-secondary');
+
+           $('#'+ tag +'_text').addClass('SA_text-success');
+           $('#'+ tag +'_div').addClass('SA_border-left-success');
+           $('#'+ tag +'_progress').addClass('SA_bg-success');
+       } else if(p_l_per == 0) {
+           $('#'+ tag +'_div').removeClass('SA_border-left-success');
+           $('#'+ tag +'_div').removeClass('SA_border-left-danger');
+           $('#'+ tag +'_text').removeClass('SA_text-danger');
+           $('#'+ tag +'_text').removeClass('SA_text-success');
+           $('#'+ tag +'_progress').removeClass('SA_bg-danger');
+           $('#'+ tag +'_progress').removeClass('SA_bg-success');
+
+           $('#'+ tag +'_text').addClass('SA_text-secondary');
+           $('#'+ tag +'_div').addClass('SA_border-left-secondary');
+           $('#'+ tag +'_progress').addClass('SA_bg-secondary');
+       } else {
+           $('#'+ tag +'_div').removeClass('SA_border-left-success');
+           $('#'+ tag +'_div').removeClass('SA_border-left-secondary');
+           $('#'+ tag +'_text').removeClass('SA_text-success');
+           $('#'+ tag +'_text').removeClass('SA_text-secondary');
+           $('#'+ tag +'_progress').removeClass('SA_bg-success');
+           $('#'+ tag +'_progress').removeClass('SA_bg-secondary');
+
+           $('#'+ tag +'_text').addClass('SA_text-danger');
+           $('#'+ tag +'_div').addClass('SA_border-left-danger');
+           $('#'+ tag +'_progress').addClass('SA_bg-danger');
+       }
+    }
+
+    function change_upper_values(data){
+       console.log('Data:');
+       console.log(data);
+
+       const initialVals       = {avg: 0, n: 0, total: 0};
+       const stock_portfolio_data_average_length = data.extra_stock_data.stock_portfolio_data.reduce(averageBuyingPrice, initialVals);
+       console.log(stock_portfolio_data_average_length);
+
+       const volume_in_portfolio = stock_portfolio_data_average_length.n;
+       $('#volume_in_portfolio').text(volume_in_portfolio);
+
+       const average_buying_price = stock_portfolio_data_average_length.avg;
+       $('#average_buying_price').text(average_buying_price);
+
+       const total_buying_price = stock_portfolio_data_average_length.total;
+       $('#total_buying_price').text(total_buying_price);
+
+       if (data.extra_stock_data.price_detail_intraday != null){
+
+           $('#current_stock_value').text(data.extra_stock_data.price_detail_intraday.close);
+
+           const daily_p_l = (data.extra_stock_data.price_detail_intraday.close - data.extra_stock_data.price_detail_adjusted.close) * volume_in_portfolio;
+           $('#daily_p_l').text(daily_p_l);
+
+           const daily_p_l_per = ((data.extra_stock_data.price_detail_intraday.close - data.extra_stock_data.price_detail_adjusted.close) / data.extra_stock_data.price_detail_adjusted.close) * 100;
+
+           change_colors('daily_p_l', daily_p_l_per);
+
+           const overall_p_l = (data.extra_stock_data.price_detail_intraday.close * volume_in_portfolio) - total_buying_price;
+           $('#overall_p_l').text(overall_p_l);
+
+           const overall_p_l_per = (overall_p_l / (data.extra_stock_data.price_detail_intraday.close * volume_in_portfolio)) * 100;
+
+           change_colors('overall_p_l', overall_p_l_per);
+
+       } else{
+
+           $('#current_stock_value').text(data.extra_stock_data.price_detail_adjusted.close);
+
+           const daily_p_l = 0;
+           $('#daily_p_l').text(daily_p_l);
+
+           const daily_p_l_per = 0;
+
+           change_colors('daily_p_l', daily_p_l_per);
+
+           const overall_p_l = (data.extra_stock_data.price_detail_adjusted.close * volume_in_portfolio) - total_buying_price;
+           $('#overall_p_l').text(overall_p_l);
+
+           const overall_p_l_per = (overall_p_l / (data.extra_stock_data.price_detail_adjusted.close * volume_in_portfolio)) * 100;
+
+           change_colors('overall_p_l', overall_p_l_per);
+
+       }
+    }
+
     $( document ).ready(function() {
        $('link[rel=stylesheet][href~="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css?version=<?php echo $wo['config']['version']; ?>"]').remove();
        // $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/general-style-plugins.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
        $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/bootsrap-rtl.min.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
        $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/style_rtl.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
        // $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/style.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
+
+       $.ajax({
+           url: Wo_Ajax_Requests_File(),
+           type: 'GET',
+           dataType: 'json',
+           data: {
+               f:'portfolio_stock_extra_data',
+               stock_fincode: <?php echo $wo['stock_data']['fincode']; ?>,
+               portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>
+           },
+               })
+               .done(function(ajax_data) {
+                   change_upper_values(ajax_data);
+               })
+
     });
 
 </script>

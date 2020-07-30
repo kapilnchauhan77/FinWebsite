@@ -102,7 +102,8 @@
 
     var StockSearchContainer = $('.stock-search-container');
     var StockSearchResult = $('.stock-search-dropdown-result');
-    var stock_quotes_to_add = new Array();
+    var stock_quotes_to_add = {};
+    var stock_num = 0;
 
     function Wo_StockSearchResult(query) {
         if (query != '') {
@@ -131,7 +132,7 @@
             $('#stock_container').addClass('hidden');
             $('#stock_quote_table_search').removeClass('hidden');
         }
-        table_body_data_to_add = `<tr id=`+ fincode +` style="height:39px">
+        table_body_data_to_add = `<tr id=`+ fincode + stock_num +` style="height:39px">
                                      <td id="stock_name" class="stock_quote_name_search">` + comp_name + `</td>
                                      <td><input id="stock_transaction_date" type="date" name="transaction_date" /></td>
                                      <td>
@@ -140,44 +141,48 @@
                                          </span>
                                      </td>
                                      <td><input id="stock_qty" type="number" min="0" value="0" step="any" name="quantity" style="height:39px;" /></td>
-                                     <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteStockQuoteFromSearch(`+ fincode +`)"></i></td>
+                                     <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteStockQuoteFromSearch('`+ fincode + stock_num +`')"></i></td>
                                   </tr>`;
 
-        stock_quotes_to_add.push(fincode);
+        stock_quotes_to_add[stock_num] = fincode;
+        stock_num += 1;
 
         $('#table_stock_quote_search_body').append(table_body_data_to_add);
     }
 
-    function deleteStockQuoteFromSearch(fincode){
-        stock_quotes_to_add.splice(stock_quotes_to_add.indexOf(fincode), 1);
-        if (!(stock_quotes_to_add.length)){
+    function deleteStockQuoteFromSearch(id){
+
+        delete stock_quotes_to_add[id.slice(6)];
+
+        if (!(Object.keys(stock_quotes_to_add).length)){
             $('#stock_container').removeClass('hidden');
             $('#stock_quote_table_search').addClass('hidden');
         }
-        console.log(stock_quotes_to_add.length);
-        $("#"+fincode).remove();
+        $("#"+id).remove();
     }
 
     function pushStockDataToBackend(){
         var stock_array_to_send = new Array();
 
-        stock_quotes_to_add.forEach(function (fincode, index_stock){
-            if ($("#"+fincode+" #stock_transaction_date").val() === ""){
-                $("#"+fincode+" #stock_transaction_date").val(new Date().toDateInputValue());
+        Object.keys(stock_quotes_to_add).forEach(function (id){
+            if ($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val() === ""){
+                $("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val(new Date().toDateInputValue());
             }
 
             stockInfo = {
 
-                    stock_fincode: parseInt(fincode),
-                    stock_transaction_date: new Date($("#"+fincode+" #stock_transaction_date").val()).getTime()/1000,
-                    stock_transaction_price: parseFloat($("#"+fincode+" #stock_transaction_price").val()),
-                    stock_transaction_qty: parseFloat($("#"+fincode+" #stock_qty").val())
+                    stock_fincode: parseInt(stock_quotes_to_add[id]),
+                    stock_transaction_date: parseInt(new Date($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000),
+                    stock_transaction_price: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_price").val()),
+                    stock_transaction_qty: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val())
 
                         };
 
             //console.log(stockInfo);
             stock_array_to_send.push(stockInfo);
         });
+
+        console.log(stock_array_to_send);
 
         $.ajax({
             url: Wo_Ajax_Requests_File(),

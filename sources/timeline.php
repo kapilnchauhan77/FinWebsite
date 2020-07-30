@@ -58,15 +58,15 @@ if (isset($_GET['u'])) {
                 exit();
             }
             if (isset($_GET['stock'])){
-               $wo['full_stock_data'] = Wo_GetStockDetailInPortfolio($_GET['stock'], $portfolio_id);
-               if (empty($wo['full_stock_data'])){
+               $wo['stock_data'] = Wo_GetStockDetailInPortfolio($_GET['stock'], $portfolio_id);
+               if (empty($wo['stock_data'])){
                    header("Location: " . Wo_SeoLink('index.php?link1=404'));
                    exit();
                }
                else{
                    $type             = 'portfolioStocks';
-                   $about            = $wo['portfolio_data']['portfolio_name'] . ' - ' . $wo['full_stock_data']['stock_data']['compname'];
-                   $name             = $wo['portfolio_data']['portfolio_name'] . ' - ' . $wo['full_stock_data']['stock_data']['compname'];
+                   $about            = $wo['portfolio_data']['portfolio_name'] . ' - ' . $wo['stock_data']['compname'];
+                   $name             = $wo['portfolio_data']['portfolio_name'] . ' - ' . $wo['stock_data']['compname'];
                }
             }
             else{

@@ -134,9 +134,7 @@
             success: function(data) {
                 scrollToTop();
                 if (data.status == 200) {
-        	    localStorage.setItem("to_see", JSON.stringify(data));
-                window.location.href = data.location;
-                console.log(data);
+                    window.location.href = data.location;
                 } else {
                     console.log(data);
                     var errors = data.errors.join("<br>");

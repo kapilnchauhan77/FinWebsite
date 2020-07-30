@@ -8107,7 +8107,7 @@ function Wo_PortfolioCaching($portfolio_id, $get_desc){
     global $sqlConnect, $wo;
 
     $portfolio_id        = Wo_Secure($portfolio_id);
-    $query_text = "SELECT `portfolio_id`, `user_id`, `portfolio_name`, `portfolio_url`, `invested_value`, `current_value`, `PL`, `PL_PER`, `timestamp_created`, `no_of_stocks`, `daily_rank`, `overall_rank`, `privacy_level` FROM " . T_PORTFOLIO . "
+    $query_text = "SELECT `portfolio_id`, `user_id`, `portfolio_name`, `portfolio_url`, `invested_value`, `PL`, `PL_PER`, `timestamp_created`, `no_of_stocks`, `daily_rank`, `overall_rank`, `privacy_level` FROM " . T_PORTFOLIO . "
         WHERE `portfolio_id` = {$portfolio_id}";
 
     $sql          = mysqli_query($sqlConnect, $query_text);
@@ -8194,8 +8194,16 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
         $stock_transaction_date = Wo_Secure($stock_quote_datum['stock_transaction_date']);
         $stock_transaction_price = Wo_Secure($stock_quote_datum['stock_transaction_price']);
         $stock_transaction_qty = Wo_Secure($stock_quote_datum['stock_transaction_qty']);
+        $timestamp_created = strtotime("now");
 
-        $query_one   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`) VALUES ({$portfolio_id}, {$stock_fincode}, {$stock_transaction_date}, {$stock_transaction_price}, {$stock_transaction_qty})";
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `timestamp_created`) VALUES ({$portfolio_id}, {$stock_fincode}, {$stock_transaction_date}, {$stock_transaction_price}, {$stock_transaction_qty}, {$timestamp_created})";
+        $query     = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value` = `invested_value` + {$stock_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
 
         if (!$query) {
@@ -8218,11 +8226,13 @@ function Wo_GetStocksInPortfolio($portfolio_id) {
     global $sqlConnect;
 
     $data       = array();
+    $stocks       = array();
     $query_text = "SELECT `stock_fincode` FROM " . T_PORTFOLIO_STOCKS . "
         WHERE `portfolio_id` = {$portfolio_id}";
     $query_one  = mysqli_query($sqlConnect, $query_text);
     while ($fetched_data = mysqli_fetch_assoc($query_one)) {
-        if (is_array($fetched_data)) {
+        if (is_array($fetched_data) && !in_array($fetched_data['stock_fincode'], $stocks)) {
+            $stocks[] = $fetched_data['stock_fincode'];
             $data[] = Wo_CompanyCaching($fetched_data['stock_fincode']);
         };
     };
@@ -8236,10 +8246,40 @@ function Wo_GetStockDetailInPortfolio($stock_fincode, $portfolio_id) {
     $stock_fincode = Wo_Secure($stock_fincode);
     $portfolio_id = Wo_Secure($portfolio_id);
 
+    $query_text = "SELECT `stock_fincode` FROM " . T_PORTFOLIO_STOCKS . "
+        WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id}";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+
+    if (empty(mysqli_fetch_assoc($sql))){
+        return array();
+    }
+
+    $data = Wo_CompanyCaching($stock_fincode);
+
+    return $data;
+}
+function Wo_ExtraStockDetailInPortfolio($stock_fincode, $portfolio_id) {
+    global $sqlConnect;
+
+    $data       = array();
+    $stock_fincode = Wo_Secure($stock_fincode);
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $data['stock_fincode'] = $stock_fincode;
+
     $query_text = "SELECT `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty` FROM " . T_PORTFOLIO_STOCKS . "
         WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id}";
     $sql          = mysqli_query($sqlConnect, $query_text);
-    $data['stock_portfolio_data'] = mysqli_fetch_assoc($sql);
+    $data['stock_portfolio_data'] = array();
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        if (is_array($fetched_data)) {
+            $data['stock_portfolio_data'][] = $fetched_data;
+        };
+    };
+
+    if (empty($data['stock_portfolio_data'])){
+        return array();
+    }
 
     $query_text = "SELECT `scripcode`, `symbol` FROM " . T_COMPANIES . "
         WHERE `fincode` = {$stock_fincode}";
@@ -8276,11 +8316,29 @@ function Wo_GetStockDetailInPortfolio($stock_fincode, $portfolio_id) {
         $data['company_broker'] = 'bse';
     }
 
-    if (empty($data['stock_portfolio_data'])){
+    return $data;
+}
+function Wo_ExtraStockDetailForAllStocksInPortfolio($portfolio_id) {
+    global $sqlConnect;
+
+    $data         = array();
+    $stocks       = array();
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_text = "SELECT `stock_fincode` FROM " . T_PORTFOLIO_STOCKS . "
+        WHERE `portfolio_id` = {$portfolio_id}";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        if (is_array($fetched_data) && !in_array($fetched_data['stock_fincode'], $stocks)) {
+            $stocks[] = $fetched_data['stock_fincode'];
+            $data[]   = Wo_ExtraStockDetailInPortfolio($fetched_data['stock_fincode'], $portfolio_id);
+        };
+    };
+
+    if (empty($stocks)){
         return array();
     }
 
-    $data['stock_data'] = Wo_CompanyCaching($stock_fincode);
-
     return $data;
 }
+

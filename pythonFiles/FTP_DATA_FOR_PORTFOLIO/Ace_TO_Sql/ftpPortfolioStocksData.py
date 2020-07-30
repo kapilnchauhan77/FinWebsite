@@ -6,11 +6,15 @@ def get_path_name_type(company_broker):
     date_string = (str(datetime.datetime.now()).split(' ')[0].split('-')[2] +
                    str(datetime.datetime.now()).split(' ')[0].split('-')[1] +
                    str(datetime.datetime.now()).split(' ')[0].split('-')[0]
-                   if (int(
+                   if (
+                       (int(
                            str(
                                datetime.datetime.now()
                                ).split(' ')[1]
                            .split(':')[0]) >= 10)
+                       and
+                       (datetime.datetime.today().weekday() <= 4)
+                   )
                    else
                    str(int(
                            str(
@@ -27,16 +31,21 @@ def get_path_name_type(company_broker):
           '\n\n')
 
     type_of_stock_price = ('intraday'
-                           if (int(
-                                   str(
-                                       datetime.datetime.now()
-                                       ).split(' ')[1]
-                                   .split(':')[0]) >= 10 and
+                           if (
                                int(
                                    str(
                                        datetime.datetime.now()
                                        ).split(' ')[1]
-                                   .split(':')[0]) < 17)
+                                   .split(':')[0]) >= 10
+                               and
+                               int(
+                                   str(
+                                       datetime.datetime.now()
+                                       ).split(' ')[1]
+                                   .split(':')[0]) < 17
+                               and
+                               (datetime.datetime.today().weekday() <= 4)
+                               )
                            else
                            'Adjusted')
 
