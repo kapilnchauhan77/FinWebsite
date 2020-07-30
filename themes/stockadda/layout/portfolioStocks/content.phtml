@@ -602,8 +602,8 @@
     }
 
     function change_colors(tag, p_l_per){
-       $('#'+ tag +'_per').text(overall_p_l_per.toFixed(2));
-       $('#'+ tag +'_progress').attr('style', "width: " + Math.abs(overall_p_l_per.toFixed(2).toString()) + "%");
+       $('#'+ tag +'_per').text(p_l_per.toFixed(2));
+       $('#'+ tag +'_progress').attr('style', "width: " + Math.abs(p_l_per.toFixed(2).toString()) + "%");
        if (p_l_per > 0){
            $('#'+ tag +'_div').removeClass('SA_border-left-danger');
            $('#'+ tag +'_div').removeClass('SA_border-left-secondary');
@@ -641,11 +641,9 @@
     }
 
     function change_upper_values(data){
-       console.log('Data:');
-       console.log(data);
 
        const initialVals       = {avg: 0, n: 0, total: 0};
-       const stock_portfolio_data_average_length = data.extra_stock_data.stock_portfolio_data.reduce(averageBuyingPrice, initialVals);
+       const stock_portfolio_data_average_length = data.stock_portfolio_data.reduce(averageBuyingPrice, initialVals);
        console.log(stock_portfolio_data_average_length);
 
        const volume_in_portfolio = stock_portfolio_data_average_length.n;
@@ -657,27 +655,27 @@
        const total_buying_price = stock_portfolio_data_average_length.total;
        $('#total_buying_price').text(total_buying_price);
 
-       if (data.extra_stock_data.price_detail_intraday != null){
+       if (data.price_detail_intraday != null){
 
-           $('#current_stock_value').text(data.extra_stock_data.price_detail_intraday.close);
+           $('#current_stock_value').text(data.price_detail_intraday.close);
 
-           const daily_p_l = (data.extra_stock_data.price_detail_intraday.close - data.extra_stock_data.price_detail_adjusted.close) * volume_in_portfolio;
+           const daily_p_l = (data.price_detail_intraday.close - data.extra_stock_data.price_detail_adjusted.close) * volume_in_portfolio;
            $('#daily_p_l').text(daily_p_l);
 
-           const daily_p_l_per = ((data.extra_stock_data.price_detail_intraday.close - data.extra_stock_data.price_detail_adjusted.close) / data.extra_stock_data.price_detail_adjusted.close) * 100;
+           const daily_p_l_per = ((data.price_detail_intraday.close - data.extra_stock_data.price_detail_adjusted.close) / data.extra_stock_data.price_detail_adjusted.close) * 100;
 
            change_colors('daily_p_l', daily_p_l_per);
 
-           const overall_p_l = (data.extra_stock_data.price_detail_intraday.close * volume_in_portfolio) - total_buying_price;
+           const overall_p_l = (data.price_detail_intraday.close * volume_in_portfolio) - total_buying_price;
            $('#overall_p_l').text(overall_p_l);
 
-           const overall_p_l_per = (overall_p_l / (data.extra_stock_data.price_detail_intraday.close * volume_in_portfolio)) * 100;
+           const overall_p_l_per = (overall_p_l / (data.price_detail_intraday.close * volume_in_portfolio)) * 100;
 
            change_colors('overall_p_l', overall_p_l_per);
 
        } else{
 
-           $('#current_stock_value').text(data.extra_stock_data.price_detail_adjusted.close);
+           $('#current_stock_value').text(data.price_detail_adjusted.close);
 
            const daily_p_l = 0;
            $('#daily_p_l').text(daily_p_l);
@@ -686,10 +684,10 @@
 
            change_colors('daily_p_l', daily_p_l_per);
 
-           const overall_p_l = (data.extra_stock_data.price_detail_adjusted.close * volume_in_portfolio) - total_buying_price;
+           const overall_p_l = (data.price_detail_adjusted.close * volume_in_portfolio) - total_buying_price;
            $('#overall_p_l').text(overall_p_l);
 
-           const overall_p_l_per = (overall_p_l / (data.extra_stock_data.price_detail_adjusted.close * volume_in_portfolio)) * 100;
+           const overall_p_l_per = (overall_p_l / (data.price_detail_adjusted.close * volume_in_portfolio)) * 100;
 
            change_colors('overall_p_l', overall_p_l_per);
 
@@ -697,26 +695,57 @@
     }
 
     $( document ).ready(function() {
+
+       var get_data_from_server = false;
+       var data = new Array();
+
        $('link[rel=stylesheet][href~="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css?version=<?php echo $wo['config']['version']; ?>"]').remove();
        // $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/general-style-plugins.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
        $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/bootsrap-rtl.min.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
        $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/style_rtl.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
        // $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/style.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
 
-       $.ajax({
-           url: Wo_Ajax_Requests_File(),
-           type: 'GET',
-           dataType: 'json',
-           data: {
-               f:'portfolio_stock_extra_data',
-               stock_fincode: <?php echo $wo['stock_data']['fincode']; ?>,
-               portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>
-           },
-               })
-               .done(function(ajax_data) {
-                   change_upper_values(ajax_data);
-               })
+       if (typeof(Storage) == "undefined") {
+           get_data_from_server = true;
+       } else {
+           expiry_token = localStorage.getItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_time_token");
+           const dt = new Date();
+           if (dt.getTime() > expiry_token && dt.getDay() != 6 && dt.getDay != 0) {
+               (dt.getTime() > localStorage.getItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_" + <?php echo $wo['stock_data']['fincode']; ?> + "_time_token")) && (get_data_from_server = true);
+           }
+           if (!get_data_from_server){
+               data = JSON.parse(localStorage.getItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_" + <?php echo $wo['stock_data']['fincode']; ?> +"_portfolio_stock"));
+               (jQuery.isEmptyObject(data)) && (get_data_from_server = true);
+               console.log('Data localStorage:')
+               console.log(data)
+           }
+       }
 
+       if (get_data_from_server) {
+
+           $.ajax({
+               url: Wo_Ajax_Requests_File(),
+               type: 'GET',
+               dataType: 'json',
+               data: {
+                   f:'portfolio_stock_extra_data',
+                   stock_fincode: <?php echo $wo['stock_data']['fincode']; ?>,
+                   portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>
+               },
+                   })
+                   .done(function(ajax_data) {
+                       console.log("Data Server");
+                       data = ajax_data.extra_stock_data;
+                       console.log(data);
+                       change_upper_values(data);
+                       if (typeof(Storage) != "undefined") {
+                           localStorage.setItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_" + <?php echo $wo['stock_data']['fincode']; ?> + "_time_token", new Date().getTime() + 210000)
+                           localStorage.setItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_" + data.stock_fincode + "_portfolio_stock", JSON.stringify(data));
+                       }
+                   })
+       } else{
+           change_upper_values(data);
+       }
     });
 
 </script>

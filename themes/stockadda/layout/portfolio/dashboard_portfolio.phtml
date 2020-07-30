@@ -609,7 +609,6 @@
        var currentVal        = 0;
 
        data_of_all_stocks.forEach(function (value) {
-           console.log(value);
 
            if (value.price_detail_intraday == null) {
                currentVal += parseInt(value.price_detail_adjusted.close);
