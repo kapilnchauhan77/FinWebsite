@@ -104,20 +104,20 @@
 
                         <!-- Day's P&L -->
                         <div class="SA_col-6">
-                            <div class="SA_card SA_border-left-success SA_shadow SA_h-100">
+                            <div id="daily_p_p_l_div" class="SA_card SA_border-left-secondary SA_shadow SA_h-100">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                         <div class="SA_col SA_mr-2">
-                                            <div class="SA_text-xs SA_font-weight-bold SA_text-success SA_text-uppercase SA_mb-1">Day's P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;&#8377;1332 </span> </div>
+                                            <div id="daily_p_p_l_text" class="SA_text-xs SA_font-weight-bold SA_text-secondary SA_text-uppercase SA_mb-1">Day's P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;&#8377;<span id="daily_p_p_l">1332</span> </span> </div>
 
                                             <div class="SA_row SA_no-gutters SA_align-items-center">
                                                 <div class="SA_col-auto">
-                                                    <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800">39%</div>
+                                                    <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800"><span id="daily_p_p_l_per">0</span>%</div>
                                                 </div>
-                                                <div class="SA_col">
+                                                <div class="SA_col"%>
                                                     <div id="SA_progress-sm" class="SA_progress SA_mr-2">
-                                                        <div class="SA_progress-bar SA_bg-success" role="progressbar" style="width: 39%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        <div class="SA_progress-bar SA_bg-secondary" id="daily_p_p_l_progress" role="progressbar" style="width: 0%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -134,21 +134,21 @@
 
                         <!-- Overall P&L -->
                         <div class="SA_col-6">
-                            <div class="SA_card SA_border-left-danger SA_shadow SA_h-100">
+                            <div id="overall_p_p_l_div" class="SA_card SA_border-left-secondary SA_shadow SA_h-100">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                         <div class="SA_col SA_mr-2">
 
-                                            <div class="SA_text-xs SA_font-weight-bold SA_text-danger SA_text-uppercase SA_mb-1">Overall P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;-&#8377;302 </span> </div>
+                                            <div id="overall_p_p_l_text" class="SA_text-xs SA_font-weight-bold SA_text-secondary SA_text-uppercase SA_mb-1">Overall P&amp;L: <span style="font-size: 140%; font-weight: 700; color: #5a5c69;"> &nbsp;&#8377;<span id="overall_p_p_l">100</span></span> </div>
 
                                             <div class="SA_row SA_no-gutters SA_align-items-center">
                                                 <div class="SA_col-auto">
-                                                      <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800">-10%</div>
+                                                      <div class="SA_h5 SA_mb-0 SA_mr-3 SA_font-weight-bold SA_text-gray-800"><span id="overall_p_p_l_per">100</span>%</div>
                                                 </div>
                                                 <div class="SA_col">
                                                     <div id="SA_progress-sm" class="SA_progress SA_mr-2">
-                                                        <div class="SA_progress-bar SA_bg-danger" role="progressbar" style="width: 10%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        <div class="SA_progress-bar SA_bg-secondary" id="overall_p_p_l_progress" role="progressbar" style="width: 100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -189,7 +189,7 @@
 
                     <li>
                         <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;type=equity" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;type=equity" id="stock_in_portfolio" class="menuactive">
-                        <span class="split-link"><?php echo $wo['portfolio_data']['no_of_stocks']; ?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
+                        <span class="split-link"><?php echo $wo['portfolio_data']['no_of_unique_stocks']; ?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
                             <span>Stocks</span>
                         </a>
                     </li>
@@ -218,7 +218,7 @@
                     </li>
                     <li>
                         <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;type=equity" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;type=equity" id="stock_in_portfolio">
-                            <span class="split-link"><?php echo $wo['portfolio_data']['no_of_stocks']; ?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
+                            <span class="split-link"><?php echo $wo['portfolio_data']['no_of_unique_stocks']; ?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
                             <span>Stocks</span>
                         </a>
                     </li>
@@ -383,8 +383,8 @@
                                                         <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                                             <div class="SA_col SA_mr-2">
-                                                                <div class="SA_text-xs SA_font-weight-bold SA_text-dark SA_text-uppercase SA_mb-1">Some Pro Feature</div>
-                                                                <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">something</div>
+                                                                <div class="SA_text-xs SA_font-weight-bold SA_text-dark SA_text-uppercase SA_mb-1">Volume</div>
+                                                                <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800"><?php echo $wo['portfolio_data']['no_of_stocks']; ?></div>
                                                             </div>
 
                                                             <div class="SA_col-auto">
@@ -588,42 +588,9 @@
 
 <?php }; ?>
 
+<?php echo Wo_LoadPage('portfolio/portfolioFunctions'); ?>
+
 <script>
-
-    function findLocalItems (query) {
-      var i, results = [];
-      for (i in localStorage) {
-        if (localStorage.hasOwnProperty(i)) {
-          if (i.match(query) || (!query && typeof i === 'string')) {
-            value = JSON.parse(localStorage.getItem(i));
-            results.push(value);
-          }
-        }
-      }
-      return results;
-    }
-
-    function calculateTotalVals_display(data_of_all_stocks){
-       var adjustedValTotal = 0;
-       var intradayValTotal = 0;
-       var currentVal        = 0;
-
-       data_of_all_stocks.forEach(function (value) {
-
-           if (value.price_detail_intraday == null) {
-               currentVal += parseInt(value.price_detail_adjusted.close);
-               adjustedValTotal += parseInt(value.price_detail_adjusted.close);
-           } else{
-               currentVal += parseInt(value.price_detail_intraday.close);
-               intradayValTotal += parseInt(value.price_detail_intraday.close);
-               adjustedValTotal += parseInt(value.price_detail_adjusted.close);
-           }
-       });
-
-       $('#currentVal').text(currentVal);
-
-       return [adjustedValTotal, intradayValTotal, currentVal];
-    }
 
     $( document ).ready(function() {
 

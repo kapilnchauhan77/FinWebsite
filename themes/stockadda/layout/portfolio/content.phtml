@@ -163,6 +163,7 @@
 
     function pushStockDataToBackend(){
         var stock_array_to_send = new Array();
+        var no_of_stocks = 0;
 
         Object.keys(stock_quotes_to_add).forEach(function (id){
             if ($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val() === ""){
@@ -174,11 +175,12 @@
                     stock_fincode: parseInt(stock_quotes_to_add[id]),
                     stock_transaction_date: parseInt(new Date($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000),
                     stock_transaction_price: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_price").val()),
-                    stock_transaction_qty: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val())
+                    stock_transaction_qty: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val()),
+                    invested_value: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val()) * parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_price").val())
 
                         };
 
-            //console.log(stockInfo);
+            no_of_stocks += parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val());
             stock_array_to_send.push(stockInfo);
         });
 
@@ -191,7 +193,8 @@
             data: {
                 f:'portfolio_data',
                 stock_array: stock_array_to_send,
-                no_of_stocks: stock_array_to_send.length,
+                no_of_stocks: no_of_stocks,
+                no_of_unique_stocks: [...new Set(Object.values(stock_quotes_to_add))].length,
                 portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
             },
                 success: function(data) {

@@ -1,0 +1,154 @@
+<script>
+
+    function findLocalItems(query) {
+        var i, results = [];
+        for (i in localStorage) {
+            if (localStorage.hasOwnProperty(i)) {
+                if (i.match(query) || (!query && typeof i === 'string')) {
+                    value = JSON.parse(localStorage.getItem(i));
+                    results.push(value);
+                }
+            }
+        }
+        return results;
+    }
+
+    function calculateTotalVals_display(data_of_all_stocks){
+        var adjustedValTotal = 0;
+        var intradayValTotal = 0;
+        var currentVal       = 0;
+
+        data_of_all_stocks.forEach(function (value) {
+            console.log("Val:");
+            console.log(value);
+
+            if (value.price_detail_intraday == null) {
+                currentVal += parseInt(value.price_detail_adjusted.close);
+                adjustedValTotal += parseInt(value.price_detail_adjusted.close);
+            } else{
+                currentVal += parseInt(value.price_detail_intraday.close);
+                intradayValTotal += parseInt(value.price_detail_intraday.close);
+                adjustedValTotal += parseInt(value.price_detail_adjusted.close);
+            }
+        });
+
+        $('#currentVal').text(currentVal);
+
+        const daily_p_p_l = (currentVal - adjustedValTotal) * <?php echo $wo['portfolio_data']['no_of_stocks'];?>;
+        $('#daily_p_p_l').text(daily_p_p_l);
+
+        const daily_p_p_l_per = ((currentVal - adjustedValTotal) / adjustedValTotal);
+        change_colors('daily_p_p_l', daily_p_p_l_per);
+
+        const overall_p_p_l = (currentVal * <?php echo $wo['portfolio_data']['no_of_stocks']; ?>) - <?php echo $wo['portfolio_data']['invested_value']; ?>;
+        $('#overall_p_p_l').text(overall_p_p_l);
+
+        const overall_p_p_l_per = (overall_p_p_l / (currentVal * <?php echo $wo['portfolio_data']['no_of_stocks']; ?>)) * 100;
+        change_colors('overall_p_p_l', overall_p_p_l_per);
+
+        return [adjustedValTotal, intradayValTotal, currentVal];
+    }
+
+    function averageBuyingPrice({n, total}, stock_portfolio_data) {
+        if (stock_portfolio_data.stock_transaction_qty < 0) {
+            return {n, total};
+        }
+        return {
+            n:   n + parseFloat(stock_portfolio_data.stock_transaction_qty),
+            total: total + (parseFloat(stock_portfolio_data.stock_transaction_price) * parseFloat(stock_portfolio_data.stock_transaction_qty)),
+        };
+    }
+
+    function change_colors(tag, p_l_per){
+       $('#'+ tag +'_per').text(p_l_per.toFixed(2));
+       $('#'+ tag +'_progress').attr('style', "width: " + Math.abs(p_l_per.toFixed(2).toString()) + "%");
+       if (p_l_per > 0){
+           $('#'+ tag +'_div').removeClass('SA_border-left-danger');
+           $('#'+ tag +'_div').removeClass('SA_border-left-secondary');
+           $('#'+ tag +'_text').removeClass('SA_text-danger');
+           $('#'+ tag +'_text').removeClass('SA_text-secondary');
+           $('#'+ tag +'_progress').removeClass('SA_bg-danger');
+           $('#'+ tag +'_progress').removeClass('SA_bg-secondary');
+
+           $('#'+ tag +'_text').addClass('SA_text-success');
+           $('#'+ tag +'_div').addClass('SA_border-left-success');
+           $('#'+ tag +'_progress').addClass('SA_bg-success');
+       } else if(p_l_per == 0) {
+           $('#'+ tag +'_div').removeClass('SA_border-left-success');
+           $('#'+ tag +'_div').removeClass('SA_border-left-danger');
+           $('#'+ tag +'_text').removeClass('SA_text-danger');
+           $('#'+ tag +'_text').removeClass('SA_text-success');
+           $('#'+ tag +'_progress').removeClass('SA_bg-danger');
+           $('#'+ tag +'_progress').removeClass('SA_bg-success');
+
+           $('#'+ tag +'_text').addClass('SA_text-secondary');
+           $('#'+ tag +'_div').addClass('SA_border-left-secondary');
+           $('#'+ tag +'_progress').addClass('SA_bg-secondary');
+       } else {
+           $('#'+ tag +'_div').removeClass('SA_border-left-success');
+           $('#'+ tag +'_div').removeClass('SA_border-left-secondary');
+           $('#'+ tag +'_text').removeClass('SA_text-success');
+           $('#'+ tag +'_text').removeClass('SA_text-secondary');
+           $('#'+ tag +'_progress').removeClass('SA_bg-success');
+           $('#'+ tag +'_progress').removeClass('SA_bg-secondary');
+
+           $('#'+ tag +'_text').addClass('SA_text-danger');
+           $('#'+ tag +'_div').addClass('SA_border-left-danger');
+           $('#'+ tag +'_progress').addClass('SA_bg-danger');
+       }
+    }
+
+
+    function change_upper_values(data){
+
+       const initialVals       = {n: 0, total: 0};
+       const stock_portfolio_data_average_length = data.stock_portfolio_data.reduce(averageBuyingPrice, initialVals);
+       console.log(stock_portfolio_data_average_length);
+
+       const volume_in_portfolio = stock_portfolio_data_average_length.n;
+       $('#volume_in_portfolio').text(volume_in_portfolio);
+
+       const total_buying_price = stock_portfolio_data_average_length.total;
+       $('#total_buying_price').text(total_buying_price);
+
+       const average_buying_price = total_buying_price/volume_in_portfolio;
+       $('#average_buying_price').text(average_buying_price);
+
+       if (data.price_detail_intraday != null){
+
+           $('#current_stock_value').text(data.price_detail_intraday.close);
+
+           const daily_p_l = (data.price_detail_intraday.close - data.extra_stock_data.price_detail_adjusted.close) * volume_in_portfolio;
+           $('#daily_p_l').text(daily_p_l);
+
+           const daily_p_l_per = ((data.price_detail_intraday.close - data.extra_stock_data.price_detail_adjusted.close) / data.extra_stock_data.price_detail_adjusted.close) * 100;
+           change_colors('daily_p_l', daily_p_l_per);
+
+           const overall_p_l = (data.price_detail_intraday.close * volume_in_portfolio) - total_buying_price;
+           $('#overall_p_l').text(overall_p_l);
+
+           const overall_p_l_per = (overall_p_l / (data.price_detail_intraday.close * volume_in_portfolio)) * 100;
+           change_colors('overall_p_l', overall_p_l_per);
+
+       } else{
+
+           $('#current_stock_value').text(data.price_detail_adjusted.close);
+
+           const daily_p_l = 0;
+           $('#daily_p_l').text(daily_p_l);
+
+           const daily_p_l_per = 0;
+
+           change_colors('daily_p_l', daily_p_l_per);
+
+           const overall_p_l = (data.price_detail_adjusted.close * volume_in_portfolio) - total_buying_price;
+           $('#overall_p_l').text(overall_p_l);
+
+           const overall_p_l_per = (overall_p_l / (data.price_detail_adjusted.close * volume_in_portfolio)) * 100;
+
+           change_colors('overall_p_l', overall_p_l_per);
+
+       }
+    }
+
+</script>

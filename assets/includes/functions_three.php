@@ -7784,9 +7784,9 @@ function Wo_CompanyGraphAPICall($fincode = 0, $type = 'I', $DateOption = '', $ex
 }
 function Wo_GetCompanyGraphPriceFromAPI($fincode = 0, $type = 'I', $DateOption = '', $exchange='BSE', $DateCount = '', $StartDate = '', $EndDate = ''){
     if ($type=='H'){
-        $data = Wo_CompanyGraphAPICall($fincode, $type , $DateOption , 'NSE', $DateCount , $StartDate , $EndDate );
+        $data = Wo_CompanyGraphAPICall($fincode, $type , $DateOption , 'BSE', $DateCount , $StartDate , $EndDate );
         if (empty($data['Table'])){
-            $data = Wo_CompanyGraphAPICall($fincode, $type , $DateOption , 'BSE', $DateCount , $StartDate , $EndDate );
+            $data = Wo_CompanyGraphAPICall($fincode, $type , $DateOption , 'NSE', $DateCount , $StartDate , $EndDate );
         }
     } else{
         $data = Wo_CompanyGraphAPICall($fincode, $type , $DateOption , $exchange, $DateCount , $StartDate , $EndDate );
@@ -7844,24 +7844,24 @@ function Wo_GetCompanyGraphPrice($fincode = 0, $timestamp = 0, $type = 'I', $Dat
                 }
             }
             // TODO Delete Historical Cache
-            // else{
-            //     $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_INTRADAYGRAPHTIME . "
-            //     WHERE `fincode` = '{$fincode}' LIMIT 1";
-            //     $query_one  = mysqli_query($sqlConnect, $query_text);
-            //     $fetched_data = mysqli_fetch_assoc($query_one);
-            //     if ($fetched_data['unix_timestamp'] < $timestamp) {
-            //         $fincode = (string)$fincode;
-            //         $timestamp = $timestamp + 600;
-            //         $query_text = "UPDATE " . T_INTRADAYGRAPHTIME . " SET `unix_timestamp` =  {$timestamp} WHERE `fincode` = '{$fincode}' LIMIT 1";
-            //         $query  = mysqli_query($sqlConnect, $query_text);
-            //         if (!$query) {
-            //             return false;
-            //         }
-            //         $cache->delete($hashed_fincode . '_COMPANY_Graph_'. $type .'_'. $DateOption .'_'. $DateCount .'_'. $StartDate .'_'. $EndDate .'_Price.tmp');
-            //         $data = Wo_GetCompanyGraphPriceFromAPI($fincode, $type, $DateOption, $DateCount, $StartDate, $EndDate);
-            //         $cache->write($hashed_fincode . '_COMPANY_Graph_'. $type .'_'. $DateOption .'_'. $DateCount .'_'. $StartDate .'_'. $EndDate .'_Price.tmp', $data);
-            //     }
-            // }
+            else{
+                $query_text = "SELECT `unix_timestamp`, `exchange` FROM " . T_INTRADAYGRAPHTIME . "
+                WHERE `fincode` = '{$fincode}' LIMIT 1";
+                $query_one  = mysqli_query($sqlConnect, $query_text);
+                $fetched_data = mysqli_fetch_assoc($query_one);
+                if ($fetched_data['unix_timestamp'] < $timestamp) {
+                    $fincode = (string)$fincode;
+                    $timestamp = $timestamp + 600;
+                    $query_text = "UPDATE " . T_INTRADAYGRAPHTIME . " SET `unix_timestamp` =  {$timestamp} WHERE `fincode` = '{$fincode}' LIMIT 1";
+                    $query  = mysqli_query($sqlConnect, $query_text);
+                    if (!$query) {
+                        return false;
+                    }
+                    $cache->delete($hashed_fincode . '_COMPANY_Graph_'. $type .'_'. $DateOption .'_'. $DateCount .'_'. $StartDate .'_'. $EndDate .'_Price.tmp');
+                    $data = Wo_GetCompanyGraphPriceFromAPI($fincode, $type, $DateOption, $DateCount, $StartDate, $EndDate);
+                    $cache->write($hashed_fincode . '_COMPANY_Graph_'. $type .'_'. $DateOption .'_'. $DateCount .'_'. $StartDate .'_'. $EndDate .'_Price.tmp', $data);
+                }
+            }
         }
     }
     else{
@@ -8107,7 +8107,7 @@ function Wo_PortfolioCaching($portfolio_id, $get_desc){
     global $sqlConnect, $wo;
 
     $portfolio_id        = Wo_Secure($portfolio_id);
-    $query_text = "SELECT `portfolio_id`, `user_id`, `portfolio_name`, `portfolio_url`, `invested_value`, `PL`, `PL_PER`, `timestamp_created`, `no_of_stocks`, `daily_rank`, `overall_rank`, `privacy_level` FROM " . T_PORTFOLIO . "
+    $query_text = "SELECT `portfolio_id`, `user_id`, `portfolio_name`, `portfolio_url`, `invested_value`, `PL`, `PL_PER`, `timestamp_created`, `no_of_unique_stocks`, `no_of_stocks`, `daily_rank`, `overall_rank`, `privacy_level` FROM " . T_PORTFOLIO . "
         WHERE `portfolio_id` = {$portfolio_id}";
 
     $sql          = mysqli_query($sqlConnect, $query_text);
@@ -8182,11 +8182,12 @@ function Wo_getPortfolioURL(){
 
     return 'portfolio_' . $wo['user']['user_id'] . '_' . $fetched_data['portfolio_count'];
 }
-function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
+function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $no_of_unique_stocks){
     global $wo, $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
     $no_of_stocks = $wo['portfolio_data']['no_of_stocks'] + $no_of_stocks;
+    $no_of_unique_stocks = $wo['portfolio_data']['no_of_unique_stocks'] + $no_of_unique_stocks;
 
     foreach ($stock_quote_data as $stock_quote_datum) {
 
@@ -8194,6 +8195,7 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
         $stock_transaction_date = Wo_Secure($stock_quote_datum['stock_transaction_date']);
         $stock_transaction_price = Wo_Secure($stock_quote_datum['stock_transaction_price']);
         $stock_transaction_qty = Wo_Secure($stock_quote_datum['stock_transaction_qty']);
+        $invested_value = Wo_Secure($stock_quote_datum['invested_value']);
         $timestamp_created = strtotime("now");
 
         $query_one   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `timestamp_created`) VALUES ({$portfolio_id}, {$stock_fincode}, {$stock_transaction_date}, {$stock_transaction_price}, {$stock_transaction_qty}, {$timestamp_created})";
@@ -8203,7 +8205,7 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
             return mysqli_error($sqlConnect);
         };
 
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value` = `invested_value` + {$stock_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value` = `invested_value` + {$invested_value} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
 
         if (!$query) {
@@ -8211,7 +8213,7 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
         };
     }
 
-    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `no_of_stocks` = {$no_of_stocks} WHERE `portfolio_id` = {$portfolio_id}";
+    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `no_of_stocks` = {$no_of_stocks}, `no_of_unique_stocks` = {$no_of_unique_stocks} WHERE `portfolio_id` = {$portfolio_id}";
     $query     = mysqli_query($sqlConnect, $query_one);
 
     if (!$query) {
