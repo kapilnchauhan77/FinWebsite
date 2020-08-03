@@ -71,18 +71,38 @@ def start_append():
             data = phpserialize.dict_to_list(full_data[0])
 
         for datum in data:
-            datum = {key.decode(): val.decode() for key, val in datum.items()}
+            try:
+                datum = {key.decode(): val.decode() if type(val) == bytes else val for key, val in datum.items()}
+            except Exception as e:
+                print(str(e))
+                print(datum)
+                break
+                # continue
+
             # datum['fincode'] = fincode
             # datum.pop('fincode')
+
+        try:
+            if 'Date' in datum:
+                datum['date'] = int(datetime.timestamp(datetime.strptime(datum.pop('Date'), '%Y-%m-%d %H:%M:%S')))
+        except:
+            print('datum')
+            print(datum)
+            continue
+
+        if 'Open' in datum:
             datum['open'] = datum.pop('Open')
-            datum['date'] = int(datetime.timestamp(datetime.strptime(datum.pop('Date'), '%Y-%m-%d %H:%M:%S')))
 
-            new_data.append(datum)
+        new_data.append(datum)
 
-        if new_data[-1]['date'] < companyDatum['date']:
-            new_data.append(companyDatum)
-            appendedValues += 1
+        try:
+            if new_data[-1]['date'] < companyDatum['date']:
+                new_data.append(companyDatum)
+                appendedValues += 1
 
+        except:
+            print('data')
+            print(data)
         # print(companyDatum)
 
         full_data = dict()
