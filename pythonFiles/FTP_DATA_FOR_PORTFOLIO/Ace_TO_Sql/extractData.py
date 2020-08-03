@@ -130,7 +130,7 @@ def extract_data():
         if file_type == "intraday":
             companyDataBse = [{'bse': datum[0],
                                'open': datum[1],
-                               'close': datum[2],
+                               'price': datum[2],
                                'high': datum[3],
                                'low': datum[4],
                                'volume': int(datum[-3]),
@@ -139,7 +139,7 @@ def extract_data():
 
             companyDataNse = [{'nse': datum[1],
                                'open': datum[10],
-                               'close': datum[11],
+                               'price': datum[11],
                                'high': datum[12],
                                'low': datum[13],
                                'volume': int(datum[7]),
@@ -148,7 +148,7 @@ def extract_data():
 
             bseData = [{'index': datum[0],
                         'open': datum[1],
-                        'close': datum[2],
+                        'price': datum[2],
                         'high': datum[3],
                         'low': datum[4],
                         'volume': int(datum[-3]),
@@ -158,7 +158,7 @@ def extract_data():
         else:
             companyDataBse = [{'bse': datum[0],
                                'open': datum[2],
-                               'close': datum[3],
+                               'price': datum[3],
                                'high': datum[4],
                                'low': datum[5],
                                'volume': int(datum[6]),
@@ -167,7 +167,7 @@ def extract_data():
 
             companyDataNse = [{'nse': datum[0],
                                'open': datum[2],
-                               'close': datum[3],
+                               'price': datum[3],
                                'high': datum[4],
                                'low': datum[5],
                                'volume': int(datum[6]),
@@ -176,7 +176,7 @@ def extract_data():
 
             bseData = [{'index': datum[0],
                         'open': datum[2],
-                        'close': datum[3],
+                        'price': datum[3],
                         'high': datum[4],
                         'low': datum[5],
                         'volume': int(datum[-3]),
