@@ -186,6 +186,10 @@
 
         console.log(stock_array_to_send);
 
+        no_of_unique_stocks = [...new Set(Object.values(stock_quotes_to_add))].length;
+        console.log("no_of_unique_stocks");
+        console.log(no_of_unique_stocks);
+
         $.ajax({
             url: Wo_Ajax_Requests_File(),
             type: 'GET',
@@ -194,12 +198,13 @@
                 f:'portfolio_data',
                 stock_array: stock_array_to_send,
                 no_of_stocks: no_of_stocks,
-                no_of_unique_stocks: [...new Set(Object.values(stock_quotes_to_add))].length,
+                no_of_unique_stocks: (no_of_unique_stocks > 0) ? no_of_unique_stocks : 0,
                 portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
             },
                 success: function(data) {
                     if (data['status'] == 200){
                         console.log(data);
+                        console.log("done");
                         history.go(0);
                     }
                     else{

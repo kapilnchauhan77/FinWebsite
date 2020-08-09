@@ -1,0 +1,31 @@
+<script>
+
+    function getGraphData(data) {
+
+        console.log('Graph Argument Data:');
+        console.log(data);
+        $.ajax({
+            url: Wo_Ajax_Requests_File(),
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                f:'historical_data_cache',
+                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+            },
+                })
+                .done(function(ajax_data) {
+                    console.log('Data from Cache:')
+                    console.log(ajax_data);
+                    data = ajax_data.stock_data;
+                    data.forEach(value => {
+                        console.log(value.fincode);
+                        value.Table.forEach(value => {
+                            /* console.log(value); */
+                            price = parseFloat(value.price)
+                            /* console.log(price) */
+                        })
+                    })
+                });
+    };
+
+</script>

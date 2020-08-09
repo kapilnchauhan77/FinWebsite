@@ -215,7 +215,7 @@ $wo['googleLoginUrl']     = $config['site_url'] . '/login-with.php?provider=Goog
 $wo['linkedInLoginUrl']   = $config['site_url'] . '/login-with.php?provider=LinkedIn';
 $wo['VkontakteLoginUrl']  = $config['site_url'] . '/login-with.php?provider=Vkontakte';
 $wo['instagramLoginUrl']  = $config['site_url'] . '/login-with.php?provider=Instagram';
-// Defualt User Pictures 
+// Defualt User Pictures
 $wo['userDefaultAvatar']  = 'upload/photos/d-avatar.jpg';
 $wo['userDefaultCover']   = 'upload/photos/d-cover.jpg';
 $wo['pageDefaultAvatar']  = 'upload/photos/d-page.jpg';
@@ -772,13 +772,13 @@ if ($wo['config']['last_notification_delete_run'] <= time()-(60*60*24)) {
     mysqli_multi_query($sqlConnect, " DELETE FROM " . T_NOTIFICATION . " WHERE `time` < " . (time() - (60 * 60 * 24 * 5)) . " AND `seen` <> 0");
     mysqli_query($sqlConnect, "UPDATE " . T_CONFIG . " SET `value` = '" . time() . "' WHERE `name` = 'last_notification_delete_run'");
 }
-// manage packages 
+// manage packages
 $wo['pro_packages'] = Wo_GetAllProInfo();
 $wo['pro_packages_types'] = array('1' => 'star',
                                   '2' => 'hot',
                                   '3' => 'ultima',
                                   '4' => 'vip');
-// manage packages 
+// manage packages
 $star_package_duration   = 604800; // week in seconds
 $hot_package_duration    = 2629743; // month in seconds
 $ultima_package_duration = 31556926; // year in seconds

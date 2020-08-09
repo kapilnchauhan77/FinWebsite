@@ -18,7 +18,7 @@
                 <script>console.log('<?php echo $_GET['type']; ?>');</script>
 
                 <?php
-                    $stocks_in_portfolios = Wo_GetStocksInPortfolio($wo['portfolio_data']['portfolio_id']);
+                    $stocks_in_portfolios = Wo_GetDataOfStocksInPortfolio($wo['portfolio_data']['portfolio_id']);
                     if (count($stocks_in_portfolios) > 0) {
                         foreach ($stocks_in_portfolios as $wo['stock_in_portfolios']) {
                             echo Wo_LoadPage('portfolio/stocks_in_portfolio_list');

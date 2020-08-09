@@ -182,6 +182,9 @@
     </div>
 </div>
 
+<script>console.log('hi:')</script>
+<script>console.log((<?php echo json_encode(Wo_GetHistoricalData($wo['stock_data']['fincode'])); ?>))</script>
+
 <?php if (isset($_GET['type'])) { ?>
     <div class="row wo_user_profile" style="margin: -33px 0px 20px 33.333%;">
         <label class="col-md-1 "></label>

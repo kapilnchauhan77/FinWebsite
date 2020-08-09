@@ -17,8 +17,9 @@ def get_fincode(code, type_):
     try:
         fincode = [int(fncd[0]) for fncd in fincodes_][0]
     except:
+        fincode = 0
+        # print(str(e))
         # print(f"{str(code)}_{str(type_)}")
         pass
 
     return fincode
-

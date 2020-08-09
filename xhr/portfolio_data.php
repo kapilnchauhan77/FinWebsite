@@ -4,7 +4,7 @@ if ($f == 'portfolio_data') {
     $portfolio_id = $_GET['portfolio_id'];
     $no_of_stocks = $_GET['no_of_stocks'];
     $no_of_unique_stocks = $_GET['no_of_unique_stocks'];
-    if (!empty($stock_array) && !empty($portfolio_id) && !empty($no_of_stocks)) {
+    if (!empty($stock_array) && !empty($portfolio_id)) {
         $portfolio_data_added = AddStocksToPortfolio($stock_array, $portfolio_id, $no_of_stocks, $no_of_unique_stocks);
         if ($portfolio_data_added === true){
 
@@ -32,9 +32,10 @@ if ($f == 'portfolio_data') {
         }
     } else {
         $data = array(
-            'status' => 400,
+            'status' => 404,
             'stock_array' => $stock_array,
-            'portfolio_id' => $portfolio_id
+            'portfolio_id' => $portfolio_id,
+            'no_of_stocks' => $no_of_stocks
         );
     };
     header("Content-type: application/json");

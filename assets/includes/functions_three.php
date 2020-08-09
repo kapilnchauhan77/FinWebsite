@@ -8224,7 +8224,7 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $
 
     return true;
 }
-function Wo_GetStocksInPortfolio($portfolio_id) {
+function Wo_GetDataOfStocksInPortfolio($portfolio_id) {
     global $sqlConnect;
 
     $data       = array();
@@ -8240,6 +8240,21 @@ function Wo_GetStocksInPortfolio($portfolio_id) {
     };
 
     return $data;
+}
+function Wo_GetStocksInPortfolio($portfolio_id) {
+    global $sqlConnect;
+
+    $stocks       = array();
+    $query_text = "SELECT `stock_fincode` FROM " . T_PORTFOLIO_STOCKS . "
+        WHERE `portfolio_id` = {$portfolio_id}";
+    $query_one  = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($query_one)) {
+        if (is_array($fetched_data) && !in_array($fetched_data['stock_fincode'], $stocks)) {
+            $stocks[] = $fetched_data['stock_fincode'];
+        };
+    };
+
+    return $stocks;
 }
 function Wo_GetStockDetailInPortfolio($stock_fincode, $portfolio_id) {
     global $sqlConnect;
@@ -8343,4 +8358,23 @@ function Wo_ExtraStockDetailForAllStocksInPortfolio($portfolio_id) {
 
     return $data;
 }
+function HistoricalPrices_read($fileName) {
+    $fileName = 'historical_prices/' . $fileName . '_historical_price.prmt';
+    if (file_exists($fileName)) {
+        $handle   = fopen($fileName, 'rb');
+        $variable = fread($handle, filesize($fileName));
+        fclose($handle);
+        return unserialize($variable);
+    } else {
+        /* return $fileName; */
+        return null;
+    }
+}
+function Wo_GetHistoricalData($fincode){
 
+    $fincode = Wo_Secure($fincode);
+    $fetched_data = HistoricalPrices_read($fincode);
+    $fetched_data['fincode'] = $fincode;
+
+    return $fetched_data;
+}

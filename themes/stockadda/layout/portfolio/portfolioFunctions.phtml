@@ -13,14 +13,33 @@
         return results;
     }
 
-    function calculateTotalVals_display(data_of_all_stocks){
+    function calculateTotalVals_display(data_of_all_stocks, get_fincode_data = true){
         var adjustedValTotal = 0;
         var intradayValTotal = 0;
         var currentVal       = 0;
+        var fincode_price_obj = Array();
 
         data_of_all_stocks.forEach(function (value) {
             console.log("Val:");
             console.log(value);
+
+            if (get_fincode_data == true) {
+                dates = Array();
+                rolling_sum_price - 0;
+
+                fincode_price_obj[value.stock_fincode] = {};
+
+                value.stock_portfolio_data.forEach(val => {
+                    fincode_price_obj[value.stock_fincode][parseInt(val.stock_transaction_date)] = parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price);
+                });
+
+                dates = Object.keys(fincode_price_obj[value.stock_fincode]);
+                dates.sort();
+                dates.forEach(date_ => {
+                    rolling_sum_price += fincode_price_obj[value.stock_fincode][date_];
+                    fincode_price_obj[value.stock_fincode][date_] = rolling_sum_price;
+                });
+            };
 
             if (value.price_detail_intraday == null) {
                 currentVal += parseInt(value.price_detail_adjusted.close);
@@ -46,7 +65,7 @@
         const overall_p_p_l_per = (overall_p_p_l / (currentVal * <?php echo $wo['portfolio_data']['no_of_stocks']; ?>)) * 100;
         change_colors('overall_p_p_l', overall_p_p_l_per);
 
-        return [adjustedValTotal, intradayValTotal, currentVal];
+        return [adjustedValTotal, intradayValTotal, currentVal, fincode_price_obj];
     }
 
     function averageBuyingPrice({n, total}, stock_portfolio_data) {
