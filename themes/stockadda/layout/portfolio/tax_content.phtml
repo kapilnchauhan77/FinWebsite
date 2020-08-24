@@ -1,0 +1,474 @@
+<div class="portfolio_html" style="margin-top:1%">
+    <div class="portfolio_body">
+        <div id="SA_wrapper">
+
+            <!-- Content Wrapper -->
+            <div id="SA_content-wrapper" class="SA_d-flex SA_flex-column">
+
+                <!-- Main Content -->
+                <div id="SA_content">
+
+                    <!-- Begin Page Content -->
+                    <div class="SA_container-fluid">
+
+                        <!-- Content Row -->
+                        <div class="SA_row">
+
+                            <!-- Area Chart -->
+                            <div class="SA_col-xl-6 SA_col-lg-6">
+                                <div class="SA_card SA_shadow SA_mb-4">
+
+                                    <!-- Card Header - Dropdown -->
+                                    <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                                        <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Earnings Overview</h6>
+                                    </div>
+
+                                    <!-- Card Body -->
+                                    <div class="SA_card-body">
+                                        <div class="SA_chart-area"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                                            <canvas id="SA_myAreaChart" width="842" height="320" class="chartjs-render-monitor" style="display: block; width: 842px; height: 320px;"></canvas>
+                                        </div>
+                                    </div>
+
+                                </div>
+                             </div>
+
+                            <!-- Pie Chart -->
+                            <div class="SA_col-xl-6 SA_col-lg-6">
+
+                                <div class="SA_row">
+
+                                    <div class="SA_col-md-6 SA_mb-4">
+                                        <div class="SA_card SA_border-left-success SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-success SA_text-uppercase SA_mb-1">Realised Gain</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;40,000</div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-money fa-2x SA_text-gray-300"></i>
+                                                        <i class="fa fa-arrow-up fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-6 SA_mb-4">
+                                        <div class="SA_card SA_border-left-danger SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-danger SA_text-uppercase SA_mb-1">Unrealised Loss</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">-&#8377;83,720</div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-money fa-2x SA_text-gray-300"></i>
+                                                        <i class="fa fa-arrow-down fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="SA_row">
+
+                                    <div class="SA_col-md-4 SA_mb-4">
+                                       <div class="SA_card SA_shadow SA_mb-4">
+
+                                            <!-- Card Header - Dropdown -->
+                                            <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Stock Weightages</h6>
+                                            </div>
+
+                                            <!-- Card Body -->
+                                            <div class="SA_card-body" style="padding-bottom: 1.6em !important;">
+                                                <div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                                                    <canvas id="SA_Stock_Weightages" style="display: block; width: 612px; height: 165px;" width="612" height="165" class="chartjs-render-monitor"></canvas>
+                                                </div>
+
+                                                <!--<div class="SA_mt-4 SA_text-center SA_small" style="margin-top: 2.0em !important;">-->
+                                                <!--    <span class="SA_mr-2">-->
+                                                <!--        Best Performing Stock: &nbsp;<i class="fa fa-circle" style="color: #4e73df;"></i> Reliance Ind.-->
+                                                <!--    </span>-->
+                                                <!--</div>-->
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-4 SA_mb-4">
+                                       <div class="SA_card SA_shadow SA_mb-4">
+
+                                            <!-- Card Header - Dropdown -->
+                                            <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Sector Allocations</h6>
+                                            </div>
+
+                                            <!-- Card Body -->
+                                            <div class="SA_card-body" style="padding-bottom: 1.6em !important;">
+                                                <div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                                                    <canvas id="Sector_Allocations" style="display: block; width: 612px; height: 165px;" width="612" height="165" class="chartjs-render-monitor"></canvas>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-4 SA_mb-4">
+                                       <div class="SA_card SA_shadow SA_mb-4">
+
+                                            <!-- Card Header - Dropdown -->
+                                            <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Tax</h6>
+                                            </div>
+
+                                            <!-- Card Body -->
+                                            <div class="SA_card-body" style="padding-bottom: 0.6em !important;">
+                                                <div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                                                    <canvas id="myBarChart" width="729" height="138" class="chartjs-render-monitor" style="display: block; width: 729px; height: 138px;"></canvas>
+                                                </div>
+                                            </div>
+
+                                            <div class="SA_mb-4 SA_text-center SA_small">
+                                                <span class="SA_mr-2">
+                                                    <span style="margin-right:10%;"><i class="fa fa-circle" style="color: #515259;"></i> Unrealised</span>
+                                                    <i class="fa fa-circle" style="color: #1422e3;"></i> Realised
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Content Row -->
+                        <div class="SA_row">
+
+                            <!-- Content Column -->
+                            <div class="SA_col-lg-6 SA_mb-4">
+
+                                <!-- Extra Financial Data -->
+                                <div class="SA_row">
+
+                                    <div class="SA_col-md-6 SA_mb-4">
+                                        <div class="SA_card SA_border-left-success SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-success SA_text-uppercase SA_mb-1">Realised Gain</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;40,000</div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-money fa-2x SA_text-gray-300"></i>
+                                                        <i class="fa fa-arrow-up fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-6 SA_mb-4">
+                                        <div class="SA_card SA_border-left-danger SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-danger SA_text-uppercase SA_mb-1">Unrealised Loss</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">-&#8377;83,720</div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-money fa-2x SA_text-gray-300"></i>
+                                                        <i class="fa fa-arrow-down fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-6 SA_mb-4">
+                                        <div class="SA_card SA_border-left-secondary SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-secondary SA_text-uppercase SA_mb-1">LTCG</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;83,720</div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-calculator fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-6 SA_mb-4">
+                                        <div class="SA_card SA_border-left-secondary SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-secondary SA_text-uppercase SA_mb-1">STCG</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;83,720</div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-calculator fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-6 SA_mb-4">
+                                        <div class="SA_card SA_border-left-dark SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-dark SA_text-uppercase SA_mb-1">Volume</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800"><?php echo $wo['portfolio_data']['no_of_stocks']; ?></div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-circle fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-6 SA_mb-4">
+                                        <div class="SA_card SA_border-left-dark SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-dark SA_text-uppercase SA_mb-1">Some Pro Feature</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">something</div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-circle fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-6 SA_mb-4">
+                                        <div class="SA_card SA_border-left-dark SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-dark SA_text-uppercase SA_mb-1">Some Pro Feature</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">something</div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-circle fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-6 SA_mb-4">
+                                        <div class="SA_card SA_border-left-dark SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-dark SA_text-uppercase SA_mb-1">Some Pro Feature</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">something</div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-circle fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- Project Card Example -->
+                                <div class="SA_card SA_shadow SA_mb-4">
+
+                                    <div class="SA_card-header SA_py-3">
+                                        <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Projects</h6>
+                                    </div>
+
+                                    <div class="SA_card-body">
+
+                                        <h4 class="SA_small SA_font-weight-bold">Server Migration <span class="float-right">20%</span></h4>
+                                        <div class="SA_progress SA_mb-4">
+                                            <div class="SA_progress-bar SA_bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+
+                                        <h4 class="SA_small SA_font-weight-bold">Sales Tracking <span class="float-right">40%</span></h4>
+                                        <div class="SA_progress SA_mb-4">
+                                            <div class="SA_progress-bar SA_bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+
+                                        <h4 class="SA_small SA_font-weight-bold">Customer Database <span class="float-right">60%</span></h4>
+                                        <div class="SA_progress SA_mb-4">
+                                            <div class="SA_progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+
+                                        <h4 class="SA_small SA_font-weight-bold">Payout Details <span class="float-right">80%</span></h4>
+                                        <div class="SA_progress SA_mb-4">
+                                            <div class="SA_progress-bar SA_bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+
+                                        <h4 class="SA_small SA_font-weight-bold">Account Setup <span class="float-right">Complete!</span></h4>
+                                        <div class="SA_progress">
+                                            <div class="SA_progress-bar SA_bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="SA_col-lg-6 SA_mb-4">
+
+                                <!-- Illustrations -->
+                                <div class="SA_row">
+
+                                    <div class="SA_col">
+                                        <div class="SA_card SA_shadow SA_mb-4">
+
+                                            <div class="SA_card-header SA_py-3">
+                                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Top 3 Performing Stocks</h6>
+                                            </div>
+
+                                            <div class="SA_card-body">
+
+                                                <h4 class="SA_small SA_font-weight-bold">Server Migration <span class="float-right">20%</span></h4>
+                                                <div class="SA_progress SA_mb-4">
+                                                    <div class="SA_progress-bar SA_bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+
+                                                <h4 class="SA_small SA_font-weight-bold">Sales Tracking <span class="float-right">40%</span></h4>
+                                                <div class="SA_progress SA_mb-4">
+                                                    <div class="SA_progress-bar SA_bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+
+                                                <h4 class="SA_small SA_font-weight-bold">Customer Database <span class="float-right">60%</span></h4>
+                                                <div class="SA_progress SA_mb-4">
+                                                    <div class="SA_progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+
+                                                <h4 class="SA_small SA_font-weight-bold">Payout Details <span class="float-right">80%</span></h4>
+                                                <div class="SA_progress SA_mb-4">
+                                                    <div class="SA_progress-bar SA_bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+
+                                                <h4 class="SA_small SA_font-weight-bold">Account Setup <span class="float-right">Complete!</span></h4>
+                                                <div class="SA_progress">
+                                                    <div class="SA_progress-bar SA_bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="SA_col">
+                                        <div class="SA_card SA_shadow SA_mb-4">
+
+                                            <div class="SA_card-header SA_py-3">
+                                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Worst 3 Performing Stocks</h6>
+                                            </div>
+
+                                            <div class="SA_card-body">
+
+                                                <h4 class="SA_small SA_font-weight-bold">Server Migration <span class="float-right">20%</span></h4>
+                                                <div class="SA_progress SA_mb-4">
+                                                    <div class="SA_progress-bar SA_bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+
+                                                <h4 class="SA_small SA_font-weight-bold">Sales Tracking <span class="float-right">40%</span></h4>
+                                                <div class="SA_progress SA_mb-4">
+                                                    <div class="SA_progress-bar SA_bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+
+                                                <h4 class="SA_small SA_font-weight-bold">Customer Database <span class="float-right">60%</span></h4>
+                                                <div class="SA_progress SA_mb-4">
+                                                    <div class="SA_progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+
+                                                <h4 class="SA_small SA_font-weight-bold">Payout Details <span class="float-right">80%</span></h4>
+                                                <div class="SA_progress SA_mb-4">
+                                                    <div class="SA_progress-bar SA_bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+
+                                                <h4 class="SA_small SA_font-weight-bold">Account Setup <span class="float-right">Complete!</span></h4>
+                                                <div class="SA_progress">
+                                                    <div class="SA_progress-bar SA_bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <!-- Approach -->
+                                    <div class="SA_card SA_shadow SA_mb-4">
+                                        <div class="SA_card-header SA_py-3">
+                                            <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Development Approach</h6>
+                                        </div>
+                                        <div class="SA_card-body">
+                                            <p>SB Admin 2 makes extensive use of Bootstrap 4 utility classes in order to reduce CSS bloat and poor page performance. Custom CSS classes are used to create custom components and custom utility classes.</p>
+                                            <p class="SA_mb-0">Before working with this theme, you should become familiar with the Bootstrap framework, especially the utility classes.</p>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- /.SA_container-fluid -->
+
+                    </div>
+                    <!-- End of Main Content -->
+
+                </div>
+                <!-- End of Content Wrapper -->
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<?php echo Wo_LoadPage('portfolio/dashboard_portfolio_graphs'); ?>

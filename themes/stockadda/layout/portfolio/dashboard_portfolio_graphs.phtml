@@ -1,7 +1,162 @@
 <script>
+    function number_format(number, decimals, dec_point, thousands_sep) {
+      // *     example: number_format(1234.56, 2, ',', ' ');
+      // *     return: '1 234,56'
+      number = (number + '').replace(',', '').replace(' ', '');
+      var n = !isFinite(+number) ? 0 : +number,
+        prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+        sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+        dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+        s = '',
+        toFixedFix = function(n, prec) {
+          var k = Math.pow(10, prec);
+          return '' + Math.round(n * k) / k;
+        };
+      // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+      s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+      if (s[0].length > 3) {
+        s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+      }
+      if ((s[1] || '').length < prec) {
+        s[1] = s[1] || '';
+        s[1] += new Array(prec - s[1].length + 1).join('0');
+      }
+      return s.join(dec);
+    }
+
     // Set new default font family and font color to mimic Bootstrap's default styling
-    Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
     Chart.defaults.global.defaultFontColor = '#858796';
+
+    // Bar Chart Example
+    var ctx = document.getElementById("myBarChart");
+    var myBarChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+          labels: ["LTCG", "RTCG"],
+          datasets: [{
+              barThickness: 22,
+              data: [-238, -553],
+              backgroundColor: "#515259",
+              /* hoverBackgroundColor: "#515259" */
+          },{
+              barThickness: 22,
+              data: [727, 589],
+              backgroundColor: "#1422e3",
+              /* hoverBackgroundColor: "#1422e3" */
+          }],
+        },
+        options: {
+            hover: {
+                mode: false
+            },
+            maintainAspectRatio: false,
+            /* layout: { */
+            /*     padding: { */
+            /*         left: 0, */
+            /*         right: 25, */
+            /*         top: 0, */
+            /*         bottom: 0 */
+            /*     } */
+            /* }, */
+            scales: {
+                xAxes: [{
+                    time: {
+                        unit: 'month'
+                    },
+                    gridLines: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 6
+                    },
+                    maxBarThickness: 25,
+                    stacked: true,
+                }],
+                yAxes: [{
+                    ticks: {
+                        min: -1500,
+                        max: 4500,
+                        maxTicksLimit: 5,
+                        padding: 10,
+                    },
+                    /* gridLines: { */
+                    /*     display: false, */
+                    /*     drawBorder: false */
+                    /* }, */
+                    gridLines: {
+                        color: "rgb(234, 236, 244)",
+                        zeroLineColor: "rgb(234, 236, 244)",
+                        drawBorder: false,
+                        borderDash: [2],
+                        zeroLineBorderDash: [2]
+                    },
+                    stacked: true,
+                }],
+            },
+            legend: {
+                display: false
+            },
+            /* annotation: { */
+            /*     annotations: [ */
+            /*         { */
+            /*             drawTime: "afterDatasetsDraw", */
+            /*             type: "line", */
+            /*             mode: "vertical", */
+            /*             scaleID: "x-axis-0", */
+            /*             value: 3.8, */
+            /*             borderWidth: 5, */
+            /*             borderColor: "red", */
+            /*             label: { */
+            /*                 content: "TODAY", */
+            /*                 enabled: true, */
+            /*                 position: "top" */
+            /*             } */
+            /*         } */
+            /*     ] */
+            /* }, */
+            tooltips: {
+                /* backgroundColor: "rgb(255,255,255)", */
+                /* bodyFontColor: "#858796", */
+                titleMarginBottom: 10,
+                /* titleFontColor: '#6e707e', */
+                titleFontSize: 14,
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                /* yPadding: 15, */
+                displayColors: false,
+                intersect: false,
+                mode: 'index',
+                caretPadding: 10,
+                callbacks: {
+                    label: function(tooltipItem, chart) {
+                        console.log(tooltipItem);
+                        var datasetLabel = (tooltipItem.datasetIndex === 0) ? 'Unrealised' : 'Realised';
+                        return datasetLabel + ': $' + (tooltipItem.xLabel);
+                    }
+                }
+            },
+            animation: {
+                duration: 0,
+                onComplete: function () {
+                    var chartInstance = this.chart,
+                    ctx = chartInstance.ctx;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    this.data.datasets.forEach(function (dataset, i) {
+                        var meta = chartInstance.controller.getDatasetMeta(i);
+                        console.log(meta);
+                        meta.data.forEach(function (bar, index) {
+                            var data = dataset.data[index];
+                            ctx.fillText(data, bar._model.x, bar._model.y - 12);
+                        });
+                    });
+                }
+            }
+
+        }
+    });
 
     // Pie Chart Example
     var ctx = document.getElementById("SA_Stock_Weightages");
@@ -49,6 +204,7 @@
             }],
         },
         options: {
+            text: 'hi',
             maintainAspectRatio: false,
             tooltips: {
                 backgroundColor: "rgb(255,255,255)",
@@ -66,93 +222,6 @@
             cutoutPercentage: 80,
         },
     });
-
-    var ctx = document.getElementById("Asset_Allocation");
-    var myPieChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-                labels: ["Equities", "Property", "Leverage"],
-                datasets: [{
-                data: [44, 36, 20],
-                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
-                hoverBorderColor: "rgba(234, 236, 244, 1)",
-            }],
-        },
-        options: {
-            maintainAspectRatio: false,
-            tooltips: {
-                backgroundColor: "rgb(255,255,255)",
-                bodyFontColor: "#858796",
-                borderColor: '#dddfeb',
-                borderWidth: 1,
-                xPadding: 15,
-                yPadding: 15,
-                displayColors: false,
-                caretPadding: 10,
-            },
-            legend: {
-                display: false
-            },
-            cutoutPercentage: 80,
-        },
-    });
-
-    var ctx = document.getElementById("Mkt_Cap_Weight");
-    var myPieChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-                labels: ["Large Cap", "Mid Cap"],
-                datasets: [{
-                data: [20, 30],
-                backgroundColor: ['#4e73df', '#1cc88a'],
-                hoverBackgroundColor: ['#2e59d9', '#17a673'],
-                hoverBorderColor: "rgba(234, 236, 244, 1)",
-            }],
-        },
-        options: {
-            maintainAspectRatio: false,
-            tooltips: {
-                backgroundColor: "rgb(255,255,255)",
-                bodyFontColor: "#858796",
-                borderColor: '#dddfeb',
-                borderWidth: 1,
-                xPadding: 15,
-                yPadding: 15,
-                displayColors: false,
-                caretPadding: 10,
-            },
-            legend: {
-                display: false
-            },
-            cutoutPercentage: 80,
-        },
-    });
-
-    function number_format(number, decimals, dec_point, thousands_sep) {
-      // *     example: number_format(1234.56, 2, ',', ' ');
-      // *     return: '1 234,56'
-      number = (number + '').replace(',', '').replace(' ', '');
-      var n = !isFinite(+number) ? 0 : +number,
-        prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
-        sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
-        dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
-        s = '',
-        toFixedFix = function(n, prec) {
-          var k = Math.pow(10, prec);
-          return '' + Math.round(n * k) / k;
-        };
-      // Fix for IE parseFloat(0.55).toFixed(0) = 0;
-      s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
-      if (s[0].length > 3) {
-        s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
-      }
-      if ((s[1] || '').length < prec) {
-        s[1] = s[1] || '';
-        s[1] += new Array(prec - s[1].length + 1).join('0');
-      }
-      return s.join(dec);
-    }
 
     // Area Chart Example
     var ctx = document.getElementById("SA_myAreaChart");
