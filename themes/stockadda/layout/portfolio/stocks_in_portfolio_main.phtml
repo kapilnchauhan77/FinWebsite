@@ -4,18 +4,16 @@
             <div class="wo_page_hdng pag_neg_padd pag_alone">
                 <div class="wo_page_hdng_menu">
                     <ul class="list-unstyled">
-                        <li id='equity'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;type=equity" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;type=equity">Equity</a></li>
-                        <li id='mutual_funds'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;type=mutual_funds" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;type=mutual_funds">Mutual Funds</a></li>
-                        <li id='other_assets'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;type=other_assets" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;type=other_assets">Other Assets</a></li>
-                        <li id='transactions'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;type=transactions" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;type=transactions">All Transactions</a></li>
+                        <li id='equity'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=equity" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=equity">Equity</a></li>
+                        <li id='mutual_funds'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=mutual_funds" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=mutual_funds">Mutual Funds</a></li>
+                        <li id='other_assets'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=other_assets" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=other_assets">Other Assets</a></li>
+                        <li id='all_transactions'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=transactions" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=transactions">All Transactions</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         <div class="wo_my_pages">
             <div>
-
-                <script>console.log('<?php echo $_GET['type']; ?>');</script>
 
                 <?php
                     $stocks_in_portfolios = Wo_GetDataOfStocksInPortfolio($wo['portfolio_data']['portfolio_id']);
@@ -36,7 +34,11 @@
 <script>
 
     $( document ).ready(function() {
-        $('#' + '<?php echo $_GET['type']; ?>').addClass('active');
+        tab = '<?php echo $_GET['tab']; ?>';
+        tab = tab === 'transactions' ? 'all_transactions' : tab;
+        $('#' + tab).addClass('active');
+        $('#transactions').addClass('menuactive');
+        console.log('Tab: ' + tab);
     });
 
 </script>

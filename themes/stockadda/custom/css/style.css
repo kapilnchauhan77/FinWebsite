@@ -877,6 +877,11 @@ input[type="button"].SA_btn-block {
   max-width: 33.33333%;
 }
 
+.SA_col-8 {
+  flex: 0 0 66.666666%;
+  max-width: 66.666666%;
+}
+
 @media (min-width: 768px) {
   .SA_col-md {
     flex-basis: 0;

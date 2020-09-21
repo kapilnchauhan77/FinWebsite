@@ -21,10 +21,10 @@
             <div class="SA_row" style="margin-top: 1.5% !important;">
 
                 <!-- Value -->
-                <div class="SA_col-7">
+                <div class="SA_col-4">
                     <div class="SA_row">
 
-                        <div class="SA_col-3">
+                        <div class="SA_col-6">
                             <div class="SA_card SA_border-left-primary SA_shadow SA_h-100 SA_py-2">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
@@ -40,7 +40,7 @@
                             </div>
                         </div>
 
-                        <div class="SA_col-3">
+                        <div class="SA_col-6">
                             <div class="SA_card SA_border-left-warning SA_shadow SA_h-100 SA_py-2">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
@@ -56,8 +56,34 @@
                             </div>
                         </div>
 
+                    </div>
+                </div>
+
+                <div class="SA_col-4">
+                    <div class="SA_row">
+
+                       <!-- Volume -->
+                        <div class="SA_col-4">
+                            <div class="SA_card SA_border-left-primary SA_shadow SA_h-100 SA_py-2">
+                                <div class="SA_card-body">
+                                      <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                            <div class="SA_col SA_mr-2">
+                                              <div class="SA_text-xs SA_font-weight-bold SA_text-primary SA_text-uppercase SA_mb-1">Volume</div>
+                                              <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800"><?php echo $wo['portfolio_data']['no_of_stocks']; ?></div>
+                                            </div>
+
+                                            <div class="SA_col-auto">
+                                                <i class="fa fa-calculator fa-2x SA_text-gray-300"></i>
+                                            </div>
+
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+
                        <!-- XIRR -->
-                        <div class="SA_col-3">
+                        <div class="SA_col-4">
                             <div class="SA_card SA_border-left-info SA_shadow SA_h-100">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
@@ -81,33 +107,6 @@
                             </div>
                         </div>
 
-                       <!-- Divdends -->
-                        <div class="SA_col-3">
-                            <div class="SA_card SA_border-left-primary SA_shadow SA_h-100 SA_py-2">
-                                <div class="SA_card-body">
-                                      <div class="SA_row SA_no-gutters SA_align-items-center">
-
-                                            <div class="SA_col SA_mr-2">
-                                              <div class="SA_text-xs SA_font-weight-bold SA_text-primary SA_text-uppercase SA_mb-1">Divdends</div>
-                                              <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">32</div>
-                                            </div>
-
-                                            <div class="SA_col-auto">
-                                              <i class="fa fa-inr fa-2x SA_text-gray-300"></i>
-                                            </div>
-
-                                      </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-
-                <div class="SA_col-5">
-                    <div class="SA_row">
-
                        <!-- Overall Rank -->
                        <div class="SA_col-4">
                             <div class="SA_card SA_border-left-secondary SA_shadow SA_h-100 SA_py-2">
@@ -128,8 +127,16 @@
                             </div>
                         </div>
 
+
+                    </div>
+                </div>
+
+
+                <div class="SA_col-4">
+                    <div class="SA_row">
+
                         <!-- Day's P&L -->
-                        <div class="SA_col-4">
+                        <div class="SA_col-6">
                             <div id="daily_p_p_l_div" class="SA_card SA_border-left-secondary SA_shadow SA_h-100">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
@@ -145,7 +152,7 @@
                                         </div>
 
                                         <div class="SA_col-auto">
-                                            <i class="fa fa-clipboard-list fa-2x SA_text-gray-300"></i>
+                                            <i class="fa fa-inr fa-2x SA_text-gray-300"></i>
                                         </div>
 
                                     </div>
@@ -154,7 +161,7 @@
                         </div>
 
                         <!-- Overall P&L -->
-                        <div class="SA_col-4">
+                        <div class="SA_col-6">
                             <div id="overall_p_p_l_div" class="SA_card SA_border-left-secondary SA_shadow SA_h-100">
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
@@ -172,8 +179,9 @@
                                         </div>
 
                                         <div class="SA_col-auto">
-                                            <i class="fa fa-clipboard-list fa-2x SA_text-gray-300"></i>
+                                            <i class="fa fa-inr fa-2x SA_text-gray-300"></i>
                                         </div>
+
 
                                     </div>
                                 </div>
@@ -203,35 +211,35 @@
                 </li>
 
                 <li>
-                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=overview" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=overview" id="overview">
+                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=overview" data-ajax="<?php echo $wo['portfolio_data']['raw_url'];?>&amp;tab=overview" id="overview">
                         <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M5 3A2 2 0 0 0 3 5H5M7 3V5H9V3M11 3V5H13V3M15 3V5H17V3M19 3V5H21A2 2 0 0 0 19 3M3 7V9H5V7M7 7V11H11V7M13 7V11H17V7M19 7V9H21V7M3 11V13H5V11M19 11V13H21V11M7 13V17H11V13M13 13V17H17V13M3 15V17H5V15M19 15V17H21V15M3 19A2 2 0 0 0 5 21V19M7 19V21H9V19M11 19V21H13V19M15 19V21H17V19M19 19V21A2 2 0 0 0 21 19Z" fill="currentColor"></path></svg></span>
                         <span>Overview</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=pro_analysis" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=pro_analysis" id="pro_analysis">
+                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=pro_analysis" data-ajax="<?php echo $wo['portfolio_data']['raw_url'];?>&amp;tab=pro_analysis" id="pro_analysis">
                         <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M5 3A2 2 0 0 0 3 5H5M7 3V5H9V3M11 3V5H13V3M15 3V5H17V3M19 3V5H21A2 2 0 0 0 19 3M3 7V9H5V7M7 7V11H11V7M13 7V11H17V7M19 7V9H21V7M3 11V13H5V11M19 11V13H21V11M7 13V17H11V13M13 13V17H17V13M3 15V17H5V15M19 15V17H21V15M3 19A2 2 0 0 0 5 21V19M7 19V21H9V19M11 19V21H13V19M15 19V21H17V19M19 19V21A2 2 0 0 0 21 19Z" fill="currentColor"></path></svg></span>
                         <span>Pro Analysis</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=performance" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=performance" id="performance">
+                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=performance" data-ajax="<?php echo $wo['portfolio_data']['raw_url'];?>&amp;tab=performance" id="performance">
                         <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M5 3A2 2 0 0 0 3 5H5M7 3V5H9V3M11 3V5H13V3M15 3V5H17V3M19 3V5H21A2 2 0 0 0 19 3M3 7V9H5V7M7 7V11H11V7M13 7V11H17V7M19 7V9H21V7M3 11V13H5V11M19 11V13H21V11M7 13V17H11V13M13 13V17H17V13M3 15V17H5V15M19 15V17H21V15M3 19A2 2 0 0 0 5 21V19M7 19V21H9V19M11 19V21H13V19M15 19V21H17V19M19 19V21A2 2 0 0 0 21 19Z" fill="currentColor"></path></svg></span>
                         <span>Performance</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=tax" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=tax" id="tax">
+                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=tax" data-ajax="<?php echo $wo['portfolio_data']['raw_url'];?>&amp;tab=tax" id="tax">
                         <span class="split-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M5 3A2 2 0 0 0 3 5H5M7 3V5H9V3M11 3V5H13V3M15 3V5H17V3M19 3V5H21A2 2 0 0 0 19 3M3 7V9H5V7M7 7V11H11V7M13 7V11H17V7M19 7V9H21V7M3 11V13H5V11M19 11V13H21V11M7 13V17H11V13M13 13V17H17V13M3 15V17H5V15M19 15V17H21V15M3 19A2 2 0 0 0 5 21V19M7 19V21H9V19M11 19V21H13V19M15 19V21H17V19M19 19V21A2 2 0 0 0 21 19Z" fill="currentColor"></path></svg></span>
                         <span>Tax</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=transactions" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=transactions" id="transactions">
+                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=transactions" data-ajax="<?php echo $wo['portfolio_data']['raw_url'];?>&amp;tab=transactions" id="transactions">
                         <span class="split-link"><?php echo $wo['portfolio_data']['no_of_unique_stocks']; ?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11 4h10v2H11V4zm0 4h6v2h-6V8zm0 6h10v2H11v-2zm0 4h6v2h-6v-2zM3 4h6v6H3V4zm2 2v2h2V6H5zm-2 8h6v6H3v-6zm2 2v2h2v-2H5z" fill="currentColor"></path></svg></span>
                         <span>Transactions</span>
                     </a>
@@ -244,6 +252,27 @@
 
 <?php switch ($_GET['tab']) {
     case 'transactions': ?>
+
+        <?php echo Wo_LoadPage('portfolio/stocks_in_portfolio_main'); ?>
+
+    </div>
+
+<?php break;
+    case 'other_assets': ?>
+
+        <?php echo Wo_LoadPage('portfolio/stocks_in_portfolio_main'); ?>
+
+    </div>
+
+<?php break;
+    case 'equity': ?>
+
+        <?php echo Wo_LoadPage('portfolio/stocks_in_portfolio_main'); ?>
+
+    </div>
+
+<?php break;
+    case 'mutual_funds': ?>
 
         <?php echo Wo_LoadPage('portfolio/stocks_in_portfolio_main'); ?>
 

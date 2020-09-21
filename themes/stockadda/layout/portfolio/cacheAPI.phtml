@@ -1,13 +1,75 @@
 <script>
-    function getGraphData(fincode_data, fincode_volume, fincode_sorted_dates) {
 
-        /* console.log('Graph Argument Data:'); */
-        /* console.log(fincode_data); */
-        /* console.log(fincode_volume); */
-        /* console.log(fincode_sorted_dates); */
+    function processGraphData(data){
 
         var graphData = new Object();
 
+        for (value_index in data) {
+            var value = data[value_index];
+
+            var fincode = value['fincode'];
+
+            var volume = fincode_volume[fincode][fincode_sorted_dates[fincode][0]];
+            graphData[fincode] = new Object();
+
+            var date_index = 0;
+
+            var last_day_modif = (fincode_sorted_dates[fincode].length > 1) ? false : true;
+            var last_day_modif_idx = 0;
+
+            if (last_day_modif === true){
+
+                for (idx_ = last_day_modif_idx; idx_ < value.Table.length; idx_++){
+                    var val = value.Table[idx_];
+
+                    if (val['date'] < fincode_sorted_dates[fincode][0]){
+                        continue;
+                    }
+
+                    graphData[fincode][val['date']] = (volume * val['price']); }
+                    console.log('Graph Data:');
+                    console.log(graphData);
+
+            } else {
+                for (val_idx in value.Table) {
+                    var val = value.Table[val_idx];
+
+                    if (val['date'] < fincode_sorted_dates[fincode][0]){
+                        continue;
+                    }
+
+                    if (val['date'] > fincode_sorted_dates[fincode][date_index + 1]){
+
+                        volume += fincode_volume[fincode][fincode_sorted_dates[fincode][date_index + 1]];
+
+                        if (date_index < (fincode_sorted_dates[fincode].length - 2)) {
+                            date_index += 1;
+                        } else {
+                            last_day_modif = true;
+                            last_day_modif_idx = val_idx;
+                            date_index = (fincode_sorted_dates[fincode].length - 1);
+                            break;
+                        }
+                    }
+
+                    graphData[fincode][val['date']] = (volume * val['price']);
+                    console.log('Graph Data:');
+                    console.log(graphData);
+                };
+            };
+        };
+
+        return graphData;
+    };
+
+    function getGraphData(fincode_data, fincode_volume, fincode_sorted_dates) {
+
+        console.log('Graph Argument Data:');
+        console.log(fincode_data);
+        console.log(fincode_volume);
+        console.log(fincode_sorted_dates);
+
+        var graphData = new Object();
         $.ajax({
             url: Wo_Ajax_Requests_File(),
             type: 'GET',
@@ -18,73 +80,11 @@
             },
                 })
                 .done(function(ajax_data) {
-                    /* console.log('Data from Cache:') */
-                    /* console.log(ajax_data); */
                     data = ajax_data.stock_data;
-                    /* console.log(data); */
-                    for (value_index in data) {
-                        var value = data[value_index];
-                        /* console.log(value); */
-                        var fincode = value['fincode'];
-                        /* console.log('fincode'); */
-                        /* console.log(fincode); */
-                        var volume = fincode_volume[fincode][fincode_sorted_dates[fincode][0]];
-                        graphData[fincode] = new Object();
-
-                        var date_index = 0;
-                        /* console.log(fincode_sorted_dates[fincode].length); */
-                        var last_day_modif = (fincode_sorted_dates[fincode].length > 1) ? false : true;
-                        var last_day_modif_idx = 0;
-                        /* console.log(last_day_modif); */
-
-                        if (last_day_modif == false){
-                            for (val_idx in value.Table) {
-                                var val = value.Table[val_idx];
-                                /* console.log(value); */
-                                if (val['date'] < fincode_sorted_dates[fincode][0]){
-                                    continue;
-                                }
-
-                                if (val['date'] > fincode_sorted_dates[fincode][date_index + 1]){
-                                    /* console.log('bye bro'); */
-                                    /* console.log(val['date']); */
-                                    volume += fincode_volume[fincode][fincode_sorted_dates[fincode][date_index + 1]];
-
-                                    if (date_index < (fincode_sorted_dates[fincode].length - 2)) {
-                                        date_index += 1;
-                                    } else {
-                                        last_day_modif = true;
-                                        last_day_modif_idx = val_idx;
-                                        date_index = (fincode_sorted_dates[fincode].length - 1);
-                                        break;
-                                    }
-                                }
-
-                                /* console.log(volume); */
-                                /* console.log(fincode_sorted_dates[fincode][date_index]); */
-                                /* console.log(volume * val['price']); */
-                                graphData[fincode][val['date']] = (volume * val['price']);
-                            };
-                        };
-
-                        if (last_day_modif == true){
-                            /* console.log('volume'); */
-                            for (idx_ = last_day_modif_idx; idx_ < value.Table.length; idx_++){
-                                var val = value.Table[idx_];
-
-                                if (val['date'] < fincode_sorted_dates[fincode][0]){
-                                    continue;
-                                }
-
-                                /* console.log(volume); */
-                                /* console.log(fincode_sorted_dates[fincode][date_index]); */
-                                /* console.log(volume * val['price']); */
-                                graphData[fincode][val['date']] = (volume * val['price']); }
-                        };
-                    };
+                    graphData = processGraphData(data);
                 });
 
-        console.log('graphData');
+        console.log('graphData:');
         console.log(graphData);
 
     };

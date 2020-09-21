@@ -2,7 +2,7 @@ import os
 from .data_extraction import extract_data
 from .fincode_finding import get_fincode
 import phpserialize
-from io import StringIO, BytesIO
+from io import BytesIO
 from datetime import datetime
 
 
