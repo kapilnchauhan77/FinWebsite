@@ -130,5 +130,6 @@ define('T_STOCKDTLADJBSE', 'stock_prices_adjusted_ftp_bse');
 define('T_STOCKDTLADJNSE', 'stock_prices_adjusted_ftp_nse');
 define('T_STOCKDTLINTBSE', 'stock_prices_intraday_ftp_bse');
 define('T_STOCKDTLINTNSE', 'stock_prices_intraday_ftp_nse');
+define('T_HISTORICAL', 'historical_prices');
 //END OF CUSTOM ADDITIONS
 ?>

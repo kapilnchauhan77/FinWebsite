@@ -1,20 +1,28 @@
 <script>
 
-    function processGraphData(data){
+    function processGraphData(data, fincode_volume, fincode_sorted_dates, currentVal){
 
         var graphData = new Object();
 
         for (value_index in data) {
             var value = data[value_index];
+            console.log('Val idx');
+            console.log(value_index);
+            console.log(value);
 
             var fincode = value['fincode'];
 
             var volume = fincode_volume[fincode][fincode_sorted_dates[fincode][0]];
-            graphData[fincode] = new Object();
+            /* graphData[fincode] = new Object(); */
+            graphData[fincode] = {
+                                    'Dates' : new Array(),
+                                    'Prices': new Array(),
+                                 };
 
             var date_index = 0;
 
             var last_day_modif = (fincode_sorted_dates[fincode].length > 1) ? false : true;
+            console.log(fincode_sorted_dates[fincode]);
             var last_day_modif_idx = 0;
 
             if (last_day_modif === true){
@@ -26,9 +34,13 @@
                         continue;
                     }
 
-                    graphData[fincode][val['date']] = (volume * val['price']); }
-                    console.log('Graph Data:');
-                    console.log(graphData);
+                    graphData[fincode]['Dates'].push(val['date']);
+                    /* graphData[fincode]['Prices'].push((currentVal - (volume * val['price']))); */
+                    graphData[fincode]['Prices'].push((volume * val['price']));
+                }
+
+                console.log('Graph Data:');
+                console.log(graphData);
 
             } else {
                 for (val_idx in value.Table) {
@@ -37,6 +49,8 @@
                     if (val['date'] < fincode_sorted_dates[fincode][0]){
                         continue;
                     }
+                    console.log('val');
+                    console.log(val);
 
                     if (val['date'] > fincode_sorted_dates[fincode][date_index + 1]){
 
@@ -52,40 +66,56 @@
                         }
                     }
 
-                    graphData[fincode][val['date']] = (volume * val['price']);
+                    graphData[fincode]['Dates'].push(val['date']);
+                    /* graphData[fincode]['Prices'].push((currentVal - (volume * val['price']))); */
+                    graphData[fincode]['Prices'].push((volume * val['price']));
+
                     console.log('Graph Data:');
                     console.log(graphData);
                 };
             };
         };
 
+        console.log(graphData);
         return graphData;
     };
 
-    function getGraphData(fincode_data, fincode_volume, fincode_sorted_dates) {
+    function getGraphData(fincode_data, fincode_volume, fincode_sorted_dates, currentVal, timeline) {
 
         console.log('Graph Argument Data:');
+        console.log('Fincode Data:');
         console.log(fincode_data);
+        console.log('Fincode Volume:');
         console.log(fincode_volume);
+        console.log('Fincode Sorted Dates:');
         console.log(fincode_sorted_dates);
+        console.log('Current Value:');
+        console.log(currentVal);
+        console.log('Timeline:');
+        console.log(timeline);
 
         var graphData = new Object();
         $.ajax({
             url: Wo_Ajax_Requests_File(),
             type: 'GET',
+            async: false,
             dataType: 'json',
             data: {
                 f:'historical_data_cache',
+                timeline: timeline,
                 portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
             },
                 })
                 .done(function(ajax_data) {
                     data = ajax_data.stock_data;
-                    graphData = processGraphData(data);
+                    console.log('data');
+                    console.log(data);
+                    graphData = processGraphData(data, fincode_volume, fincode_sorted_dates, currentVal);
                 });
 
         console.log('graphData:');
         console.log(graphData);
+        if (document.getElementById("SA_myAreaChart")) stocksAreaChart(graphData);
 
     };
 

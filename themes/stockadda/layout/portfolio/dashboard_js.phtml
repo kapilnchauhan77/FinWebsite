@@ -1,6 +1,6 @@
 <script>
 
-    function PortfolioDataProcessing() {
+    function PortfolioDataProcessing(timeline) {
 
        var get_data_from_server = false;
        var data_of_all_stocks = new Array();
@@ -55,7 +55,7 @@
                        }
 
                        [adjustedValTotal, intradayValTotal, currentVal, fincode_price_obj, fincode_volume, fincode_sorted_dates] = calculateTotalVals_display(data_of_all_stocks);
-                       getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates);
+                       getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal, timeline);
 
                        console.log("Current Value: " + currentVal);
                        console.log("Adjusted Value: " + adjustedValTotal);
@@ -64,7 +64,7 @@
 
        } else{
            [adjustedValTotal, intradayValTotal, currentVal, fincode_price_obj, fincode_volume, fincode_sorted_dates] = calculateTotalVals_display(data_of_all_stocks);
-           getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates);
+           getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal, timeline);
 
            console.log("Current Value: " + currentVal);
            console.log("Adjusted Value: " + adjustedValTotal);
@@ -74,11 +74,21 @@
     }
 
 
-    $( document ).ready(PortfolioDataProcessing());
+    $( document ).ready(function () {
+        /* INFO: 0: MAX, Time_Stamp: Other */
+        var SA_PORTFOLIO_timestamp = (new Date().getTime() / 1000) - (90 * 24 * 60 * 60); // For 10 Days
+        /* if (localStorage.getItem('SA_portfolio_time') == null) localStorage.setItem('SA_portfolio_time', SA_PORTFOLIO_timestamp); */
+        localStorage.setItem('SA_portfolio_time', SA_PORTFOLIO_timestamp);
 
-    /* setInterval(PortfolioDataProcessing, 180000); */
-    setInterval(function(){
-        $('#currentVal').text(0);
-    }, 1800);
+        PortfolioDataProcessing(localStorage.getItem('SA_portfolio_time'));
+        /* PortfolioDataProcessing(0); */
+    });
+
+    var SA_PORTFOLIO_timestamp = (new Date().getTime() / 1000) - (90 * 24 * 60 * 60); // For 10 Days
+    if (localStorage.getItem('SA_portfolio_time') == null) localStorage.setItem('SA_portfolio_time', SA_PORTFOLIO_timestamp);
+    setInterval(PortfolioDataProcessing, 180000, localStorage.getItem('SA_portfolio_time'));
+    /* setInterval(function(){ */
+    /*     $('#currentVal').text(0); */
+    /* }, 1800); */
 
 </script>

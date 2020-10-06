@@ -8358,7 +8358,7 @@ function Wo_ExtraStockDetailForAllStocksInPortfolio($portfolio_id) {
 
     return $data;
 }
-function HistoricalPrices_read($fileName) {
+function HistoricalPrices_read_FILE($fileName) {
     $fileName = 'historical_prices/' . $fileName . '_historical_price.prmt';
     if (file_exists($fileName)) {
         $handle   = fopen($fileName, 'rb');
@@ -8370,10 +8370,34 @@ function HistoricalPrices_read($fileName) {
         return null;
     }
 }
-function Wo_GetHistoricalData($fincode){
+function HistoricalPrices_read_SQL($fincode, $timeline) {
+    global $sqlConnect;
+
+    $data          = array();
+    $data['Table'] = array();
+    $fincode = Wo_Secure($fincode);
+    $timeline = Wo_Secure($timeline);
+
+    $additional_query = ($timeline === 0) ? ";" : " AND `date` >= " . $timeline . ";";
+
+    $query_text = "SELECT `date`, `price` FROM `" . T_HISTORICAL . "` WHERE `fincode` = " . $fincode . $additional_query;
+
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        if (!empty($fetched_data)){
+            $data['Table'][]   = $fetched_data;
+        }
+    };
+    $data['fincode'] = $fincode;
+
+    return $data;
+}
+function Wo_GetHistoricalData($fincode, $timeline){
 
     $fincode = Wo_Secure($fincode);
-    $fetched_data = HistoricalPrices_read($fincode);
+    $timeline = Wo_Secure($timeline);
+    /* $fetched_data = HistoricalPrices_read_FILE($fincode); */
+    $fetched_data = HistoricalPrices_read_SQL($fincode, $timeline);
     $fetched_data['fincode'] = $fincode;
 
     return $fetched_data;

@@ -1,0 +1,58 @@
+<ul class="list-group filterby portfolio_graph_filter" id="filter-button" style="float: right;margin: 0;background-color: #f9f9f9; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.0);">
+
+    <li class="list-group-item hidden" contenteditable="false">Graph by</li>
+
+    <li class="list-group-item filter-by-li avtive" id="10D" onclick="thePortfolioTimeline('10D');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px; width: 20.4%;">
+        <b>10D</b>
+    </li>
+
+    <li class="list-group-item filter-by-li" id="1M" onclick="thePortfolioTimeline('1M');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px; width: 18.5%">
+        <b>1M</b>
+    </li>
+
+    <li class="list-group-item filter-by-li" id="1Yr" onclick="thePortfolioTimeline('1Yr');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px; width: 18%">
+        <b>1Yr</b>
+    </li>
+
+    <li class="list-group-item filter-by-li" id="YTD" onclick="thePortfolioTimeline('YTD');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px; width: 20.6%">
+        <b>YTD</b>
+    </li>
+
+    <li class="list-group-item filter-by-li" id="MAX" onclick="thePortfolioTimeline('MAX');" style="box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); color: #000;  border-radius: 5px; width: 22.5%">
+        <b>MAX</b>
+    </li>
+
+</ul>
+
+
+<script>
+
+    function thePortfolioTimeline(timeline){
+
+        switch (timeline){
+            case '10D':
+                SA_PORTFOLIO_timestamp = (new Date().getTime() / 1000) - (10 * 24 * 60 * 60); // For 10 Days
+                break;
+            case '1M':
+                SA_PORTFOLIO_timestamp = (new Date().getTime() / 1000) - (30 * 24 * 60 * 60); // For 1 Month
+                break;
+            case '1Yr':
+                SA_PORTFOLIO_timestamp = (new Date().getTime() / 1000) - (365 * 24 * 60 * 60); // For 1 Year
+                break;
+            case 'YTD':
+                SA_PORTFOLIO_timestamp = new Date(new Date().getFullYear(), 0).getTime()/1000; // For 1 Year To Date
+                break;
+            case 'MAX':
+                SA_PORTFOLIO_timestamp = 0;
+                break;
+            default:
+                SA_PORTFOLIO_timestamp = new Date(new Date().getFullYear(), 0).getTime()/1000; // For 1 Year To Date
+                break;
+        };
+
+        localStorage.removeItem('SA_portfolio_time');
+        localStorage.setItem('SA_portfolio_time', SA_PORTFOLIO_timestamp);
+        PortfolioDataProcessing(localStorage.getItem('SA_portfolio_time'));
+    };
+
+</script>

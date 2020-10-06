@@ -27,9 +27,11 @@
             console.log("Val:");
             console.log(value);
 
+            var total_volume_of_stock = 0;
+
             if (get_fincode_data == true) {
                 var dates = new Array();
-                var rolling_sum_price = 0;
+                /* var rolling_sum_price = 0; */
 
                 fincode_price_obj[value.stock_fincode] = new Object();
                 fincode_volume[value.stock_fincode]    = new Object();
@@ -37,30 +39,44 @@
                 value.stock_portfolio_data.forEach(val => {
                     fincode_price_obj[value.stock_fincode][parseInt(val.stock_transaction_date)] = parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price);
                     fincode_volume[value.stock_fincode][parseInt(val.stock_transaction_date)] = parseFloat(val.stock_transaction_qty);
+                    total_volume_of_stock += parseFloat(val.stock_transaction_qty);
                 });
 
                 dates = Object.keys(fincode_price_obj[value.stock_fincode]);
                 dates.sort();
+
+                /* TODO This is fishy, test more */
                 /* dates.forEach(date_ => { */
                 /*     rolling_sum_price += fincode_price_obj[value.stock_fincode][date_]; */
                 /*     fincode_price_obj[value.stock_fincode][date_] = rolling_sum_price; */
                 /* }); */
+                /* Fishy Code */
+
                 fincode_sorted_dates[value.stock_fincode] = dates;
             };
 
             if (value.price_detail_intraday == null) {
-                currentVal += parseInt(value.price_detail_adjusted.close);
-                adjustedValTotal += parseInt(value.price_detail_adjusted.close);
-            } else{
-                currentVal += parseInt(value.price_detail_intraday.close);
-                intradayValTotal += parseInt(value.price_detail_intraday.close);
-                adjustedValTotal += parseInt(value.price_detail_adjusted.close);
+
+                currentVal       += parseFloat(value.price_detail_adjusted.close);
+                adjustedValTotal += parseFloat(value.price_detail_adjusted.close);
+
+            } else {
+
+                currentVal       += parseFloat(value.price_detail_intraday.close);
+                intradayValTotal += parseFloat(value.price_detail_intraday.close);
+                adjustedValTotal += parseFloat(value.price_detail_adjusted.close);
+
             }
+
+            currentVal       *= total_volume_of_stock;
+            adjustedValTotal *= total_volume_of_stock;
+            intradayValTotal *= total_volume_of_stock;
+
         });
 
         $('#currentVal').text(currentVal);
 
-        const daily_p_p_l = (currentVal - adjustedValTotal) * <?php echo $wo['portfolio_data']['no_of_stocks'];?>;
+        const daily_p_p_l = (currentVal - adjustedValTotal);
         $('#daily_p_p_l').text(daily_p_p_l);
 
         const daily_p_p_l_per = ((currentVal - adjustedValTotal) / adjustedValTotal);
