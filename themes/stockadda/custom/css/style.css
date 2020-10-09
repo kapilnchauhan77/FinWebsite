@@ -1,9 +1,3 @@
-/*
-
-Add here your custom css styles Example: p { text-align: center; color: red; }
-
-*/
-
 .header-fixed1000, .header-fixed1200 { max-width: 95%!important;}
 .container { width: 95%!important;}
 @media (min-width:992px) {

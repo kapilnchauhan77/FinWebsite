@@ -13,7 +13,7 @@
             var fincode = value['fincode'];
 
             var volume = fincode_volume[fincode][fincode_sorted_dates[fincode][0]];
-            /* graphData[fincode] = new Object(); */
+
             graphData[fincode] = {
                                     'Dates' : new Array(),
                                     'Prices': new Array(),
@@ -115,7 +115,7 @@
 
         console.log('graphData:');
         console.log(graphData);
-        if (document.getElementById("SA_myAreaChart")) stocksAreaChart(graphData);
+        /* if (document.getElementById("SA_myAreaChart")) stocksAreaChart(graphData); */
 
     };
 
