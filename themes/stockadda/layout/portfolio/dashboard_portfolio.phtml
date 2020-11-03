@@ -1,12 +1,32 @@
+<script>console.log(<?php echo json_encode($wo); ?>);</script>
 <div class="row page-margin wo_page_profile" data-page="portfolio" data-id="<?php echo $wo['portfolio_data']['portfolio_name'];?>">
     <div class="profile-container">
 		<div class="page-info-cont" style="margin-bottom: 0px !important;">
             <div class="row">
                 <div class="col-xs-12 col-sm-9 col-md-8 first_row">
                     <div class="info">
-                        <div class="title" style="margin: 0">
-                            <a style="font-size: 50px;"><?php echo $wo['portfolio_data']['portfolio_name']; ?></a>
-                        </div>
+                        <?php if ($wo['user']['portfolio_count'] > 1){ ?>
+                            <div class="title dropdown dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="margin: 0;cursor: pointer;">
+                                <a style="font-size: 50px;"><?php echo $wo['portfolio_data']['portfolio_name']; ?></a>
+                                <i class="fa fa-caret-down fa-2x" style="color:#2E59D9"></i>
+                            </div>
+
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                                <?php
+                                    $portfolios = Wo_GetPortfolioDropdown();
+                                    foreach ($portfolios as $wo['portfolio_dropdown']) {
+                                        if ($wo['portfolio_dropdown']['portfolio_name'] !== $wo['portfolio_data']['portfolio_name'])
+                                        echo "<li role='presentation'><a role='menuitem' tabindex='-1' href='{$wo['portfolio_dropdown']['url']}'>{$wo['portfolio_dropdown']['portfolio_name']}</a></li>";
+                                    }
+                                ?>
+                            </ul>
+                        <?php } else {?>
+                            <div class="title" style="margin: 0;">
+                                <a style="font-size: 50px;"><?php echo $wo['portfolio_data']['portfolio_name']; ?></a>
+                            </div>
+                        <?php };?>
+
+                        <div class="small"><?php echo $wo['portfolio_data']['portfolio_description']; ?></div>
 
                     </div>
                 </div>

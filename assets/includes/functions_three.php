@@ -8164,11 +8164,44 @@ function Wo_PortfolioCaching($portfolio_id, $get_desc){
     $fetched_data['raw_url'] = '?link1=timeline&u=' . $fetched_data['portfolio_url'];
 
     if ($get_desc == true){
-        $query_text = "SELECT `portfolio_description` FROM " . T_PORTFOLIO . "
+        $query_text = "SELECT `portfolio_description` FROM " . T_PORTFOLIO_DESC . "
             WHERE `portfolio_id` = {$portfolio_id}";
         $sql          = mysqli_query($sqlConnect, $query_text);
         $fetched_data['portfolio_description'] = mysqli_fetch_assoc($sql)['portfolio_description'];
     }
+
+    return $fetched_data;
+}
+function Wo_GetPortfolioDropdown() {
+    global $sqlConnect, $wo;
+
+    $uid        =  $wo['user']['user_id'];
+    $data       = array();
+    $query_text = "SELECT `portfolio_id` FROM " . T_PORTFOLIO . "
+        WHERE `user_id` = {$uid}";
+    $query_one  = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($query_one)) {
+        if (is_array($fetched_data)) {
+            $data[] = Wo_PortfolioDropdownCaching($fetched_data['portfolio_id']);
+        };
+    };
+
+    return $data;
+}
+function Wo_PortfolioDropdownCaching($portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id        = Wo_Secure($portfolio_id);
+    $query_text = "SELECT `portfolio_name`, `portfolio_url` FROM " . T_PORTFOLIO . " WHERE `portfolio_id` = {$portfolio_id}";
+
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    $fetched_data = mysqli_fetch_assoc($sql);
+
+    if (empty($fetched_data)) {
+        return array();
+    }
+
+    $fetched_data['url'] = Wo_SeoLink('index.php?link1=timeline&u=' . $fetched_data['portfolio_url']);
 
     return $fetched_data;
 }
