@@ -1,30 +1,44 @@
-<script>console.log(<?php echo json_encode($wo); ?>);</script>
-<div class="row page-margin wo_page_profile" data-page="portfolio" data-id="<?php echo $wo['portfolio_data']['portfolio_name'];?>">
+<script>console.log(<?php echo json_encode($wo); ?>);</script>;
+<div class="row page-margin wo_page_profile" data-page="portfolio" data-id="<?php echo $wo['portfolio_data']['portfolio_name'];?>">;
     <div class="profile-container">
 		<div class="page-info-cont" style="margin-bottom: 0px !important;">
             <div class="row">
                 <div class="col-xs-12 col-sm-9 col-md-8 first_row">
                     <div class="info">
+                        <!-- <div class="title dropdown dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="margin: 0;cursor: pointer;"> -->
+                        <div class="title" style="margin: 0;">
                         <?php if ($wo['user']['portfolio_count'] > 1){ ?>
-                            <div class="title dropdown dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="margin: 0;cursor: pointer;">
+                            <span class="dropdown dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="margin: 0;cursor: pointer;">
                                 <a style="font-size: 50px;"><?php echo $wo['portfolio_data']['portfolio_name']; ?></a>
                                 <i class="fa fa-caret-down fa-2x" style="color:#2E59D9"></i>
-                            </div>
+                            </span>
 
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                                 <?php
                                     $portfolios = Wo_GetPortfolioDropdown();
                                     foreach ($portfolios as $wo['portfolio_dropdown']) {
                                         if ($wo['portfolio_dropdown']['portfolio_name'] !== $wo['portfolio_data']['portfolio_name'])
-                                        echo "<li role='presentation'><a role='menuitem' tabindex='-1' href='{$wo['portfolio_dropdown']['url']}'>{$wo['portfolio_dropdown']['portfolio_name']}</a></li>";
+                                        echo "<li role='presentation'><a style='font-size:13px;' role='menuitem' tabindex='-1' href='{$wo['portfolio_dropdown']['url']}'>{$wo['portfolio_dropdown']['portfolio_name']}</a></li>";
                                     }
                                 ?>
                             </ul>
                         <?php } else {?>
-                            <div class="title" style="margin: 0;">
                                 <a style="font-size: 50px;"><?php echo $wo['portfolio_data']['portfolio_name']; ?></a>
-                            </div>
                         <?php };?>
+
+                                <span id="portfolio_eye" style="margin-left:2.3em;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Toggle portfolio between private/public">
+                                    <?php if ($wo['portfolio_data']['privacy_level'] < 3){?>
+                                        <i style='cursor: pointer;' class="fa fa-eye fa-3x" onclick="SA_make_portfolio_private(true);"></i>
+                                    <?php } else{?>
+                                        <i style='cursor: pointer;' class="fa fa-eye-slash fa-3x" onclick="SA_make_portfolio_private(false);"></i>
+                                    <?php };?>
+                                </span>
+
+                                <span style="margin-left:1em;" onclick="SA_SharePortfolioOn(<?php echo $wo['portfolio_data']['portfolio_id']; ?>, <?php echo $wo['user']['user_id']; ?>)">
+                                    <i style='cursor: pointer;' class="fa fa-share-alt fa-3x"></i>
+                                </span>
+
+                            </div>
 
                         <div class="small"><?php echo $wo['portfolio_data']['portfolio_description']; ?></div>
 

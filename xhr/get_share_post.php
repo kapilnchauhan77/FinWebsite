@@ -1,4 +1,4 @@
-<?php 
+<?php
 if ($f == 'get_share_post') {
     $data['status'] = 400;
     if (!empty($_GET['post_id'])) {
@@ -12,5 +12,3 @@ if ($f == 'get_share_post') {
     echo json_encode($data);
     exit();
 }
-
-

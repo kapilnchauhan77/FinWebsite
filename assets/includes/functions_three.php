@@ -8087,6 +8087,22 @@ function Wo_CreatePortfolio($data){
 
     return true;
 }
+function SA_privatize_portfolio($privatize, $portfolio_id){
+    global $sqlConnect;
+
+    $privacy_level = ($privatize === 'true') ? 5 : 0;
+
+    $query_text = "UPDATE " . T_PORTFOLIO . " SET privacy_level = {$privacy_level} WHERE portfolio_id = {$portfolio_id} LIMIT 1";
+    $query  = mysqli_query($sqlConnect, $query_text);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    /* return $privatize; */
+    /* return $privacy_level; */
+    return true;
+}
 function Wo_GetMyPortfolios() {
     global $sqlConnect, $wo;
 
