@@ -1,5 +1,5 @@
-<script>console.log(<?php echo json_encode($wo); ?>);</script>;
-<div class="row page-margin wo_page_profile" data-page="portfolio" data-id="<?php echo $wo['portfolio_data']['portfolio_name'];?>">;
+<script>console.log(<?php echo json_encode($wo); ?>);</script>
+<div class="row page-margin wo_page_profile" data-page="portfolio" data-id="<?php echo $wo['portfolio_data']['portfolio_name'];?>">
     <div class="profile-container">
 		<div class="page-info-cont" style="margin-bottom: 0px !important;">
             <div class="row">
@@ -34,7 +34,7 @@
                                     <?php };?>
                                 </span>
 
-                                <span style="margin-left:1em;" onclick="SA_SharePortfolioOn(<?php echo $wo['portfolio_data']['portfolio_id']; ?>, <?php echo $wo['user']['user_id']; ?>)">
+                                <span style="margin-left:1em;" onclick="SA_SharePortfolioOn('<?php echo $wo['portfolio_data']['portfolio_url']; ?>')">
                                     <i style='cursor: pointer;' class="fa fa-share-alt fa-3x"></i>
                                 </span>
 
@@ -46,8 +46,12 @@
                 </div>
 
                 <span style="float: right;margin-top: 1.2%;margin-right: 1.2%;">
-                    <a href="#" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_btn-success SA_shadow-sm"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add</a>
-                    <a href="#" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_btn-primary SA_shadow-sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Edit</a>
+                    <?php if ($wo['user']['portfolio_count'] > 2 && $wo['user']['is_pro'] == 0){ ?>
+                        <a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_btn-success SA_shadow-sm" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Upgrade to add more Portfolios">&nbsp;Upgrade to Pro</a>
+                    <?php } else { ?>
+                        <a href="<?php echo Wo_SeoLink('index.php?link1=create-portfolio');?>" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_btn-success SA_shadow-sm"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Portfolio</a>
+                    <?php }; ?>
+                    <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;edit=portfolio" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_btn-primary SA_shadow-sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Edit Portfolio</a>
                 </span>
 
             </div>

@@ -69,6 +69,11 @@ if (isset($_GET['u'])) {
                    $name             = $wo['portfolio_data']['portfolio_name'] . ' - ' . $wo['stock_data']['compname'];
                }
             }
+            else if (isset($_GET['edit'])){
+               $type             = 'editPortfolio';
+               $about            = $wo['portfolio_data']['portfolio_name'] . ' - edit';
+               $name             = $wo['portfolio_data']['portfolio_name'] . ' - edit';
+            }
             else{
                 $type                = 'portfolio';
                 $about               = $wo['portfolio_data']['portfolio_name'];

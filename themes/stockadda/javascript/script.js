@@ -1956,6 +1956,7 @@ function Wo_OpenLightBox(post_id) {
   $('#contnet').append('<div class="lightbox-container"><div class="lightbox-backgrond" onclick="Wo_CloseLightbox();"></div><div class="lb-preloader" style="display:block"><svg width="50px" height="50px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"><rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><circle cx="50" cy="50" r="40" stroke="#676d76" fill="none" stroke-width="6" stroke-linecap="round"><animate attributeName="stroke-dashoffset" dur="1.5s" repeatCount="indefinite" from="0" to="502"></animate><animate attributeName="stroke-dasharray" dur="1.5s" repeatCount="indefinite" values="150.6 100.4;1 250;150.6 100.4"></animate></circle></svg></div></div>');
   $.get(Wo_Ajax_Requests_File(), {f:'open_lightbox', post_id:post_id}, function(data) {
     if (data.status == 200) {
+
     document.body.style.overflow = 'hidden';
       $('.lightbox-container').html(data.html);
     }
@@ -2847,27 +2848,25 @@ function Wo_SharePost(post_id, owner_id, self){
 
 }
 
-function SA_SharePortfolioOn(portfolio_id, owner_id){
+function SA_SharePortfolioOn(portfolio_url){
 
-  if (!portfolio_id) {
+  if (!portfolio_url) {
     return false;
   }
 
-    $('#share_post_modal').modal('hide');
-    $('#share_post_modal').remove();
+    $('#share_portfolio_modal').modal('hide');
+    $('#share_portfolio_modal').remove();
     $.ajax({
       url: Wo_Ajax_Requests_File(),
       type: 'GET',
       dataType: 'json',
-      data: {f: 'get_share_portfolio',portfolio_id:portfolio_id},
+      data: {f: 'get_share_portfolio',portfolio_url:portfolio_url},
     })
     .done(function(data) {
       if (data.status == 200) {
-        console.log('bitch');
-        $('body').append(data.html);
-        $('#SearchForInputPostId').val(portfolio_id);
-        $('#SearchForInputTypeId').val(owner_id);
-        $('#share_post_modal').modal('show');
+          console.log(data);
+          $('body').append(data.html);
+          $('#share_portfolio_modal').modal('show');
       }
     })
     .fail(function() {

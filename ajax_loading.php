@@ -125,7 +125,7 @@ if ($wo['config']['membership_system'] == 1) {
                 case 'create-page':
                     include('sources/create_page.php');
                     break;
-                // SA ADDITION FOR CREATE PORTFOLIO
+                // SA ADDITION FOR CREATE PORTFOLIO AND EDIT PORTFOLIO
                 case 'create-portfolio':
                     include('sources/create_portfolio.php');
                     break;
@@ -702,7 +702,7 @@ else{
         case 'create-page':
             include('sources/create_page.php');
             break;
-        // SA ADDITION FOR CREATE PORTFOLIO
+        // SA ADDITION FOR CREATE PORTFOLIO AND EDIT PORTFOLIO
         case 'create-portfolio':
             include('sources/create_portfolio.php');
             break;

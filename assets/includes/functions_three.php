@@ -8087,6 +8087,31 @@ function Wo_CreatePortfolio($data){
 
     return true;
 }
+function Wo_EditPortfolio($data){
+    global $wo, $sqlConnect;
+
+    $portfolio_id = $data['portfolio_id'];
+    $portfolio_title = $data['portfolio_title'];
+    $portfolio_description = $data['portfolio_description'];
+    $privacy_level = $data['privacy_level'];
+    $userId = $wo['user']['user_id'];
+
+    $query_text = "UPDATE " . T_PORTFOLIO . " SET `user_id` = {$userId}, `portfolio_name` = '{$portfolio_title}', `privacy_level` = {$privacy_level} WHERE `portfolio_id` = {$portfolio_id}";
+    $query  = mysqli_query($sqlConnect, $query_text);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    $query_text = "UPDATE " . T_PORTFOLIO_DESC . " SET `portfolio_description` = '{$portfolio_description}' WHERE `portfolio_id` = {$portfolio_id}";
+    $query  = mysqli_query($sqlConnect, $query_text);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    return true;
+}
 function SA_privatize_portfolio($privatize, $portfolio_id){
     global $sqlConnect;
 
@@ -8113,7 +8138,7 @@ function Wo_GetMyPortfolios() {
     $query_one  = mysqli_query($sqlConnect, $query_text);
     while ($fetched_data = mysqli_fetch_assoc($query_one)) {
         if (is_array($fetched_data)) {
-            $data[] = Wo_PortfolioCaching($fetched_data['portfolio_id'], false);
+            $data[] = Wo_PortfolioCaching($fetched_data['portfolio_id'], true);
         };
     };
 
@@ -8229,6 +8254,7 @@ function Wo_getPortfolioURL(){
     $query_one    = mysqli_query($sqlConnect, $query_text);
     $fetched_data = mysqli_fetch_assoc($query_one);
 
+    /* username_portfolio_portfoliocountuserid+3 */
     return 'portfolio_' . $wo['user']['user_id'] . '_' . $fetched_data['portfolio_count'];
 }
 function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $no_of_unique_stocks){
