@@ -57,6 +57,8 @@ if (isset($_GET['u'])) {
                 header("Location: " . Wo_SeoLink('index.php?link1=404'));
                 exit();
             }
+
+
             if (isset($_GET['stock'])){
                $wo['stock_data'] = Wo_GetStockDetailInPortfolio($_GET['stock'], $portfolio_id);
                if (empty($wo['stock_data'])){
@@ -69,15 +71,24 @@ if (isset($_GET['u'])) {
                    $name             = $wo['portfolio_data']['portfolio_name'] . ' - ' . $wo['stock_data']['compname'];
                }
             }
-            else if (isset($_GET['edit'])){
-               $type             = 'editPortfolio';
-               $about            = $wo['portfolio_data']['portfolio_name'] . ' - edit';
-               $name             = $wo['portfolio_data']['portfolio_name'] . ' - edit';
-            }
             else{
-                $type                = 'portfolio';
-                $about               = $wo['portfolio_data']['portfolio_name'];
-                $name                = $wo['portfolio_data']['portfolio_name'];
+                switch ($_GET['t2']){
+                    case 'edit':
+                       $type             = 'editPortfolio';
+                       $about            = $wo['portfolio_data']['portfolio_name'] . ' - edit';
+                       $name             = $wo['portfolio_data']['portfolio_name'] . ' - edit';
+                       break;
+                    case 'add-stocks':
+                       $type             = 'addStocksPortfolio';
+                       $about            = $wo['portfolio_data']['portfolio_name'] . ' - add stocks';
+                       $name             = $wo['portfolio_data']['portfolio_name'] . ' - add stocks';
+                       break;
+                    default:
+                        $type                = 'portfolio';
+                        $about               = $wo['portfolio_data']['portfolio_name'];
+                        $name                = $wo['portfolio_data']['portfolio_name'];
+                        break;
+                }
             }
         }
         // END OF ADDITION

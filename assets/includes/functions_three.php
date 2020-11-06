@@ -8262,7 +8262,7 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $
 
     $portfolio_id = Wo_Secure($portfolio_id);
     $no_of_stocks = $wo['portfolio_data']['no_of_stocks'] + $no_of_stocks;
-    $no_of_unique_stocks = $wo['portfolio_data']['no_of_unique_stocks'] + $no_of_unique_stocks;
+    $no_of_unique_stocks = 0;
 
     foreach ($stock_quote_data as $stock_quote_datum) {
 
@@ -8272,6 +8272,13 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $
         $stock_transaction_qty = Wo_Secure($stock_quote_datum['stock_transaction_qty']);
         $invested_value = Wo_Secure($stock_quote_datum['invested_value']);
         $timestamp_created = strtotime("now");
+
+        $query_text   = "SELECT `id` FROM " . T_PORTFOLIO_STOCKS . " WHERE stock_fincode = {$stock_fincode} AND `portfolio_id` = {$portfolio_id}";
+        $query_one    = mysqli_query($sqlConnect, $query_text);
+
+        if (mysqli_num_rows($query_one) <= 0){
+            $no_of_unique_stocks += 1;
+        };
 
         $query_one   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `timestamp_created`) VALUES ({$portfolio_id}, {$stock_fincode}, {$stock_transaction_date}, {$stock_transaction_price}, {$stock_transaction_qty}, {$timestamp_created})";
         $query     = mysqli_query($sqlConnect, $query_one);
@@ -8288,7 +8295,7 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $
         };
     }
 
-    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `no_of_stocks` = {$no_of_stocks}, `no_of_unique_stocks` = {$no_of_unique_stocks} WHERE `portfolio_id` = {$portfolio_id}";
+    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `no_of_stocks` = `no_of_stocks` + {$no_of_stocks}, `no_of_unique_stocks` = `no_of_unique_stocks` + {$no_of_unique_stocks} WHERE `portfolio_id` = {$portfolio_id}";
     $query     = mysqli_query($sqlConnect, $query_one);
 
     if (!$query) {
