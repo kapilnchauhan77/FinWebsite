@@ -98,7 +98,8 @@
         $.ajax({
             url: Wo_Ajax_Requests_File(),
             type: 'GET',
-            async: false,
+            /* async: false, */
+            async: true,
             dataType: 'json',
             data: {
                 f:'historical_data_cache',
@@ -111,12 +112,10 @@
                     console.log('data');
                     console.log(data);
                     graphData = processGraphData(data, fincode_volume, fincode_sorted_dates, currentVal);
+                    console.log('graphData:');
+                    console.log(graphData);
+                    if (document.getElementById("SA_myAreaChart")) stocksAreaChart(graphData);
                 });
-
-        console.log('graphData:');
-        console.log(graphData);
-        /* if (document.getElementById("SA_myAreaChart")) stocksAreaChart(graphData); */
-
     };
 
 </script>

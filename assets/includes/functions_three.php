@@ -8440,6 +8440,35 @@ function Wo_ExtraStockDetailForAllStocksInPortfolio($portfolio_id) {
 
     return $data;
 }
+function Wo_SmallStockDetailForAllStocksInPortfolio($portfolio_id) {
+    global $sqlConnect;
+
+    $data         = array();
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_text = "SELECT `id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty` FROM " . T_PORTFOLIO_STOCKS . "
+        WHERE `portfolio_id` = {$portfolio_id}";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        if (is_array($fetched_data)) {
+            $data[] = $fetched_data;
+        };
+    };
+
+    return $data;
+}
+function getCompName($fincode){
+    global $sqlConnect;
+
+    $fincode = Wo_Secure($fincode);
+
+    $query_text = "SELECT `compname` FROM " . T_COMPANIES . "
+        WHERE `fincode` = {$fincode} LIMIT 1;";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    $fetched_data = mysqli_fetch_assoc($sql);
+
+    return $fetched_data['compname'];
+}
 function HistoricalPrices_read_FILE($fileName) {
     $fileName = 'historical_prices/' . $fileName . '_historical_price.prmt';
     if (file_exists($fileName)) {
@@ -8464,12 +8493,19 @@ function HistoricalPrices_read_SQL($fincode, $timeline) {
 
     $query_text = "SELECT `date`, `price` FROM `" . T_HISTORICAL . "` WHERE `fincode` = " . $fincode . $additional_query;
 
-    $sql          = mysqli_query($sqlConnect, $query_text);
-    while ($fetched_data = mysqli_fetch_assoc($sql)) {
-        if (!empty($fetched_data)){
-            $data['Table'][]   = $fetched_data;
-        }
-    };
+    //Execute the query and put data into a result
+    $result = $sqlConnect->query($query_text);
+
+    //Copy result into a associative array
+    $data['Table'] = $result->fetch_all(MYSQLI_ASSOC);
+
+    /* $sql          = mysqli_query($sqlConnect, $query_text); */
+    /* while ($fetched_data = mysqli_fetch_assoc($sql)) { */
+    /*     if (!empty($fetched_data)){ */
+    /*         $data['Table'][]   = $fetched_data; */
+    /*     } */
+    /* }; */
+
     $data['fincode'] = $fincode;
 
     return $data;

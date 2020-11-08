@@ -30,7 +30,15 @@
     function stocksAreaChart(data){
         console.log("Data in Stocks Area Chart:");
         console.log(data);
+        console.log('data[104058]');
         console.log(data[104058]);
+
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                console.log(key + " -> " + data[parseInt(key)]);
+                break;
+            }
+        }
 
         let SA_Portfolio_LineChart = {
           type: 'line',

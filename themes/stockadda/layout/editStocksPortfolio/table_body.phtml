@@ -1,0 +1,22 @@
+<tr id=<?php echo $wo['portfolio_transactions']['id']; ?> style="height:39px">
+<td id="stock_name" class="stock_quote_name_search"><?php echo getCompName($wo['portfolio_transactions']['stock_fincode']); ?></td>
+    <td><input id="stock_transaction_date" type="date" name="transaction_date" /></td>
+    <td>
+        <span class="stock_quote_transac_price_div">
+        <input id="stock_transaction_price" type="number" min="0" value="<?php echo $wo['portfolio_transactions']['stock_transaction_price']; ?>" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" />
+        </span>
+    </td>
+    <td><input id="stock_qty" type="number" min="0" value="<?php echo $wo['portfolio_transactions']['stock_transaction_qty']; ?>" step="any" name="quantity" style="height:39px;" /></td>
+    <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteStockQuoteFromSearch(<?php echo $wo['portfolio_transactions']['id']; ?> )"></i></td>
+</tr>
+
+<script>
+
+$(document).ready(function () {
+
+    var parsedTimestamp = new Date(<?php echo $wo['portfolio_transactions']['stock_transaction_date']; ?> * 1000);
+    $("#<?php echo $wo['portfolio_transactions']['id']; ?> #stock_transaction_date").val(parsedTimestamp.getFullYear() + '-' + lpad((parsedTimestamp.getMonth() + 1).toString(), 2) + '-' + lpad(parsedTimestamp.getDate().toString(), 2));
+
+});
+
+</script>
