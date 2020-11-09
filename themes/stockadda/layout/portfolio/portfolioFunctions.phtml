@@ -75,15 +75,18 @@
         });
 
         $('#currentVal').text(currentVal);
+        $('#currentValTable').text(currentVal);
 
         const daily_p_p_l = (currentVal - adjustedValTotal);
         $('#daily_p_p_l').text(daily_p_p_l);
+        $('#daily_p_p_lTable').text(daily_p_p_l);
 
         const daily_p_p_l_per = ((currentVal - adjustedValTotal) / adjustedValTotal);
         change_colors('daily_p_p_l', daily_p_p_l_per);
 
         const overall_p_p_l = (currentVal * <?php echo $wo['portfolio_data']['no_of_stocks']; ?>) - <?php echo $wo['portfolio_data']['invested_value']; ?>;
         $('#overall_p_p_l').text(overall_p_p_l);
+        $('#overall_p_p_lTable').text(overall_p_p_l);
 
         const overall_p_p_l_per = (overall_p_p_l / (currentVal * <?php echo $wo['portfolio_data']['no_of_stocks']; ?>)) * 100;
         change_colors('overall_p_p_l', overall_p_p_l_per);

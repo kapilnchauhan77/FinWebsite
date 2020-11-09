@@ -58,7 +58,6 @@ if (isset($_GET['u'])) {
                 exit();
             }
 
-
             if (isset($_GET['stock'])){
                $wo['stock_data'] = Wo_GetStockDetailInPortfolio($_GET['stock'], $portfolio_id);
                if (empty($wo['stock_data'])){

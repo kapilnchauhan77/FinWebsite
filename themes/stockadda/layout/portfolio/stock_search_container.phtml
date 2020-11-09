@@ -49,7 +49,10 @@
                                          </span>
                                      </td>
                                      <td><input id="stock_qty" type="number" min="0" value="0" step="any" name="quantity" style="height:39px;" /></td>
+                                     <td><select name='exchange' id='exchange' style="width: 6em; height: 2.75em;"><option value="BSE">BSE</option><option value="NSE">NSE</option></select></td>
                                      <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteStockQuoteFromSearch('`+ fincode + stock_num +`')"></i></td>
+                                  </tr>` + `<tr id=`+ fincode + stock_num +`charge style="height:39px">
+                                     <td>Charge: <span id=`+ fincode + stock_num +`charge_>0</span></td>
                                   </tr>`;
 
         stock_quotes_to_add[stock_num] = fincode;
@@ -67,6 +70,7 @@
             $('#stock_quote_table_search').addClass('hidden');
         }
         $("#"+id).remove();
+        $("#"+id+"charge").remove();
     }
 
     function pushStockDataToBackend(){

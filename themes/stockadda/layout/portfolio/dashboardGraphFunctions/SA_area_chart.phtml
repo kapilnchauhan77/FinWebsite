@@ -33,11 +33,8 @@
         console.log('data[104058]');
         console.log(data[104058]);
 
-        for (var key in data) {
-            if (data.hasOwnProperty(key)) {
-                console.log(key + " -> " + data[parseInt(key)]);
-                break;
-            }
+        for (const [key, value] of Object.entries(data)) {
+          console.log(`${key}: ${value}`);
         }
 
         let SA_Portfolio_LineChart = {
