@@ -27,20 +27,43 @@
     }
 
     // Stocks Bought Chart
-    function stocksAreaChart(data){
+    function stocksAreaChart(data, fincode_volume, fincode_prices){
+        chart_data = new Object();
         console.log("Data in Stocks Area Chart:");
         console.log(data);
-        console.log('data[104058]');
-        console.log(data[104058]);
 
         for (const [key, value] of Object.entries(data)) {
-          console.log(`${key}: ${value}`);
+            for (var date_idx = 0; date_idx < data[key]['Dates'].length; date_idx++){
+                if (data[key]['Dates'][date_idx] in chart_data) chart_data[data[key]['Dates'][date_idx]] += data[key]['Prices'][date_idx];
+                else chart_data[data[key]['Dates'][date_idx]] = data[key]['Prices'][date_idx];
+            }
         }
+
+
+        /* var annotations = marketing.map(function(date, index) { */
+        /*    return { */
+        /*       type: 'line', */
+        /*       id: 'vline' + index, */
+        /*       mode: 'vertical', */
+        /*       scaleID: 'x-axis-0', */
+        /*       value: date, */
+        /*       borderColor: 'green', */
+        /*       borderWidth: 1, */
+        /*       label: { */
+        /*          enabled: true, */
+        /*          position: "center", */
+        /*          content: amount[index] */
+        /*       } */
+        /*    } */
+        /* }); */
+
+        console.log('chart_data');
+        console.log(chart_data);
 
         let SA_Portfolio_LineChart = {
           type: 'line',
           data: {
-            labels: data[104058]['Dates'],
+            labels: Object.keys(chart_data),
             datasets: [{
               label: "Earnings",
               lineTension: 0.3,
@@ -54,7 +77,7 @@
               pointHoverBorderColor: "rgba(78, 115, 223, 1)",
               pointHitRadius: 7,
               pointBorderWidth: 2,
-              data: data[104058]['Prices'],
+              data: Object.keys(chart_data),
             }],
           },
           options: {

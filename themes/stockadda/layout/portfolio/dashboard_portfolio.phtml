@@ -18,7 +18,7 @@
                                     $portfolios = Wo_GetPortfolioDropdown();
                                     foreach ($portfolios as $wo['portfolio_dropdown']) {
                                         if ($wo['portfolio_dropdown']['portfolio_name'] !== $wo['portfolio_data']['portfolio_name'])
-                                        echo "<li role='presentation'><a style='font-size:13px;' role='menuitem' tabindex='-1' href='{$wo['portfolio_dropdown']['url']}'>{$wo['portfolio_dropdown']['portfolio_name']}</a></li>";
+                                            echo "<li role='presentation'><a style='font-size:13px;' role='menuitem' tabindex='-1' href='{$wo['portfolio_dropdown']['url']}'>{$wo['portfolio_dropdown']['portfolio_name']}</a></li>";
                                     }
                                 ?>
                             </ul>

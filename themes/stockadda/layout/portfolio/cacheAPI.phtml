@@ -114,7 +114,7 @@
                     graphData = processGraphData(data, fincode_volume, fincode_sorted_dates, currentVal);
                     console.log('graphData:');
                     console.log(graphData);
-                    if (document.getElementById("SA_myAreaChart")) stocksAreaChart(graphData);
+                    if (document.getElementById("SA_myAreaChart")) stocksAreaChart(graphData, fincode_volume, fincode_data);
                 });
     };
 

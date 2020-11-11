@@ -45,20 +45,45 @@
                                      <td><input id="stock_transaction_date" type="date" name="transaction_date" /></td>
                                      <td>
                                          <span class="stock_quote_transac_price_div">
-                                             <input id="stock_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" />
+                                             <input id="stock_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeValues(`+ fincode + stock_num +`) onchange=changeValues(`+ fincode + stock_num +`) />
                                          </span>
                                      </td>
-                                     <td><input id="stock_qty" type="number" min="0" value="0" step="any" name="quantity" style="height:39px;" /></td>
+                                     <td><input id="stock_qty" type="number" min="0" value="0" step="any" name="quantity" style="height:39px;" onkeyup=changeValues(`+ fincode + stock_num +`) onchange=changeValues(`+ fincode + stock_num +`)/></td>
                                      <td><select name='exchange' id='exchange' style="width: 6em; height: 2.75em;"><option value="BSE">BSE</option><option value="NSE">NSE</option></select></td>
                                      <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteStockQuoteFromSearch('`+ fincode + stock_num +`')"></i></td>
-                                  </tr>` + `<tr id=`+ fincode + stock_num +`charge style="height:39px">
-                                     <td>Charge: <span id=`+ fincode + stock_num +`charge_>0</span></td>
+                                   </tr>
+                                   <tr id=`+ fincode + stock_num +`charge style="height:39px">
+                                     <td>Amount: <span id=`+ fincode + stock_num +`amount_>0</span></td>
+                                     <td><a id="charge_breakdown" href='#' data-toggle="tooltip" data-placement="bottom" title="Charges">Charge: <span id=`+ fincode + stock_num +`charge_>0</span></a></td>
+                                     <td><input style="text-decoration: none; cursor: default;" id="brokerage" type="number" value=0  onkeyup=changeValues(`+ fincode + stock_num +`) onchange=changeValues(`+ fincode + stock_num +`) /><select name='percentage_inr' id='percentage_inr' onchange=changeValues(`+ fincode + stock_num +`) ><option value="Percentage">Percentage</option><option value="INR">INR</option></select></td>
+                                     <td>Brokerage Charge: <span id=`+ fincode + stock_num +`broker_charge_>0</span></td>
+                                     <td>Net Amount: <span id=`+ fincode + stock_num +`net_amount>0</span></td>
+                                  </tr>
+                                  <tr id=`+ fincode + stock_num +`stock_notes style="height:39px">
+                                     <td><textarea name="notes" id="notes" rows="1"></textarea></td>
                                   </tr>`;
+
 
         stock_quotes_to_add[stock_num] = fincode;
         stock_num += 1;
 
         $('#table_stock_quote_search_body').append(table_body_data_to_add);
+    }
+
+    function changeValues(id){
+        amount = $("#"+id + " #stock_qty").val() * $("#"+id + " #stock_transaction_price").val();
+        stt_charge = amount * 0.001;
+        exchange_charge = ($("#"+id + " #exchange").val()=="BSE") ? (amount * 0.0000275) : (amount * 0.0000325);
+        sebi_charge = amount * 0.000001;
+        stamp_duty = amount * 0.00000;
+        brokerage_charge = ($("#"+id + "charge #percentage_inr").val()=="INR") ? $("#"+id + "charge #brokerage").val() : (amount * $("#"+id + "charge #brokerage").val()/100);
+        charge = stt_charge + exchange_charge + sebi_charge + stamp_duty;
+        net_amount = amount + charge + brokerage_charge;
+        $("#"+id+"broker_charge_").text(brokerage_charge.toFixed(2));
+        $("#"+id+"charge_").text(charge.toFixed(2));
+        $("#"+id+" #charge_breakdown").attr('title', 'STT Charge: '+stt_charge+'\n Exchange Charge: '+exchange_charge+'\n Sebi Charge: '+sebi_charge+'\n Stamp Duty: '+stamp_duty);
+        $("#"+id+"amount_").text(amount.toFixed(2));
+        $("#"+id+"net_amount").text(net_amount.toFixed(2));
     }
 
     function deleteStockQuoteFromSearch(id){
@@ -69,8 +94,10 @@
             $('#stock_container').removeClass('hidden');
             $('#stock_quote_table_search').addClass('hidden');
         }
+
         $("#"+id).remove();
         $("#"+id+"charge").remove();
+        $("#"+id+"stock_notes").remove();
     }
 
     function pushStockDataToBackend(){
