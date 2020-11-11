@@ -8255,7 +8255,18 @@ function Wo_getPortfolioURL(){
     $fetched_data = mysqli_fetch_assoc($query_one);
 
     /* username_portfolio_portfoliocountuserid+3 */
-    return 'portfolio_' . $wo['user']['user_id'] . '_' . $fetched_data['portfolio_count'];
+    return 'portfolio_' . $wo['user']['username'] . '_' . $fetched_data['portfolio_count'];
+}
+function SA_Get_Portfolio_Count(){
+    global $wo, $sqlConnect;
+
+    $uid          = Wo_Secure($wo['user']['user_id']);
+    $query_text   = "SELECT `portfolio_count` FROM " . T_USERS . " WHERE user_id = {$uid};";
+    $query_one    = mysqli_query($sqlConnect, $query_text);
+    $fetched_data = mysqli_fetch_assoc($query_one);
+
+    /* username_portfolio_portfoliocountuserid+3 */
+    return $fetched_data['portfolio_count'];
 }
 function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $no_of_unique_stocks){
     global $wo, $sqlConnect;

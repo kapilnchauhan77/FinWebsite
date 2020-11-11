@@ -52,6 +52,7 @@ if (isset($_GET['u'])) {
             $name                = $wo['company_data']['s_name'];
         } else if ($check_user['type'] == 'portfolio') {
             $id                  = $portfolio_id = $check_user['portfolio_id'];
+            $wo['user']['portfolio_count'] = SA_Get_Portfolio_Count();
             $wo['portfolio_data']  = Wo_PortfolioCaching($portfolio_id, true);
             if (empty($wo['portfolio_data'])){
                 header("Location: " . Wo_SeoLink('index.php?link1=404'));
