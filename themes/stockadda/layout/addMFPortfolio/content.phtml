@@ -4,7 +4,7 @@
         <div class="row" >
             <div class="col-md-12">
                 <div class="title" style="margin: 0; font-weight: 700; color: #3e3e3e; text-transform: capitalize;font-size:3em">
-                    Add Stocks in <?php echo (strpos(strtolower($wo['portfolio_data']['portfolio_name']), 'portfolio') !== false) ? $wo['portfolio_data']['portfolio_name'] : 'Portfolio - ' . $wo['portfolio_data']['portfolio_name']; ?>
+                    Add Mutual Funds in <?php echo (strpos(strtolower($wo['portfolio_data']['portfolio_name']), 'portfolio') !== false) ? $wo['portfolio_data']['portfolio_name'] : 'Portfolio - ' . $wo['portfolio_data']['portfolio_name']; ?>
                     <script>
                         console.log(<?php echo json_encode($wo['portfolio_data']); ?>);
                     </script>
@@ -21,7 +21,7 @@
 
                     <div id="first_stock_add" class="stock_search" role="search">
 
-                        <span class="stock_tooltip" data-toggle="tooltip" data-placement="bottom" title="Search and add Stocks">
+                        <span class="stock_tooltip" data-toggle="tooltip" data-placement="bottom" title="Search and add Mutual Fund">
                             <input class="stock_input" data-toggle="stock_dropdown" type="text" onkeyup="Wo_StockSearchResult(this.value)">
                         </span>
 

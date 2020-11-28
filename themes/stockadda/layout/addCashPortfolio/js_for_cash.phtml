@@ -1,0 +1,152 @@
+<!-- JS Pages functions -->
+<script src="<?php echo $wo['config']['theme_url'];?>/javascript/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
+<script type="text/javascript">
+
+    Date.prototype.toDateInputValue = (function() {
+        var local = new Date(this);
+        local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        return local.toJSON().slice(0, 10);
+    });
+
+    var cash_to_not_add = new Array();
+    var cash_num = 1;
+
+    function AddCashToTable(){
+
+        table_body_data_to_add = `<tr id=`+ cash_num +` style="height:39px">
+                                      <td><select name='cash_type' id='cash_type' style="width: 6em; height: 2.75em;"><option value="Gold">Gold</option><option value="Silver">Silver</option></select></td>
+                                      <td><input id="cash_transaction_date" type="date" name="transaction_date"/></td>
+                                      <td>
+                                          <span class="stock_quote_transac_price_div">
+                                              <input id="cash_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeCashValues(`+ cash_num +` ) onchange=changeCashValues(`+ cash_num +` ) />
+                                          </span>
+                                      </td>
+                                      <td><input id="cash_qty" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_qty" style="height:39px;" onkeyup=changeCashValues(`+ cash_num +` ) onchange=changeCashValues(`+ cash_num +` ) /></td>
+                                      <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteCash(`+ cash_num +` )"></i></td>
+                                  </tr>
+                                  <tr id="`+ cash_num +`_charge" style="height:39px">
+                                      <td>
+                                          <span class="small">Charges:</span>
+                                          <br>
+                                          <span class="stock_quote_transac_price_div">
+                                             <input id="cash_transaction_charge" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_charge" style="height:39px;" onkeyup=changeCashValues(`+ cash_num +` ) onchange=changeCashValues(`+ cash_num +` ) />
+                                          </span>
+                                      </td>
+                                      <td>
+                                          <span class="small">Net Amount:</span>
+                                          <br>
+                                          <span class="stock_quote_transac_price_div">
+                                             <input id="cash_transaction_net_amount" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_net_amount" style="height:39px;" onkeyup=changeCashValues(`+ cash_num +` ) onchange=changeCashValues(`+ cash_num +` ) />
+                                          </span>
+                                      </td>
+                                      <td>
+                                          <span class="small">Purchased From:</span>
+                                          <br>
+                                          <span>
+                                             <input id="cash_transaction_purc_fr" type="text" class="stock_quote_transac_price" name="transaction_purc_fr" style="height:39px;"/>
+                                          </span>
+                                      </td>
+                                      <td colspan="2">
+                                          <span class="small">Notes:</span>
+                                          <br>
+                                          <span>
+                                              <textarea name="notes" id="notes" rows="1"></textarea>
+                                          </span>
+                                      </td>
+                                  </tr>`
+
+
+        cash_num += 1;
+
+        $('#table_cash_quote_search_body').append(table_body_data_to_add);
+    }
+
+    function changeCashValues(id){
+        conversion_metric = ($("#"+id + " #cash_type").val() == "Gold") ? 10 : 1000;
+        amount = parseFloat($("#"+id + " #cash_transaction_price").val()) * parseFloat($("#"+id + " #cash_qty").val()) / conversion_metric;
+        charge = parseFloat($("#"+id + "_charge #cash_transaction_charge").val());
+        net_amount = amount + charge;
+        $("#"+id + "_charge #cash_transaction_net_amount").val(net_amount);
+    }
+
+    function deleteCash(id){
+
+        cash_to_not_add.push(id);
+
+        console.log(cash_to_not_add);
+        console.log(cash_to_not_add.length);
+        console.log(cash_num);
+
+        if (cash_to_not_add.length == cash_num){
+
+            window.location.replace("<?php echo $wo['portfolio_data']['url'];?>");
+
+        }else{
+
+            $("#"+id).remove();
+            $("#"+id+"_charge").remove();
+
+        }
+    }
+
+    function pushCashDataToBackend(){
+        cash_array_to_send = new Array();
+
+        /* console.log($("#"+cash_to_add[id]+id+"charge_").text()) */
+
+        for (id = 0; id < cash_num; id++){
+            if (!cash_to_not_add.includes(id)){
+
+                if ($("#"+id+" #cash_transaction_date").val() === ""){
+                    $("#"+id+" #cash_transaction_date").val("NaN");
+                }
+                console.log(parseFloat($("#"+id+"_charge #cash_transaction_net_amount").val()));
+
+                cashInfo = {
+
+                        cash_type: $('#'+id+'#cash_type').val(),
+                        cash_transaction_date: parseInt(new Date($("#"+id+" #cash_transaction_date").val()).getTime()/1000),
+                        cash_transaction_price: parseFloat($("#"+id+" #cash_transaction_price").val()),
+                        cash_transaction_qty: parseFloat($("#"+id+" #cash_qty").val()),
+                        cash_charge: parseFloat($("#"+id+"_charge #cash_transaction_charge").val()),
+                        cash_net_amount: parseFloat($("#"+id+"_charge #cash_transaction_net_amount").val()),
+                        cash_purchased_from: $("#"+id+"_charge #cash_transaction_purc_fr").val(),
+                        note: $("#"+id+"_charge #notes").val(),
+
+                            };
+
+                cash_array_to_send.push(cashInfo);
+            }
+        }
+
+        $.ajax({
+            url: Wo_Ajax_Requests_File(),
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                f:'add_cash',
+                cash_array: cash_array_to_send,
+                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+            },
+                success: function(data) {
+                    if (data['status'] == 200){
+                        console.log(data);
+                        console.log("done");
+                        location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
+                    }
+                    else if (data['status'] == 401){
+                        console.log(data['error']);
+                        $('#cash_add_errors').text(data['error']);
+                    }
+                    else{
+                        console.log(data);
+                        $('#cash_add_errors').text(data['error']);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                }
+        });
+    }
+
+</script>

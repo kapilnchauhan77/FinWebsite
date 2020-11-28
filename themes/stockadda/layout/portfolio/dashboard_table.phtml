@@ -14,25 +14,16 @@
     <tbody>
 
         <tr>
-            <th scope="row"><span style="margin: 0.75em;">Stocks</span></th>
-            <td>&#8377;<?php echo $wo['portfolio_data']['invested_value']?></td>
-            <td> &nbsp;&#8377;<span id="daily_p_p_lTable">1332</span></td>
-            <td> &nbsp;&#8377;<span id="overall_p_p_lTable">100</span></td>
+            <th scope="row"><span style="margin: 0.75em;">Stocks</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-stocks" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-stocks">Edit</a></span></th>
+            <td>&#8377;<?php echo $wo['portfolio_data']['stock_invested_value']?></td>
+            <td> &nbsp;<span id="daily_p_p_lTable_text">&#8377;<span id="daily_p_p_lTable">0</span> (<span id="daily_p_p_lTable_per">0</span>%)</span></td>
+            <td> &nbsp;<span id="overall_p_p_lTable_text">&#8377;<span id="overall_p_p_lTable">0</span> (<span id="overall_p_p_lTable_per">0</span>%)</span></td>
             <td>0</td>
-            <td>&#8377;<span id='currentValTable'>40,000</span></td>
+            <td>&#8377;<span id='currentValTable'>0</span></td>
         </tr>
 
         <tr>
-            <th scope="row"><span style="margin: 0.75em;">Mutual Funds</span></th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-
-        <tr>
-            <th scope="row"><span style="margin: 0.75em;">Day's Gain</span></th>
+            <th scope="row"><span style="margin: 0.75em;">Mutual Funds</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-mutual-funds" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-cash">Edit</a></span></th>
             <td></td>
             <td></td>
             <td></td>
@@ -41,7 +32,7 @@
         </tr>
 
         <tr>
-            <th scope="row"><span style="margin: 0.75em;">Bullion</span></th>
+            <th scope="row"><span style="margin: 0.75em;">Cash</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-cash" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-cash">Edit</a></span></th>
             <td></td>
             <td></td>
             <td></td>
@@ -50,7 +41,7 @@
         </tr>
 
         <tr>
-            <th scope="row"><span style="margin: 0.75em;">Fixed Income</span></th>
+            <th scope="row"><span style="margin: 0.75em;">Bullion</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-bullion" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-bullion">Edit</a></span></th>
             <td></td>
             <td></td>
             <td></td>
@@ -59,7 +50,7 @@
         </tr>
 
         <tr>
-            <th scope="row"><span style="margin: 0.75em;">Property</span></th>
+            <th scope="row"><span style="margin: 0.75em;">Fixed Income</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-FD" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-FD">Edit</a></span></th>
             <td></td>
             <td></td>
             <td></td>
@@ -68,7 +59,7 @@
         </tr>
 
         <tr>
-            <th scope="row"><span style="margin: 0.75em;">Cash</span></th>
+            <th scope="row"><span style="margin: 0.75em;">Property</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-property" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-FD">Edit</a></span></th>
             <td></td>
             <td></td>
             <td></td>
@@ -77,7 +68,7 @@
         </tr>
 
         <tr>
-            <th scope="row"><span style="margin: 0.75em;">Xyz</span></th>
+            <th scope="row"><span style="margin: 0.75em;">Other Assets</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-OA" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-FD">Edit</a></span></th>
             <td></td>
             <td></td>
             <td></td>
@@ -86,7 +77,25 @@
         </tr>
 
         <tr>
-            <th scope="row"><span style="margin: 0.75em;">Loans</span></th>
+            <th scope="row"><span style="margin: 0.75em;">Loans</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-Loans" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-FD">Edit</a></span></th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <th scope="row"><span style="margin: 0.75em;">Other Borrowings</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-OB" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-FD">Edit</a></span></th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+
+        <tr style="background-color:grey">
+            <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
             <td></td>
             <td></td>
             <td></td>

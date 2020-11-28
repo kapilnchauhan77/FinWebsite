@@ -1,0 +1,105 @@
+<div style="background-color: white; display:flex; height: 93.5vh; width: 100%; justify-content: center; align-items: center; text-align: center; border-radius: 3px; margin-bottom:0px;">
+    <div class="container" style="display: inline-block;">
+
+        <div class="row" >
+            <div class="col-md-12">
+                <div class="title" style="margin: 0; font-weight: 700; color: #3e3e3e; text-transform: capitalize;font-size:3em">
+                    Add Cash in <?php echo (strpos(strtolower($wo['portfolio_data']['portfolio_name']), 'portfolio') !== false) ? $wo['portfolio_data']['portfolio_name'] : 'Portfolio - ' . $wo['portfolio_data']['portfolio_name']; ?>
+                    <script>
+                        console.log(<?php echo json_encode($wo['portfolio_data']); ?>);
+                    </script>
+
+                </div>
+                <span id='cash_add_errors' style="color: red;"></span>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div id="stock_quote_table_search" class="col-md-12">
+               <table class="table table-hover table-striped">
+
+                   <thead>
+                       <tr>
+                           <th style="text-align: center;">Cash</th>
+                           <th style="text-align: center;">Transaction Date</th>
+                           <th style="text-align: center;">Price per unit (Gold- 10 Grams, Silver- 1 Kg)</th>
+                           <th style="text-align: center;">Quantity in Grams</th>
+                           <th style="text-align: center;">Action</th>
+                       </tr>
+                   </thead>
+
+                   <tbody id="table_cash_quote_search_body">
+
+                        <tr id="0" style="height:39px">
+                            <td><select name='cash_type' id='cash_type' style="width: 6em; height: 2.75em;"><option value="Gold">Gold</option><option value="Silver">Silver</option></select></td>
+                            <td><input id="cash_transaction_date" type="date" name="transaction_date"/></td>
+                            <td>
+                                <span class="stock_quote_transac_price_div">
+                                    <input id="cash_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeCashValues(0) onchange=changeCashValues(0) />
+                                </span>
+                            </td>
+                            <td><input id="cash_qty" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_qty" style="height:39px;" onkeyup=changeCashValues(0) onchange=changeCashValues(0) /></td>
+                            <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteCash(0)"></i></td>
+                        </tr>
+
+                        <tr id="0_charge" style="height:39px">
+                            <td>
+                                <span class="small">Charges:</span>
+                                <br>
+                                <span class="stock_quote_transac_price_div">
+                                   <input id="cash_transaction_charge" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_charge" style="height:39px;" onkeyup=changeCashValues(0) onchange=changeCashValues(0) />
+                                </span>
+                            </td>
+                            <td>
+                                <span class="small">Net Amount:</span>
+                                <br>
+                                <span class="stock_quote_transac_price_div">
+                                   <input id="cash_transaction_net_amount" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_net_amount" style="height:39px;" onkeyup=changeCashValues(0) onchange=changeCashValues(0) />
+                                </span>
+                            </td>
+                            <td>
+                                <span class="small">Purchased From:</span>
+                                <br>
+                                <span>
+                                   <input id="cash_transaction_purc_fr" type="text" class="stock_quote_transac_price" name="transaction_purc_fr" style="height:39px;"/>
+                                </span>
+                            </td>
+                            <td colspan="2">
+                                <span class="small">Notes:</span>
+                                <br>
+                                <span>
+                                    <textarea name="notes" id="notes" rows="1"></textarea>
+                                </span>
+                            </td>
+                        </tr>
+
+
+                   </tbody>
+
+               </table>
+
+               <span class="stock_search_submit" data-toggle="tooltip" data-placement="bottom" onclick="pushCashDataToBackend()" title="Add Stocks to Portfolio"></span>
+
+               <div style="float: left;">
+
+                   <div style="margin-top: 9px;">
+
+                        <span onclick="AddCashToTable()" class="add_cash" data-toggle="tooltip" data-placement="bottom" title="Add Cash"></span>
+
+                   </div>
+
+                   <div class="stock-quote-dropdown-menu search-dropdown-container" style="display:inline-block;left:auto;margin-top: 10px;margin-left: -6.3%;width: auto;" role="menu">
+                     <div class="stock-search-dropdown-result"></div>
+                   </div>
+
+               </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<?php echo Wo_LoadPage("addCashPortfolio/js_for_cash"); ?>

@@ -27,10 +27,12 @@
     }
 
     // Stocks Bought Chart
-    function stocksAreaChart(data, fincode_volume, fincode_prices){
-        chart_data = new Object();
+    function stocksAreaChart(data, all_dates){
+        var dates = new Array();
+        var chart_data = new Object();
         console.log("Data in Stocks Area Chart:");
         console.log(data);
+        console.log(all_dates);
 
         for (const [key, value] of Object.entries(data)) {
             for (var date_idx = 0; date_idx < data[key]['Dates'].length; date_idx++){
@@ -40,22 +42,22 @@
         }
 
 
-        /* var annotations = marketing.map(function(date, index) { */
-        /*    return { */
-        /*       type: 'line', */
-        /*       id: 'vline' + index, */
-        /*       mode: 'vertical', */
-        /*       scaleID: 'x-axis-0', */
-        /*       value: date, */
-        /*       borderColor: 'green', */
-        /*       borderWidth: 1, */
-        /*       label: { */
-        /*          enabled: true, */
-        /*          position: "center", */
-        /*          content: amount[index] */
-        /*       } */
-        /*    } */
-        /* }); */
+        var annotations = Object.keys(all_dates).map(function(date, index) {
+           return {
+              type: 'line',
+              id: 'vline' + index,
+              mode: 'vertical',
+              scaleID: 'x-axis-0',
+              value: date,
+              borderColor: 'green',
+              borderWidth: 1,
+              label: {
+                 enabled: true,
+                 position: "center",
+                 content: chart_data[date]
+              }
+           }
+        });
 
         console.log('chart_data');
         console.log(chart_data);
@@ -144,8 +146,12 @@
                   return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
                 }
               }
+            },
+            annotation: {
+              /* drawTime: 'afterDatasetsDraw', */
+              annotations: annotations
             }
-          }
+          },
         };
 
         if (typeof(this.SA_portfolio_current_value_chart) != "undefined") {

@@ -1,0 +1,152 @@
+<!-- JS Pages functions -->
+<script src="<?php echo $wo['config']['theme_url'];?>/javascript/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
+<script type="text/javascript">
+
+    Date.prototype.toDateInputValue = (function() {
+        var local = new Date(this);
+        local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        return local.toJSON().slice(0, 10);
+    });
+
+    var ob_to_not_add = new Array();
+    var ob_num = 1;
+
+    function AddOBToTable(){
+
+        table_body_data_to_add = `<tr id=`+ ob_num +` style="height:39px">
+                                      <td><select name='ob_type' id='ob_type' style="width: 6em; height: 2.75em;"><option value="Gold">Gold</option><option value="Silver">Silver</option></select></td>
+                                      <td><input id="ob_transaction_date" type="date" name="transaction_date"/></td>
+                                      <td>
+                                          <span class="stock_quote_transac_price_div">
+                                              <input id="ob_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeOBValues(`+ ob_num +` ) onchange=changeOBValues(`+ ob_num +` ) />
+                                          </span>
+                                      </td>
+                                      <td><input id="ob_qty" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_qty" style="height:39px;" onkeyup=changeOBValues(`+ ob_num +` ) onchange=changeOBValues(`+ ob_num +` ) /></td>
+                                      <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteOB(`+ ob_num +` )"></i></td>
+                                  </tr>
+                                  <tr id="`+ ob_num +`_charge" style="height:39px">
+                                      <td>
+                                          <span class="small">Charges:</span>
+                                          <br>
+                                          <span class="stock_quote_transac_price_div">
+                                             <input id="ob_transaction_charge" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_charge" style="height:39px;" onkeyup=changeOBValues(`+ ob_num +` ) onchange=changeOBValues(`+ ob_num +` ) />
+                                          </span>
+                                      </td>
+                                      <td>
+                                          <span class="small">Net Amount:</span>
+                                          <br>
+                                          <span class="stock_quote_transac_price_div">
+                                             <input id="ob_transaction_net_amount" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_net_amount" style="height:39px;" onkeyup=changeOBValues(`+ ob_num +` ) onchange=changeOBValues(`+ ob_num +` ) />
+                                          </span>
+                                      </td>
+                                      <td>
+                                          <span class="small">Purchased From:</span>
+                                          <br>
+                                          <span>
+                                             <input id="ob_transaction_purc_fr" type="text" class="stock_quote_transac_price" name="transaction_purc_fr" style="height:39px;"/>
+                                          </span>
+                                      </td>
+                                      <td colspan="2">
+                                          <span class="small">Notes:</span>
+                                          <br>
+                                          <span>
+                                              <textarea name="notes" id="notes" rows="1"></textarea>
+                                          </span>
+                                      </td>
+                                  </tr>`
+
+
+        ob_num += 1;
+
+        $('#table_ob_quote_search_body').append(table_body_data_to_add);
+    }
+
+    function changeOBValues(id){
+        conversion_metric = ($("#"+id + " #ob_type").val() == "Gold") ? 10 : 1000;
+        amount = parseFloat($("#"+id + " #ob_transaction_price").val()) * parseFloat($("#"+id + " #ob_qty").val()) / conversion_metric;
+        charge = parseFloat($("#"+id + "_charge #ob_transaction_charge").val());
+        net_amount = amount + charge;
+        $("#"+id + "_charge #ob_transaction_net_amount").val(net_amount);
+    }
+
+    function deleteOB(id){
+
+        ob_to_not_add.push(id);
+
+        console.log(ob_to_not_add);
+        console.log(ob_to_not_add.length);
+        console.log(ob_num);
+
+        if (ob_to_not_add.length == ob_num){
+
+            window.location.replace("<?php echo $wo['portfolio_data']['url'];?>");
+
+        }else{
+
+            $("#"+id).remove();
+            $("#"+id+"_charge").remove();
+
+        }
+    }
+
+    function pushOBDataToBackend(){
+        ob_array_to_send = new Array();
+
+        /* console.log($("#"+ob_to_add[id]+id+"charge_").text()) */
+
+        for (id = 0; id < ob_num; id++){
+            if (!ob_to_not_add.includes(id)){
+
+                if ($("#"+id+" #ob_transaction_date").val() === ""){
+                    $("#"+id+" #ob_transaction_date").val("NaN");
+                }
+                console.log(parseFloat($("#"+id+"_charge #ob_transaction_net_amount").val()));
+
+                obInfo = {
+
+                        ob_type: $('#'+id+'#ob_type').val(),
+                        ob_transaction_date: parseInt(new Date($("#"+id+" #ob_transaction_date").val()).getTime()/1000),
+                        ob_transaction_price: parseFloat($("#"+id+" #ob_transaction_price").val()),
+                        ob_transaction_qty: parseFloat($("#"+id+" #ob_qty").val()),
+                        ob_charge: parseFloat($("#"+id+"_charge #ob_transaction_charge").val()),
+                        ob_net_amount: parseFloat($("#"+id+"_charge #ob_transaction_net_amount").val()),
+                        ob_purchased_from: $("#"+id+"_charge #ob_transaction_purc_fr").val(),
+                        note: $("#"+id+"_charge #notes").val(),
+
+                            };
+
+                ob_array_to_send.push(obInfo);
+            }
+        }
+
+        $.ajax({
+            url: Wo_Ajax_Requests_File(),
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                f:'add_ob',
+                ob_array: ob_array_to_send,
+                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+            },
+                success: function(data) {
+                    if (data['status'] == 200){
+                        console.log(data);
+                        console.log("done");
+                        location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
+                    }
+                    else if (data['status'] == 401){
+                        console.log(data['error']);
+                        $('#ob_add_errors').text(data['error']);
+                    }
+                    else{
+                        console.log(data);
+                        $('#ob_add_errors').text(data['error']);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                }
+        });
+    }
+
+</script>

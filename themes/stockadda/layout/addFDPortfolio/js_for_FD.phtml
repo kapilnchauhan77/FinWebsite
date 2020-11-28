@@ -1,0 +1,158 @@
+<!-- JS Pages functions -->
+<script src="<?php echo $wo['config']['theme_url'];?>/javascript/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
+<script type="text/javascript">
+
+    Date.prototype.toDateInputValue = (function() {
+        var local = new Date(this);
+        local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+        return local.toJSON().slice(0, 10);
+    });
+
+    var fd_to_not_add = new Array();
+    var fd_num = 1;
+
+    function AddFDToTable(){
+
+        table_body_data_to_add = `<tr id="` + fd_num + `" style="height:39px">
+                                        <td><input id="fd_type" style="height:39px" type="text" name="fd_type"/></td>
+                                        <td><input id="fd_bank" style="height:39px" type="text" name="fd_bank"/></td>
+                                        <td width="7%">
+                                            <span class="fd_transac_price_div">
+                                                <input id="fd_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="width:100%; height:39px;" />
+                                            </span>
+                                        </td>
+                                        <td><input id="fd_transaction_date" type="date" name="transaction_date" /></td>
+                                        <td width="7%"><input id="fd_rate" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="fd_rate" style="width:100%; height:39px;" /></td>
+                                        <td width="1%">
+                                            <input style="width: 150%; height:39px" id="fd_yrs" min="0" value="0" name="fd_yrs" onkeyup=changeFDValues(` + fd_num + `) onchange=changeFDValues(` + fd_num + `) />
+                                        </td>
+                                        <td width="1%" style="padding-left:1%">
+                                            <input style="width: 100%; height:39px" id="fd_mths" min="0" value="0" name="fd_mths" onkeyup=changeFDValues(` + fd_num + `) onchange=changeFDValues(` + fd_num + `) />
+                                        </td>
+                                        <td width="1%">
+                                            <input style="width: 100%; height:39px" id="fd_days" min="0" value="0" name="fd_days" onkeyup=changeFDValues(` + fd_num + `) onchange=changeFDValues(` + fd_num + `) />
+                                        </td>
+                                        <td><input id="fd_maturity_date" type="date" name="fd_maturity_date" readonly /></td>
+                                        <td><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteFD(` + fd_num + `)"></i></td>
+                                    </tr>`
+
+
+        fd_num += 1;
+
+        $('#table_fd_quote_search_body').append(table_body_data_to_add);
+    }
+
+    function changeFDValues(id){
+        var smallDaysMnths = [4, 6, 9, 11];
+        var today = new Date();
+        days_increase = today.getDate() + parseInt($("#"+id+" #fd_days").val());
+        mnths_increase = today.getMonth() + 1 + parseInt($("#"+id+" #fd_mths").val());
+        yrs_increase = parseInt(today.getFullYear()) + parseInt($("#"+id+" #fd_yrs").val());
+
+        if (days_increase > 31){
+            mnths_increase += parseInt(days_increase / 31);
+            days_increase = parseInt(days_increase % 31);
+        }
+        days_increase = ((days_increase == 0) ? 31 : days_increase);
+
+        if (mnths_increase > 12){
+            yrs_increase += parseInt(mnths_increase / 12);
+            mnths_increase = parseInt(mnths_increase % 12);
+        }
+        mnths_increase =((mnths_increase == 0) ? 12 : mnths_increase);
+
+        if (smallDaysMnths.includes(mnths_increase)){
+            if (days_increase == 31){
+                days_increase =  1;
+                mnths_increase += 1;
+            }
+        } else if (mnths_increase == 2){
+            var factor_to_check = ((yrs_increase % 4 == 0) ? 29 : 28);
+            if (days_increase > factor_to_check){
+                mnths_increase += 1;
+                days_increase = parseInt(days_increase % factor_to_check);
+            }
+        }
+
+        var dd = String(days_increase).padStart(2, '0');
+        var mm = String(mnths_increase).padStart(2, '0'); //January is 0!
+        var yyyy = String(yrs_increase);
+        today = yyyy + '-' + mm + '-' + dd;
+        $("#"+id+" #fd_maturity_date").val(today);
+
+    }
+
+    function deleteFD(id){
+        fd_to_not_add.push(id);
+
+        if (fd_to_not_add.length == fd_num){
+
+            window.location.replace("<?php echo $wo['portfolio_data']['url'];?>");
+
+        }else{
+
+            $("#"+id).remove();
+            $("#"+id+"_charge").remove();
+
+        }
+    }
+
+    function pushFDDataToBackend(){
+        fd_array_to_send = new Array();
+
+        /* console.log($("#"+fd_to_add[id]+id+"charge_").text()) */
+
+        for (id = 0; id < fd_num; id++){
+            if (!fd_to_not_add.includes(id)){
+
+                if ($("#"+id+" #fd_transaction_date").val() === ""){
+                    $("#"+id+" #fd_transaction_date").val("NaN");
+                }
+                console.log(parseFloat($("#"+id+"_charge #fd_transaction_net_amount").val()));
+
+                fdInfo = {
+
+                        fd_type: $('#'+id+'#fd_type').val(),
+                        fd_bank: $('#'+id+'#fd_bank').val(),
+                        fd_transaction_price: parseFloat($("#"+id+" #fd_transaction_price").val()),
+                        fd_transaction_date: parseInt(new Date($("#"+id+" #fd_transaction_date").val()).getTime()/1000),
+                        fd_transaction_interest: parseFloat($("#"+id+" #fd_rate").val()),
+                        fd_maturity_date: parseInt(new Date($("#"+id+" #fd_maturity_date").val()).getTime()/1000),
+
+                            };
+
+                fd_array_to_send.push(fdInfo);
+            }
+        }
+
+        $.ajax({
+            url: Wo_Ajax_Requests_File(),
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                f:'add_fd',
+                fd_array: fd_array_to_send,
+                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+            },
+                success: function(data) {
+                    if (data['status'] == 200){
+                        console.log(data);
+                        console.log("done");
+                        location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
+                    }
+                    else if (data['status'] == 401){
+                        console.log(data['error']);
+                        $('#fd_add_errors').text(data['error']);
+                    }
+                    else{
+                        console.log(data);
+                        $('#fd_add_errors').text(data['error']);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                }
+        });
+    }
+
+</script>

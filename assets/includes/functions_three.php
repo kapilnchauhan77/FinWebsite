@@ -8148,7 +8148,7 @@ function Wo_PortfolioCaching($portfolio_id, $get_desc){
     global $sqlConnect, $wo;
 
     $portfolio_id        = Wo_Secure($portfolio_id);
-    $query_text = "SELECT `portfolio_id`, `user_id`, `portfolio_name`, `portfolio_url`, `invested_value`, `PL`, `PL_PER`, `timestamp_created`, `no_of_unique_stocks`, `no_of_stocks`, `daily_rank`, `overall_rank`, `privacy_level` FROM " . T_PORTFOLIO . "
+    $query_text = "SELECT `portfolio_id`, `user_id`, `portfolio_name`, `portfolio_url`, `total_invested_value`, `stock_invested_value`, `timestamp_created`, `no_of_unique_stocks`, `no_of_stocks`, `privacy_level` FROM " . T_PORTFOLIO . "
         WHERE `portfolio_id` = {$portfolio_id}";
 
     $sql          = mysqli_query($sqlConnect, $query_text);
@@ -8268,7 +8268,214 @@ function SA_Get_Portfolio_Count(){
     /* username_portfolio_portfoliocountuserid+3 */
     return $fetched_data['portfolio_count'];
 }
-function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $no_of_unique_stocks){
+function AddBullionToPortfolio($bullion_data, $portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    foreach ($bullion_data as $bullion_datum) {
+
+        $bullion_type = (Wo_Secure($bullion_datum['bullion_type']) == "Gold") ? 1 : 0;
+        $bullion_transaction_date = Wo_Secure($bullion_datum['bullion_transaction_date']);
+        $bullion_transaction_price = Wo_Secure($bullion_datum['bullion_transaction_price']);
+        $bullion_transaction_qty = Wo_Secure($bullion_datum['bullion_transaction_qty']);
+        $bullion_charge = Wo_Secure($bullion_datum['bullion_charge']);
+        $bullion_net_amount = Wo_Secure($bullion_datum['bullion_net_amount']);
+        $bullion_purchased_from = Wo_Secure($bullion_datum['bullion_purchased_from']);
+        $bullion_note = Wo_Secure($bullion_datum['note']);
+        $timestamp_created = strtotime("now");
+
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_BULLION . " (`portfolio_id`, `bullion_type`, `transaction_date`, `transaction_price`, `transaction_quantity`, `timestamp_created`, `charge`, `net_amount`, `purchased_from`, `note`) VALUES ({$portfolio_id}, {$bullion_type}, {$bullion_transaction_date}, {$bullion_transaction_price}, {$bullion_transaction_qty}, {$timestamp_created}, {$bullion_charge}, {$bullion_net_amount}, '{$bullion_purchased_from}', '{$bullion_note}')";
+        $query       = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$bullion_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
+        $query     = mysqli_query($sqlConnect, $query_one);
+
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_bullion` = `invested_value_bullion` + {$bullion_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
+        $query     = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+    }
+
+    return true;
+}
+function AddOBToPortfolio($ob_data, $portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    foreach ($ob_data as $ob_datum) {
+
+        $ob_type = (Wo_Secure($ob_datum['ob_type']) == "Gold") ? 1 : 0;
+        $ob_transaction_date = Wo_Secure($ob_datum['ob_transaction_date']);
+        $ob_transaction_price = Wo_Secure($ob_datum['ob_transaction_price']);
+        $ob_transaction_qty = Wo_Secure($ob_datum['ob_transaction_qty']);
+        $ob_charge = Wo_Secure($ob_datum['ob_charge']);
+        $ob_net_amount = Wo_Secure($ob_datum['ob_net_amount']);
+        $ob_purchased_from = Wo_Secure($ob_datum['ob_purchased_from']);
+        $ob_note = Wo_Secure($ob_datum['note']);
+        $timestamp_created = strtotime("now");
+
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_OB . " (`portfolio_id`, `ob_type`, `transaction_date`, `transaction_price`, `transaction_quantity`, `timestamp_created`, `charge`, `net_amount`, `purchased_from`, `note`) VALUES ({$portfolio_id}, {$ob_type}, {$ob_transaction_date}, {$ob_transaction_price}, {$ob_transaction_qty}, {$timestamp_created}, {$ob_charge}, {$ob_net_amount}, '{$ob_purchased_from}', '{$ob_note}')";
+        $query       = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `other_borrowings` = `other_borrowings` + {$ob_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
+        $query     = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+    }
+
+    return true;
+}
+function AddCashToPortfolio($cash_data, $portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    foreach ($cash_data as $cash_datum) {
+
+        $cash_type = (Wo_Secure($cash_datum['cash_type']) == "Gold") ? 1 : 0;
+        $cash_transaction_date = Wo_Secure($cash_datum['cash_transaction_date']);
+        $cash_transaction_price = Wo_Secure($cash_datum['cash_transaction_price']);
+        $cash_transaction_qty = Wo_Secure($cash_datum['cash_transaction_qty']);
+        $cash_charge = Wo_Secure($cash_datum['cash_charge']);
+        $cash_net_amount = Wo_Secure($cash_datum['cash_net_amount']);
+        $cash_purchased_from = Wo_Secure($cash_datum['cash_purchased_from']);
+        $cash_note = Wo_Secure($cash_datum['note']);
+        $timestamp_created = strtotime("now");
+
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_CASH . " (`portfolio_id`, `cash_type`, `transaction_date`, `transaction_price`, `transaction_quantity`, `timestamp_created`, `charge`, `net_amount`, `purchased_from`, `note`) VALUES ({$portfolio_id}, {$cash_type}, {$cash_transaction_date}, {$cash_transaction_price}, {$cash_transaction_qty}, {$timestamp_created}, {$cash_charge}, {$cash_net_amount}, '{$cash_purchased_from}', '{$cash_note}')";
+        $query       = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_cash` = `invested_value_cash` + {$cash_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
+        $query     = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+    }
+
+    return true;
+}
+function AddLoansToPortfolio($loans_data, $portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    foreach ($loans_data as $loans_datum) {
+
+        $loans_type = (Wo_Secure($loans_datum['loans_type']) == "Gold") ? 1 : 0;
+        $loans_transaction_date = Wo_Secure($loans_datum['loans_transaction_date']);
+        $loans_transaction_price = Wo_Secure($loans_datum['loans_transaction_price']);
+        $loans_transaction_qty = Wo_Secure($loans_datum['loans_transaction_qty']);
+        $loans_charge = Wo_Secure($loans_datum['loans_charge']);
+        $loans_net_amount = Wo_Secure($loans_datum['loans_net_amount']);
+        $loans_purchased_from = Wo_Secure($loans_datum['loans_purchased_from']);
+        $loans_note = Wo_Secure($loans_datum['note']);
+        $timestamp_created = strtotime("now");
+
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_PROPERTY . " (`portfolio_id`, `loans_type`, `transaction_date`, `transaction_price`, `transaction_quantity`, `timestamp_created`, `charge`, `net_amount`, `purchased_from`, `note`) VALUES ({$portfolio_id}, {$loans_type}, {$loans_transaction_date}, {$loans_transaction_price}, {$loans_transaction_qty}, {$timestamp_created}, {$loans_charge}, {$loans_net_amount}, '{$loans_purchased_from}', '{$loans_note}')";
+        $query       = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_properties` = `invested_value_properties` + {$loans_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
+        $query     = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+    }
+
+    return true;
+}
+function AddPropertyToPortfolio($property_data, $portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    foreach ($property_data as $property_datum) {
+
+        $property_type = (Wo_Secure($property_datum['property_type']) == "Gold") ? 1 : 0;
+        $property_transaction_date = Wo_Secure($property_datum['property_transaction_date']);
+        $property_transaction_price = Wo_Secure($property_datum['property_transaction_price']);
+        $property_transaction_qty = Wo_Secure($property_datum['property_transaction_qty']);
+        $property_charge = Wo_Secure($property_datum['property_charge']);
+        $property_net_amount = Wo_Secure($property_datum['property_net_amount']);
+        $property_purchased_from = Wo_Secure($property_datum['property_purchased_from']);
+        $property_note = Wo_Secure($property_datum['note']);
+        $timestamp_created = strtotime("now");
+
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_PROPERTY . " (`portfolio_id`, `property_type`, `transaction_date`, `transaction_price`, `transaction_quantity`, `timestamp_created`, `charge`, `net_amount`, `purchased_from`, `note`) VALUES ({$portfolio_id}, {$property_type}, {$property_transaction_date}, {$property_transaction_price}, {$property_transaction_qty}, {$timestamp_created}, {$property_charge}, {$property_net_amount}, '{$property_purchased_from}', '{$property_note}')";
+        $query       = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_properties` = `invested_value_properties` + {$property_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
+        $query     = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+    }
+
+    return true;
+}
+function AddFDToPortfolio($fd_data, $portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    foreach ($fd_data as $fd_datum) {
+
+        $fd_type = (Wo_Secure($fd_datum['fd_type']) == "Gold") ? 1 : 0;
+        $fd_transaction_date = Wo_Secure($fd_datum['fd_transaction_date']);
+        $fd_transaction_price = Wo_Secure($fd_datum['fd_transaction_price']);
+        $fd_transaction_qty = Wo_Secure($fd_datum['fd_transaction_qty']);
+        $fd_charge = Wo_Secure($fd_datum['fd_charge']);
+        $fd_net_amount = Wo_Secure($fd_datum['fd_net_amount']);
+        $fd_purchased_from = Wo_Secure($fd_datum['fd_purchased_from']);
+        $fd_note = Wo_Secure($fd_datum['note']);
+        $timestamp_created = strtotime("now");
+
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_FD . " (`portfolio_id`, `fd_type`, `transaction_date`, `transaction_price`, `transaction_quantity`, `timestamp_created`, `charge`, `net_amount`, `purchased_from`, `note`) VALUES ({$portfolio_id}, {$fd_type}, {$fd_transaction_date}, {$fd_transaction_price}, {$fd_transaction_qty}, {$timestamp_created}, {$fd_charge}, {$fd_net_amount}, '{$fd_purchased_from}', '{$fd_note}')";
+        $query       = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_FD` = `invested_value_FD` + {$fd_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
+        $query     = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+    }
+
+    return true;
+}
+function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
     global $wo, $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
@@ -8281,7 +8488,9 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $
         $stock_transaction_date = Wo_Secure($stock_quote_datum['stock_transaction_date']);
         $stock_transaction_price = Wo_Secure($stock_quote_datum['stock_transaction_price']);
         $stock_transaction_qty = Wo_Secure($stock_quote_datum['stock_transaction_qty']);
-        $invested_value = Wo_Secure($stock_quote_datum['invested_value']);
+        $stock_invested_value = Wo_Secure($stock_quote_datum['stock_invested_value']);
+        $stock_charge = Wo_Secure($stock_quote_datum['stock_charge']);
+        $stock_note = Wo_Secure($stock_quote_datum['note']);
         $timestamp_created = strtotime("now");
 
         $query_text   = "SELECT `id` FROM " . T_PORTFOLIO_STOCKS . " WHERE stock_fincode = {$stock_fincode} AND `portfolio_id` = {$portfolio_id}";
@@ -8291,14 +8500,17 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $
             $no_of_unique_stocks += 1;
         };
 
-        $query_one   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `timestamp_created`) VALUES ({$portfolio_id}, {$stock_fincode}, {$stock_transaction_date}, {$stock_transaction_price}, {$stock_transaction_qty}, {$timestamp_created})";
-        $query     = mysqli_query($sqlConnect, $query_one);
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `timestamp_created`, `Charges`, `Notes`) VALUES ({$portfolio_id}, {$stock_fincode}, {$stock_transaction_date}, {$stock_transaction_price}, {$stock_transaction_qty}, {$timestamp_created}, {$stock_charge}, '{$stock_note}')";
+        $query       = mysqli_query($sqlConnect, $query_one);
 
         if (!$query) {
             return mysqli_error($sqlConnect);
         };
 
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value` = `invested_value` + {$invested_value} WHERE `portfolio_id` = {$portfolio_id}";
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `stock_invested_value` = `stock_invested_value` + {$stock_invested_value} WHERE `portfolio_id` = {$portfolio_id}";
+        $query     = mysqli_query($sqlConnect, $query_one);
+
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$stock_invested_value} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
 
         if (!$query) {

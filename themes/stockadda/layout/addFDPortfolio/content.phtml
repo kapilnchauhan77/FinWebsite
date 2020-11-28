@@ -1,0 +1,83 @@
+<div style="background-color: white; display:flex; height: 93.5vh; width: 100%; justify-content: center; align-items: center; text-align: center; border-radius: 3px; margin-bottom:0px;">
+    <div class="container" style="display: inline-block;">
+
+        <div class="row" >
+            <div class="col-md-12">
+                <div class="title" style="margin: 0; font-weight: 700; color: #3e3e3e; text-transform: capitalize;font-size:3em">
+                    Add Fixed Deposit in <?php echo (strpos(strtolower($wo['portfolio_data']['portfolio_name']), 'portfolio') !== false) ? $wo['portfolio_data']['portfolio_name'] : 'Portfolio - ' . $wo['portfolio_data']['portfolio_name']; ?>
+                    <script>
+                        console.log(<?php echo json_encode($wo['portfolio_data']); ?>);
+                    </script>
+
+                </div>
+                <span id='fd_add_errors' style="color: red;"></span>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div id="stock_quote_table_search" class="col-md-12">
+               <table class="table table-hover table-striped">
+
+                   <thead>
+                       <tr>
+                           <th style="text-align: center;">Fixed Income Type</th>
+                           <th style="text-align: center;">Bank/Institution Name</th>
+                           <th style="text-align: center;">Amount</th>
+                           <th style="text-align: center;">Start Date</th>
+                           <th style="text-align: center;">Int rate</th>
+                           <th width="1%" style="text-align: center;">Yrs</th>
+                           <th width="1%" style="text-align: center;">Mnths</th>
+                           <th width="1%" style="text-align: center;">Days</th>
+                           <th style="text-align: center;">Maturity Date</th>
+                           <th style="text-align: center;">Action</th>
+                       </tr>
+                   </thead>
+
+                   <tbody id="table_fd_quote_search_body">
+
+                        <tr id="0" style="height:39px">
+                            <td><input id="fd_type" style="height:39px" type="text" name="fd_type"/></td>
+                            <td><input id="fd_bank" style="height:39px" type="text" name="fd_bank"/></td>
+                            <td width="7%">
+                                <span class="fd_transac_price_div">
+                                    <input id="fd_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="width:100%; height:39px;" />
+                                </span>
+                            </td>
+                            <td><input id="fd_transaction_date" type="date" name="transaction_date" /></td>
+                            <td width="7%"><input id="fd_rate" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="fd_rate" style="width:100%; height:39px;" /></td>
+                            <td width="1%"> <input style="width: 150%; height:39px" id="fd_yrs" min="0" value="0" name="fd_yrs" onkeyup=changeFDValues(0) onchange=changeFDValues(0) /> </td>
+                            <td width="1%" style="padding-left:1%"> <input style="width: 100%; height:39px" id="fd_mths" min="0" value="0" name="fd_mths" onkeyup=changeFDValues(0) onchange=changeFDValues(0) /> </td>
+                            <td width="1%"> <input style="width: 100%; height:39px" id="fd_days" min="0" value="0" name="fd_days" onkeyup=changeFDValues(0) onchange=changeFDValues(0) /> </td>
+                            <td><input id="fd_maturity_date" type="date" name="fd_maturity_date" readonly /></td>
+                            <td><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteFD(0)"></i></td>
+                        </tr>
+
+                   </tbody>
+
+               </table>
+
+               <span class="stock_search_submit" data-toggle="tooltip" data-placement="bottom" onclick="pushFDDataToBackend()" title="Add Stocks to Portfolio"></span>
+
+               <div style="float: left;">
+
+                   <div style="margin-top: 9px;">
+
+                        <span onclick="AddFDToTable()" class="add_bullion" data-toggle="tooltip" data-placement="bottom" title="Add FD"></span>
+
+                   </div>
+
+                   <div class="stock-quote-dropdown-menu search-dropdown-container" style="display:inline-block;left:auto;margin-top: 10px;margin-left: -6.3%;width: auto;" role="menu">
+                     <div class="stock-search-dropdown-result"></div>
+                   </div>
+
+               </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<?php echo Wo_LoadPage("addFDPortfolio/js_for_FD"); ?>

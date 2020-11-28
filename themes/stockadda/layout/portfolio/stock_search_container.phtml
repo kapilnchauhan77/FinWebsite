@@ -42,25 +42,25 @@
         }
         table_body_data_to_add = `<tr id=`+ fincode + stock_num +` style="height:39px">
                                      <td id="stock_name" class="stock_quote_name_search">` + comp_name + `</td>
-                                     <td><input id="stock_transaction_date" type="date" name="transaction_date" /></td>
+                                     <td><input id="stock_transaction_date" type="date" name="transaction_date"/></td>
                                      <td>
                                          <span class="stock_quote_transac_price_div">
                                              <input id="stock_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeValues(`+ fincode + stock_num +`) onchange=changeValues(`+ fincode + stock_num +`) />
                                          </span>
                                      </td>
-                                     <td><input id="stock_qty" type="number" min="0" value="0" step="any" name="quantity" style="height:39px;" onkeyup=changeValues(`+ fincode + stock_num +`) onchange=changeValues(`+ fincode + stock_num +`)/></td>
+                                      <td><input id="stock_qty" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="quantity" style="height:39px;" onkeyup=changeValues(`+ fincode + stock_num +`) onchange=changeValues(`+ fincode + stock_num +`) /></td>
                                      <td><select name='exchange' id='exchange' style="width: 6em; height: 2.75em;"><option value="BSE">BSE</option><option value="NSE">NSE</option></select></td>
                                      <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteStockQuoteFromSearch('`+ fincode + stock_num +`')"></i></td>
                                    </tr>
                                    <tr id=`+ fincode + stock_num +`charge style="height:39px">
                                      <td>Amount: <span id=`+ fincode + stock_num +`amount_>0</span></td>
-                                     <td><a id="charge_breakdown" href='#' data-toggle="tooltip" data-placement="bottom" title="Charges">Charge: <span id=`+ fincode + stock_num +`charge_>0</span></a></td>
-                                     <td><input style="text-decoration: none; cursor: default;" id="brokerage" type="number" value=0  onkeyup=changeValues(`+ fincode + stock_num +`) onchange=changeValues(`+ fincode + stock_num +`) /><select name='percentage_inr' id='percentage_inr' onchange=changeValues(`+ fincode + stock_num +`) ><option value="Percentage">Percentage</option><option value="INR">INR</option></select></td>
-                                     <td>Brokerage Charge: <span id=`+ fincode + stock_num +`broker_charge_>0</span></td>
+                                     <td id='all_charges' title="Current Charges: 0">Charge: <span id=`+ fincode + stock_num +`charge_>0</span></td>
+                                     <td><input style="text-decoration: none; cursor: default;" id="brokerage" type="number" value=0 step="any" onkeyup=changeValues(`+ fincode + stock_num +`) onchange=changeValues(`+ fincode + stock_num +`) /><select name='percentage_inr' id='percentage_inr' onchange=changeValues(`+ fincode + stock_num +`) ><option value="Percentage">Percentage</option><option value="INR">INR</option></select></td>
+                                     <td colspan="2">Brokerage Charge: <span id=`+ fincode + stock_num +`broker_charge_>0</span></td>
                                      <td>Net Amount: <span id=`+ fincode + stock_num +`net_amount>0</span></td>
                                   </tr>
                                   <tr id=`+ fincode + stock_num +`stock_notes style="height:39px">
-                                     <td><textarea name="notes" id="notes" rows="1"></textarea></td>
+                                     <td colspan="7"> <span class="small">Notes:</span> <br> <span> <textarea name="notes" id="notes" rows="1"></textarea> </span> </textarea></td>
                                   </tr>`;
 
 
@@ -76,12 +76,12 @@
         exchange_charge = ($("#"+id + " #exchange").val()=="BSE") ? (amount * 0.0000275) : (amount * 0.0000325);
         sebi_charge = amount * 0.000001;
         stamp_duty = amount * 0.00000;
-        brokerage_charge = ($("#"+id + "charge #percentage_inr").val()=="INR") ? $("#"+id + "charge #brokerage").val() : (amount * $("#"+id + "charge #brokerage").val()/100);
+        brokerage_charge = ($("#"+id + "charge #percentage_inr").val()=="INR") ? parseFloat($("#"+id + "charge #brokerage").val()) : (amount * $("#"+id + "charge #brokerage").val()/100);
         charge = stt_charge + exchange_charge + sebi_charge + stamp_duty;
         net_amount = amount + charge + brokerage_charge;
         $("#"+id+"broker_charge_").text(brokerage_charge.toFixed(2));
         $("#"+id+"charge_").text(charge.toFixed(2));
-        $("#"+id+" #charge_breakdown").attr('title', 'STT Charge: '+stt_charge+'\n Exchange Charge: '+exchange_charge+'\n Sebi Charge: '+sebi_charge+'\n Stamp Duty: '+stamp_duty);
+        $("#"+id+"charge #all_charges").attr('title', ' STT Charge: '+stt_charge.toFixed(2)+'\n Exchange Charge: '+exchange_charge.toFixed(2)+'\n Sebi Charge: '+sebi_charge.toFixed(2)+'\n Stamp Duty: '+stamp_duty.toFixed(2));
         $("#"+id+"amount_").text(amount.toFixed(2));
         $("#"+id+"net_amount").text(net_amount.toFixed(2));
     }
@@ -106,16 +106,21 @@
 
         Object.keys(stock_quotes_to_add).forEach(function (id){
             if ($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val() === ""){
-                $("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val(new Date().toDateInputValue());
+                /* alert('Please Enter a Date'); */
+                /* $("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val(new Date().toDateInputValue()); */
+                $("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val("NaN");
             }
+            /* console.log($("#"+stock_quotes_to_add[id]+id+"charge_").text()) */
 
             stockInfo = {
 
                     stock_fincode: parseInt(stock_quotes_to_add[id]),
                     stock_transaction_date: parseInt(new Date($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000),
                     stock_transaction_price: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_price").val()),
-                    stock_transaction_qty: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val()),
-                    invested_value: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val()) * parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_price").val())
+                    stock_transaction_qty: parseInt($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val()),
+                    stock_invested_value: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val()) * parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_price").val()),
+                    stock_charge: parseFloat($("#"+stock_quotes_to_add[id]+id+"charge_").text()) + parseFloat($("#"+stock_quotes_to_add[id]+id+"broker_charge_").text()),
+                    note: $("#"+stock_quotes_to_add[id]+id+"stock_notes #notes").val(),
 
                         };
 
@@ -137,7 +142,6 @@
                 f:'portfolio_data',
                 stock_array: stock_array_to_send,
                 no_of_stocks: no_of_stocks,
-                /* no_of_unique_stocks: (no_of_unique_stocks > 0) ? no_of_unique_stocks : 0, */
                 portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
             },
                 success: function(data) {
@@ -145,6 +149,10 @@
                         console.log(data);
                         console.log("done");
                         location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
+                    }
+                    else if (data['status'] == 401){
+                        console.log(data['error']);
+                        $('#stock_add_errors').text(data['error']);
                     }
                     else{
                         console.log(data);

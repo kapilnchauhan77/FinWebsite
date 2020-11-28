@@ -16,15 +16,18 @@
     function calculateTotalVals_display(data_of_all_stocks, get_fincode_data = true){
         /* TODO Remove variables that are not needed */
 
-        var adjustedValTotal     = 0;
-        var intradayValTotal     = 0;
-        var currentVal           = 0;
-        var asset_sold_this_year = 0;
-        var asset_added_this_year = 0;
-        var fincode_price_obj    = new Object();
-        var fincode_volume       = new Object();
-        var fincode_sorted_dates = new Object();
-        var yr_timestamp = (new Date().getTime() / 1000) - (365 * 24 * 60 * 60);
+        var all_dates = new Array();
+        var adjustedValTotal        = 0;
+        var intradayValTotal        = 0;
+        var currentVal              = 0;
+        var asset_sold_this_year    = 0;
+        var asset_added_this_year   = 0;
+        var currentVal_of_asset_fyr = 0;
+        var fincode_added_this_fyr  = new Object();
+        var fincode_price_obj       = new Object();
+        var fincode_volume          = new Object();
+        var fincode_sorted_dates    = new Object();
+        var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         data_of_all_stocks.forEach(function (value) {
             console.log("Val:");
@@ -43,9 +46,12 @@
                     fincode_price_obj[value.stock_fincode][parseInt(val.stock_transaction_date)] = parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price);
                     fincode_volume[value.stock_fincode][parseInt(val.stock_transaction_date)] = parseFloat(val.stock_transaction_qty);
                     total_volume_of_stock += parseFloat(val.stock_transaction_qty);
-                    if (parseInt(val.stock_transaction_date) >= yr_timestamp){
-                        if (parseFloat(val.stock_transaction_qty) < 0) asset_sold_this_year += parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price);
-                        else asset_added_this_year += parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price);
+                    if (parseInt(val.stock_transaction_date) >= financial_yr_timestamp){
+                        if (parseFloat(val.stock_transaction_qty) < 0) asset_sold_this_year += -1 * parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price);
+                        else{
+                            fincode_added_this_fyr[value.stock_fincode] = parseInt(val.stock_transaction_qty);
+                            asset_added_this_year += parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price);
+                        }
                     }
                 });
 
@@ -59,16 +65,19 @@
                 /* }); */
                 /* Fishy Code */
 
+                all_dates = all_dates.concat(dates);
                 fincode_sorted_dates[value.stock_fincode] = dates;
             };
 
             if (value.price_detail_intraday == null) {
 
+                if (value.stock_fincode in fincode_added_this_fyr) currentVal_of_asset_fyr += (parseFloat(value.price_detail_adjusted.close) * fincode_added_this_fyr[value.stock_fincode]);
                 currentVal       += parseFloat(value.price_detail_adjusted.close);
                 adjustedValTotal += parseFloat(value.price_detail_adjusted.close);
 
             } else {
 
+                if (value.stock_fincode in fincode_added_this_fyr) currentVal_of_asset_fyr += (parseFloat(value.price_detail_intraday.close) * fincode_added_this_fyr[value.stock_fincode]);
                 currentVal       += parseFloat(value.price_detail_intraday.close);
                 intradayValTotal += parseFloat(value.price_detail_intraday.close);
                 adjustedValTotal += parseFloat(value.price_detail_adjusted.close);
@@ -84,6 +93,8 @@
         $('#currentVal').text(currentVal);
         $('#currentValTable').text(currentVal);
         $('#asset_added_this_year').text(asset_added_this_year);
+        var p_l_this_year = currentVal_of_asset_fyr - asset_added_this_year;
+        $('#p_l_this_year').text(p_l_this_year);
         $('#asset_sold_this_year').text(asset_sold_this_year);
 
         const daily_p_p_l = (currentVal - adjustedValTotal);
@@ -92,15 +103,17 @@
 
         const daily_p_p_l_per = ((currentVal - adjustedValTotal) / adjustedValTotal);
         change_colors('daily_p_p_l', daily_p_p_l_per);
+        change_colors('daily_p_p_lTable', daily_p_p_l_per);
 
-        const overall_p_p_l = (currentVal * <?php echo $wo['portfolio_data']['no_of_stocks']; ?>) - <?php echo $wo['portfolio_data']['invested_value']; ?>;
+        const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['stock_invested_value']; ?>);
         $('#overall_p_p_l').text(overall_p_p_l);
         $('#overall_p_p_lTable').text(overall_p_p_l);
 
         const overall_p_p_l_per = (overall_p_p_l / (currentVal * <?php echo $wo['portfolio_data']['no_of_stocks']; ?>)) * 100;
         change_colors('overall_p_p_l', overall_p_p_l_per);
+        change_colors('overall_p_p_lTable', overall_p_p_l_per);
 
-        return [adjustedValTotal, intradayValTotal, currentVal, fincode_price_obj, fincode_volume, fincode_sorted_dates];
+        return [adjustedValTotal, intradayValTotal, currentVal, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates];
     }
 
     function averageBuyingPrice({n, total}, stock_portfolio_data) {
@@ -115,25 +128,19 @@
 
     function change_colors(tag, p_l_per){
        $('#'+ tag +'_per').text(p_l_per.toFixed(2));
-       $('#'+ tag +'_progress').attr('style', "width: " + Math.abs(p_l_per.toFixed(2).toString()) + "%");
        if (p_l_per > 0){
            $('#'+ tag +'_div').removeClass('SA_border-left-danger');
            $('#'+ tag +'_div').removeClass('SA_border-left-secondary');
            $('#'+ tag +'_text').removeClass('SA_text-danger');
            $('#'+ tag +'_text').removeClass('SA_text-secondary');
-           $('#'+ tag +'_progress').removeClass('SA_bg-danger');
-           $('#'+ tag +'_progress').removeClass('SA_bg-secondary');
 
            $('#'+ tag +'_text').addClass('SA_text-success');
            $('#'+ tag +'_div').addClass('SA_border-left-success');
-           $('#'+ tag +'_progress').addClass('SA_bg-success');
        } else if(p_l_per == 0) {
            $('#'+ tag +'_div').removeClass('SA_border-left-success');
            $('#'+ tag +'_div').removeClass('SA_border-left-danger');
            $('#'+ tag +'_text').removeClass('SA_text-danger');
            $('#'+ tag +'_text').removeClass('SA_text-success');
-           $('#'+ tag +'_progress').removeClass('SA_bg-danger');
-           $('#'+ tag +'_progress').removeClass('SA_bg-success');
 
            $('#'+ tag +'_text').addClass('SA_text-secondary');
            $('#'+ tag +'_div').addClass('SA_border-left-secondary');
@@ -143,12 +150,9 @@
            $('#'+ tag +'_div').removeClass('SA_border-left-secondary');
            $('#'+ tag +'_text').removeClass('SA_text-success');
            $('#'+ tag +'_text').removeClass('SA_text-secondary');
-           $('#'+ tag +'_progress').removeClass('SA_bg-success');
-           $('#'+ tag +'_progress').removeClass('SA_bg-secondary');
 
            $('#'+ tag +'_text').addClass('SA_text-danger');
            $('#'+ tag +'_div').addClass('SA_border-left-danger');
-           $('#'+ tag +'_progress').addClass('SA_bg-danger');
        }
     }
 

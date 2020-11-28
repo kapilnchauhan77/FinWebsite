@@ -75,9 +75,9 @@
                            })
                        }
 
-                       [adjustedValTotal, intradayValTotal, currentVal, fincode_price_obj, fincode_volume, fincode_sorted_dates] = calculateTotalVals_display(data_of_all_stocks);
+                       [adjustedValTotal, intradayValTotal, currentVal, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalVals_display(data_of_all_stocks);
                        /* TODO */
-                       getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal, timeline);
+                       getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal, timeline, all_dates);
 
                        console.log("Current Value: " + currentVal);
                        console.log("Adjusted Value: " + adjustedValTotal);
@@ -85,9 +85,9 @@
                    });
 
        } else{
-           [adjustedValTotal, intradayValTotal, currentVal, fincode_price_obj, fincode_volume, fincode_sorted_dates] = calculateTotalVals_display(data_of_all_stocks);
+           [adjustedValTotal, intradayValTotal, currentVal, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalVals_display(data_of_all_stocks);
            /* TODO */
-           getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal, timeline);
+           getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal, timeline, all_dates);
 
            console.log("Current Value: " + currentVal);
            console.log("Adjusted Value: " + adjustedValTotal);

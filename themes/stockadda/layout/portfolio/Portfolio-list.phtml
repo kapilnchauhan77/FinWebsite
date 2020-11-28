@@ -20,7 +20,7 @@
 						<span>Date Created: <?php echo $wo['portfolio']['timestamp_created']; ?></span>
 						<span>Portfolio Age: 0</span>
 						<span>Privacy: <?php echo ($wo['portfolio']['privacy_level'] < 3) ? "Public TODO all" : "Private"; ?></span>
-						<span>Invested Amount: <?php echo $wo['portfolio']['invested_value']; ?></span>
+						<span>Invested Amount: <?php echo $wo['portfolio']['total_invested_value']; ?></span>
 
 						<?php else:?>
 						<span>No Stocks in your portfolio, kindly <a href="<?php echo $wo['portfolio']['url'];?>" data-ajax="<?php echo  $wo['portfolio']['raw_url'];?>">add stocks</a>: </span>

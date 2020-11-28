@@ -88,6 +88,46 @@ if (isset($_GET['u'])) {
                        $about            = $wo['portfolio_data']['portfolio_name'] . ' - add stocks';
                        $name             = $wo['portfolio_data']['portfolio_name'] . ' - add stocks';
                        break;
+                    case 'add-bullion':
+                       $type             = 'addBullionPortfolio';
+                       $about            = $wo['portfolio_data']['portfolio_name'] . ' - add bullion';
+                       $name             = $wo['portfolio_data']['portfolio_name'] . ' - add bullion';
+                       break;
+                    case 'add-mutual-funds':
+                       $type             = 'addMFPortfolio';
+                       $about            = $wo['portfolio_data']['portfolio_name'] . ' - add Mutual Funds';
+                       $name             = $wo['portfolio_data']['portfolio_name'] . ' - add Mutual Funds';
+                       break;
+                    case 'add-cash':
+                       $type             = 'addCashPortfolio';
+                       $about            = $wo['portfolio_data']['portfolio_name'] . ' - add cash';
+                       $name             = $wo['portfolio_data']['portfolio_name'] . ' - add cash';
+                       break;
+                    case 'add-FD':
+                       $type             = 'addFDPortfolio';
+                       $about            = $wo['portfolio_data']['portfolio_name'] . ' - add FD';
+                       $name             = $wo['portfolio_data']['portfolio_name'] . ' - add FD';
+                       break;
+                    case 'add-Loans':
+                       $type             = 'addLoansPortfolio';
+                       $about            = $wo['portfolio_data']['portfolio_name'] . ' - add Loans';
+                       $name             = $wo['portfolio_data']['portfolio_name'] . ' - add Loans';
+                       break;
+                    case 'add-OA':
+                       $type             = 'addOAPortfolio';
+                       $about            = $wo['portfolio_data']['portfolio_name'] . ' - add OA';
+                       $name             = $wo['portfolio_data']['portfolio_name'] . ' - add OA';
+                       break;
+                    case 'add-OB':
+                       $type             = 'addOBPortfolio';
+                       $about            = $wo['portfolio_data']['portfolio_name'] . ' - add OB';
+                       $name             = $wo['portfolio_data']['portfolio_name'] . ' - add OB';
+                       break;
+                    case 'add-Property':
+                       $type             = 'addPropertyPortfolio';
+                       $about            = $wo['portfolio_data']['portfolio_name'] . ' - add Property';
+                       $name             = $wo['portfolio_data']['portfolio_name'] . ' - add Property';
+                       break;
                     default:
                         $type                = 'portfolio';
                         $about               = $wo['portfolio_data']['portfolio_name'];
@@ -234,11 +274,13 @@ if ($type == 'page') {
         }
     }
 }
+
 //THE BELOW IS DELETED IN DEVELOPER FILE I SUSPECT BECAUSE OF COPYING FROM OLD VERSION. I"VE LET IT REMAIN
 if (!empty($_GET['type']) && in_array($_GET['type'], array('activities','mutual_friends','following','followers','videos','photos','likes','groups','family_list','requests'))) {
     $name = $name ." | ".Wo_Secure($_GET['type']);
 }
 //END
+
 $wo['description'] = $about;
 $wo['keywords']    = '';
 $wo['page']        = $type;

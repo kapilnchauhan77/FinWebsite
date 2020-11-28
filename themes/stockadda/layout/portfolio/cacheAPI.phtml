@@ -80,7 +80,7 @@
         return graphData;
     };
 
-    function getGraphData(fincode_data, fincode_volume, fincode_sorted_dates, currentVal, timeline) {
+    function getGraphData(fincode_data, fincode_volume, fincode_sorted_dates, currentVal, timeline, all_dates = new Array()) {
 
         console.log('Graph Argument Data:');
         console.log('Fincode Data:');
@@ -114,7 +114,7 @@
                     graphData = processGraphData(data, fincode_volume, fincode_sorted_dates, currentVal);
                     console.log('graphData:');
                     console.log(graphData);
-                    if (document.getElementById("SA_myAreaChart")) stocksAreaChart(graphData, fincode_volume, fincode_data);
+                    if (document.getElementById("SA_myAreaChart")) stocksAreaChart(graphData, all_dates);
                 });
     };
 

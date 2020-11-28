@@ -1,32 +1,29 @@
 <?php
-if ($f == 'portfolio_data') {
-    $stock_array = $_GET['stock_array'];
+if ($f == 'add_fd') {
+    $fd_array = $_GET['fd_array'];
     $portfolio_id = $_GET['portfolio_id'];
-    $no_of_stocks = $_GET['no_of_stocks'];
-    $no_of_unique_stocks = $_GET['no_of_unique_stocks'];
-    /* $errors = array(); */
     $error = '';
-    if (!empty($stock_array) && !empty($portfolio_id)) {
+    if (!empty($fd_array) && !empty($portfolio_id)) {
 
-        foreach ($stock_array as $stock_data) {
-            if ($stock_data['stock_transaction_date'] === "NaN"){
+        foreach ($fd_array as $fd_data) {
+            if ($fd_data['fd_transaction_date'] === "NaN"){
                 /* $errors[] = "Please Enter Date!"; */
                 $error = "Please Enter Date!";
                 break;
             }
-            if ($stock_data['stock_transaction_date'] > time()){
+            if ($fd_data['fd_transaction_date'] > time()){
                 /* $errors[] = "Please Enter Date!"; */
                 $error = "Future Dates not allowed!";
                 break;
             }
-            if ($stock_data['stock_transaction_price'] == 0){
+            if ($fd_data['fd_transaction_price'] == 0){
                 /* $errors[] = "Please Enter Price!"; */
                 $error = "Please Enter Price!";
                 break;
             }
-            if ($stock_data['stock_transaction_qty'] == 0){
+            if ($fd_data['fd_maturity_date'] == "NaN"){
                 /* $errors[] = "Please Enter Quantity!"; */
-                $error = "Please Enter Quantity!";
+                $error = "Please Enter Maturity time!";
                 break;
             }
         }
@@ -43,7 +40,7 @@ if ($f == 'portfolio_data') {
                 exit();
         }
         else{
-            $portfolio_data_added = AddStocksToPortfolio($stock_array, $portfolio_id, $no_of_stocks);
+            $portfolio_data_added = AddFDToPortfolio($fd_array, $portfolio_id);
             if ($portfolio_data_added === true){
 
                 $data = array(
@@ -59,9 +56,8 @@ if ($f == 'portfolio_data') {
                 $data = array(
                     'status' => 400,
                     'error' => $portfolio_data_added,
-                    'stock_array' => $stock_array,
+                    'fd_array' => $fd_array,
                     'portfolio_id' => $portfolio_id,
-                    'no_of_stocks' => $no_of_stocks
                 );
 
                 header("Content-type: application/json");
@@ -72,9 +68,8 @@ if ($f == 'portfolio_data') {
     } else {
         $data = array(
             'status' => 404,
-            'stock_array' => $stock_array,
+            'fd_array' => $fd_array,
             'portfolio_id' => $portfolio_id,
-            'no_of_stocks' => $no_of_stocks
         );
     };
     header("Content-type: application/json");

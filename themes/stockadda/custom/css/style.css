@@ -232,6 +232,27 @@ input:checked + .sliderx:before {
 .open>.stock-quote-dropdown-menu:not(.notfi-dropdown):not([role=combobox]) {transition: opacity 150ms cubic-bezier(0.4, 0.0, 0.2, 1) 0ms,transform 150ms cubic-bezier(0.4, 0.0, 0.2, 1) 0ms;transform: scale3d(1,1,1);opacity: 1;visibility: visible;}
 .stock-quote-dropdown-menu:not(.notfi-dropdown) > li > a {padding: 0 16px;line-height: 32px;}
 
+/* set the unit abbreviation for each unit class */
+.fd_transac_price_div::after {
+  position: relative;
+  top: -2.1em;
+  right: -1.8em;
+  content: '\20B9';
+}
+.fd_transac_price_div:hover::after,
+.fd_transac_price_div:focus-within::after {
+  position: relative;
+  right: -1.0em;
+}
+
+/* handle Firefox (arrows always shown) */
+@supports (-moz-appearance:none) {
+  .fd_transac_price_div::after {
+    position: relative;
+    right: 2.8em;
+  }
+}
+
 .stock_quote_transac_price_div:hover::after,
 .stock_quote_transac_price_div:focus-within::after {
   position: relative;
@@ -293,6 +314,30 @@ input:checked + .sliderx:before {
 .stock_input::-webkit-search-decoration,
 .stock_input::-webkit-search-cancel-button {
 	display: none;
+}
+.add_bullion {
+	background: #ededed url(./themes/stockadda/icons/png/add-icon.png) no-repeat 9px center;
+	border: solid 1px #ccc;
+	padding: 14px 6px 8px 31px;
+	width: 55px;
+
+	-webkit-border-radius: 10em;
+	-moz-border-radius: 10em;
+	border-radius: 10em;
+
+	-webkit-transition: all .5s;
+	-moz-transition: all .5s;
+	transition: all .5s;
+}
+.add_bullion:hover {
+    cursor: pointer;
+	width: 130px;
+	background-color: #fff;
+	border-color: #4d91ea;
+
+	-webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	-moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	box-shadow: 0 0 5px rgba(109,207,246,.5);
 }
 .stock_input[type=text] {
 	background: #ededed url(./themes/stockadda/icons/png/search-icon.png) no-repeat 9px center;
