@@ -21,7 +21,7 @@
                                                 <input id="fd_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="width:100%; height:39px;" />
                                             </span>
                                         </td>
-                                        <td><input id="fd_transaction_date" type="date" name="transaction_date" /></td>
+                                        <td><input id="fd_transaction_date" type="date" name="transaction_date"  onkeyup=changeFDValues(` + fd_num + `) onchange=changeFDValues(` + fd_num + `) /></td>
                                         <td width="7%"><input id="fd_rate" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="fd_rate" style="width:100%; height:39px;" /></td>
                                         <td width="1%">
                                             <input style="width: 150%; height:39px" id="fd_yrs" min="0" value="0" name="fd_yrs" onkeyup=changeFDValues(` + fd_num + `) onchange=changeFDValues(` + fd_num + `) />
@@ -44,7 +44,7 @@
 
     function changeFDValues(id){
         var smallDaysMnths = [4, 6, 9, 11];
-        var today = new Date();
+        var today = new Date($("#"+id+" #fd_transaction_date").val());
         days_increase = today.getDate() + parseInt($("#"+id+" #fd_days").val());
         mnths_increase = today.getMonth() + 1 + parseInt($("#"+id+" #fd_mths").val());
         yrs_increase = parseInt(today.getFullYear()) + parseInt($("#"+id+" #fd_yrs").val());
@@ -92,7 +92,7 @@
         }else{
 
             $("#"+id).remove();
-            $("#"+id+"_charge").remove();
+            /* $("#"+id+"_charge").remove(); */
 
         }
     }
@@ -108,12 +108,17 @@
                 if ($("#"+id+" #fd_transaction_date").val() === ""){
                     $("#"+id+" #fd_transaction_date").val("NaN");
                 }
+
+                if ($("#"+id+" #fd_maturity_date").val() === ""){
+                    $("#"+id+" #fd_maturity_date").val("NaN");
+                }
+
                 console.log(parseFloat($("#"+id+"_charge #fd_transaction_net_amount").val()));
 
                 fdInfo = {
 
-                        fd_type: $('#'+id+'#fd_type').val(),
-                        fd_bank: $('#'+id+'#fd_bank').val(),
+                        fd_type: $('#'+id+' #fd_type').val(),
+                        fd_bank: $('#'+id+' #fd_bank').val(),
                         fd_transaction_price: parseFloat($("#"+id+" #fd_transaction_price").val()),
                         fd_transaction_date: parseInt(new Date($("#"+id+" #fd_transaction_date").val()).getTime()/1000),
                         fd_transaction_interest: parseFloat($("#"+id+" #fd_rate").val()),

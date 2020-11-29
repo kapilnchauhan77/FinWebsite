@@ -1,30 +1,28 @@
 <?php
-if ($f == 'add_cash') {
-    $cash_array = $_GET['cash_array'];
+if ($f == 'add_mutual_funds') {
+    $mf_array = $_GET['mf_array'];
     $portfolio_id = $_GET['portfolio_id'];
+    $no_of_mf = $_GET['no_of_mf'];
     $error = '';
-    if (!empty($cash_array) && !empty($portfolio_id)) {
+    if (!empty($mf_array) && !empty($portfolio_id)) {
 
-        foreach ($cash_array as $cash_data) {
-            if ($cash_data['cash_transaction_date'] === "NaN"){
-                /* $errors[] = "Please Enter Date!"; */
+        foreach ($mf_array as $mf_data) {
+            if ($mf_data['mf_transaction_date'] === "NaN"){
                 $error = "Please Enter Date!";
                 break;
             }
-            if ($cash_data['cash_transaction_date'] > time()){
-                /* $errors[] = "Please Enter Date!"; */
+            if ($mf_data['mf_transaction_date'] > time()){
                 $error = "Future Dates not allowed!";
                 break;
             }
-            if ($cash_data['cash_transaction_price'] == 0){
-                /* $errors[] = "Please Enter Price!"; */
+            if ($mf_data['mf_transaction_price'] == 0){
                 $error = "Please Enter Price!";
                 break;
             }
-            /* if ($cash_data['cash_transaction_price'] < 0){ */
-            /*     $error = "Please Enter Postive Price Only!"; */
-            /*     break; */
-            /* } */
+            if ($mf_data['mf_transaction_qty'] == 0){
+                $error = "Please Enter Quantity!";
+                break;
+            }
         }
 
         if ($error !== ''){
@@ -39,7 +37,7 @@ if ($f == 'add_cash') {
                 exit();
         }
         else{
-            $portfolio_data_added = AddCashToPortfolio($cash_array, $portfolio_id);
+            $portfolio_data_added = AddMFToPortfolio($mf_array, $portfolio_id, $no_of_mf);
             if ($portfolio_data_added === true){
 
                 $data = array(
@@ -55,8 +53,9 @@ if ($f == 'add_cash') {
                 $data = array(
                     'status' => 400,
                     'error' => $portfolio_data_added,
-                    'cash_array' => $cash_array,
+                    'mf_array' => $mf_array,
                     'portfolio_id' => $portfolio_id,
+                    'no_of_mf' => $no_of_mf
                 );
 
                 header("Content-type: application/json");
@@ -67,8 +66,9 @@ if ($f == 'add_cash') {
     } else {
         $data = array(
             'status' => 404,
-            'cash_array' => $cash_array,
+            'mf_array' => $mf_array,
             'portfolio_id' => $portfolio_id,
+            'no_of_mf' => $no_of_mf
         );
     };
     header("Content-type: application/json");

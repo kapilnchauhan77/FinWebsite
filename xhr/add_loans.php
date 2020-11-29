@@ -1,30 +1,31 @@
 <?php
-if ($f == 'add_cash') {
-    $cash_array = $_GET['cash_array'];
+if ($f == 'add_loans') {
+    $loans_array = $_GET['loans_array'];
     $portfolio_id = $_GET['portfolio_id'];
     $error = '';
-    if (!empty($cash_array) && !empty($portfolio_id)) {
+    if (!empty($loans_array) && !empty($portfolio_id)) {
 
-        foreach ($cash_array as $cash_data) {
-            if ($cash_data['cash_transaction_date'] === "NaN"){
+        foreach ($loans_array as $loans_data) {
+            if ($loans_data['loans_transaction_date'] === "NaN"){
                 /* $errors[] = "Please Enter Date!"; */
                 $error = "Please Enter Date!";
                 break;
             }
-            if ($cash_data['cash_transaction_date'] > time()){
+            if ($loans_data['loans_transaction_date'] > time()){
                 /* $errors[] = "Please Enter Date!"; */
                 $error = "Future Dates not allowed!";
                 break;
             }
-            if ($cash_data['cash_transaction_price'] == 0){
+            if ($loans_data['loans_transaction_price'] == 0){
                 /* $errors[] = "Please Enter Price!"; */
                 $error = "Please Enter Price!";
                 break;
             }
-            /* if ($cash_data['cash_transaction_price'] < 0){ */
-            /*     $error = "Please Enter Postive Price Only!"; */
-            /*     break; */
-            /* } */
+            if ($loans_data['loans_maturity_date'] == "NaN"){
+                /* $errors[] = "Please Enter Quantity!"; */
+                $error = "Please Enter Maturity time!";
+                break;
+            }
         }
 
         if ($error !== ''){
@@ -39,7 +40,7 @@ if ($f == 'add_cash') {
                 exit();
         }
         else{
-            $portfolio_data_added = AddCashToPortfolio($cash_array, $portfolio_id);
+            $portfolio_data_added = AddLoansToPortfolio($loans_array, $portfolio_id);
             if ($portfolio_data_added === true){
 
                 $data = array(
@@ -55,7 +56,7 @@ if ($f == 'add_cash') {
                 $data = array(
                     'status' => 400,
                     'error' => $portfolio_data_added,
-                    'cash_array' => $cash_array,
+                    'loans_array' => $loans_array,
                     'portfolio_id' => $portfolio_id,
                 );
 
@@ -67,7 +68,7 @@ if ($f == 'add_cash') {
     } else {
         $data = array(
             'status' => 404,
-            'cash_array' => $cash_array,
+            'loans_array' => $loans_array,
             'portfolio_id' => $portfolio_id,
         );
     };

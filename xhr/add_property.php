@@ -21,9 +21,9 @@ if ($f == 'add_property') {
                 $error = "Please Enter Price!";
                 break;
             }
-            if ($property_data['property_transaction_qty'] == 0){
-                /* $errors[] = "Please Enter Quantity!"; */
-                $error = "Please Enter Quantity!";
+            if ($property_data['property_current_price'] == 0){
+                /* $errors[] = "Please Enter Price!"; */
+                $error = "Please Current Value of your asset!";
                 break;
             }
         }

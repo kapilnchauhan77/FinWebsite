@@ -3,7 +3,6 @@ if ($f == 'portfolio_data') {
     $stock_array = $_GET['stock_array'];
     $portfolio_id = $_GET['portfolio_id'];
     $no_of_stocks = $_GET['no_of_stocks'];
-    $no_of_unique_stocks = $_GET['no_of_unique_stocks'];
     /* $errors = array(); */
     $error = '';
     if (!empty($stock_array) && !empty($portfolio_id)) {

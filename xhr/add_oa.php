@@ -6,6 +6,11 @@ if ($f == 'add_oa') {
     if (!empty($oa_array) && !empty($portfolio_id)) {
 
         foreach ($oa_array as $oa_data) {
+            if ($oa_data['oa_type'] === ""){
+                /* $errors[] = "Please Enter Date!"; */
+                $error = "Please Enter Name of your Asset!";
+                break;
+            }
             if ($oa_data['oa_transaction_date'] === "NaN"){
                 /* $errors[] = "Please Enter Date!"; */
                 $error = "Please Enter Date!";
@@ -21,9 +26,9 @@ if ($f == 'add_oa') {
                 $error = "Please Enter Price!";
                 break;
             }
-            if ($oa_data['oa_transaction_qty'] == 0){
+            if ($oa_data['oa_current_price'] == 0){
                 /* $errors[] = "Please Enter Quantity!"; */
-                $error = "Please Enter Quantity!";
+                $error = "Please Enter Current Value of your Investments!";
                 break;
             }
         }
@@ -40,7 +45,7 @@ if ($f == 'add_oa') {
                 exit();
         }
         else{
-            $portfolio_data_added = AddOBToPortfolio($oa_array, $portfolio_id);
+            $portfolio_data_added = AddOAToPortfolio($oa_array, $portfolio_id);
             if ($portfolio_data_added === true){
 
                 $data = array(

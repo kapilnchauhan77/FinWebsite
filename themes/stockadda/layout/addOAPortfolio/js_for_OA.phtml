@@ -13,40 +13,24 @@
 
     function AddOAToTable(){
 
-        table_body_data_to_add = `<tr id=`+ oa_num +` style="height:39px">
-                                      <td><select name='oa_type' id='oa_type' style="width: 6em; height: 2.75em;"><option value="Gold">Gold</option><option value="Silver">Silver</option></select></td>
+        table_body_data_to_add = `<tr id="`+ oa_num +`" style="height:39px">
+                                      <td><input id="oa_type" type="text" style="height:39px" /></td>
                                       <td><input id="oa_transaction_date" type="date" name="transaction_date"/></td>
                                       <td>
                                           <span class="stock_quote_transac_price_div">
-                                              <input id="oa_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeOAValues(`+ oa_num +` ) onchange=changeOAValues(`+ oa_num +` ) />
+                                              <input id="oa_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" />
                                           </span>
                                       </td>
-                                      <td><input id="oa_qty" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_qty" style="height:39px;" onkeyup=changeOAValues(`+ oa_num +` ) onchange=changeOAValues(`+ oa_num +` ) /></td>
-                                      <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteOA(`+ oa_num +` )"></i></td>
+                                      <td>
+                                          <span class="stock_quote_transac_price_div">
+                                              <input id="oa_current_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="current_price" style="height:39px;" />
+                                          </span>
+                                      </td>
+                                      <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteOA(`+ oa_num +`)"></i></td>
                                   </tr>
+
                                   <tr id="`+ oa_num +`_charge" style="height:39px">
-                                      <td>
-                                          <span class="small">Charges:</span>
-                                          <br>
-                                          <span class="stock_quote_transac_price_div">
-                                             <input id="oa_transaction_charge" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_charge" style="height:39px;" onkeyup=changeOAValues(`+ oa_num +` ) onchange=changeOAValues(`+ oa_num +` ) />
-                                          </span>
-                                      </td>
-                                      <td>
-                                          <span class="small">Net Amount:</span>
-                                          <br>
-                                          <span class="stock_quote_transac_price_div">
-                                             <input id="oa_transaction_net_amount" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_net_amount" style="height:39px;" onkeyup=changeOAValues(`+ oa_num +` ) onchange=changeOAValues(`+ oa_num +` ) />
-                                          </span>
-                                      </td>
-                                      <td>
-                                          <span class="small">Purchased From:</span>
-                                          <br>
-                                          <span>
-                                             <input id="oa_transaction_purc_fr" type="text" class="stock_quote_transac_price" name="transaction_purc_fr" style="height:39px;"/>
-                                          </span>
-                                      </td>
-                                      <td colspan="2">
+                                      <td colspan="5">
                                           <span class="small">Notes:</span>
                                           <br>
                                           <span>
@@ -59,14 +43,6 @@
         oa_num += 1;
 
         $('#table_oa_quote_search_body').append(table_body_data_to_add);
-    }
-
-    function changeOAValues(id){
-        conversion_metric = ($("#"+id + " #oa_type").val() == "Gold") ? 10 : 1000;
-        amount = parseFloat($("#"+id + " #oa_transaction_price").val()) * parseFloat($("#"+id + " #oa_qty").val()) / conversion_metric;
-        charge = parseFloat($("#"+id + "_charge #oa_transaction_charge").val());
-        net_amount = amount + charge;
-        $("#"+id + "_charge #oa_transaction_net_amount").val(net_amount);
     }
 
     function deleteOA(id){
@@ -104,13 +80,10 @@
 
                 oaInfo = {
 
-                        oa_type: $('#'+id+'#oa_type').val(),
+                        oa_type: $('#'+id+' #oa_type').val(),
                         oa_transaction_date: parseInt(new Date($("#"+id+" #oa_transaction_date").val()).getTime()/1000),
                         oa_transaction_price: parseFloat($("#"+id+" #oa_transaction_price").val()),
-                        oa_transaction_qty: parseFloat($("#"+id+" #oa_qty").val()),
-                        oa_charge: parseFloat($("#"+id+"_charge #oa_transaction_charge").val()),
-                        oa_net_amount: parseFloat($("#"+id+"_charge #oa_transaction_net_amount").val()),
-                        oa_purchased_from: $("#"+id+"_charge #oa_transaction_purc_fr").val(),
+                        oa_current_price: parseFloat($("#"+id+" #oa_current_price").val()),
                         note: $("#"+id+"_charge #notes").val(),
 
                             };
@@ -118,6 +91,8 @@
                 oa_array_to_send.push(oaInfo);
             }
         }
+
+        console.log(oa_array_to_send);
 
         $.ajax({
             url: Wo_Ajax_Requests_File(),

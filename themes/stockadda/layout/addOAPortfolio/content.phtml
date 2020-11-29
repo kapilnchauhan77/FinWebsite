@@ -21,10 +21,10 @@
 
                    <thead>
                        <tr>
-                           <th style="text-align: center;">Other Assets</th>
+                           <th style="text-align: center;">Asset Name</th>
                            <th style="text-align: center;">Transaction Date</th>
-                           <th style="text-align: center;">Price per unit (Gold- 10 Grams, Silver- 1 Kg)</th>
-                           <th style="text-align: center;">Quantity in Grams</th>
+                           <th style="text-align: center;">Invested Value</th>
+                           <th style="text-align: center;">Current Value</th>
                            <th style="text-align: center;">Action</th>
                        </tr>
                    </thead>
@@ -32,40 +32,23 @@
                    <tbody id="table_oa_quote_search_body">
 
                         <tr id="0" style="height:39px">
-                            <td><select name='oa_type' id='oa_type' style="width: 6em; height: 2.75em;"><option value="Gold">Gold</option><option value="Silver">Silver</option></select></td>
+                            <td><input id="oa_type" type="text" style="height:39px" /></td>
                             <td><input id="oa_transaction_date" type="date" name="transaction_date"/></td>
                             <td>
                                 <span class="stock_quote_transac_price_div">
-                                    <input id="oa_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeOAValues(0) onchange=changeOAValues(0) />
+                                    <input id="oa_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" />
                                 </span>
                             </td>
-                            <td><input id="oa_qty" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_qty" style="height:39px;" onkeyup=changeOAValues(0) onchange=changeOAValues(0) /></td>
+                            <td>
+                                <span class="stock_quote_transac_price_div">
+                                    <input id="oa_current_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="current_price" style="height:39px;" />
+                                </span>
+                            </td>
                             <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteOA(0)"></i></td>
                         </tr>
 
                         <tr id="0_charge" style="height:39px">
-                            <td>
-                                <span class="small">Charges:</span>
-                                <br>
-                                <span class="stock_quote_transac_price_div">
-                                   <input id="oa_transaction_charge" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_charge" style="height:39px;" onkeyup=changeOAValues(0) onchange=changeOAValues(0) />
-                                </span>
-                            </td>
-                            <td>
-                                <span class="small">Net Amount:</span>
-                                <br>
-                                <span class="stock_quote_transac_price_div">
-                                   <input id="oa_transaction_net_amount" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_net_amount" style="height:39px;" onkeyup=changeOAValues(0) onchange=changeOAValues(0) />
-                                </span>
-                            </td>
-                            <td>
-                                <span class="small">Purchased From:</span>
-                                <br>
-                                <span>
-                                   <input id="oa_transaction_purc_fr" type="text" class="stock_quote_transac_price" name="transaction_purc_fr" style="height:39px;"/>
-                                </span>
-                            </td>
-                            <td colspan="2">
+                            <td colspan="5">
                                 <span class="small">Notes:</span>
                                 <br>
                                 <span>
@@ -85,7 +68,7 @@
 
                    <div style="margin-top: 9px;">
 
-                        <span onclick="AddOAToTable()" class="add_oa" data-toggle="tooltip" data-placement="bottom" title="Add OA"></span>
+                        <span onclick="AddOAToTable()" class="add_bullion" data-toggle="tooltip" data-placement="bottom" title="Add OA"></span>
 
                    </div>
 

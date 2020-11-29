@@ -13,47 +13,28 @@
 
     function AddLoansToTable(){
 
-        table_body_data_to_add = `<tr id=`+ loans_num +` style="height:39px">
-                                      <td><select name='loans_type' id='loans_type' style="width: 6em; height: 2.75em;"><option value="Gold">Gold</option><option value="Silver">Silver</option></select></td>
-                                      <td><input id="loans_transaction_date" type="date" name="transaction_date"/></td>
-                                      <td>
-                                          <span class="stock_quote_transac_price_div">
-                                              <input id="loans_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeLoansValues(`+ loans_num +` ) onchange=changeLoansValues(`+ loans_num +` ) />
-                                          </span>
-                                      </td>
-                                      <td><input id="loans_qty" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_qty" style="height:39px;" onkeyup=changeLoansValues(`+ loans_num +` ) onchange=changeLoansValues(`+ loans_num +` ) /></td>
-                                      <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteLoans(`+ loans_num +` )"></i></td>
-                                  </tr>
-                                  <tr id="`+ loans_num +`_charge" style="height:39px">
-                                      <td>
-                                          <span class="small">Charges:</span>
-                                          <br>
-                                          <span class="stock_quote_transac_price_div">
-                                             <input id="loans_transaction_charge" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_charge" style="height:39px;" onkeyup=changeLoansValues(`+ loans_num +` ) onchange=changeLoansValues(`+ loans_num +` ) />
-                                          </span>
-                                      </td>
-                                      <td>
-                                          <span class="small">Net Amount:</span>
-                                          <br>
-                                          <span class="stock_quote_transac_price_div">
-                                             <input id="loans_transaction_net_amount" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_net_amount" style="height:39px;" onkeyup=changeLoansValues(`+ loans_num +` ) onchange=changeLoansValues(`+ loans_num +` ) />
-                                          </span>
-                                      </td>
-                                      <td>
-                                          <span class="small">Purchased From:</span>
-                                          <br>
-                                          <span>
-                                             <input id="loans_transaction_purc_fr" type="text" class="stock_quote_transac_price" name="transaction_purc_fr" style="height:39px;"/>
-                                          </span>
-                                      </td>
-                                      <td colspan="2">
-                                          <span class="small">Notes:</span>
-                                          <br>
-                                          <span>
-                                              <textarea name="notes" id="notes" rows="1"></textarea>
-                                          </span>
-                                      </td>
-                                  </tr>`
+        table_body_data_to_add = `<tr id="` + loans_num + `" style="height:39px">
+                                        <td><input id="loans_type" style="height:39px" type="text" name="loans_type"/></td>
+                                        <td><input id="loans_bank" style="height:39px" type="text" name="loans_bank"/></td>
+                                        <td width="7%">
+                                            <span class="loans_transac_price_div">
+                                                <input id="loans_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="width:100%; height:39px;" />
+                                            </span>
+                                        </td>
+                                        <td><input id="loans_transaction_date" type="date" name="transaction_date" onkeyup=changeLoansValues(` + loans_num + `) onchange=changeLoansValues(` + loans_num + `) /></td>
+                                        <td width="7%"><input id="loans_rate" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="loans_rate" style="width:100%; height:39px;" /></td>
+                                        <td width="1%">
+                                            <input style="width: 150%; height:39px" id="loans_yrs" min="0" value="0" name="loans_yrs" onkeyup=changeLoansValues(` + loans_num + `) onchange=changeLoansValues(` + loans_num + `) />
+                                        </td>
+                                        <td width="1%" style="padding-left:1%">
+                                            <input style="width: 100%; height:39px" id="loans_mths" min="0" value="0" name="loans_mths" onkeyup=changeLoansValues(` + loans_num + `) onchange=changeLoansValues(` + loans_num + `) />
+                                        </td>
+                                        <td width="1%">
+                                            <input style="width: 100%; height:39px" id="loans_days" min="0" value="0" name="loans_days" onkeyup=changeLoansValues(` + loans_num + `) onchange=changeLoansValues(` + loans_num + `) />
+                                        </td>
+                                        <td><input id="loans_maturity_date" type="date" name="loans_maturity_date" readonly /></td>
+                                        <td><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteLoans(` + loans_num + `)"></i></td>
+                                    </tr>`
 
 
         loans_num += 1;
@@ -62,20 +43,47 @@
     }
 
     function changeLoansValues(id){
-        conversion_metric = ($("#"+id + " #loans_type").val() == "Gold") ? 10 : 1000;
-        amount = parseFloat($("#"+id + " #loans_transaction_price").val()) * parseFloat($("#"+id + " #loans_qty").val()) / conversion_metric;
-        charge = parseFloat($("#"+id + "_charge #loans_transaction_charge").val());
-        net_amount = amount + charge;
-        $("#"+id + "_charge #loans_transaction_net_amount").val(net_amount);
+        var smallDaysMnths = [4, 6, 9, 11];
+        var today = new Date($("#"+id+" #loans_transaction_date").val());
+        days_increase = today.getDate() + parseInt($("#"+id+" #loans_days").val());
+        mnths_increase = today.getMonth() + 1 + parseInt($("#"+id+" #loans_mths").val());
+        yrs_increase = parseInt(today.getFullYear()) + parseInt($("#"+id+" #loans_yrs").val());
+
+        if (days_increase > 31){
+            mnths_increase += parseInt(days_increase / 31);
+            days_increase = parseInt(days_increase % 31);
+        }
+        days_increase = ((days_increase == 0) ? 31 : days_increase);
+
+        if (mnths_increase > 12){
+            yrs_increase += parseInt(mnths_increase / 12);
+            mnths_increase = parseInt(mnths_increase % 12);
+        }
+        mnths_increase =((mnths_increase == 0) ? 12 : mnths_increase);
+
+        if (smallDaysMnths.includes(mnths_increase)){
+            if (days_increase == 31){
+                days_increase =  1;
+                mnths_increase += 1;
+            }
+        } else if (mnths_increase == 2){
+            var factor_to_check = ((yrs_increase % 4 == 0) ? 29 : 28);
+            if (days_increase > factor_to_check){
+                mnths_increase += 1;
+                days_increase = parseInt(days_increase % factor_to_check);
+            }
+        }
+
+        var dd = String(days_increase).padStart(2, '0');
+        var mm = String(mnths_increase).padStart(2, '0'); //January is 0!
+        var yyyy = String(yrs_increase);
+        today = yyyy + '-' + mm + '-' + dd;
+        $("#"+id+" #loans_maturity_date").val(today);
+
     }
 
     function deleteLoans(id){
-
         loans_to_not_add.push(id);
-
-        console.log(loans_to_not_add);
-        console.log(loans_to_not_add.length);
-        console.log(loans_num);
 
         if (loans_to_not_add.length == loans_num){
 
@@ -84,7 +92,7 @@
         }else{
 
             $("#"+id).remove();
-            $("#"+id+"_charge").remove();
+            /* $("#"+id+"_charge").remove(); */
 
         }
     }
@@ -100,18 +108,21 @@
                 if ($("#"+id+" #loans_transaction_date").val() === ""){
                     $("#"+id+" #loans_transaction_date").val("NaN");
                 }
+
+                if ($("#"+id+" #loans_maturity_date").val() === ""){
+                    $("#"+id+" #loans_maturity_date").val("NaN");
+                }
+
                 console.log(parseFloat($("#"+id+"_charge #loans_transaction_net_amount").val()));
 
                 loansInfo = {
 
-                        loans_type: $('#'+id+'#loans_type').val(),
-                        loans_transaction_date: parseInt(new Date($("#"+id+" #loans_transaction_date").val()).getTime()/1000),
+                        loans_type: $('#'+id+' #loans_type').val(),
+                        loans_bank: $('#'+id+' #loans_bank').val(),
                         loans_transaction_price: parseFloat($("#"+id+" #loans_transaction_price").val()),
-                        loans_transaction_qty: parseFloat($("#"+id+" #loans_qty").val()),
-                        loans_charge: parseFloat($("#"+id+"_charge #loans_transaction_charge").val()),
-                        loans_net_amount: parseFloat($("#"+id+"_charge #loans_transaction_net_amount").val()),
-                        loans_purchased_from: $("#"+id+"_charge #loans_transaction_purc_fr").val(),
-                        note: $("#"+id+"_charge #notes").val(),
+                        loans_transaction_date: parseInt(new Date($("#"+id+" #loans_transaction_date").val()).getTime()/1000),
+                        loans_transaction_interest: parseFloat($("#"+id+" #loans_rate").val()),
+                        loans_maturity_date: parseInt(new Date($("#"+id+" #loans_maturity_date").val()).getTime()/1000),
 
                             };
 

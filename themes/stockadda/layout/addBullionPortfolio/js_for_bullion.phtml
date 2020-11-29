@@ -73,10 +73,6 @@
 
         bullion_to_not_add.push(id);
 
-        console.log(bullion_to_not_add);
-        console.log(bullion_to_not_add.length);
-        console.log(bullion_num);
-
         if (bullion_to_not_add.length == bullion_num){
 
             window.location.replace("<?php echo $wo['portfolio_data']['url'];?>");
@@ -104,7 +100,7 @@
 
                 bullionInfo = {
 
-                        bullion_type: $('#'+id+'#bullion_type').val(),
+                        bullion_type: $('#'+id+' #bullion_type').val(),
                         bullion_transaction_date: parseInt(new Date($("#"+id+" #bullion_transaction_date").val()).getTime()/1000),
                         bullion_transaction_price: parseFloat($("#"+id+" #bullion_transaction_price").val()),
                         bullion_transaction_qty: parseFloat($("#"+id+" #bullion_qty").val()),

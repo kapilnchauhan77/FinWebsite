@@ -88,6 +88,11 @@ if (isset($_GET['u'])) {
                        $about            = $wo['portfolio_data']['portfolio_name'] . ' - add stocks';
                        $name             = $wo['portfolio_data']['portfolio_name'] . ' - add stocks';
                        break;
+                    case 'add-property':
+                       $type             = 'addPropertyPortfolio';
+                       $about            = $wo['portfolio_data']['portfolio_name'] . ' - add Property';
+                       $name             = $wo['portfolio_data']['portfolio_name'] . ' - add Property';
+                       break;
                     case 'add-bullion':
                        $type             = 'addBullionPortfolio';
                        $about            = $wo['portfolio_data']['portfolio_name'] . ' - add bullion';

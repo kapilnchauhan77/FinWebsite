@@ -21,11 +21,6 @@ if ($f == 'add_ob') {
                 $error = "Please Enter Price!";
                 break;
             }
-            if ($ob_data['ob_transaction_qty'] == 0){
-                /* $errors[] = "Please Enter Quantity!"; */
-                $error = "Please Enter Quantity!";
-                break;
-            }
         }
 
         if ($error !== ''){

@@ -8409,12 +8409,22 @@ function WoCanLogin() {
 
 // SA CUSTOM FUNCTIONS
 function SA_GetStock_Quote_Search($search_qeury) {
-    global $sqlConnect, $wo;
+    global $sqlConnect;
     $search_qeury = Wo_Secure($search_qeury);
     $data         = array();
     $query = mysqli_query($sqlConnect, " SELECT `fincode` FROM " . T_COMPANIES . " WHERE ((`compname` LIKE '%$search_qeury%') OR (`symbol` LIKE '%$search_qeury%') OR (`scripcode` LIKE '%$search_qeury%') OR (`isin` LIKE '%$search_qeury%')) LIMIT 3");
     while ($fetched_data = mysqli_fetch_assoc($query)) {
         $data[] = Wo_CompanyCaching($fetched_data['fincode']);
+    }
+    return $data;
+}
+function SA_GetMFSearch($search_qeury) {
+    global $sqlConnect;
+    $search_qeury = Wo_Secure($search_qeury);
+    $data         = array();
+    $query = mysqli_query($sqlConnect, " SELECT `id` FROM " . T_MUTUALFUNDS . " WHERE ((`Scheme Name` LIKE '%$search_qeury%') OR (`Scheme Code` LIKE '%$search_qeury%') OR (`MF House` LIKE '%$search_qeury%')) LIMIT 15");
+    while ($fetched_data = mysqli_fetch_assoc($query)) {
+        $data[] = Wo_MFCaching($fetched_data['id']);
     }
     return $data;
 }
