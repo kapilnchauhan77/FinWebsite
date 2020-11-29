@@ -8174,12 +8174,10 @@ function Wo_PortfolioCaching($portfolio_id, $get_desc){
     global $sqlConnect, $wo;
 
     $portfolio_id        = Wo_Secure($portfolio_id);
-    $query_text = "SELECT `portfolio_id`, `user_id`, `portfolio_name`, `portfolio_url`, `total_invested_value`, `stock_invested_value`, `timestamp_created`, `no_of_unique_stocks`, `no_of_stocks`, `privacy_level` FROM " . T_PORTFOLIO . "
-        WHERE `portfolio_id` = {$portfolio_id}";
-
+    $query_text = "SELECT `portfolio_id`, `user_id`, `portfolio_name`, `portfolio_url`, `total_invested_value`, `invested_value_bullion`, `invested_value_cash`,  `invested_value_FD`, `invested_value_properties`, `invested_value_other_assets`,  `loan_borrowings`,  `other_borrowings`, `stock_invested_value`, `invested_value_mutual_funds`, `timestamp_created`, `no_of_unique_stocks`, `no_of_unique_mf`, `no_of_stocks`, `privacy_level` FROM " . T_PORTFOLIO . " WHERE `portfolio_id` = {$portfolio_id}";
     $sql          = mysqli_query($sqlConnect, $query_text);
-    $fetched_data = mysqli_fetch_assoc($sql);
 
+    $fetched_data = mysqli_fetch_assoc($sql);
     if (empty($fetched_data)) {
         return array();
     }
@@ -8568,10 +8566,12 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
             return mysqli_error($sqlConnect);
         };
 
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `stock_invested_value` = `stock_invested_value` + {$stock_invested_value} WHERE `portfolio_id` = {$portfolio_id}";
+        $total_stock_invested_value = $stock_invested_value + $stock_charge;
+
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `stock_invested_value` = `stock_invested_value` + {$total_stock_invested_value} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
 
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$stock_invested_value} WHERE `portfolio_id` = {$portfolio_id}";
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$total_stock_invested_value} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
 
         if (!$query) {

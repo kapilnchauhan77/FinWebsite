@@ -24,79 +24,79 @@
 
         <tr>
             <th scope="row"><span style="margin: 0.75em;">Mutual Funds</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-mutual-funds" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-cash">Edit</a></span></th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>&#8377;<?php echo $wo['portfolio_data']['invested_value_mutual_funds']?></td>
+            <td id="mf_days_gain">0</td>
+            <td id="mf_unrealised_gain">0</td>
+            <td id="mf_realised_gain">0</td>
+            <td id="mf_current_price">0</td>
         </tr>
 
         <tr>
             <th scope="row"><span style="margin: 0.75em;">Cash</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-cash" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-cash">Edit</a></span></th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>&#8377;<?php echo $wo['portfolio_data']['invested_value_cash']?></td>
+            <td>N.A.</td>
+            <td>N.A.</td>
+            <td>N.A.</td>
+            <td>&#8377;<?php echo $wo['portfolio_data']['invested_value_cash']?></td>
         </tr>
 
         <tr>
             <th scope="row"><span style="margin: 0.75em;">Bullion</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-bullion" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-bullion">Edit</a></span></th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>&#8377;<?php echo $wo['portfolio_data']['invested_value_bullion']?></td>
+            <td id="bullion_days_gain">0</td>
+            <td id="bullion_unrealised_gain">0</td>
+            <td id="bullion_realised_gain">0</td>
+            <td id="bullion_current_price">0</td>
         </tr>
 
         <tr>
             <th scope="row"><span style="margin: 0.75em;">Fixed Income</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-FD" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-FD">Edit</a></span></th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>&#8377;<?php echo $wo['portfolio_data']['invested_value_FD']?></td>
+            <td id="FD_days_gain">0</td>
+            <td id="FD_unrealised_gain">0</td>
+            <td id="FD_realised_gain">0</td>
+            <td id="FD_current_price">0</td>
         </tr>
 
         <tr>
             <th scope="row"><span style="margin: 0.75em;">Property</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-property" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-FD">Edit</a></span></th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>&#8377;<?php echo $wo['portfolio_data']['invested_value_properties']?></td>
+            <td>N.A.</td>
+            <td id="property_unrealised_gain">0</td>
+            <td id="property_realised_gain">0</td>
+            <td id="property_current_price">0</td>
         </tr>
 
         <tr>
             <th scope="row"><span style="margin: 0.75em;">Other Assets</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-OA" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-FD">Edit</a></span></th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>&#8377;<?php echo $wo['portfolio_data']['invested_value_other_assets']?></td>
+            <td>N.A.</td>
+            <td id="oa_unrealised_gain">0</td>
+            <td id="oa_realised_gain">0</td>
+            <td id="oa_current_price">0</td>
         </tr>
 
         <tr>
             <th scope="row"><span style="margin: 0.75em;">Loans</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-Loans" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-FD">Edit</a></span></th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>&#8377;<?php echo $wo['portfolio_data']['loan_borrowings']?></td>
+            <td>N.A.</td>
+            <td>N.A.</td>
+            <td>N.A.</td>
+            <td id="loan_current_price">0</td>
         </tr>
 
         <tr>
             <th scope="row"><span style="margin: 0.75em;">Other Borrowings</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-OB" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-FD">Edit</a></span></th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>&#8377;<?php echo $wo['portfolio_data']['other_borrowings']?></td>
+            <td>N.A.</td>
+            <td id="ob_unrealised_gain">0</td>
+            <td id="ob_realised_gain">0</td>
+            <td id="ob_current_price">0</td>
         </tr>
 
         <tr style="background-color:grey">
             <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
-            <td></td>
+            <td><span style="margin: 0.75em; color: white;">&#8377;<?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?></span></td>
             <td></td>
             <td></td>
             <td></td>
