@@ -8554,14 +8554,14 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
         $stock_note = Wo_Secure($stock_quote_datum['note']);
         $timestamp_created = strtotime("now");
 
-        $query_text   = "SELECT `id` FROM " . T_PORTFOLIO_STOCKS . " WHERE stock_fincode = {$stock_fincode} AND `portfolio_id` = {$portfolio_id}";
+        $query_text   = "SELECT `id` FROM " . T_PORTFOLIO_STOCKS . " WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id}";
         $query_one    = mysqli_query($sqlConnect, $query_text);
 
         if (mysqli_num_rows($query_one) <= 0){
             $no_of_unique_stocks += 1;
         };
 
-        $query_one   = "INSERT INTO " . T_PORTFOLIO_MF . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `timestamp_created`, `Charges`, `Notes`) VALUES ({$portfolio_id}, {$stock_fincode}, {$stock_transaction_date}, {$stock_transaction_price}, {$stock_transaction_qty}, {$timestamp_created}, {$stock_charge}, '{$stock_note}')";
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `timestamp_created`, `Charges`, `Notes`) VALUES ({$portfolio_id}, {$stock_fincode}, {$stock_transaction_date}, {$stock_transaction_price}, {$stock_transaction_qty}, {$timestamp_created}, {$stock_charge}, '{$stock_note}')";
         $query       = mysqli_query($sqlConnect, $query_one);
 
         if (!$query) {
