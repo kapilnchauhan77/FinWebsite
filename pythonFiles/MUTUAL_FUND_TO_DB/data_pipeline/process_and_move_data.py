@@ -7,12 +7,11 @@ from dbconnect import Connection;
 
 def process_data_and_move(status):
     if status:
-        c, conn = Connection()
+        c, conn = Connection();
 
         c.execute("DELETE FROM `old_mutual_funds`;");
         c.execute("INSERT INTO `old_mutual_funds` (`Scheme Code`, `Net Asset Value`, `Date timestamp`) SELECT `Scheme Code`, `Net Asset Value`, `Date timestamp` FROM `mutual_funds`;");
         c.execute("DELETE FROM `mutual_funds`;");
-
         conn.commit();
 
         insert_count = 0;
@@ -40,7 +39,7 @@ def process_data_and_move(status):
 
                     except Exception as e:
                         with open('logs/mf_logs', 'a') as f:
-                            print(f'Error: {str(e)}', file=f)
+                            print(f'Error: {str(e)}', file=f);
 
                 else:
                     inside_name = str(datum);
@@ -55,5 +54,4 @@ def process_data_and_move(status):
 
 with open('logs/mf_logs', 'a') as f:
     insert_count = process_data_and_move(download_data());
-    # insert_count, update_count = process_data_and_move(True);
-    print(f'Successfully Inserted: {insert_count} rows at Timestamp: {time.time()}' + 2*'\n', file=f)
+    print(f'Successfully Inserted: {insert_count} rows at Timestamp: {time.time()}' + 2*'\n', file=f);

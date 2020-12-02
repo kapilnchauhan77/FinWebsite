@@ -139,6 +139,7 @@ define('T_STOCKDTLINTBSE', 'stock_prices_intraday_ftp_bse');
 define('T_STOCKDTLINTNSE', 'stock_prices_intraday_ftp_nse');
 define('T_HISTORICAL', 'historical_prices');
 define('T_MUTUALFUNDS', 'mutual_funds');
+define('T_OLDMUTUALFUNDS', 'old_mutual_funds');
 define('T_PORTFOLIO_MF', 'mf_in_portfolio');
 //END OF CUSTOM ADDITIONS
 ?>

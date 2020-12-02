@@ -48,6 +48,70 @@
                                                 <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                                     <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-gray SA_text-uppercase SA_mb-1">Net Worth</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="current_net_worth">40,000</span></div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-money fa-2x SA_text-gray-300"></i>
+                                                        <i class="fa fa-arrow-up fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-4 SA_mb-4">
+                                        <div class="SA_card SA_border-left-success SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-success SA_text-uppercase SA_mb-1">Total Assets</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="total_assets">0</span></div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-money fa-2x SA_text-gray-300"></i>
+                                                        <i class="fa fa-arrow-up fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-4 SA_mb-4">
+                                        <div class="SA_card SA_border-left-danger SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-danger SA_text-uppercase SA_mb-1">Total Liabilities</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="total_liabilities"><?php echo round($wo['portfolio_data']['other_borrowings'], 2); ?></span></div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-money fa-2x SA_text-gray-300"></i>
+                                                        <i class="fa fa-arrow-down fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="SA_row">
+
+                                    <div class="SA_col-md-4 SA_mb-4">
+                                        <div class="SA_card SA_border-left-secondary SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
                                                         <div class="SA_text-xs SA_font-weight-bold SA_text-gray SA_text-uppercase SA_mb-1">Asset Added This Year</div>
                                                         <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="asset_added_this_year">40,000</span></div>
                                                     </div>
@@ -101,6 +165,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
 
                                 <div class="SA_row">
@@ -110,13 +175,13 @@
 
                                             <!-- Card Header - Dropdown -->
                                             <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
-                                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Stock Weightages</h6>
+                                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Invested value Allocations</h6>
                                             </div>
 
                                             <!-- Card Body -->
                                             <div class="SA_card-body" style="padding-bottom: 1.6em !important;">
                                                 <div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                                                    <canvas id="SA_Stock_Weightages" style="display: block; width: 612px; height: 165px;" width="612" height="165" class="chartjs-render-monitor"></canvas>
+                                                    <canvas id="invested_val_allocation_SA" style="display: block; width: 612px; height: 165px;" width="612" height="165" class="chartjs-render-monitor"></canvas>
                                                 </div>
 
                                                 <!--<div class="SA_mt-4 SA_text-center SA_small" style="margin-top: 2.0em !important;">-->
@@ -135,7 +200,7 @@
 
                                             <!-- Card Header - Dropdown -->
                                             <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
-                                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Sector Allocations</h6>
+                                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Current Value Allocations</h6>
                                             </div>
 
                                             <!-- Card Body -->
@@ -232,4 +297,6 @@
 
 </div>
 
-<?php echo Wo_LoadPage('portfolio/dashboard_portfolio_graphs'); ?>
+<?php echo Wo_LoadPage('portfolio/dashboardGraphFunctions/SA_area_chart'); ?>
+<?php echo Wo_LoadPage('portfolio/dashboardGraphFunctions/Sector_Allocations'); ?>
+<?php echo Wo_LoadPage('portfolio/dashboardGraphFunctions/invested_val_allocation_SA'); ?>

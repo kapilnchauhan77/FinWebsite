@@ -8422,9 +8422,9 @@ function SA_GetMFSearch($search_qeury) {
     global $sqlConnect;
     $search_qeury = Wo_Secure($search_qeury);
     $data         = array();
-    $query = mysqli_query($sqlConnect, " SELECT `id` FROM " . T_MUTUALFUNDS . " WHERE ((`Scheme Name` LIKE '%$search_qeury%') OR (`Scheme Code` LIKE '%$search_qeury%') OR (`MF House` LIKE '%$search_qeury%')) LIMIT 15");
+    $query = mysqli_query($sqlConnect, " SELECT `Scheme Code` FROM " . T_MUTUALFUNDS . " WHERE ((`Scheme Name` LIKE '%$search_qeury%') OR (`Scheme Code` LIKE '%$search_qeury%') OR (`MF House` LIKE '%$search_qeury%')) LIMIT 15");
     while ($fetched_data = mysqli_fetch_assoc($query)) {
-        $data[] = Wo_MFCaching($fetched_data['id']);
+        $data[] = Wo_MFCaching($fetched_data['Scheme Code'], false);
     }
     return $data;
 }

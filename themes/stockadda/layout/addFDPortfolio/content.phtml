@@ -30,6 +30,7 @@
                            <th width="1%" style="text-align: center;">Mnths</th>
                            <th width="1%" style="text-align: center;">Days</th>
                            <th style="text-align: center;">Maturity Date</th>
+                           <th style="text-align: center;">Compounded Interest Frequency</th>
                            <th style="text-align: center;">Action</th>
                        </tr>
                    </thead>
@@ -50,6 +51,7 @@
                             <td width="1%" style="padding-left:1%"> <input style="width: 100%; height:39px" id="fd_mths" min="0" value="0" name="fd_mths" onkeyup=changeFDValues(0) onchange=changeFDValues(0) /> </td>
                             <td width="1%"> <input style="width: 100%; height:39px" id="fd_days" min="0" value="0" name="fd_days" onkeyup=changeFDValues(0) onchange=changeFDValues(0) /> </td>
                             <td><input id="fd_maturity_date" type="date" name="fd_maturity_date" readonly /></td>
+                            <td><select id="fd_interest_payout_frequency" name="fd_interest_payout_frequency" style="width: 6em; height: 2.75em;"><option value="Monthly">Monthly</option><option value="Quaterly">Quaterly</option><option value="Half Yearly">Half Yearly</option><option value="Yearly">Yearly</option></select></td>
                             <td><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteFD(0)"></i></td>
                         </tr>
 

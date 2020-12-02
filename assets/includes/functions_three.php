@@ -7656,15 +7656,15 @@ function Wo_CompanyCaching($fincode){
 
     return $fetched_data;
 }
-function Wo_MFCaching($id){
+function Wo_MFCaching($scheme_code, $get_old_data){
     global $wo, $sqlConnect, $cache;
-    if(empty($id)){
+    if(empty($scheme_code)){
         return false;
     }
-    $id        = Wo_Secure($id);
+    $scheme_code        = Wo_Secure($scheme_code);
     $query_text = "SELECT `id`, `Category`, `Scheme Name`, `Scheme Code`, `ISIN Div Payout/ ISIN Growth`, `ISIN Div Reinvestment`, `Net Asset Value`, `Date timestamp` FROM " . T_MUTUALFUNDS . "
-    WHERE `id` = {$id}";
-    $hashed_id = md5($id);
+    WHERE `Scheme Code` = {$scheme_code}";
+    $hashed_id = md5($scheme_code);
     if ($wo['config']['cacheSystem'] == 1) {
         $fetched_data = $cache->read($hashed_id . '_MF_Data.tmp');
         if (empty($fetched_data)) {
@@ -7678,6 +7678,19 @@ function Wo_MFCaching($id){
         }
     if (empty($fetched_data)) {
         return array();
+    }
+    if ($get_old_data){
+        $query_text = "SELECT `Net Asset Value`, `Date timestamp` FROM " . T_OLDMUTUALFUNDS . "
+            WHERE `Scheme Code` = {$scheme_code}";
+        $sql          = mysqli_query($sqlConnect, $query_text);
+        $extra_data   = mysqli_fetch_assoc($sql);
+        if (empty($extra_data)){
+            $fetched_data['Old Net Asset Value'] = $fetched_data['Net Asset Value'];
+            $fetched_data['Old Date timestamp']  = $fetched_data['Date timestamp'];
+        } else{
+            $fetched_data['Old Net Asset Value'] = $extra_data['Net Asset Value'];
+            $fetched_data['Old Date timestamp']  = $extra_data['Date timestamp'];
+        }
     }
     return $fetched_data;
     /* return $query_text; */
@@ -8430,41 +8443,41 @@ function AddCashToPortfolio($cash_data, $portfolio_id){
 
     return true;
 }
-function AddLoansToPortfolio($loans_data, $portfolio_id){
-    global $sqlConnect;
+/* function AddLoansToPortfolio($loans_data, $portfolio_id){ */
+/*     global $sqlConnect; */
 
-    $portfolio_id = Wo_Secure($portfolio_id);
+/*     $portfolio_id = Wo_Secure($portfolio_id); */
 
-    foreach ($loans_data as $loans_datum) {
+/*     foreach ($loans_data as $loans_datum) { */
 
-        $loans_type = Wo_Secure($loans_datum['loans_type']);
-        $loans_bank = Wo_Secure($loans_datum['loans_bank']);
-        $loans_transaction_date = Wo_Secure($loans_datum['loans_transaction_date']);
-        $loans_maturity_date = Wo_Secure($loans_datum['loans_maturity_date']);
-        $loans_transaction_price = Wo_Secure($loans_datum['loans_transaction_price']);
-        $loans_transaction_interest = Wo_Secure($loans_datum['loans_transaction_interest']);
-        $timestamp_created = strtotime("now");
+/*         $loans_type = Wo_Secure($loans_datum['loans_type']); */
+/*         $loans_bank = Wo_Secure($loans_datum['loans_bank']); */
+/*         $loans_transaction_date = Wo_Secure($loans_datum['loans_transaction_date']); */
+/*         $loans_maturity_date = Wo_Secure($loans_datum['loans_maturity_date']); */
+/*         $loans_transaction_price = Wo_Secure($loans_datum['loans_transaction_price']); */
+/*         $loans_transaction_interest = Wo_Secure($loans_datum['loans_transaction_interest']); */
+/*         $timestamp_created = strtotime("now"); */
 
-        $query_one   = "INSERT INTO " . T_PORTFOLIO_LOANS . " (`portfolio_id`, `loans_type`, `loans_bank`, `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `timestamp_created`) VALUES ({$portfolio_id}, '{$loans_type}', '{$loans_bank}', {$loans_transaction_date}, {$loans_maturity_date}, {$loans_transaction_price}, {$loans_transaction_interest}, {$timestamp_created})";
-        $query       = mysqli_query($sqlConnect, $query_one);
+/*         $query_one   = "INSERT INTO " . T_PORTFOLIO_LOANS . " (`portfolio_id`, `loans_type`, `loans_bank`, `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `timestamp_created`) VALUES ({$portfolio_id}, '{$loans_type}', '{$loans_bank}', {$loans_transaction_date}, {$loans_maturity_date}, {$loans_transaction_price}, {$loans_transaction_interest}, {$timestamp_created})"; */
+/*         $query       = mysqli_query($sqlConnect, $query_one); */
 
-        if (!$query) {
-            return mysqli_error($sqlConnect);
-        };
+/*         if (!$query) { */
+/*             return mysqli_error($sqlConnect); */
+/*         }; */
 
-        /* $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$loans_transaction_price} WHERE `portfolio_id` = {$portfolio_id}"; */
-        /* $query     = mysqli_query($sqlConnect, $query_one); */
+/*         /1* $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$loans_transaction_price} WHERE `portfolio_id` = {$portfolio_id}"; *1/ */
+/*         /1* $query     = mysqli_query($sqlConnect, $query_one); *1/ */
 
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `loan_borrowings` = `loan_borrowings` + {$loans_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
-        $query     = mysqli_query($sqlConnect, $query_one);
+/*         $query_one   = "UPDATE " . T_PORTFOLIO . " SET `loan_borrowings` = `loan_borrowings` + {$loans_transaction_price} WHERE `portfolio_id` = {$portfolio_id}"; */
+/*         $query     = mysqli_query($sqlConnect, $query_one); */
 
-        if (!$query) {
-            return mysqli_error($sqlConnect);
-        };
-    }
+/*         if (!$query) { */
+/*             return mysqli_error($sqlConnect); */
+/*         }; */
+/*     } */
 
-    return true;
-}
+/*     return true; */
+/* } */
 function AddPropertyToPortfolio($property_data, $portfolio_id){
     global $sqlConnect;
 
@@ -8514,7 +8527,26 @@ function AddFDToPortfolio($fd_data, $portfolio_id){
         $fd_transaction_interest = Wo_Secure($fd_datum['fd_transaction_interest']);
         $timestamp_created = strtotime("now");
 
-        $query_one   = "INSERT INTO " . T_PORTFOLIO_FD . " (`portfolio_id`, `fd_type`, `fd_bank`, `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `timestamp_created`) VALUES ({$portfolio_id}, '{$fd_type}', '{$fd_bank}', {$fd_transaction_date}, {$fd_maturity_date}, {$fd_transaction_price}, {$fd_transaction_interest}, {$timestamp_created})";
+        $fd_interest_payout_frequency_name = Wo_Secure($fd_datum['fd_interest_payout_frequency']);
+        switch ($fd_interest_payout_frequency_name){
+            case 'Monthly':
+                $fd_interest_payout_frequency = 12;
+                break;
+            case 'Quaterly':
+                $fd_interest_payout_frequency = 4;
+                break;
+            case 'Half Yearly':
+                $fd_interest_payout_frequency = 2;
+                break;
+            case 'Yearly':
+                $fd_interest_payout_frequency = 1;
+                break;
+            default:
+                return 'Select only from given options!';
+                break;
+        }
+
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_FD . " (`portfolio_id`, `fd_type`, `fd_bank`, `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `interest_payout_frequency`, `timestamp_created`) VALUES ({$portfolio_id}, '{$fd_type}', '{$fd_bank}', {$fd_transaction_date}, {$fd_maturity_date}, {$fd_transaction_price}, {$fd_transaction_interest}, {$fd_interest_payout_frequency}, {$timestamp_created})";
         $query       = mysqli_query($sqlConnect, $query_one);
 
         if (!$query) {
@@ -8751,6 +8783,66 @@ function Wo_ExtraStockDetailInPortfolio($stock_fincode, $portfolio_id) {
 
     return $data;
 }
+function Wo_ExtraPropertyDetailForAllPropertyInPortfolio($portfolio_id){
+    global $sqlConnect;
+
+    $data         = array();
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_text = "SELECT `transaction_date`, `transaction_price`, `current_price` FROM " . T_PORTFOLIO_PROPERTY . "
+        WHERE `portfolio_id` = {$portfolio_id}";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        $data[]   = $fetched_data;
+    };
+
+    return $data;
+}
+function Wo_ExtraOADetailForAllOAInPortfolio($portfolio_id){
+    global $sqlConnect;
+
+    $data         = array();
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_text = "SELECT `transaction_date`, `transaction_price`, `current_price` FROM " . T_PORTFOLIO_OA . "
+        WHERE `portfolio_id` = {$portfolio_id}";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        $data[]   = $fetched_data;
+    };
+
+    return $data;
+}
+/* function Wo_ExtraLoansDetailForAllLoansInPortfolio($portfolio_id){ */
+/*     global $sqlConnect; */
+
+/*     $data         = array(); */
+/*     $portfolio_id = Wo_Secure($portfolio_id); */
+
+/*     $query_text = "SELECT `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `interest_payout_frequency` FROM " . T_PORTFOLIO_LOANS . " */
+/*         WHERE `portfolio_id` = {$portfolio_id}"; */
+/*     $sql          = mysqli_query($sqlConnect, $query_text); */
+/*     while ($fetched_data = mysqli_fetch_assoc($sql)) { */
+/*         $data[]   = $fetched_data; */
+/*     }; */
+
+/*     return $data; */
+/* } */
+function Wo_ExtraFDDetailForAllFDInPortfolio($portfolio_id){
+    global $sqlConnect;
+
+    $data         = array();
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_text = "SELECT `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `interest_payout_frequency` FROM " . T_PORTFOLIO_FD . "
+        WHERE `portfolio_id` = {$portfolio_id}";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        $data[]   = $fetched_data;
+    };
+
+    return $data;
+}
 function Wo_ExtraStockDetailForAllStocksInPortfolio($portfolio_id) {
     global $sqlConnect;
 
@@ -8769,6 +8861,44 @@ function Wo_ExtraStockDetailForAllStocksInPortfolio($portfolio_id) {
     };
 
     if (empty($stocks)){
+        return array();
+    }
+
+    return $data;
+}
+function Wo_ExtraMFDetailForAllMFInPortfolio($portfolio_id) {
+    global $sqlConnect;
+
+    $data           = array();
+    $scheme_code    = array();
+    $portfolio_id   = Wo_Secure($portfolio_id);
+
+    $query_text = "SELECT `Scheme Code`, `mf_transaction_date`, `mf_transaction_qty`, `mf_transaction_price` FROM " . T_PORTFOLIO_MF . " WHERE `portfolio_id` = {$portfolio_id}";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        if (is_array($fetched_data) && !in_array($fetched_data['Scheme Code'], $scheme_code)) {
+            $scheme_code[]                                                                                                              = $fetched_data['Scheme Code'];
+            $data[$fetched_data['Scheme Code']]                                                                                         = array();
+            $data[$fetched_data['Scheme Code']]['mf_data']                                                                              = Wo_MFCaching($fetched_data['Scheme Code'], true);
+            $data[$fetched_data['Scheme Code']]['mf_portfolio_data']                                                                    = array();
+            $data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']]                              = array();
+            $data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']]['mf_transaction_qty']        = $fetched_data['mf_transaction_qty'];
+            $data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']]['mf_transaction_amount']     = ($fetched_data['mf_transaction_price'] * $fetched_data['mf_transaction_qty']);
+        }
+        else{
+            if (empty($data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']])){
+                $data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']]                          = array();
+                $data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']]['mf_transaction_qty']    = $fetched_data['mf_transaction_qty'];
+                $data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']]['mf_transaction_amount'] = ($fetched_data['mf_transaction_price'] * $fetched_data['mf_transaction_qty']);
+            }
+            else{
+                $data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']]['mf_transaction_qty']    += $fetched_data['mf_transaction_qty'];
+                $data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']]['mf_transaction_amount'] += ($fetched_data['mf_transaction_price'] * $fetched_data['mf_transaction_qty']);
+            }
+        };
+    };
+
+    if (empty($scheme_code)){
         return array();
     }
 
