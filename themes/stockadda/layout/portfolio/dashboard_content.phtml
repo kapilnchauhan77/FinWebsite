@@ -113,7 +113,7 @@
 
                                                     <div class="SA_col SA_mr-2">
                                                         <div class="SA_text-xs SA_font-weight-bold SA_text-gray SA_text-uppercase SA_mb-1">Asset Added This Year</div>
-                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="asset_added_this_year">40,000</span></div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="asset_added_this_year">0</span></div>
                                                     </div>
 
                                                     <div class="SA_col-auto">
@@ -147,13 +147,13 @@
                                     </div>
 
                                     <div class="SA_col-md-4 SA_mb-4">
-                                        <div class="SA_card SA_border-left-danger SA_shadow SA_h-100">
+                                        <div id="p_l_added_this_year_unrealised_div" class="SA_card SA_border-left-secondary SA_shadow SA_h-100">
                                             <div class="SA_card-body">
                                                 <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                                     <div class="SA_col SA_mr-2">
-                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-danger SA_text-uppercase SA_mb-1">P&L This Year</div>
-                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="p_l_this_year">40,000</span></div>
+                                                        <div id="p_l_added_this_year_unrealised_text" class="SA_text-xs SA_font-weight-bold SA_text-gray SA_text-uppercase SA_mb-1">P&L This Year (Unrealised)</div>
+                                                        <div id="p_l_added_this_year_unrealised_text_ruppee" class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="p_l_this_year">0</span></div>
                                                     </div>
 
                                                     <div class="SA_col-auto">
@@ -206,7 +206,7 @@
                                             <!-- Card Body -->
                                             <div class="SA_card-body" style="padding-bottom: 1.6em !important;">
                                                 <div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                                                    <canvas id="Sector_Allocations" style="display: block; width: 612px; height: 165px;" width="612" height="165" class="chartjs-render-monitor"></canvas>
+                                                    <canvas id="current_val_allocation_SA" style="display: block; width: 612px; height: 165px;" width="612" height="165" class="chartjs-render-monitor"></canvas>
                                                 </div>
                                             </div>
 
@@ -297,6 +297,7 @@
 
 </div>
 
+<?php echo Wo_LoadPage('portfolio/dashboard_portfolio_graphs'); ?>
 <?php echo Wo_LoadPage('portfolio/dashboardGraphFunctions/SA_area_chart'); ?>
-<?php echo Wo_LoadPage('portfolio/dashboardGraphFunctions/Sector_Allocations'); ?>
+<?php echo Wo_LoadPage('portfolio/dashboardGraphFunctions/current_val_allocation_SA'); ?>
 <?php echo Wo_LoadPage('portfolio/dashboardGraphFunctions/invested_val_allocation_SA'); ?>

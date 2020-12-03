@@ -8,6 +8,7 @@
             <th style="text-align: center;" class="SA_text-primary">Unrealised Gain</th>
             <th style="text-align: center;" class="SA_text-primary">Realised Gain</th>
             <th style="text-align: center;" class="SA_text-primary">Current Value</th>
+            <th style="text-align: center;" class="SA_text-primary">XIRR</th>
         </tr>
     </thead>
 
@@ -20,6 +21,7 @@
             <td> &nbsp;<span id="overall_p_p_lTable_text">&#8377;<span id="overall_p_p_lTable">0</span> (<span id="overall_p_p_lTable_per">0</span>%)</span></td>
             <td>0</td>
             <td>&#8377;<span id='currentValTable'>0</span></td>
+            <td>&#8377;<span id='xirr_stocks'>0</span></td>
         </tr>
 
         <tr>
@@ -29,6 +31,7 @@
             <td> &nbsp;<span id="mf_overall_p_p_lTable_text">&#8377;<span id="mf_overall_p_p_lTable">0</span> (<span id="mf_overall_p_p_lTable_per">0</span>%)</span></td>
             <td id="mf_realised_gain">0</td>
             <td>&#8377;<span id='mf_currentValTable'>0</span></td>
+            <td>&#8377;<span id='xirr_mf'>0</span></td>
         </tr>
 
         <tr>
@@ -38,6 +41,7 @@
             <td>N.A.</td>
             <td>N.A.</td>
             <td>&#8377;<?php echo round($wo['portfolio_data']['invested_value_cash'], 2); ?></td>
+            <td>N.A.</td>
         </tr>
 
         <tr>
@@ -47,6 +51,7 @@
             <td id="bullion_unrealised_gain">0</td>
             <td id="bullion_realised_gain">0</td>
             <td id="bullion_current_price">0</td>
+            <td>&#8377;<span id='xirr_bullion'>0</span></td>
         </tr>
 
         <tr>
@@ -56,6 +61,7 @@
             <td> &nbsp;<span id="fd_overall_p_p_lTable_text">&#8377;<span id="fd_overall_p_p_lTable">0</span> (<span id="fd_overall_p_p_lTable_per">0</span>%)</span></td>
             <td id="fd_realised_gain">0</td>
             <td>&#8377;<span id='fd_currentValTable'>0</span></td>
+            <td>&#8377;<span id='xirr_fd'>0</span></td>
         </tr>
 
         <tr>
@@ -65,6 +71,7 @@
             <td> &nbsp;<span id="properties_overall_p_p_lTable_text">&#8377;<span id="properties_overall_p_p_lTable">0</span> (<span id="properties_overall_p_p_lTable_per">0</span>%)</span></td>
             <td id="property_realised_gain">0</td>
             <td>&#8377;<span id='properties_currentValTable'>0</span></td>
+            <td>&#8377;<span id='xirr_property'>0</span></td>
         </tr>
 
         <tr>
@@ -74,6 +81,7 @@
             <td> &nbsp;<span id="oa_overall_p_p_lTable_text">&#8377;<span id="oa_overall_p_p_lTable">0</span> (<span id="oa_overall_p_p_lTable_per">0</span>%)</span></td>
             <td id="oa_realised_gain">0</td>
             <td>&#8377;<span id='oa_currentValTable'>0</span></td>
+            <td>&#8377;<span id='xirr_other_assets'>0</span></td>
         </tr>
 
 <!--
@@ -96,11 +104,13 @@
             <td>N.A.</td>
             <td>N.A.</td>
             <td> &nbsp;<span style="color: red;">&#8377;<?php echo round($wo['portfolio_data']['other_borrowings'], 2); ?></span></td>
+            <td>N.A.</td>
         </tr>
 
         <tr style="background-color:grey">
             <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
             <td><span style="margin: 0.75em; color: white;">&#8377;<?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?></span></td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>

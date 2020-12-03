@@ -1,17 +1,14 @@
 <script>
 
-    // Sector_Allocations
-    function sectorAllocations(){
-        var ctx = document.getElementById("Sector_Allocations");
-
+    function current_value_allocation(ctx, currentVal_array){
         var myPieChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                    labels: ["Electricity", "Finance", "Hotels"],
+                    labels: ["Bullion", "Cash", "Fixed Deposit", "Other Assets", "Properties", "Stocks", "Mutual Funds"],
                     datasets: [{
-                    data: [37, 40, 23],
-                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                    data: currentVal_array,
+                    backgroundColor: ['#00876c', '#63b179', '#aed987', '#ffff9d', '#fcc267', '#ef8250', '#d43d51'],
+                    hoverBackgroundColor: ['#00876c', '#58a066', '#98b561', '#dac767', '#e09d4b', '#e06f45', '#d43d51'],
                     hoverBorderColor: "rgba(234, 236, 244, 1)",
                 }],
             },
@@ -33,7 +30,6 @@
                 cutoutPercentage: 70,
             },
         });
-
     };
 
 </script>

@@ -27,6 +27,12 @@
        var data_of_all_assets = new Array();
        var adjustedValTotal, intradayValTotal;
        var tab_opened =  ("<?php echo ($_GET['tab']); ?>" !== "") ? "<?php echo $_GET['tab']; ?>" : "dashboard";
+       var currentVal_mf = 0;
+       var currentVal_properties = 0;
+       var currentVal_oa = 0;
+       var currentVal_fd = 0;
+       var currentVal_bullion = 0;
+       var currentVal_cash = <?php echo round($wo['portfolio_data']['invested_value_cash'], 2); ?>;
 
        $("#" + tab_opened).addClass('menuactive');
 
@@ -88,16 +94,14 @@
                            })
                        }
 
-                       var [adjustedValTotal, intradayValTotal, currentVal_stocks, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalValsStocks_display(data_of_all_stocks);
-                       var currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds);
-                       var currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties);
-                       var currentVal_oa = calculateTotalValsOA_display(data_of_all_oa);
-                       var currentVal_fd = calculateTotalValsFD_display(data_of_all_fd);
-                       var currentVal_cash = <?php echo $wo['portfolio_data']['invested_value_cash']; ?>;
-                       var currentVal_bullion = 0;
+                       if (data_of_all_stocks.length != 0) var [adjustedValTotal, intradayValTotal, currentVal_stocks, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalValsStocks_display(data_of_all_stocks);
+                       if (data_of_all_mutual_funds.length != 0) currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds).toFixed(2);
+                       if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties).toFixed(2);
+                       if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa).toFixed(2);
+                       if (data_of_all_fd.length != 0) currentVal_fd = calculateTotalValsFD_display(data_of_all_fd).toFixed(2);
 
-                       console.log([currentVal_bullion, currentVal_cash, currentVal_fd, currentVal_oa, currentVal_properties, currentVal_stocks, currentVal_mf]);
-                       /* add_doughnutCharts([currentVal_bullion, currentVal_cash, currentVal_fd, currentVal_oa, currentVal_properties, currentVal_stocks, currentVal_mf]); */
+                       add_doughnutCharts([currentVal_bullion, currentVal_cash, currentVal_fd, currentVal_oa, currentVal_properties, currentVal_stocks, currentVal_mf]);
+                       change_dynamic_colors();
                        /* TODO */
                        /* getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal_stocks, timeline, all_dates); */
 
@@ -114,16 +118,15 @@
            data_of_all_oa = data_of_all_assets.extraOAFullPortfolio;
            data_of_all_fd = data_of_all_assets.extraFDFullPortfolio;
 
-           var [adjustedValTotal, intradayValTotal, currentVal_stocks, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalValsStocks_display(data_of_all_stocks);
-           var currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds);
-           var currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties);
-           var currentVal_oa = calculateTotalValsOA_display(data_of_all_oa);
-           var currentVal_fd = calculateTotalValsFD_display(data_of_all_fd);
-           var currentVal_cash = <?php echo $wo['portfolio_data']['invested_value_cash']; ?>;
-           var currentVal_bullion = 0;
+           if (data_of_all_stocks.length != 0) var [adjustedValTotal, intradayValTotal, currentVal_stocks, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalValsStocks_display(data_of_all_stocks);
+           if (data_of_all_mutual_funds.length != 0) currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds).toFixed(2);
+           if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties).toFixed(2);
+           if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa).toFixed(2);
+           if (data_of_all_fd.length != 0) currentVal_fd = calculateTotalValsFD_display(data_of_all_fd).toFixed(2);
 
-           console.log([currentVal_bullion, currentVal_cash, currentVal_fd, currentVal_oa, currentVal_properties, currentVal_stocks, currentVal_mf]);
-           /* add_doughnutCharts([currentVal_bullion, currentVal_cash, currentVal_fd, currentVal_oa, currentVal_properties, currentVal_stocks, currentVal_mf]); */
+           add_doughnutCharts([currentVal_bullion, currentVal_cash, currentVal_fd, currentVal_oa, currentVal_properties, currentVal_stocks, currentVal_mf]);
+           change_dynamic_colors();
+
            /* TODO */
            /* getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal_stocks, timeline, all_dates); */
 
@@ -154,3 +157,5 @@
     /* }, 1800); */
 
 </script>
+
+<?php echo Wo_LoadPage('portfolio/dashboard_portfolio_graphs'); ?>

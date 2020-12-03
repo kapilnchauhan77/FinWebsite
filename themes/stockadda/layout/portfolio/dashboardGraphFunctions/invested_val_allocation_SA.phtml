@@ -1,14 +1,16 @@
 <script>
 
-    function invested_value_allocation(currentVal_array){
+    // Sector_Allocations
+    function invested_value_allocation(ctx){
+
         var myPieChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                     labels: ["Bullion", "Cash", "Fixed Deposit", "Other Assets", "Properties", "Stocks", "Mutual Funds"],
                     datasets: [{
-                    data: currentVal_array,
-                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                    data: [<?php echo round($wo['portfolio_data']['invested_value_bullion'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_cash'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_FD'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_other_assets'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_properties'], 2); ?>, <?php echo round($wo['portfolio_data']['stock_invested_value'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_mutual_funds'], 2); ?>],
+                    backgroundColor: ['#00876c', '#63b179', '#aed987', '#ffff9d', '#fcc267', '#ef8250', '#d43d51'],
+                    hoverBackgroundColor: ['#00876c', '#58a066', '#98b561', '#dac767', '#e09d4b', '#e06f45', '#d43d51'],
                     hoverBorderColor: "rgba(234, 236, 244, 1)",
                 }],
             },
@@ -30,6 +32,7 @@
                 cutoutPercentage: 70,
             },
         });
+
     };
 
 </script>
