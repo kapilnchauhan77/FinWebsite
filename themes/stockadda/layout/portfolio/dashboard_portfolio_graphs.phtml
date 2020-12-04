@@ -1,10 +1,37 @@
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 
+    function add_lineChart(dates_obj){
+       console.log(dates_obj);
+       date_time_stamps = Object.keys(dates_obj).sort();
+       var dates_array_to_send = new Array();
+
+       for (outer_tracking_point = 0; outer_tracking_point < date_time_stamps.length; outer_tracking_point++){
+           for (inner_tracking_point = 0; inner_tracking_point < outer_tracking_point; inner_tracking_point++){
+               dates_obj[date_time_stamps[inner_tracking_point]] += dates_obj[date_time_stamps[outer_tracking_point]];
+           };
+       };
+
+       date_time_stamps.forEach(function (date_time){
+           dates_obj_to_send = {
+                                    'x': parseInt(date_time) * 1000,
+                                    'y': dates_obj[date_time]
+                                };
+           dates_array_to_send.push(dates_obj_to_send);
+       });
+
+       console.log(dates_obj);
+       ctx = document.querySelector("#asset_line_graph_SA");
+       if (ctx) assetLineGraph(ctx, dates_array_to_send);
+    };
+
     function add_doughnutCharts(currentVal_array){
-        var ctx = document.getElementById("current_val_allocation_SA");
-        if (ctx) current_value_allocation(ctx, currentVal_array);
-        ctx = document.getElementById("invested_val_allocation_SA");
+        /* ctx = document.getElementById("invested_val_allocation_SA"); */
+        ctx = document.querySelector("#invested_val_allocation_SA");
         if (ctx) invested_value_allocation(ctx);
+        /* var ctx = document.getElementById("current_val_allocation_SA"); */
+        ctx = document.querySelector("#current_val_allocation_SA");
+        if (ctx) current_value_allocation(ctx, currentVal_array);
     };
 
     $( document ).ready(function(){
@@ -80,7 +107,7 @@
                     caretPadding: 10,
                     callbacks: {
                         label: function(tooltipItem, chart) {
-                            console.log(tooltipItem);
+                            /* console.log(tooltipItem); */
                             var datasetLabel = (tooltipItem.datasetIndex === 0) ? 'Unrealised' : 'Realised';
                             return datasetLabel + ': $' + (tooltipItem.xLabel);
                         }

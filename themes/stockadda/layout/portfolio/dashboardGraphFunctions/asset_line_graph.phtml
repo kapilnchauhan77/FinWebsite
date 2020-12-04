@@ -1,0 +1,73 @@
+<script>
+
+    function assetLineGraph(ctx, dates_array){
+        console.log(dates_array);
+
+        var options = {
+             series: [{
+                          name: "Invested Value",
+                          data: dates_array,
+                      },
+                      {
+                          name: "Total Invested Value",
+                          data: [{
+                                    'x': dates_array[0]['x'],
+                                    'y': <?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?>
+                                },
+                                {
+                                    'x': new Date().getTime(),
+                                    'y': <?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?>
+                                }],
+                      },
+                      {
+                          name: "Current Value",
+                          data: [{
+                                    'x': dates_array[0]['x'],
+                                    'y': parseFloat($('#currentVal').text())
+                                },
+                                {
+                                    'x': new Date().getTime(),
+                                    'y': parseFloat($('#currentVal').text())
+                                }],
+                      }],
+           chart: {
+                     type: 'area',
+                     stacked: false,
+                     height: 350,
+                     zoom: {
+                       type: 'x',
+                       enabled: true,
+                       autoScaleYaxis: true
+                     },
+                     toolbar: {
+                       autoSelected: 'zoom'
+                     }
+                   },
+           dataLabels: {
+             enabled: false
+             /* enabled: true */
+           },
+           stroke: {
+             curve: 'straight'
+           },
+           /* title: { */
+           /*   text: 'Product Trends by Month', */
+           /*   align: 'left' */
+           /* }, */
+           grid: {
+             row: {
+               colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+               opacity: 0.5
+             },
+           },
+           xaxis: {
+             type: 'datetime',
+           }
+           };
+
+        var chart = new ApexCharts(ctx, options);
+        chart.render();
+
+    }
+
+</script>

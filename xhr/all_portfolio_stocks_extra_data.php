@@ -8,6 +8,8 @@ if ($f == 'all_portfolio_stocks_extra_data') {
         /* $extraLoansFullPortfolio = Wo_ExtraLoansDetailForAllLoansInPortfolio($portfolio_id); */
         $extraOAFullPortfolio = Wo_ExtraOADetailForAllOAInPortfolio($portfolio_id);
         $extraFDFullPortfolio = Wo_ExtraFDDetailForAllFDInPortfolio($portfolio_id);
+        $extraCashFullPortfolio = Wo_ExtraCashDetailForAllCashInPortfolio($portfolio_id);
+        $extraBullionFullPortfolio = Wo_ExtraBullionDetailForAllBullionInPortfolio($portfolio_id);
         if (!empty($extraStockDataFullPortfolio)){
 
             $data = array(
@@ -18,6 +20,8 @@ if ($f == 'all_portfolio_stocks_extra_data') {
                 /* 'extraLoansFullPortfolio'         => $extraLoansFullPortfolio, */
                 'extraOAFullPortfolio'            => $extraOAFullPortfolio,
                 'extraFDFullPortfolio'            => $extraFDFullPortfolio,
+                'extraCashFullPortfolio'          => $extraCashFullPortfolio,
+                'extraBullionFullPortfolio'       => $extraBullionFullPortfolio,
                 'status'                          => 200
             );
 

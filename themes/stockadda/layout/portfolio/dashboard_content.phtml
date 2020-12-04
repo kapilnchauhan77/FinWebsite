@@ -23,15 +23,18 @@
 
                                         <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Earnings Overview</h6>
 
-                                        <?php echo Wo_LoadPage('portfolio/portfolio_graph_filter'); ?>
+                                        <?php
+                                            /* echo Wo_LoadPage('portfolio/portfolio_graph_filter'); */
+                                        ?>
 
                                     </div>
 
                                     <!-- Card Body -->
                                     <div class="SA_card-body">
-                                        <div class="SA_chart-area"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                                        <!-- <div class="SA_chart-area"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
                                             <canvas id="SA_myAreaChart" width="842" height="320" class="chartjs-render-monitor" style="display: block; width: 842px; height: 320px;"></canvas>
-                                        </div>
+                                        </div> -->
+                                        <div id="asset_line_graph_SA"></div>
                                     </div>
 
                                 </div>
@@ -179,10 +182,12 @@
                                             </div>
 
                                             <!-- Card Body -->
-                                            <div class="SA_card-body" style="padding-bottom: 1.6em !important;">
-                                                <div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                                            <div class="SA_card-body" style="padding: 0em !important;">
+                                                <!--<div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
                                                     <canvas id="invested_val_allocation_SA" style="display: block; width: 612px; height: 165px;" width="612" height="165" class="chartjs-render-monitor"></canvas>
-                                                </div>
+                                                </div>-->
+                                                <!--<div id="invested_val_allocation_SA" style="display: block; height: 60%; width: 60%;"></div>-->
+                                                <div id="invested_val_allocation_SA"></div>
 
                                                 <!--<div class="SA_mt-4 SA_text-center SA_small" style="margin-top: 2.0em !important;">-->
                                                 <!--    <span class="SA_mr-2">-->
@@ -204,11 +209,12 @@
                                             </div>
 
                                             <!-- Card Body -->
-                                            <div class="SA_card-body" style="padding-bottom: 1.6em !important;">
+                                            <!-- <div class="SA_card-body" style="padding-bottom: 1.6em !important;">
                                                 <div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
                                                     <canvas id="current_val_allocation_SA" style="display: block; width: 612px; height: 165px;" width="612" height="165" class="chartjs-render-monitor"></canvas>
                                                 </div>
-                                            </div>
+                                            </div> -->
+                                            <div id="current_val_allocation_SA"></div>
 
                                         </div>
                                     </div>
@@ -298,6 +304,6 @@
 </div>
 
 <?php echo Wo_LoadPage('portfolio/dashboard_portfolio_graphs'); ?>
-<?php echo Wo_LoadPage('portfolio/dashboardGraphFunctions/SA_area_chart'); ?>
+<?php echo Wo_LoadPage('portfolio/dashboardGraphFunctions/asset_line_graph'); ?>
 <?php echo Wo_LoadPage('portfolio/dashboardGraphFunctions/current_val_allocation_SA'); ?>
 <?php echo Wo_LoadPage('portfolio/dashboardGraphFunctions/invested_val_allocation_SA'); ?>

@@ -8798,6 +8798,36 @@ function Wo_ExtraPropertyDetailForAllPropertyInPortfolio($portfolio_id){
 
     return $data;
 }
+function Wo_ExtraBullionDetailForAllBullionInPortfolio($portfolio_id){
+    global $sqlConnect;
+
+    $data         = array();
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_text = "SELECT `transaction_date`, `net_amount` FROM " . T_PORTFOLIO_BULLION . "
+        WHERE `portfolio_id` = {$portfolio_id}";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        $data[]   = $fetched_data;
+    };
+
+    return $data;
+}
+function Wo_ExtraCashDetailForAllCashInPortfolio($portfolio_id){
+    global $sqlConnect;
+
+    $data         = array();
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_text = "SELECT `transaction_date`, `transaction_amount` FROM " . T_PORTFOLIO_CASH . "
+        WHERE `portfolio_id` = {$portfolio_id}";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        $data[]   = $fetched_data;
+    };
+
+    return $data;
+}
 function Wo_ExtraOADetailForAllOAInPortfolio($portfolio_id){
     global $sqlConnect;
 

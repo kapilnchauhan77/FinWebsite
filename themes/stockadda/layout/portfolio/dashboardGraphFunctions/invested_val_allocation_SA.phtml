@@ -1,37 +1,41 @@
 <script>
 
-    // Sector_Allocations
     function invested_value_allocation(ctx){
 
-        var myPieChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                    labels: ["Bullion", "Cash", "Fixed Deposit", "Other Assets", "Properties", "Stocks", "Mutual Funds"],
-                    datasets: [{
-                    data: [<?php echo round($wo['portfolio_data']['invested_value_bullion'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_cash'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_FD'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_other_assets'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_properties'], 2); ?>, <?php echo round($wo['portfolio_data']['stock_invested_value'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_mutual_funds'], 2); ?>],
-                    backgroundColor: ['#00876c', '#63b179', '#aed987', '#ffff9d', '#fcc267', '#ef8250', '#d43d51'],
-                    hoverBackgroundColor: ['#00876c', '#58a066', '#98b561', '#dac767', '#e09d4b', '#e06f45', '#d43d51'],
-                    hoverBorderColor: "rgba(234, 236, 244, 1)",
-                }],
+        var options = {
+              series: [<?php echo round($wo['portfolio_data']['invested_value_bullion'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_cash'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_FD'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_other_assets'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_properties'], 2); ?>, <?php echo round($wo['portfolio_data']['stock_invested_value'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_mutual_funds'], 2); ?>],
+              chart: {
+              width: '100%',
+              type: 'donut',
             },
-            options: {
-                maintainAspectRatio: false,
-                tooltips: {
-                    backgroundColor: "rgb(255,255,255)",
-                    bodyFontColor: "#858796",
-                    borderColor: '#dddfeb',
-                    borderWidth: 1,
-                    xPadding: 15,
-                    yPadding: 15,
-                    displayColors: false,
-                    caretPadding: 10,
-                },
-                legend: {
-                    display: false
-                },
-                cutoutPercentage: 70,
+            labels: ["Bullion", "Cash", "Fixed Deposit", "Other Assets", "Properties", "Stocks", "Mutual Funds"],
+            plotOptions: {
+              pie: {
+                dataLabels: {
+                  offset: -5
+                }
+              }
             },
-        });
+            colors: ['#00876c', '#58a066', '#98b561', '#dac767', '#e09d4b', '#e06f45', '#d43d51'],
+            dataLabels: {
+              formatter(val, opts) {
+                const name = opts.w.globals.labels[opts.seriesIndex]
+                return [name, val.toFixed(1) + '%']
+              }
+            },
+            animation: {
+                enabled: false,
+                dynamicAnimation: {
+                    enabled: false,
+                }
+            },
+            legend: {
+              show: false
+            }
+            };
+
+        var chart = new ApexCharts(ctx, options);
+        chart.render();
 
     };
 
