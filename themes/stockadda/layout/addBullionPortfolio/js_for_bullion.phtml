@@ -122,12 +122,13 @@
             data: {
                 f:'add_bullion',
                 bullion_array: bullion_array_to_send,
-                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>,
             },
                 success: function(data) {
                     if (data['status'] == 200){
                         console.log(data);
                         console.log("done");
+                        localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
                         location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
                     }
                     else if (data['status'] == 401){
