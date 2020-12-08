@@ -9,18 +9,23 @@
               type: 'donut',
             },
             labels: ["Bullion", "Cash", "Fixed Deposit", "Other Assets", "Properties", "Stocks", "Mutual Funds"],
+            tooltip: {enabled: false},
             plotOptions: {
               pie: {
-                dataLabels: {
-                  offset: -5
-                }
+                donut: {
+                    labels: {
+                        show: true,
+                        value: {
+                            formatter: function(val){return ('₹' + val);}
+                        }
+                    }
+                },
               }
             },
             colors: ['#00876c', '#58a066', '#98b561', '#dac767', '#e09d4b', '#e06f45', '#d43d51'],
             dataLabels: {
               formatter(val, opts) {
-                const name = opts.w.globals.labels[opts.seriesIndex]
-                return [name, val.toFixed(1) + '%']
+                return (val.toFixed(1) + '%');
               }
             },
             animation: {
@@ -30,9 +35,10 @@
                 }
             },
             legend: {
-              show: false
+              show: true,
+              position: 'bottom'
             }
-            };
+        };
 
         var chart = new ApexCharts(ctx, options);
         chart.render();

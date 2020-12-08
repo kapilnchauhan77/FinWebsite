@@ -60,11 +60,18 @@
             type: 'datetime',
           },
           yaxis: {
+            /* show: false, */
             max: max_y,
             min: least_val,
             labels: {
-                      formatter: (value) => { return '₹' + value.toFixed(2) },
-                  },
+                formatter: (value) => {
+                    val = Math.round(value).toString();
+                    if (val.length > 3 && val.length < 6) val = Math.round(parseInt(val) / 1000).toString() + 'K';
+                    else if (val.length > 5 && val.length < 8) val = Math.round(parseInt(val) / 100000).toString() + 'L';
+                    else if (val.length > 7) val = Math.round(parseInt(val) / 100000).toString() + 'Cr';
+                    return '₹' + val;
+                },
+            },
           },
           tooltip: {
             x: {
