@@ -27,6 +27,7 @@
        var data_of_all_assets = new Array();
        /* var adjustedValTotal, intradayValTotal; */
        var tab_opened =  ("<?php echo ($_GET['tab']); ?>" !== "") ? "<?php echo $_GET['tab']; ?>" : "dashboard";
+       var currentVal_stocks = 0;
        var currentVal_mf = 0;
        var currentVal_properties = 0;
        var currentVal_oa = 0;
@@ -98,11 +99,11 @@
                        }
 
                        /* if (data_of_all_stocks.length != 0) var [adjustedValTotal, intradayValTotal, currentVal_stocks, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalValsStocks_display(data_of_all_stocks); */
-                       if (data_of_all_stocks.length != 0) var currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj);
-                       if (data_of_all_mutual_funds.length != 0) var currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj);
-                       if (data_of_all_properties.length != 0) var currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj);
-                       if (data_of_all_oa.length != 0) var currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj);
-                       if (data_of_all_fd.length != 0) var currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj);
+                       if (data_of_all_stocks.length != 0) currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj);
+                       if (data_of_all_mutual_funds.length != 0) currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj);
+                       if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj);
+                       if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj);
+                       if (data_of_all_fd.length != 0) currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj);
                        if (data_of_all_cash.length != 0) calculateTotalValsCash_display(data_of_all_cash, dates_obj, type_dates_obj);
                        if (data_of_all_bullion.length != 0) calculateTotalValsBullion_display(data_of_all_bullion, dates_obj, type_dates_obj);
 
@@ -136,11 +137,11 @@
            data_of_all_bullion = data_of_all_assets.extraBullionFullPortfolio;
 
            /* if (data_of_all_stocks.length != 0) var [adjustedValTotal, intradayValTotal, currentVal_stocks, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalValsStocks_display(data_of_all_stocks); */
-           if (data_of_all_stocks.length != 0) var currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj);
-           if (data_of_all_mutual_funds.length != 0) var currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj);
-           if (data_of_all_properties.length != 0) var currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj);
-           if (data_of_all_oa.length != 0) var currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj);
-           if (data_of_all_fd.length != 0) var currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj);
+           if (data_of_all_stocks.length != 0) currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj);
+           if (data_of_all_mutual_funds.length != 0) currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj);
+           if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj);
+           if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj);
+           if (data_of_all_fd.length != 0) currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj);
            if (data_of_all_cash.length != 0) calculateTotalValsCash_display(data_of_all_cash, dates_obj, type_dates_obj);
            if (data_of_all_bullion.length != 0) calculateTotalValsBullion_display(data_of_all_bullion, dates_obj, type_dates_obj);
 
