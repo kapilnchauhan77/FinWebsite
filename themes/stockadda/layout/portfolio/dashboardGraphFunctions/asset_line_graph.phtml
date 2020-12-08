@@ -35,7 +35,7 @@
                   color: '#fff',
                   background: '#FB9E01',
                 },
-                text: 'Current Value: ₹' + currentVal,
+                text: 'Current Value: ₹' + currentVal.toFixed(2),
               }
             },{
               y: total_invested_value,
@@ -46,7 +46,7 @@
                   color: '#fff',
                   background: '#00E396',
                 },
-                text: 'Total Invested Value: ₹' + total_invested_value,
+                text: 'Total Invested Value: ₹' + total_invested_value.toFixed(2),
               }
             }]
           },
@@ -71,7 +71,7 @@
                 formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
                     if (series != undefined){
                         var date_ = new Date(value);
-                        return ('Invested Value till <b>'+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +':</b><b>₹' + series[seriesIndex][dataPointIndex] + "</b>");
+                        return ('Invested Value till <b>'+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +':</b><b>₹' + series[seriesIndex][dataPointIndex].toFixed(2) + "</b>");
                     }
                 },
             },
@@ -84,17 +84,17 @@
                                  to_show += "• ";
                                  if (type == "Fixed Deposit"){
                                       date_ = new Date(type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i]['maturity_date'] * 1000);
-                                      to_show += "Opened " + type + " of ₹" + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][0]['transaction_price'] + " at interest rate of " + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][0]['interest_rate'] + "%; Maturity Date: "+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +".</br>"
+                                      to_show += "Opened " + type + " of ₹" + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][0]['transaction_price'].toFixed(2) + " at interest rate of " + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][0]['interest_rate'] + "%; Maturity Date: "+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +".</br>"
                                  }
                                  else{
                                       if (type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i] > 0){
                                           if (type == "Cash") to_show += "Added ";
                                           else to_show += "Bought ";
-                                          to_show += type + " worth ₹" + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i] + ".</br>"
+                                          to_show += type + " worth ₹" + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i].toFixed(2) + ".</br>"
                                       } else{
                                           if (type == "Cash") to_show += "Withdrew ";
                                           else to_show += "Sold ";
-                                          to_show += type + " worth ₹" + -1 * type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i] + ".</br>"
+                                          to_show += type + " worth ₹" + -1 * type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i].toFixed(2)  + ".</br>"
                                       }
                                  }
                              }
