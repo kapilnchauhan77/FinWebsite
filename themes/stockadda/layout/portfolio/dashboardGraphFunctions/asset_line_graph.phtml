@@ -1,73 +1,224 @@
 <script>
 
-    function assetLineGraph(ctx, dates_array){
+    function assetLineGraph(ctx, dates_array, least_val, start_date, type_dates_obj, skip_end, current_date){
         console.log(dates_array);
+        var currentVal = parseFloat($('#currentVal').text());
+        var total_invested_value = <?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?>;
+        var max_y = (currentVal > total_invested_value) ? currentVal : total_invested_value;
+        max_y += (max_y / 10);
+        if (currentVal < 0 || least_val < 0) least_val = (currentVal > least_val) ? (least_val + least_val / 10) : (currentVal + currentVal / 10);
+        else least_val = (currentVal > least_val) ? (least_val - least_val / 10) : (currentVal - currentVal / 10);
 
         var options = {
-             series: [{
-                          name: "Invested Value",
-                          data: dates_array,
-                      },
-                      {
-                          name: "Total Invested Value",
-                          data: [{
-                                    'x': dates_array[0]['x'],
-                                    'y': <?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?>
-                                },
-                                {
-                                    'x': new Date().getTime(),
-                                    'y': <?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?>
-                                }],
-                      },
-                      {
-                          name: "Current Value",
-                          data: [{
-                                    'x': dates_array[0]['x'],
-                                    'y': parseFloat($('#currentVal').text())
-                                },
-                                {
-                                    'x': new Date().getTime(),
-                                    'y': parseFloat($('#currentVal').text())
-                                }],
-                      }],
-           chart: {
-                     type: 'area',
-                     stacked: false,
-                     height: 350,
-                     zoom: {
-                       type: 'x',
-                       enabled: true,
-                       autoScaleYaxis: true
-                     },
-                     toolbar: {
-                       autoSelected: 'zoom'
+            series: [{
+            name: '',
+            data: dates_array
+          }],
+            chart: {
+            id: 'area-datetime',
+            type: 'area',
+            height: 350,
+            zoom: {
+              autoScaleYaxis: true
+            }
+          },
+          /* stroke: { */
+          /*   curve: 'straight', */
+          /* }, */
+          annotations: {
+            yaxis: [{
+              y: currentVal,
+              borderColor: '#FB9E01',
+              label: {
+                borderColor: '#FB9E01',
+                style: {
+                  color: '#fff',
+                  background: '#FB9E01',
+                },
+                text: 'Current Value: ₹' + currentVal,
+              }
+            },{
+              y: total_invested_value,
+              borderColor: '#00E396',
+              label: {
+                borderColor: '#00E396',
+                style: {
+                  color: '#fff',
+                  background: '#00E396',
+                },
+                text: 'Total Invested Value: ₹' + total_invested_value,
+              }
+            }]
+          },
+          dataLabels: {
+            enabled: false
+          },
+          /* markers: { */
+          /*   size: 5, */
+          /* }, */
+          xaxis: {
+            type: 'datetime',
+          },
+          yaxis: {
+            max: max_y,
+            min: least_val,
+            labels: {
+                      formatter: (value) => { return '₹' + value.toFixed(2) },
+                  },
+          },
+          tooltip: {
+            x: {
+                formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
+                    if (series != undefined){
+                        var date_ = new Date(value);
+                        return ('Invested Value till <b>'+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +':</b><b>₹' + series[seriesIndex][dataPointIndex] + "</b>");
+                    }
+                },
+            },
+            y: {
+                 formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
+                     to_show = "";
+                     if (skip_end == false || dates_array[dataPointIndex]['x']/1000 != current_date){
+                         Object.keys(type_dates_obj[dates_array[dataPointIndex]['x']/1000]).forEach(function(type) {
+                             for (i = 0; i < type_dates_obj[dates_array[dataPointIndex]['x']/1000][type].length; i++){
+                                 to_show += "• ";
+                                 if (type == "Fixed Deposit"){
+                                      date_ = new Date(type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i]['maturity_date'] * 1000);
+                                      to_show += "Opened " + type + " of ₹" + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][0]['transaction_price'] + " at interest rate of " + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][0]['interest_rate'] + "%; Maturity Date: "+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +".</br>"
+                                 }
+                                 else{
+                                      if (type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i] > 0){
+                                          if (type == "Cash") to_show += "Added ";
+                                          else to_show += "Bought ";
+                                          to_show += type + " worth ₹" + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i] + ".</br>"
+                                      } else{
+                                          if (type == "Cash") to_show += "Withdrew ";
+                                          else to_show += "Sold ";
+                                          to_show += type + " worth ₹" + -1 * type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i] + ".</br>"
+                                      }
+                                 }
+                             }
+                         })
                      }
-                   },
-           dataLabels: {
-             enabled: false
-             /* enabled: true */
-           },
-           stroke: {
-             curve: 'straight'
-           },
-           /* title: { */
-           /*   text: 'Product Trends by Month', */
-           /*   align: 'left' */
-           /* }, */
-           grid: {
-             row: {
-               colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-               opacity: 0.5
+                     else {
+                        to_show += "No transactions were made today";
+                     }
+                     return to_show;
+                 },
+                 title: ""
              },
-           },
-           xaxis: {
-             type: 'datetime',
-           }
-           };
+             marker: {
+                 show: false,
+             },
+          },
+          fill: {
+            type: 'gradient',
+            gradient: {
+              shadeIntensity: 1,
+              opacityFrom: 0.7,
+              opacityTo: 0.9,
+              stops: [0, 100]
+            }
+          },
+        };
 
         var chart = new ApexCharts(ctx, options);
-        chart.render();
 
+        chart.render().then(() => {
+          for (let i = 1; i <= chart.w.globals.series[0].length; i++) {
+            const datapoint = chart.w.config.series[0].data[i - 1];
+
+            chart.addPointAnnotation({
+              x: datapoint.x,
+              y: datapoint.y,
+              marker: {
+                  size: 5,
+                  fillColor: '#fff',
+                  strokeColor: datapoint.color,
+                  radius: 2,
+                  cssClass: 'apexcharts-custom-class'
+              },
+              /* image: { */
+              /*   path: datapoint.color === "red" ? img1 : img2, */
+              /*   offsetY: -3 */
+              /* } */
+            });
+          }
+        });
+
+
+        var resetCssClasses = function(activeEl) {
+        var els = document.querySelectorAll('button')
+        Array.prototype.forEach.call(els, function(el) {
+          el.classList.remove('active')
+        })
+
+        activeEl.target.classList.add('active')
+      }
+
+      start_date = start_date * 1000;
+
+      var tenD =(current_date - (10 * 24 * 60 * 60)) * 1000;
+      tenD = (tenD > start_date) ? tenD : start_date;
+
+      var oneM = (current_date - (30 * 24 * 60 * 60)) * 1000;
+      oneM = (oneM > start_date) ? oneM : start_date;
+
+      var oneYr = (current_date - (365 * 24 * 60 * 60)) * 1000;
+      oneYr = (oneYr > start_date) ? oneYr : start_date;
+
+      var ytd_ = parseInt(new Date(new Date().getFullYear(), 0).getTime()/1000) * 1000;
+      ytd_ = (ytd_ > start_date) ? ytd_ : start_date;
+
+      document
+        .querySelector('#TenD')
+        .addEventListener('click', function(e) {
+          resetCssClasses(e)
+
+          chart.zoomX(
+            tenD,
+            current_date * 1000
+          )
+        })
+
+      document
+        .querySelector('#OneM')
+        .addEventListener('click', function(e) {
+          resetCssClasses(e)
+
+          chart.zoomX(
+            oneM,
+            current_date * 1000
+          )
+        })
+
+      document
+        .querySelector('#OneYr')
+        .addEventListener('click', function(e) {
+          resetCssClasses(e)
+          chart.zoomX(
+            oneYr,
+            current_date * 1000
+          )
+        })
+
+      document.querySelector('#YTD').addEventListener('click', function(e) {
+        resetCssClasses(e)
+
+        chart.zoomX(
+            ytd_,
+            current_date * 1000
+        )
+      })
+
+      document.querySelector('#MAX').addEventListener('click', function(e) {
+        resetCssClasses(e)
+
+        chart.zoomX(
+          start_date,
+          current_date * 1000
+        )
+      })
     }
 
 </script>

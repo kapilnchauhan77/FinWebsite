@@ -74,6 +74,7 @@
 
                 amount_to_add = parseFloat($("#"+id+" #cash_transaction_price").val());
                 amount_to_add = (amount_to_add < 0) ? (-1 * amount_to_add) : amount_to_add;
+                console.log(<?php echo $wo['portfolio_data']['invested_value_cash']; ?>);
 
                 cashInfo = {
 
@@ -96,6 +97,7 @@
                 f:'add_cash',
                 cash_array: cash_array_to_send,
                 portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                available_cash: parseFloat(<?php echo $wo['portfolio_data']['invested_value_cash']; ?>),
             },
                 success: function(data) {
                     if (data['status'] == 200){

@@ -34,7 +34,7 @@
        var currentVal_bullion = 0;
        var currentVal_cash = <?php echo round($wo['portfolio_data']['invested_value_cash'], 2); ?>;
        var dates_obj = new Object();
-
+       var type_dates_obj = new Object();
 
        $("#" + tab_opened).addClass('menuactive');
 
@@ -98,22 +98,31 @@
                        }
 
                        /* if (data_of_all_stocks.length != 0) var [adjustedValTotal, intradayValTotal, currentVal_stocks, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalValsStocks_display(data_of_all_stocks); */
-                       if (data_of_all_stocks.length != 0) var currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj);
-                       if (data_of_all_mutual_funds.length != 0) currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj).toFixed(2);
-                       if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj).toFixed(2);
-                       if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj).toFixed(2);
-                       if (data_of_all_fd.length != 0) currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj).toFixed(2);
-                       if (data_of_all_cash.length != 0) calculateTotalValsCash_display(data_of_all_cash, dates_obj);
-                       if (data_of_all_bullion.length != 0) calculateTotalValsBullion_display(data_of_all_bullion, dates_obj);
+                       if (data_of_all_stocks.length != 0) var currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj);
+                       if (data_of_all_mutual_funds.length != 0) var currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj);
+                       if (data_of_all_properties.length != 0) var currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj);
+                       if (data_of_all_oa.length != 0) var currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj);
+                       if (data_of_all_fd.length != 0) var currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj);
+                       if (data_of_all_cash.length != 0) calculateTotalValsCash_display(data_of_all_cash, dates_obj, type_dates_obj);
+                       if (data_of_all_bullion.length != 0) calculateTotalValsBullion_display(data_of_all_bullion, dates_obj, type_dates_obj);
+
+                       console.log('type_dates_obj');
+                       console.log(type_dates_obj);
 
                        add_doughnutCharts([parseFloat(currentVal_bullion), parseFloat(currentVal_cash), parseFloat(currentVal_fd), parseFloat(currentVal_oa), parseFloat(currentVal_properties), parseFloat(currentVal_stocks), parseFloat(currentVal_mf)]);
-                       add_lineChart(dates_obj);
-                       change_dynamic_colors();
+                       add_lineChart(dates_obj, type_dates_obj);
+
                        /* TODO */
                        /* getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal_stocks, timeline, all_dates); */
 
                        var total_equity = $('#total_assets').text() - $('#total_liabilities').text();
                        $('#current_net_worth').text(total_equity);
+                       var total_assets = parseFloat($('#total_assets').text());
+                       var daily_p_l = parseFloat($('#total_day_gain').text());
+                       $('#daily_p_p_l').text(daily_p_l.toFixed(2));
+                       $('#daily_p_p_l_per').text((daily_p_l / (total_assets - daily_p_l) * 100).toFixed(2));
+
+                       change_dynamic_colors();
                    });
 
        } else{
@@ -127,23 +136,31 @@
            data_of_all_bullion = data_of_all_assets.extraBullionFullPortfolio;
 
            /* if (data_of_all_stocks.length != 0) var [adjustedValTotal, intradayValTotal, currentVal_stocks, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalValsStocks_display(data_of_all_stocks); */
-           if (data_of_all_stocks.length != 0) var currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj);
-           if (data_of_all_mutual_funds.length != 0) currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj).toFixed(2);
-           if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj).toFixed(2);
-           if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj).toFixed(2);
-           if (data_of_all_fd.length != 0) currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj).toFixed(2);
-           if (data_of_all_cash.length != 0) calculateTotalValsCash_display(data_of_all_cash, dates_obj);
-           if (data_of_all_bullion.length != 0) calculateTotalValsBullion_display(data_of_all_bullion, dates_obj);
+           if (data_of_all_stocks.length != 0) var currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj);
+           if (data_of_all_mutual_funds.length != 0) var currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj);
+           if (data_of_all_properties.length != 0) var currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj);
+           if (data_of_all_oa.length != 0) var currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj);
+           if (data_of_all_fd.length != 0) var currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj);
+           if (data_of_all_cash.length != 0) calculateTotalValsCash_display(data_of_all_cash, dates_obj, type_dates_obj);
+           if (data_of_all_bullion.length != 0) calculateTotalValsBullion_display(data_of_all_bullion, dates_obj, type_dates_obj);
+
+           console.log('type_dates_obj');
+           console.log(type_dates_obj);
 
            add_doughnutCharts([parseFloat(currentVal_bullion), parseFloat(currentVal_cash), parseFloat(currentVal_fd), parseFloat(currentVal_oa), parseFloat(currentVal_properties), parseFloat(currentVal_stocks), parseFloat(currentVal_mf)]);
-           add_lineChart(dates_obj);
-           change_dynamic_colors();
+           add_lineChart(dates_obj, type_dates_obj);
 
            /* TODO */
            /* getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal_stocks, timeline, all_dates); */
 
            var total_equity = $('#total_assets').text() - $('#total_liabilities').text();
            $('#current_net_worth').text(total_equity);
+           var total_assets = parseFloat($('#total_assets').text());
+           var daily_p_l = parseFloat($('#total_day_gain').text());
+           $('#daily_p_p_l').text(daily_p_l.toFixed(2));
+           $('#daily_p_p_l_per').text((daily_p_l / (total_assets - daily_p_l) * 100).toFixed(2));
+
+           change_dynamic_colors();
        }
 
     }

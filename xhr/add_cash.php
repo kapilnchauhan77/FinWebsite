@@ -2,6 +2,7 @@
 if ($f == 'add_cash') {
     $cash_array = $_GET['cash_array'];
     $portfolio_id = $_GET['portfolio_id'];
+    $available_cash = $_GET['available_cash'];
     $error = '';
     if (!empty($cash_array) && !empty($portfolio_id)) {
 
@@ -19,6 +20,11 @@ if ($f == 'add_cash') {
             if ($cash_data['cash_transaction_price'] == 0){
                 /* $errors[] = "Please Enter Price!"; */
                 $error = "Please Enter Price!";
+                break;
+            }
+            if ($cash_data['cash_type'] == "Debit" && ((-1 * $cash_data['cash_transaction_price']) > $available_cash)){
+                /* $errors[] = "Please Enter Price!"; */
+                $error = "Available cash to withdraw: {$available_cash}₹";
                 break;
             }
             /* if ($cash_data['cash_transaction_price'] < 0){ */

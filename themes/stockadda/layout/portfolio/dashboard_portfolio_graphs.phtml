@@ -1,28 +1,45 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 
-    function add_lineChart(dates_obj){
+    function add_lineChart(dates_obj, type_dates_obj){
+       console.log('Before');
        console.log(dates_obj);
        date_time_stamps = Object.keys(dates_obj).sort();
+       var color_dict = new Object();
        var dates_array_to_send = new Array();
+       var skip_end = false;
 
-       for (outer_tracking_point = 0; outer_tracking_point < date_time_stamps.length; outer_tracking_point++){
-           for (inner_tracking_point = 0; inner_tracking_point < outer_tracking_point; inner_tracking_point++){
-               dates_obj[date_time_stamps[inner_tracking_point]] += dates_obj[date_time_stamps[outer_tracking_point]];
-           };
+       color_dict[date_time_stamps[0]] = (dates_obj[date_time_stamps[0]] > 0) ? "green" : "red";
+
+       for (tracking_point = 1; tracking_point < date_time_stamps.length; tracking_point++){
+           color_dict[date_time_stamps[tracking_point]] = (dates_obj[date_time_stamps[tracking_point]] > 0) ? "green" : "red";
+           dates_obj[date_time_stamps[tracking_point]] += dates_obj[date_time_stamps[tracking_point - 1]];
        };
 
+
+       var current_date = parseInt(new Date().getTime()/1000);
+       if (date_time_stamps[date_time_stamps.length - 1] != (current_date)) {
+           skip_end = true;
+           dates_obj[current_date] = dates_obj[date_time_stamps[date_time_stamps.length - 1]];
+           color_dict[current_date] = 'gray';
+           date_time_stamps.push(current_date);
+       }
+
+       var least_val = undefined;
        date_time_stamps.forEach(function (date_time){
-           dates_obj_to_send = {
-                                    'x': parseInt(date_time) * 1000,
-                                    'y': dates_obj[date_time]
-                                };
-           dates_array_to_send.push(dates_obj_to_send);
+           /* date_array_to_send = [parseInt(date_time) * 1000, dates_obj[date_time]]; */
+           date_array_to_send = {x: parseInt(date_time) * 1000, y: dates_obj[date_time], color: color_dict[date_time]};
+           dates_array_to_send.push(date_array_to_send);
+           if ((dates_obj[date_time] < least_val) || least_val == undefined) least_val = dates_obj[date_time];
        });
 
+
+       console.log('After');
        console.log(dates_obj);
+       console.log(color_dict);
+       console.log(type_dates_obj);
        ctx = document.querySelector("#asset_line_graph_SA");
-       if (ctx) assetLineGraph(ctx, dates_array_to_send);
+       if (ctx) assetLineGraph(ctx, dates_array_to_send, least_val, date_time_stamps[0], type_dates_obj, skip_end, current_date);
     };
 
     function add_doughnutCharts(currentVal_array){

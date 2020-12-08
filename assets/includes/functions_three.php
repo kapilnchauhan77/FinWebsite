@@ -8417,6 +8417,7 @@ function AddCashToPortfolio($cash_data, $portfolio_id){
     foreach ($cash_data as $cash_datum) {
 
         $cash_type = Wo_Secure($cash_datum['cash_type']);
+        if ($cash_type != "Credit" && $cash_type != "Debit") return "Please Select only from the given options";
         $cash_transaction_date = Wo_Secure($cash_datum['cash_transaction_date']);
         $cash_transaction_price = Wo_Secure($cash_datum['cash_transaction_price']);
         $cash_note = Wo_Secure($cash_datum['note']);
