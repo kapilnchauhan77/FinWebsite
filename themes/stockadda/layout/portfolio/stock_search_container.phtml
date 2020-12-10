@@ -121,6 +121,7 @@
                     stock_invested_value: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val()) * parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_price").val()),
                     stock_charge: parseFloat($("#"+stock_quotes_to_add[id]+id+"charge_").text()) + parseFloat($("#"+stock_quotes_to_add[id]+id+"broker_charge_").text()),
                     note: $("#"+stock_quotes_to_add[id]+id+"stock_notes #notes").val(),
+                    stock_net_amount: parseFloat($("#"+stock_quotes_to_add[id]+id+"net_amount").text()),
 
                         };
 

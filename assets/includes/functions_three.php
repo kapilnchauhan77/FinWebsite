@@ -8374,6 +8374,20 @@ function AddBullionToPortfolio($bullion_data, $portfolio_id){
         $bullion_note = Wo_Secure($bullion_datum['note']);
         $timestamp_created = strtotime("now");
 
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Credit',
+            'cash_transaction_date' => $bullion_transaction_date,
+            'cash_transaction_price' => $bullion_net_amount,
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Deposit to buy bullion");
+
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Debit',
+            'cash_transaction_date' => $bullion_transaction_date,
+            'cash_transaction_price' => (-1 * $bullion_net_amount),
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Withrawl to buy bullion");
+
         $query_one   = "INSERT INTO " . T_PORTFOLIO_BULLION . " (`portfolio_id`, `bullion_type`, `transaction_date`, `transaction_price`, `transaction_quantity`, `timestamp_created`, `charge`, `net_amount`, `purchased_from`, `note`) VALUES ({$portfolio_id}, {$bullion_type}, {$bullion_transaction_date}, {$bullion_transaction_price}, {$bullion_transaction_qty}, {$timestamp_created}, {$bullion_charge}, {$bullion_net_amount}, '{$bullion_purchased_from}', '{$bullion_note}')";
         $query       = mysqli_query($sqlConnect, $query_one);
 
@@ -8407,6 +8421,20 @@ function AddOAToPortfolio($oa_data, $portfolio_id){
         $oa_current_price = Wo_Secure($oa_datum['oa_current_price']);
         $oa_note = Wo_Secure($oa_datum['note']);
         $timestamp_created = strtotime("now");
+
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Credit',
+            'cash_transaction_date' => $oa_transaction_date,
+            'cash_transaction_price' => $oa_transaction_price,
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Deposit to buy Other Assets");
+
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Debit',
+            'cash_transaction_date' => $oa_transaction_date,
+            'cash_transaction_price' => (-1 * $oa_transaction_price),
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Withrawl to buy Other Assets");
 
         $query_one   = "INSERT INTO " . T_PORTFOLIO_OA . " (`portfolio_id`, `Asset Name`, `transaction_date`, `transaction_price`, `current_price`, `Notes`, `timestamp_created`) VALUES ({$portfolio_id}, '{$oa_type}', {$oa_transaction_date}, {$oa_transaction_price}, {$oa_current_price}, '{$oa_note}', {$timestamp_created})";
         $query       = mysqli_query($sqlConnect, $query_one);
@@ -8448,6 +8476,13 @@ function AddOBToPortfolio($ob_data, $portfolio_id){
             return mysqli_error($sqlConnect);
         };
 
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Credit',
+            'cash_transaction_date' => $ob_transaction_date,
+            'cash_transaction_price' => $ob_transaction_price,
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Deposit via Other Borrowings");
+
         /* $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$ob_transaction_price} WHERE `portfolio_id` = {$portfolio_id}"; */
         /* $query     = mysqli_query($sqlConnect, $query_one); */
 
@@ -8461,10 +8496,11 @@ function AddOBToPortfolio($ob_data, $portfolio_id){
 
     return true;
 }
-function AddCashToPortfolio($cash_data, $portfolio_id){
+function AddCashToPortfolio($cash_data, $portfolio_id, $internal_note){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    $internal_note = Wo_Secure($internal_note);
 
     foreach ($cash_data as $cash_datum) {
 
@@ -8475,7 +8511,7 @@ function AddCashToPortfolio($cash_data, $portfolio_id){
         $cash_note = Wo_Secure($cash_datum['note']);
         $timestamp_created = strtotime("now");
 
-        $query_one   = "INSERT INTO " . T_PORTFOLIO_CASH . " (`portfolio_id`, `cash_type`, `transaction_date`, `transaction_amount`, `timestamp_created`, `note`) VALUES ({$portfolio_id}, '{$cash_type}', {$cash_transaction_date}, {$cash_transaction_price}, {$timestamp_created}, '{$cash_note}')";
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_CASH . " (`portfolio_id`, `cash_type`, `transaction_date`, `transaction_amount`, `timestamp_created`, `note`, `internal_note`) VALUES ({$portfolio_id}, '{$cash_type}', {$cash_transaction_date}, {$cash_transaction_price}, {$timestamp_created}, '{$cash_note}', '{$internal_note}')";
         $query       = mysqli_query($sqlConnect, $query_one);
 
         if (!$query) {
@@ -8545,6 +8581,20 @@ function AddPropertyToPortfolio($property_data, $portfolio_id){
         $property_note = Wo_Secure($property_datum['note']);
         $timestamp_created = strtotime("now");
 
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Credit',
+            'cash_transaction_date' => $property_transaction_date,
+            'cash_transaction_price' => $property_transaction_price,
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Deposit to buy Property");
+
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Debit',
+            'cash_transaction_date' => $property_transaction_date,
+            'cash_transaction_price' => (-1 * $property_transaction_price),
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Withrawl to buy Property");
+
         $query_one   = "INSERT INTO " . T_PORTFOLIO_PROPERTY . " (`portfolio_id`, `Property Name`, `transaction_date`, `transaction_price`, `current_price`, `Notes`, `timestamp_created`) VALUES ({$portfolio_id}, '{$property_type}', {$property_transaction_date}, {$property_transaction_price}, {$property_current_price}, '{$property_note}', {$timestamp_created})";
         $query       = mysqli_query($sqlConnect, $query_one);
 
@@ -8612,6 +8662,20 @@ function AddFDToPortfolio($fd_data, $portfolio_id){
                 break;
         }
 
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Credit',
+            'cash_transaction_date' => $fd_transaction_date,
+            'cash_transaction_price' => $fd_transaction_price,
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Deposit to make a Fixed Deposit");
+
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Debit',
+            'cash_transaction_date' => $fd_transaction_date,
+            'cash_transaction_price' => (-1 * $fd_transaction_price),
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Withrawl to make a Fixed Deposit");
+
         $query_one   = "INSERT INTO " . T_PORTFOLIO_FD . " (`portfolio_id`, `fd_type`, `fd_bank`, `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `interest_payout_frequency`, `timestamp_created`, `payout_type`) VALUES ({$portfolio_id}, '{$fd_type}', '{$fd_bank}', {$fd_transaction_date}, {$fd_maturity_date}, {$fd_transaction_price}, {$fd_transaction_interest}, {$fd_interest_payout_frequency}, {$timestamp_created}, {$fd_interest_payout_type})";
         $query       = mysqli_query($sqlConnect, $query_one);
 
@@ -8646,9 +8710,24 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
         $stock_transaction_price = Wo_Secure($stock_quote_datum['stock_transaction_price']);
         $stock_transaction_qty = Wo_Secure($stock_quote_datum['stock_transaction_qty']);
         $stock_invested_value = Wo_Secure($stock_quote_datum['stock_invested_value']);
+        $stock_net_amount = Wo_Secure($stock_quote_datum['stock_net_amount']);
         $stock_charge = Wo_Secure($stock_quote_datum['stock_charge']);
         $stock_note = Wo_Secure($stock_quote_datum['note']);
         $timestamp_created = strtotime("now");
+
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Credit',
+            'cash_transaction_date' => $stock_transaction_date,
+            'cash_transaction_price' => $stock_net_amount,
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Deposit to buy Stocks");
+
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Debit',
+            'cash_transaction_date' => $stock_transaction_date,
+            'cash_transaction_price' => (-1 * $stock_net_amount),
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Deposit to buy Stocks");
 
         $query_text   = "SELECT `id` FROM " . T_PORTFOLIO_STOCKS . " WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id}";
         $query_one    = mysqli_query($sqlConnect, $query_text);
@@ -8703,6 +8782,20 @@ function AddMFToPortfolio($mf_quote_data, $portfolio_id){
         $mf_amount = Wo_Secure($mf_quote_datum['mf_amount']);
         $mf_note = Wo_Secure($mf_quote_datum['note']);
         $timestamp_created = strtotime("now");
+
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Credit',
+            'cash_transaction_date' => $mf_transaction_date,
+            'cash_transaction_price' => $mf_amount,
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Deposit to buy mutual funds");
+
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Debit',
+            'cash_transaction_date' => $mf_transaction_date,
+            'cash_transaction_price' => (-1 * $mf_amount),
+            'note' => ''
+        )), $portfolio_id, "Automatic Cash Withrawl to buy mutual funds");
 
         $query_text   = "SELECT `Scheme Code` FROM " . T_PORTFOLIO_MF . " WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id}";
         $query_one    = mysqli_query($sqlConnect, $query_text);

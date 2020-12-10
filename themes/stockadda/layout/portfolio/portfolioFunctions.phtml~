@@ -75,17 +75,17 @@
 
         });
 
-        currentVal_toDisplay = parseFloat($('#currentVal').text()) + unrealized_currentVal;
+        currentVal_toDisplay = parseFloat($('#currentVal').text()) + realized_currentVal + unrealized_currentVal;
         $('#currentVal').text(currentVal_toDisplay.toFixed(2));
         $('#total_assets').text(currentVal_toDisplay.toFixed(2));
         $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
 
-        $('#fd_currentValTable').text(((unrealized_currentVal) + realized_invested_val).toFixed(2));
+        $('#fd_currentValTable').text((realized_currentVal + unrealized_currentVal).toFixed(2));
 
         var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
         $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
 
-        var p_l_this_year = (unrealized_currentVal_fyr + realized_currentVal) - invested_fyr;
+        var p_l_this_year = unrealized_currentVal_fyr - invested_fyr;
         var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
         $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
 
@@ -111,7 +111,7 @@
         $('#fd_daily_p_p_lTable_text').removeClass('SA_text-secondary');
         $('#fd_daily_p_p_lTable_text').addClass('SA_text-success');
 
-        return ((unrealized_currentVal) + realized_invested_val).toFixed(2);
+        return (realized_currentVal + unrealized_currentVal).toFixed(2);
 
     }
 
@@ -469,7 +469,7 @@
         $('#total_assets').text(currentVal_toDisplay.toFixed(2));
         $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
 
-        $('#currentValTable').text(currentVal.toFixed(2));
+        $('#currentValTable').text(currentVal);
 
         var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + asset_added_this_year;
         $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
@@ -481,15 +481,15 @@
 
         const daily_p_p_l = (currentVal - adjustedValTotal);
         /* $('#daily_p_p_l').text(daily_p_p_l); */
-        $('#daily_p_p_lTable').text(daily_p_p_l.toFixed(2));
+        $('#daily_p_p_lTable').text(daily_p_p_l);
 
-        const daily_p_p_l_per = ((daily_p_p_l / adjustedValTotal) * 100);
+        const daily_p_p_l_per = (daily_p_p_l / adjustedValTotal) * 100;
         change_colors('daily_p_p_l', daily_p_p_l_per);
         change_colors('daily_p_p_lTable', daily_p_p_l_per);
 
         const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['stock_invested_value']; ?>);
         /* $('#overall_p_p_l').text(overall_p_p_l); */
-        $('#overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
+        $('#overall_p_p_lTable').text(overall_p_p_l);
 
         $('#total_day_gain').text((parseFloat($('#total_day_gain').text()) + daily_p_p_l).toFixed(2));
         $('#total_unrealised_gain').text((parseFloat($('#total_unrealised_gain').text()) + overall_p_p_l).toFixed(2));

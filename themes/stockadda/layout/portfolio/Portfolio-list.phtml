@@ -1,6 +1,5 @@
 <div class="page_list row boosted_pages">
 	<div class="col-xs-8 col-md-10" style="padding-bottom:5px">
-	<script>console.log(JSON.stringify(<?php echo json_encode($wo['portfolio']);?>))</script>
 		<a href="<?php echo $wo['portfolio']['url'];?>" data-ajax="<?php echo  $wo['portfolio']['raw_url'];?>">
 			<span class="page_title"><?php echo $wo['portfolio']['portfolio_name']; ?></span>
 		</a>
@@ -27,7 +26,29 @@
 						<?php endif; ?>
 
                         <span><a href="">Share</a></span>
-                        <span><a href="" onclick="delete_portfolio(<?php echo $wo['portfolio']['portfolio_id']?>)">Delete</a></span>
+                        <span data-toggle="modal" data-target="#delete_modal_<?php echo $wo['portfolio']['portfolio_id']; ?>"><a style="cursor: pointer;">Delete</a></span>
+
+                          <div class="modal fade" id="delete_modal_<?php echo $wo['portfolio']['portfolio_id']; ?>" role="dialog">
+                            <div class="modal-dialog">
+
+                              <!-- Modal content-->
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                  <h4 class="modal-title">Delete <?php echo $wo['portfolio']['portfolio_name']; ?></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Do you really want to delete <?php echo $wo['portfolio']['portfolio_name']; ?> and all it's content?</p>
+                                    <p>It is Irreversible!</p>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-success" onclick="delete_portfolio(<?php echo $wo['portfolio']['portfolio_id']; ?>, '<?php echo $wo['portfolio']['portfolio_name']; ?>')">Yes</button>
+                                  <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                                </div>
+                              </div>
+
+                            </div>
+                          </div>
 
 					</small>
 				</div>

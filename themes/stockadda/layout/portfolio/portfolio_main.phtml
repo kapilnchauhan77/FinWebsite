@@ -43,7 +43,7 @@
 
 <script>
 
-    function delete_portfolio(portfolio_id_){
+function delete_portfolio(portfolio_id_, portfolio_name_){
        $.ajax({
            url: Wo_Ajax_Requests_File(),
            type: 'GET',
@@ -54,8 +54,8 @@
            },
                })
                .done(function(data) {
-                   console.log(data);
+                   window.location.reload(true);
                })
-    }
+   }
 
 </script>
