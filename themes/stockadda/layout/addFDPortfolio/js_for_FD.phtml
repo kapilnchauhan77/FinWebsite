@@ -34,6 +34,7 @@
                                         </td>
                                         <td><input id="fd_maturity_date" type="date" name="fd_maturity_date" readonly /></td>
                                         <td><select id="fd_interest_payout_frequency" name="fd_interest_payout_frequency" style="height: 2.75em;"><option value="Monthly">Monthly</option><option value="Quaterly">Quaterly</option><option value="Half Yearly">Half Yearly</option><option value="Yearly">Yearly</option></select></td>
+                                        <td><select id="fd_interest_payout_type" name="fd_interest_payout_type" style="height: 2.75em;"><option value="Reinvestment" selected>Reinvest</option><option value="Out">Take Out</option></select></td>
                                         <td><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteFD(` + fd_num + `)"></i></td>
                                     </tr>`
 
@@ -125,6 +126,7 @@
                         fd_transaction_interest: parseFloat($("#"+id+" #fd_rate").val()),
                         fd_maturity_date: parseInt(new Date($("#"+id+" #fd_maturity_date").val()).getTime()/1000),
                         fd_interest_payout_frequency: $('#'+id+' #fd_interest_payout_frequency').val(),
+                        fd_interest_payout_type: $('#'+id+' #fd_interest_payout_type').val(),
 
                             };
 

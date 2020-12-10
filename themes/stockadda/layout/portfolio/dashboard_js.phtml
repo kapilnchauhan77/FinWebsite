@@ -153,12 +153,18 @@
            /* TODO */
            /* getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal_stocks, timeline, all_dates); */
 
-           var total_equity = $('#total_assets').text() - $('#total_liabilities').text();
-           $('#current_net_worth').text(total_equity);
            var total_assets = parseFloat($('#total_assets').text());
+           var total_equity = total_assets - $('#total_liabilities').text();
+           $('#current_net_worth').text(total_equity);
+
            var daily_p_l = parseFloat($('#total_day_gain').text());
            $('#daily_p_p_l').text(daily_p_l.toFixed(2));
            $('#daily_p_p_l_per').text((daily_p_l / (total_assets - daily_p_l) * 100).toFixed(2));
+
+           var overall_p_l =  parseFloat($('#total_unrealised_gain').text()) + parseFloat($('#total_realised_gain').text());
+           var overall_p_l_per = overall_p_l / <?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?>;
+           $('#overall_p_p_l').text(overall_p_l.toFixed(2));
+           $('#overall_p_p_l_per').text((overall_p_l_per * 100).toFixed(2));
 
            change_dynamic_colors();
        }

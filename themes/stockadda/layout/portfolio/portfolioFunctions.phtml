@@ -15,25 +15,44 @@
 
     function calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj){
 
-        var currentVal = 0;
+        var unrealized_currentVal = 0;
+        var realized_currentVal = 0;
         var daysGain = 0;
-        var currentVal_individual = 0;
+        var unrealized_currentVal_individual = 0;
+        var realized_currentVal_individual = 0;
         var no_of_days_individual = 0;
         var invested_fyr = 0;
-        var currentVal_fyr = 0;
+        var unrealized_currentVal_fyr = 0;
+        var realized_currentVal_fyr = 0;
+        var unrealized_invested_val = 0;
+        var realized_invested_val = 0;
         var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         data_of_all_fd.forEach(function (value) {
 
             no_of_days_individual = parseInt((parseInt(new Date().getTime()/1000) - value.transaction_date) / (60 * 60 * 24));
             no_of_days_individual = (no_of_days_individual == 0) ? 1 : no_of_days_individual;
-            currentVal_individual = (parseFloat(value.transaction_price) * Math.pow((1 +
-                parseFloat(value.transaction_interest) /
-                parseInt(value.interest_payout_frequency)),
-(parseInt(value.interest_payout_frequency) * ( no_of_days_individual / 365))));
 
-            daysGain   += (currentVal_individual - parseFloat(value.transaction_price))/no_of_days_individual;
-            currentVal += currentVal_individual;
+            if (value.payout_type == "0"){
+                unrealized_currentVal_individual = (parseFloat(value.transaction_price) * Math.pow((1 +
+                    parseFloat(value.transaction_interest/100) /
+                    parseInt(value.interest_payout_frequency)),
+    (parseInt(value.interest_payout_frequency) * ( no_of_days_individual / 365))));
+
+                daysGain   += (unrealized_currentVal_individual - parseFloat(value.transaction_price))/no_of_days_individual;
+                unrealized_currentVal += unrealized_currentVal_individual;
+                unrealized_invested_val += parseFloat(value.transaction_price);
+            } else{
+                realized_currentVal_individual = (parseFloat(value.transaction_price) * Math.pow((1 +
+                    parseFloat(value.transaction_interest/100) /
+                    parseInt(value.interest_payout_frequency)),
+    (parseInt(value.interest_payout_frequency) * ( no_of_days_individual / 365))));
+
+                daysGain   += (realized_currentVal_individual - parseFloat(value.transaction_price))/no_of_days_individual;
+                realized_currentVal += realized_currentVal_individual;
+                realized_invested_val += parseFloat(value.transaction_price);
+            }
+
 
             console.log('Date from FD:');
             console.log(parseInt(value.transaction_date));
@@ -48,42 +67,51 @@
             }
 
             if (parseInt(value.transaction_date) >= financial_yr_timestamp){
-                currentVal_fyr += currentVal_individual;
+                unrealized_currentVal_fyr += unrealized_currentVal_individual;
+                realized_currentVal_fyr += realized_currentVal_individual;
                 invested_fyr += parseFloat(value.transaction_price);
             }
 
 
         });
 
-        currentVal_toDisplay = parseFloat($('#currentVal').text()) + currentVal;
+        currentVal_toDisplay = parseFloat($('#currentVal').text()) + realized_currentVal + unrealized_currentVal;
         $('#currentVal').text(currentVal_toDisplay.toFixed(2));
         $('#total_assets').text(currentVal_toDisplay.toFixed(2));
         $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
 
-        $('#fd_currentValTable').text(currentVal.toFixed(2));
+        $('#fd_currentValTable').text((realized_currentVal + unrealized_currentVal).toFixed(2));
 
         var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
         $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
 
-        var p_l_this_year = currentVal_fyr - invested_fyr;
+        var p_l_this_year = unrealized_currentVal_fyr - invested_fyr;
         var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
         $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
 
         const daily_p_p_l = daysGain;
         $('#fd_daily_p_p_lTable').text(daily_p_p_l.toFixed(2));
 
-        const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['invested_value_FD']; ?>);
-        $('#fd_overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
+        const unrealized_overall_p_p_l = (unrealized_currentVal - unrealized_invested_val);
+        $('#fd_overall_p_p_lTable_unrealised').text(unrealized_overall_p_p_l.toFixed(2));
+
+        const realized_overall_p_p_l = (realized_currentVal - realized_invested_val);
+        $('#fd_overall_p_p_lTable_realised').text(realized_overall_p_p_l.toFixed(2));
 
         $('#total_day_gain').text((parseFloat($('#total_day_gain').text()) + daysGain).toFixed(2));
-        $('#total_unrealised_gain').text((parseFloat($('#total_unrealised_gain').text()) + overall_p_p_l).toFixed(2));
+        $('#total_unrealised_gain').text((parseFloat($('#total_unrealised_gain').text()) + unrealized_overall_p_p_l).toFixed(2));
+        $('#total_realised_gain').text((parseFloat($('#total_realised_gain').text()) + realized_overall_p_p_l).toFixed(2));
 
-        const overall_p_p_l_per = (overall_p_p_l / <?php echo $wo['portfolio_data']['invested_value_FD']; ?>) * 100;
-        change_colors('fd_overall_p_p_lTable', overall_p_p_l_per);
+        const overall_p_p_l_per_realised = (realized_invested_val == 0) ? 0 : (realized_overall_p_p_l / realized_invested_val) * 100;
+        change_colors('fd_overall_p_p_lTable_realised', overall_p_p_l_per_realised);
+
+        const overall_p_p_l_per_unrealised = (unrealized_invested_val == 0) ? 0 : (unrealized_overall_p_p_l / unrealized_invested_val) * 100;
+        change_colors('fd_overall_p_p_lTable_unrealised', overall_p_p_l_per_unrealised);
+
         $('#fd_daily_p_p_lTable_text').removeClass('SA_text-secondary');
         $('#fd_daily_p_p_lTable_text').addClass('SA_text-success');
 
-        return currentVal.toFixed(2);
+        return (realized_currentVal + unrealized_currentVal).toFixed(2);
 
     }
 
@@ -452,7 +480,7 @@
         $('#asset_sold_this_year').text(asset_sold_this_year);
 
         const daily_p_p_l = (currentVal - adjustedValTotal);
-        $('#daily_p_p_l').text(daily_p_p_l);
+        /* $('#daily_p_p_l').text(daily_p_p_l); */
         $('#daily_p_p_lTable').text(daily_p_p_l);
 
         const daily_p_p_l_per = (daily_p_p_l / adjustedValTotal) * 100;
@@ -460,14 +488,14 @@
         change_colors('daily_p_p_lTable', daily_p_p_l_per);
 
         const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['stock_invested_value']; ?>);
-        $('#overall_p_p_l').text(overall_p_p_l);
+        /* $('#overall_p_p_l').text(overall_p_p_l); */
         $('#overall_p_p_lTable').text(overall_p_p_l);
 
         $('#total_day_gain').text((parseFloat($('#total_day_gain').text()) + daily_p_p_l).toFixed(2));
         $('#total_unrealised_gain').text((parseFloat($('#total_unrealised_gain').text()) + overall_p_p_l).toFixed(2));
 
         const overall_p_p_l_per = (overall_p_p_l / <?php echo $wo['portfolio_data']['stock_invested_value']; ?>) * 100;
-        change_colors('overall_p_p_l', overall_p_p_l_per);
+        /* change_colors('overall_p_p_l', overall_p_p_l_per); */
         change_colors('overall_p_p_lTable', overall_p_p_l_per);
 
         /* return [adjustedValTotal, intradayValTotal, currentVal, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates]; */
@@ -485,6 +513,20 @@
     }
 
     function change_dynamic_colors(){
+        if (parseFloat($('#overall_p_p_l_per').text()) > 0){
+            /* $('#p_l_added_this_year_unrealised_div').removeClass('SA_border-left-secondary'); */
+            /* $('#p_l_added_this_year_unrealised_text_ruppee').removeClass('SA_text-gray-800'); */
+            $('#overall_p_p_l_div').addClass('SA_border-left-success');
+            $('#overall_p_p_l_text').addClass('SA_text-success');
+            /* $('#p_l_added_this_year_unrealised_text_ruppee').addClass('SA_text-success'); */
+        } else if (parseFloat($('#overall_p_p_l_per').text()) < 0){
+            /* $('#p_l_added_this_year_unrealised_text_ruppee').removeClass('SA_text-gray-800'); */
+            $('#overall_p_p_l_div').addClass('SA_border-left-danger');
+            $('#overall_p_p_l_text').addClass('SA_text-danger');
+            /* $('#p_l_this_year').addClass('SA_text-danger'); */
+            /* $('#p_l_added_this_year_unrealised_text_ruppee').addClass('SA_text-danger'); */
+        }
+
         if (parseFloat($('#daily_p_p_l_per').text()) > 0){
             /* $('#p_l_added_this_year_unrealised_div').removeClass('SA_border-left-secondary'); */
             /* $('#p_l_added_this_year_unrealised_text_ruppee').removeClass('SA_text-gray-800'); */

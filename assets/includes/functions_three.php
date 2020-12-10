@@ -8547,7 +8547,20 @@ function AddFDToPortfolio($fd_data, $portfolio_id){
                 break;
         }
 
-        $query_one   = "INSERT INTO " . T_PORTFOLIO_FD . " (`portfolio_id`, `fd_type`, `fd_bank`, `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `interest_payout_frequency`, `timestamp_created`) VALUES ({$portfolio_id}, '{$fd_type}', '{$fd_bank}', {$fd_transaction_date}, {$fd_maturity_date}, {$fd_transaction_price}, {$fd_transaction_interest}, {$fd_interest_payout_frequency}, {$timestamp_created})";
+        $fd_interest_payout_type_name = Wo_Secure($fd_datum['fd_interest_payout_type']);
+        switch ($fd_interest_payout_type_name){
+            case 'Reinvestment':
+                $fd_interest_payout_type = 0;
+                break;
+            case 'Out':
+                $fd_interest_payout_type = 1;
+                break;
+            default:
+                return 'Select only from given options!';
+                break;
+        }
+
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_FD . " (`portfolio_id`, `fd_type`, `fd_bank`, `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `interest_payout_frequency`, `timestamp_created`, `payout_type`) VALUES ({$portfolio_id}, '{$fd_type}', '{$fd_bank}', {$fd_transaction_date}, {$fd_maturity_date}, {$fd_transaction_price}, {$fd_transaction_interest}, {$fd_interest_payout_frequency}, {$timestamp_created}, {$fd_interest_payout_type})";
         $query       = mysqli_query($sqlConnect, $query_one);
 
         if (!$query) {
@@ -8865,7 +8878,7 @@ function Wo_ExtraFDDetailForAllFDInPortfolio($portfolio_id){
     $data         = array();
     $portfolio_id = Wo_Secure($portfolio_id);
 
-    $query_text = "SELECT `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `interest_payout_frequency` FROM " . T_PORTFOLIO_FD . "
+    $query_text = "SELECT `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `interest_payout_frequency`, `payout_type` FROM " . T_PORTFOLIO_FD . "
         WHERE `portfolio_id` = {$portfolio_id}";
     $sql          = mysqli_query($sqlConnect, $query_text);
     while ($fetched_data = mysqli_fetch_assoc($sql)) {

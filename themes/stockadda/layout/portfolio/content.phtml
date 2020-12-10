@@ -1,5 +1,5 @@
 <script>console.log('<?php echo json_encode($wo['portfolio_data']); ?>')</script>
-<?php if ($wo['portfolio_data']['no_of_stocks'] > 0) { ?>
+<?php if ($wo['portfolio_data']['total_invested_value'] > 0) { ?>
 
     <?php echo Wo_LoadPage('portfolio/dashboard_portfolio'); ?>
 
@@ -11,84 +11,33 @@
             <div class="row" >
                 <div class="col-md-12">
                     <div class="title" style="margin: 0; font-weight: 700; color: #3e3e3e; text-transform: capitalize;font-size:3em">
-                        No Stocks found in <?php echo (strpos(strtolower($wo['portfolio_data']['portfolio_name']), 'portfolio') !== false) ? $wo['portfolio_data']['portfolio_name'] : 'Portfolio - ' . $wo['portfolio_data']['portfolio_name']; ?>
+                        No Assets found in <?php echo (strpos(strtolower($wo['portfolio_data']['portfolio_name']), 'portfolio') !== false) ? $wo['portfolio_data']['portfolio_name'] : 'Portfolio - ' . $wo['portfolio_data']['portfolio_name']; ?>
 
                         <script>
                             console.log(<?php echo json_encode($wo['portfolio_data']); ?>);
                         </script>
 
                     </div>
-                    <span id='stock_add_errors' style="color: red;"></span>
                 </div>
             </div>
 
             <div class="row">
+                <div class="col-md-12" style="display: flex; justify-content: center; font-size: 1.5em;">
 
-                <div id="stock_container" class="col-md-12">
-                    <div class="stock_dropdown stock-search-container">
-
-                        <div id="first_stock_add" class="stock_search" role="search">
-
-                            <span class="stock_tooltip" data-toggle="tooltip" data-placement="bottom" title="Search and add Stocks">
-                                <input class="stock_input" data-toggle="stock_dropdown" type="text" onkeyup="Wo_StockSearchResult(this.value)">
-                            </span>
-
-                            <span id="stock_document_import_upload">
-                                |
-                                <span class="stock_document_import" data-toggle="tooltip" data-placement="bottom" title="Import or Upload Portfolio"></span>
-                            </span>
-
-                        </div>
-
-                        <div class="stock-quote-dropdown-menu search-dropdown-container" style="display:inline-block;left:auto;margin-top: 10px;margin-left: -6.4%;width: auto;" role="menu">
-                          <div class="stock-search-dropdown-result"></div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div id="stock_quote_table_search" class="col-md-12 hidden">
-                   <table class="table table-hover table-striped">
-
-                       <thead>
-                           <tr>
-                               <th style="text-align: center;">Stock Name</th>
-                               <th style="text-align: center;">Transaction Date</th>
-                               <th style="text-align: center;">Transaction Price</th>
-                               <th style="text-align: center;">Quantity</th>
-                               <th style="text-align: center;">Exchange</th>
-                               <th style="text-align: center;">Action</th>
-                           </tr>
-                       </thead>
-
-                       <tbody id="table_stock_quote_search_body"></tbody>
-
-                   </table>
-
-                   <span class="stock_search_submit" data-toggle="tooltip" data-placement="bottom" onclick="pushStockDataToBackend()" title="Add Stocks to Portfolio"></span>
-
-                   <div class="stock_dropdown stock-search-container" style="float: left;">
-
-                       <div id="extra_stock_seaches" class="stock_search" role="search">
-
-                           <span class="stock_tooltip" data-toggle="tooltip" data-placement="bottom" title="Search and add Stocks">
-                               <input class="stock_input" data-toggle="stock_dropdown" type="text" onkeyup="Wo_StockSearchResult(this.value)">
-                           </span>
-
-                       </div>
-
-                       <div class="stock-quote-dropdown-menu search-dropdown-container" style="display:inline-block;left:auto;margin-top: 10px;margin-left: -6.3%;width: auto;" role="menu">
-                         <div class="stock-search-dropdown-result"></div>
-                       </div>
-
-                   </div>
+                    <table>
+                        <th style="padding: 1em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-stocks">Add Stocks</th>
+                        <th style="padding: 1em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-mutual-funds">Add Mutual Funds</th>
+                        <th style="padding: 1em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-bullion">Add Bullion</th>
+                        <th style="padding: 1em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-cash">Add Cash</th>
+                        <th style="padding: 1em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-FD">Add Fixed Deposit</th>
+                        <th style="padding: 1em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-property">Add Property</th>
+                        <th style="padding: 1em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-OA">Add Other Assets</th>
+                    </table>
 
                 </div>
-
             </div>
 
         </div>
     </div>
 
 <?php }; ?>
-<?php echo Wo_LoadPage("portfolio/stock_search_container"); ?>

@@ -90,8 +90,8 @@
                              for (i = 0; i < type_dates_obj[dates_array[dataPointIndex]['x']/1000][type].length; i++){
                                  to_show += "• ";
                                  if (type == "Fixed Deposit"){
-                                      date_ = new Date(type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i]['maturity_date'] * 1000);
-                                      to_show += "Opened " + type + " of ₹" + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][0]['transaction_price'].toFixed(2) + " at interest rate of " + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][0]['interest_rate'] + "%; Maturity Date: "+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +".</br>"
+                                      var date_ = new Date(type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i]['maturity_date'] * 1000);
+                                      to_show += "Opened " + type + " of ₹" + parseFloat(type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i]['transaction_price']).toFixed(2) + " at interest rate of " + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i]['interest_rate'] + "%; Maturity Date: "+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +".</br>"
                                  }
                                  else{
                                       if (type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i] > 0){
