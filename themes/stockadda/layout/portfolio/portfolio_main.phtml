@@ -40,3 +40,22 @@
 		<?php echo Wo_LoadPage('sidebar/content');?>
 	</div>
 </div>
+
+<script>
+
+    function delete_portfolio(portfolio_id_){
+       $.ajax({
+           url: Wo_Ajax_Requests_File(),
+           type: 'GET',
+           dataType: 'json',
+           data: {
+               f:'delete_portfolio',
+               portfolio_id: portfolio_id_
+           },
+               })
+               .done(function(data) {
+                   console.log(data);
+               })
+    }
+
+</script>

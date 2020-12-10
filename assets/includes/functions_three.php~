@@ -8094,7 +8094,7 @@ function Wo_StockPriceCachingWDownloadNDelete($fincode, $timestamp, $fetched_tim
     return $data;
 }
 function SA_deletePortfolio($portfolio_id){
-    global $sqlConnect;
+    global $wo, $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
 
@@ -8115,33 +8115,6 @@ function SA_deletePortfolio($portfolio_id){
     $query_one   = "DELETE FROM " . T_PORTFOLIO_BULLION . " WHERE `portfolio_id` = {$portfolio_id}";
     $query       = mysqli_query($sqlConnect, $query_one);
 
-    $query_one   = "DELETE FROM " . T_PORTFOLIO_OA . " WHERE `portfolio_id` = {$portfolio_id}";
-    $query       = mysqli_query($sqlConnect, $query_one);
-
-    $query_one   = "DELETE FROM " . T_PORTFOLIO_OB . " WHERE `portfolio_id` = {$portfolio_id}";
-    $query       = mysqli_query($sqlConnect, $query_one);
-
-    $query_one   = "DELETE FROM " . T_PORTFOLIO_CASH . " WHERE `portfolio_id` = {$portfolio_id}";
-    $query       = mysqli_query($sqlConnect, $query_one);
-
-    /* $query_one   = "DELETE FROM " . T_PORTFOLIO_LOANS . " WHERE `portfolio_id` = {$portfolio_id}"; */
-    /* $query       = mysqli_query($sqlConnect, $query_one); */
-
-    $query_one   = "DELETE FROM " . T_PORTFOLIO_PROPERTY . " WHERE `portfolio_id` = {$portfolio_id}";
-    $query       = mysqli_query($sqlConnect, $query_one);
-
-    $query_one   = "DELETE FROM " . T_PORTFOLIO_FD . " WHERE `portfolio_id` = {$portfolio_id}";
-    $query       = mysqli_query($sqlConnect, $query_one);
-
-    $query_one   = "DELETE FROM " . T_PORTFOLIO_STOCKS . " WHERE `portfolio_id` = {$portfolio_id}";
-    $query       = mysqli_query($sqlConnect, $query_one);
-
-    $query_one   = "DELETE FROM " . T_PORTFOLIO_MF . " WHERE `portfolio_id` = {$portfolio_id}";
-    $query       = mysqli_query($sqlConnect, $query_one);
-
-    if (!$query) {
-        return mysqli_error($sqlConnect);
-    };
 
     return true;
 }

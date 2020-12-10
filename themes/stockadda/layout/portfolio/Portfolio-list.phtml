@@ -1,6 +1,6 @@
 <div class="page_list row boosted_pages">
 	<div class="col-xs-8 col-md-10" style="padding-bottom:5px">
-	<script>console.log("<?php echo $wo['portfolio']['url'];?>")</script>
+	<script>console.log(JSON.stringify(<?php echo json_encode($wo['portfolio']);?>))</script>
 		<a href="<?php echo $wo['portfolio']['url'];?>" data-ajax="<?php echo  $wo['portfolio']['raw_url'];?>">
 			<span class="page_title"><?php echo $wo['portfolio']['portfolio_name']; ?></span>
 		</a>
@@ -27,6 +27,7 @@
 						<?php endif; ?>
 
                         <span><a href="">Share</a></span>
+                        <span><a href="" onclick="delete_portfolio(<?php echo $wo['portfolio']['portfolio_id']?>)">Delete</a></span>
 
 					</small>
 				</div>
