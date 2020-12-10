@@ -10,36 +10,23 @@ if ($f == 'all_portfolio_stocks_extra_data') {
         $extraFDFullPortfolio = Wo_ExtraFDDetailForAllFDInPortfolio($portfolio_id);
         $extraCashFullPortfolio = Wo_ExtraCashDetailForAllCashInPortfolio($portfolio_id);
         $extraBullionFullPortfolio = Wo_ExtraBullionDetailForAllBullionInPortfolio($portfolio_id);
-        if (!empty($extraStockDataFullPortfolio)){
 
-            $data = array(
-                'portfolio_id'                    => $portfolio_id,
-                'extraStockDataFullPortfolio'     => $extraStockDataFullPortfolio,
-                'extraMFDataFullPortfolio'        => $extraMFDataFullPortfolio,
-                'extraPropertyDataFullPortfolio'  => $extraPropertyDataFullPortfolio,
-                /* 'extraLoansFullPortfolio'         => $extraLoansFullPortfolio, */
-                'extraOAFullPortfolio'            => $extraOAFullPortfolio,
-                'extraFDFullPortfolio'            => $extraFDFullPortfolio,
-                'extraCashFullPortfolio'          => $extraCashFullPortfolio,
-                'extraBullionFullPortfolio'       => $extraBullionFullPortfolio,
-                'status'                          => 200
-            );
+        $data = array(
+            'portfolio_id'                    => $portfolio_id,
+            'extraStockDataFullPortfolio'     => $extraStockDataFullPortfolio,
+            'extraMFDataFullPortfolio'        => $extraMFDataFullPortfolio,
+            'extraPropertyDataFullPortfolio'  => $extraPropertyDataFullPortfolio,
+            /* 'extraLoansFullPortfolio'         => $extraLoansFullPortfolio, */
+            'extraOAFullPortfolio'            => $extraOAFullPortfolio,
+            'extraFDFullPortfolio'            => $extraFDFullPortfolio,
+            'extraCashFullPortfolio'          => $extraCashFullPortfolio,
+            'extraBullionFullPortfolio'       => $extraBullionFullPortfolio,
+            'status'                          => 200
+        );
 
-            header("Content-type: application/json");
-            echo json_encode($data);
-            exit();
-        }else{
-
-            $data = array(
-                'status' => 400,
-                'portfolio_id' => $portfolio_id,
-                'message' => 'found_empty'
-            );
-
-            header("Content-type: application/json");
-            echo json_encode($data);
-            exit();
-        }
+        header("Content-type: application/json");
+        echo json_encode($data);
+        exit();
     } else {
         $data = array(
             'status' => 400,
