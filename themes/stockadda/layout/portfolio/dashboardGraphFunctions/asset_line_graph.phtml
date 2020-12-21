@@ -1,10 +1,10 @@
 <script>
 
-    function assetLineGraph(ctx, dates_array, least_val, start_date, type_dates_obj, skip_end, current_date){
+    function assetLineGraph(ctx, dates_array, least_val, max_val, start_date, type_dates_obj, skip_end, current_date){
         console.log(dates_array);
         var currentVal = parseFloat($('#currentVal').text());
         var total_invested_value = <?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?>;
-        var max_y = (currentVal > total_invested_value) ? currentVal : total_invested_value;
+        var max_y = (currentVal > max_val) ? currentVal : max_val;
         max_y += (max_y / 10);
         if (currentVal < 0 || least_val < 0) least_val = (currentVal > least_val) ? (least_val + least_val / 10) : (currentVal + currentVal / 10);
         else least_val = (currentVal > least_val) ? (least_val - least_val / 10) : (currentVal - currentVal / 10);
@@ -66,9 +66,9 @@
             labels: {
                 formatter: (value) => {
                     val = Math.round(value).toString();
-                    if (val.length > 3 && val.length < 6) val = Math.round(parseInt(val) / 1000).toString() + 'K';
-                    else if (val.length > 5 && val.length < 8) val = Math.round(parseInt(val) / 100000).toString() + 'L';
-                    else if (val.length > 7) val = Math.round(parseInt(val) / 100000).toString() + 'Cr';
+                    if (val.length > 3 && val.length < 6) val = parseFloat(Math.round(parseInt(val) / 10)/100).toString() + 'K';
+                    else if (val.length > 5 && val.length < 8) val = parseFloat(Math.round(parseInt(val) / 1000)/100).toString() + 'L';
+                    else if (val.length > 7) val = parseFloat(Math.round(parseInt(val) / 1000)/100).toString() + 'Cr';
                     return '₹' + val;
                 },
             },

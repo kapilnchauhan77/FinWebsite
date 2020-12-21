@@ -2,31 +2,34 @@
 if ($f == 'add_property') {
     $property_array = $_GET['property_array'];
     $portfolio_id = $_GET['portfolio_id'];
+    $auto_add = $_GET['auto_add'];
     $error = '';
     if (!empty($property_array) && !empty($portfolio_id)) {
 
         foreach ($property_array as $property_data) {
             if ($property_data['property_transaction_date'] === "NaN"){
                 /* $errors[] = "Please Enter Date!"; */
-                $error = "Please Enter Date!";
+                $error = "Please Enter All Purchase Dates!";
                 break;
             }
             if ($property_data['property_transaction_date'] > time()){
                 /* $errors[] = "Please Enter Date!"; */
-                $error = "Future Dates not allowed!";
+                $error = "Future Dates Not Allowed!";
                 break;
             }
             if ($property_data['property_transaction_price'] == 0){
                 /* $errors[] = "Please Enter Price!"; */
-                $error = "Please Enter Price!";
+                $error = "Please Enter All Invested values";
                 break;
             }
-            if ($property_data['property_current_price'] == 0){
+            if ($property_data['property_current_price'] < 0){
                 /* $errors[] = "Please Enter Price!"; */
-                $error = "Please Current Value of your asset!";
+                $error = "Please Enter Correct Current Value Of All Your Properties!";
                 break;
             }
         }
+
+        if ($auto_add != false && $auto_add != true) $error = 'Please do not change system files!';
 
         if ($error !== ''){
 
@@ -40,7 +43,7 @@ if ($f == 'add_property') {
                 exit();
         }
         else{
-            $portfolio_data_added = AddPropertyToPortfolio($property_array, $portfolio_id);
+            $portfolio_data_added = AddPropertyToPortfolio($property_array, $portfolio_id, $auto_add);
             if ($portfolio_data_added === true){
 
                 $data = array(

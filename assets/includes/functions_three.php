@@ -7605,6 +7605,18 @@ function StopCloudRecording($data)
 }
 
 //Custom Functions
+function user_portfolio_auth($portfolio_id){
+    global $sqlConnect, $wo;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $uid        =  $wo['user']['user_id'];
+    $query_one   = "SELECT `user_id` FROM " . T_PORTFOLIO . " WHERE `portfolio_id` = {$portfolio_id};";
+    $query       = mysqli_query($sqlConnect, $query_one);
+    $user_id     = mysqli_fetch_assoc($query)['user_id'];
+    if ($user_id != $uid) return $user_id;
+    else return true;
+}
 function Wo_GetCompanies($page_num = 0, $pageFilter = "All") {
     global $sqlConnect;
 
@@ -8097,6 +8109,7 @@ function SA_deletePortfolio($portfolio_id){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     $query_text = "DELETE FROM " . T_PORTFOLIO . " WHERE `portfolio_id` = {$portfolio_id};";
     $query  = mysqli_query($sqlConnect, $query_text);
@@ -8182,10 +8195,11 @@ function Wo_EditPortfolio($data){
     global $wo, $sqlConnect;
 
     $portfolio_title =       Wo_Secure($data['portfolio_title']);
-    $portfolio_id =          Wo_Secure($data['portfolio_id']);
     $portfolio_description = Wo_Secure($data['portfolio_description']);
     $privacy_level =         Wo_Secure($data['privacy_level']);
     $userId =                Wo_Secure($wo['user']['user_id']);
+    $portfolio_id =          Wo_Secure($data['portfolio_id']);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     $query_text = "UPDATE " . T_PORTFOLIO . " SET `user_id` = {$userId}, `portfolio_name` = '{$portfolio_title}', `privacy_level` = {$privacy_level} WHERE `portfolio_id` = {$portfolio_id}";
     $query  = mysqli_query($sqlConnect, $query_text);
@@ -8239,7 +8253,7 @@ function Wo_PortfolioCaching($portfolio_id, $get_desc){
     global $sqlConnect, $wo;
 
     $portfolio_id        = Wo_Secure($portfolio_id);
-    $query_text = "SELECT `portfolio_id`, `user_id`, `portfolio_name`, `portfolio_url`, `total_invested_value`, `invested_value_bullion`, `invested_value_cash`,  `invested_value_FD`, `invested_value_properties`, `invested_value_other_assets`,  `loan_borrowings`,  `other_borrowings`, `stock_invested_value`, `invested_value_mutual_funds`, `timestamp_created`, `no_of_unique_stocks`, `no_of_unique_mf`, `no_of_stocks`, `privacy_level` FROM " . T_PORTFOLIO . " WHERE `portfolio_id` = {$portfolio_id}";
+    $query_text = "SELECT `portfolio_id`, `user_id`, `portfolio_name`, `portfolio_url`, `total_invested_value`, `invested_value_bullion`, `invested_value_cash`, `current_value_cash`,  `invested_value_FD`, `invested_value_properties`, `invested_value_other_assets`,  `loan_borrowings`,  `other_borrowings`, `stock_invested_value`, `invested_value_mutual_funds`, `timestamp_created`, `no_of_unique_stocks`, `no_of_unique_mf`, `no_of_stocks`, `privacy_level` FROM " . T_PORTFOLIO . " WHERE `portfolio_id` = {$portfolio_id}";
     $sql          = mysqli_query($sqlConnect, $query_text);
 
     $fetched_data = mysqli_fetch_assoc($sql);
@@ -8357,10 +8371,30 @@ function SA_Get_Portfolio_Count(){
     /* username_portfolio_portfoliocountuserid+3 */
     return $fetched_data['portfolio_count'];
 }
+function AddCashForAssetManually($portfolio_id, $amount, $note, $date_){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
+
+    $amount = Wo_Secure($amount);
+    $note = Wo_Secure($note);
+    $date_ = Wo_Secure($date_);
+
+    $done = AddCashToPortfolio(array(array(
+                'cash_type' => 'Credit',
+                'cash_transaction_date' => $date_,
+                'cash_transaction_price' => $amount,
+                'note' => ''
+            )), $portfolio_id, $note);
+
+    return $done;
+}
 function AddBullionToPortfolio($bullion_data, $portfolio_id){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     foreach ($bullion_data as $bullion_datum) {
 
@@ -8412,6 +8446,7 @@ function AddOAToPortfolio($oa_data, $portfolio_id){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     foreach ($oa_data as $oa_datum) {
 
@@ -8460,6 +8495,7 @@ function AddOBToPortfolio($ob_data, $portfolio_id){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     foreach ($ob_data as $ob_datum) {
 
@@ -8500,6 +8536,7 @@ function AddCashToPortfolio($cash_data, $portfolio_id, $internal_note){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
     $internal_note = Wo_Secure($internal_note);
 
     foreach ($cash_data as $cash_datum) {
@@ -8525,10 +8562,16 @@ function AddCashToPortfolio($cash_data, $portfolio_id, $internal_note){
         $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_cash` = `invested_value_cash` + {$cash_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
 
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `current_value_cash` = `current_value_cash` + {$cash_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
+        $query     = mysqli_query($sqlConnect, $query_one);
+
         if (!$query) {
             return mysqli_error($sqlConnect);
         };
+
+        $wo['portfolio_data']['current_value_cash'] += $cash_transaction_price;
     }
+
 
     return true;
 }
@@ -8567,10 +8610,12 @@ function AddCashToPortfolio($cash_data, $portfolio_id, $internal_note){
 
 /*     return true; */
 /* } */
-function AddPropertyToPortfolio($property_data, $portfolio_id){
+function AddPropertyToPortfolio($property_data, $portfolio_id, $auto_add){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    $auto_add = Wo_Secure($auto_add);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     foreach ($property_data as $property_datum) {
 
@@ -8581,19 +8626,30 @@ function AddPropertyToPortfolio($property_data, $portfolio_id){
         $property_note = Wo_Secure($property_datum['note']);
         $timestamp_created = strtotime("now");
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Credit',
-            'cash_transaction_date' => $property_transaction_date,
-            'cash_transaction_price' => $property_transaction_price,
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to buy Property");
+        if ($auto_add == true){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Credit',
+                'cash_transaction_date' => $property_transaction_date,
+                'cash_transaction_price' => $property_transaction_price,
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Deposit to buy Property");
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Debit',
-            'cash_transaction_date' => $property_transaction_date,
-            'cash_transaction_price' => (-1 * $property_transaction_price),
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Withrawl to buy Property");
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $property_transaction_date,
+                'cash_transaction_price' => (-1 * $property_transaction_price),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withrawl to buy Property");
+        } else if ($auto_add == false){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $property_transaction_date,
+                'cash_transaction_price' => (-1 * $property_transaction_price),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withrawl to buy Property");
+        } else {
+            return 'Please Do Not Change System Files!';
+        };
 
         $query_one   = "INSERT INTO " . T_PORTFOLIO_PROPERTY . " (`portfolio_id`, `Property Name`, `transaction_date`, `transaction_price`, `current_price`, `Notes`, `timestamp_created`) VALUES ({$portfolio_id}, '{$property_type}', {$property_transaction_date}, {$property_transaction_price}, {$property_current_price}, '{$property_note}', {$timestamp_created})";
         $query       = mysqli_query($sqlConnect, $query_one);
@@ -8619,6 +8675,7 @@ function AddFDToPortfolio($fd_data, $portfolio_id){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     foreach ($fd_data as $fd_datum) {
 
@@ -8700,6 +8757,8 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
     global $wo, $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
+
     $no_of_stocks = $wo['portfolio_data']['no_of_stocks'] + $no_of_stocks;
     $no_of_unique_stocks = 0;
 
@@ -8771,6 +8830,8 @@ function AddMFToPortfolio($mf_quote_data, $portfolio_id){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
+
     $no_of_unique_mf = 0;
 
     foreach ($mf_quote_data as $mf_quote_datum) {
@@ -8834,6 +8895,7 @@ function AddMFToPortfolio($mf_quote_data, $portfolio_id){
 function Wo_GetDataOfStocksInPortfolio($portfolio_id) {
     global $sqlConnect;
 
+    $portfolio_id = Wo_Secure($portfolio_id);
     $data       = array();
     $stocks       = array();
     $query_text = "SELECT `stock_fincode` FROM " . T_PORTFOLIO_STOCKS . "
@@ -8851,6 +8913,7 @@ function Wo_GetDataOfStocksInPortfolio($portfolio_id) {
 function Wo_GetStocksInPortfolio($portfolio_id) {
     global $sqlConnect;
 
+    $portfolio_id = Wo_Secure($portfolio_id);
     $stocks       = array();
     $query_text = "SELECT `stock_fincode` FROM " . T_PORTFOLIO_STOCKS . "
         WHERE `portfolio_id` = {$portfolio_id}";

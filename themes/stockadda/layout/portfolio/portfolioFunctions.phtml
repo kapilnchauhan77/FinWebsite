@@ -256,9 +256,10 @@
             if (parseInt(value.transaction_date) in dates_obj) dates_obj[parseInt(value.transaction_date)] += parseFloat(value.transaction_price);
             else dates_obj[parseInt(value.transaction_date)] = parseFloat(value.transaction_price);
 
+            console.log(parseFloat(value.transaction_price));
             if (parseInt(value.transaction_date) in type_dates_obj){
                 if ('Properties' in type_dates_obj[parseInt(value.transaction_date)]) type_dates_obj[parseInt(value.transaction_date)]['Properties'].push(parseFloat(value.transaction_price));
-                else type_dates_obj[parseInt(value.transaction_date)]['Properties'] = (parseFloat(value.transaction_price));
+                else type_dates_obj[parseInt(value.transaction_date)]['Properties'] = [parseFloat(value.transaction_price)];
             } else {
                 type_dates_obj[parseInt(value.transaction_date)] = {'Properties': [parseFloat(value.transaction_price)]};
             }

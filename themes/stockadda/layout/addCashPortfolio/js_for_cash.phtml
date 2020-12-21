@@ -97,7 +97,7 @@
                 f:'add_cash',
                 cash_array: cash_array_to_send,
                 portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
-                available_cash: parseFloat(<?php echo $wo['portfolio_data']['invested_value_cash']; ?>),
+                available_cash: parseFloat(<?php echo $wo['portfolio_data']['current_value_cash']; ?>),
             },
                 success: function(data) {
                     if (data['status'] == 200){

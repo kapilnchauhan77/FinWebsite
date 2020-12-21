@@ -51,9 +51,9 @@ if (isset($_GET['u'])) {
             $about               = $wo['company_data']['compname'] . "'s Live Quote, Qtrly Results, Fin Ratios, Bal Sheet, P&L and much more...";
             $name                = $wo['company_data']['s_name'];
         } else if ($check_user['type'] == 'portfolio') {
-            $id                  = $portfolio_id = $check_user['portfolio_id'];
+            $id                            = $portfolio_id = $check_user['portfolio_id'];
             $wo['user']['portfolio_count'] = SA_Get_Portfolio_Count();
-            $wo['portfolio_data']  = Wo_PortfolioCaching($portfolio_id, true);
+            $wo['portfolio_data']          = Wo_PortfolioCaching($portfolio_id, true);
             if (empty($wo['portfolio_data'])){
                 header("Location: " . Wo_SeoLink('index.php?link1=404'));
                 exit();

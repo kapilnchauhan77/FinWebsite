@@ -26,11 +26,13 @@
        }
 
        var least_val = undefined;
+       var max_val = undefined;
        date_time_stamps.forEach(function (date_time){
            /* date_array_to_send = [parseInt(date_time) * 1000, dates_obj[date_time]]; */
            date_array_to_send = {x: parseInt(date_time) * 1000, y: dates_obj[date_time], color: color_dict[date_time]};
            dates_array_to_send.push(date_array_to_send);
            if ((dates_obj[date_time] < least_val) || least_val == undefined) least_val = dates_obj[date_time];
+           if ((dates_obj[date_time] > max_val) || max_val == undefined) max_val = dates_obj[date_time];
        });
 
 
@@ -39,7 +41,7 @@
        console.log(color_dict);
        console.log(type_dates_obj);
        ctx = document.querySelector("#asset_line_graph_SA");
-       if (ctx) assetLineGraph(ctx, dates_array_to_send, least_val, date_time_stamps[0], type_dates_obj, skip_end, current_date);
+       if (ctx) assetLineGraph(ctx, dates_array_to_send, least_val, max_val, date_time_stamps[0], type_dates_obj, skip_end, current_date);
     };
 
     function add_doughnutCharts(currentVal_array){

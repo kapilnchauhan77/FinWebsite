@@ -1,4 +1,5 @@
 <!-- JS Pages functions -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="<?php echo $wo['config']['theme_url'];?>/javascript/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
 <script type="text/javascript">
 
@@ -65,8 +66,50 @@
         }
     }
 
+    function ajax_call_for_property(property_array_to_send, auto_add_){
+        $.ajax({
+            url: Wo_Ajax_Requests_File(),
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                f:'add_property',
+                property_array: property_array_to_send,
+                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                auto_add: auto_add_,
+            },
+                success: function(data) {
+                    if (data['status'] == 200){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Asset Added Successfully!',
+                        }).then((result) => {
+                            localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
+                            location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
+                        })
+                    }
+                    else if (data['status'] == 401){
+                        Swal.fire({
+                            icon: 'error',
+                            title: data['error'],
+                        })
+                    }
+                    else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: data['error'],
+                        })
+                        console.log(data['error']);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                }
+        });
+    }
     function pushPropertyDataToBackend(){
-        property_array_to_send = new Array();
+        var property_total_price = 0;
+        var earliest_property_date = undefined;
+        var property_array_to_send = new Array();
 
         for (id = 0; id < property_num; id++){
             if (!property_to_not_add.includes(id)){
@@ -74,7 +117,9 @@
                 if ($("#"+id+" #property_transaction_date").val() === ""){
                     $("#"+id+" #property_transaction_date").val("NaN");
                 }
-                console.log(parseFloat($("#"+id+"_charge #property_transaction_net_amount").val()));
+
+                property_total_price += parseFloat($("#"+id+" #property_transaction_price").val());
+                if((earliest_property_date == undefined) || (parseInt(new Date($("#"+id+" #property_transaction_date").val()).getTime()/1000) < earliest_property_date)) earliest_property_date = parseInt(new Date($("#"+id+" #property_transaction_date").val()).getTime()/1000);
 
                 propertyInfo = {
 
@@ -90,37 +135,71 @@
             }
         }
 
-        console.log(property_array_to_send);
-
-        $.ajax({
-            url: Wo_Ajax_Requests_File(),
-            type: 'GET',
-            dataType: 'json',
-            data: {
-                f:'add_property',
-                property_array: property_array_to_send,
-                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
-            },
-                success: function(data) {
-                    if (data['status'] == 200){
-                        console.log(data);
-                        console.log("done");
-                        localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
-                        location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
-                    }
-                    else if (data['status'] == 401){
-                        console.log(data['error']);
-                        $('#property_add_errors').text(data['error']);
-                    }
-                    else{
-                        console.log(data);
-                        $('#property_add_errors').text(data['error']);
-                    }
+        if (property_total_price > <?php echo $wo['portfolio_data']['current_value_cash']; ?>){
+            Swal.fire({
+                title: '<p style="color: red;">Insufficient Cash Available</p>',
+                text: 'Cash Available: ₹<?php echo $wo['portfolio_data']['current_value_cash']; ?> & Transaction Cost: ₹' + property_total_price,
+                width: 400,
+                padding: '3em',
+                showCancelButton: false,
+                showCloseButton: true,
+                showDenyButton: true,
+                confirmButtonColor: 'green',
+                denyButtonColor: '#236CB0',
+                denyButtonText: 'Add Cash Automatically',
+                confirmButtonText: 'Add Cash Manually',
+                showLoaderOnConfirm: true,
+                preDeny: () => {
+                    $.ajax({
+                        url: Wo_Ajax_Requests_File(),
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            f:'add_property',
+                            property_array: property_array_to_send,
+                            portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                        }
+                    });
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Add Cash Manually',
+                        text: 'Minimum Amount To Add For This Transaction: ₹' + (property_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>),
+                        input: 'number',
+                        inputAttributes: { min: (property_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>) },
+                        validationMessage: 'Added amount is less than Required amount!',
+                        showCloseButton: true,
+                        showCancelButton: true,
+                        confirmButtonText: 'Add',
+                        preConfirm: (amount) => {
+                            $.ajax({
+                                url: Wo_Ajax_Requests_File(),
+                                type: 'GET',
+                                dataType: 'json',
+                                data: {
+                                    f:'add_cash_for_asset',
+                                    cash: amount,
+                                    portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                                    note: 'Manually added cash for buying Property',
+                                    date_: earliest_property_date,
+                                }
+                            });
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            ajax_call_for_property(property_array_to_send, false);
+                        }
+                    })
+                } else if (result.isDenied) {
+                    ajax_call_for_property(property_array_to_send, true);
                 }
-        });
+            })
+        }else {
+            ajax_call_for_property(property_array_to_send, false);
+        }
     }
 
 </script>
