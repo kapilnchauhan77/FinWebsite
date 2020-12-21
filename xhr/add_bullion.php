@@ -2,6 +2,7 @@
 if ($f == 'add_bullion') {
     $bullion_array = $_GET['bullion_array'];
     $portfolio_id = $_GET['portfolio_id'];
+    $auto_add = $_GET['auto_add'];
     $error = '';
     if (!empty($bullion_array) && !empty($portfolio_id)) {
 
@@ -28,6 +29,8 @@ if ($f == 'add_bullion') {
             }
         }
 
+        if ($auto_add != '0' && $auto_add != '1') $error = 'Please do not change system files!';
+
         if ($error !== ''){
 
                 $data = array(
@@ -40,7 +43,7 @@ if ($f == 'add_bullion') {
                 exit();
         }
         else{
-            $portfolio_data_added = AddBullionToPortfolio($bullion_array, $portfolio_id);
+            $portfolio_data_added = AddBullionToPortfolio($bullion_array, $portfolio_id, $auto_add);
             if ($portfolio_data_added === true){
 
                 $data = array(

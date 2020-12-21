@@ -94,9 +94,51 @@
         $("#"+id+"stock_notes").remove();
     }
 
+    function ajax_call_for_stocks(stocks_array_to_send, auto_add_){
+        $.ajax({
+            url: Wo_Ajax_Requests_File(),
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                f:'add_mutual_funds',
+                mf_array: stocks_array_to_send,
+                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                auto_add: auto_add_,
+            },
+                success: function(data) {
+                    if (data['status'] == 200){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Property Added Successfully!',
+                        }).then((result) => {
+                            localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
+                            location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
+                        })
+                    }
+                    else if (data['status'] == 401){
+                        Swal.fire({
+                            icon: 'error',
+                            title: data['error'],
+                        })
+                    }
+                    else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: data['error'],
+                        })
+                        console.log(data['error']);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                }
+        });
+    }
+
     function pushStockDataToBackend(){
-        var stock_array_to_send = new Array();
-        var no_of_stocks = 0;
+        var stocks_array_to_send = new Array();
+        var stocks_total_price = 0;
+        var earliest_stocks_date = undefined;
 
         Object.keys(stock_quotes_to_add).forEach(function (id){
             if ($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val() === ""){
@@ -105,6 +147,9 @@
                 $("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val("NaN");
             }
             /* console.log($("#"+stock_quotes_to_add[id]+id+"charge_").text()) */
+
+            stocks_total_price += parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_amount").val());
+            if((earliest_stocks_date == undefined) || (parseInt(new Date($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000))) earliest_stocks_date = parseInt(new Date($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000);
 
             stockInfo = {
 
@@ -117,46 +162,68 @@
 
                         };
 
-            no_of_stocks += parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val());
-            stock_array_to_send.push(stockInfo);
+            stocks_array_to_send.push(stockInfo);
         });
 
-        console.log(stock_array_to_send);
+        console.log(stocks_array_to_send);
 
         /* no_of_unique_stocks = [...new Set(Object.values(stock_quotes_to_add))].length; */
         /* console.log("no_of_unique_stocks"); */
         /* console.log(no_of_unique_stocks); */
 
-        $.ajax({
-            url: Wo_Ajax_Requests_File(),
-            type: 'GET',
-            dataType: 'json',
-            data: {
-                f:'add_mutual_funds',
-                mf_array: stock_array_to_send,
-                no_of_mf: no_of_stocks,
-                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
-            },
-                success: function(data) {
-                    if (data['status'] == 200){
-                        console.log(data);
-                        console.log("done");
-                        localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
-                        location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
-                    }
-                    else if (data['status'] == 401){
-                        console.log(data['error']);
-                        $('#stock_add_errors').text(data['error']);
-                    }
-                    else{
-                        console.log(data);
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+        if (stocks_total_price > <?php echo $wo['portfolio_data']['current_value_cash']; ?>){
+            Swal.fire({
+                title: '<p style="color: red;">Insufficient Cash Available</p>',
+                text: 'Cash Available: ₹<?php echo $wo['portfolio_data']['current_value_cash']; ?> & Transaction Cost: ₹' + stocks_total_price,
+                width: 400,
+                padding: '3em',
+                showCancelButton: false,
+                showCloseButton: true,
+                showDenyButton: true,
+                confirmButtonColor: 'green',
+                denyButtonColor: '#236CB0',
+                denyButtonText: 'Add Cash Automatically',
+                confirmButtonText: 'Add Cash Manually',
+                showLoaderOnConfirm: true,
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Add Cash Manually',
+                        text: 'Minimum Amount To Add For This Transaction: ₹' + (stocks_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>),
+                        input: 'number',
+                        inputAttributes: { min: (stocks_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>) },
+                        validationMessage: 'Added amount is less than Required amount!',
+                        showCloseButton: true,
+                        showCancelButton: true,
+                        confirmButtonText: 'Add',
+                        preConfirm: (amount) => {
+                            $.ajax({
+                                url: Wo_Ajax_Requests_File(),
+                                type: 'GET',
+                                dataType: 'json',
+                                data: {
+                                    f:'add_cash_for_asset',
+                                    cash: amount,
+                                    portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                                    note: 'Manually added cash for buying Mutual Funds',
+                                    date_: earliest_stocks_date,
+                                }
+                            });
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            ajax_call_for_stocks(stocks_array_to_send, '0');
+                        }
+                    })
+                } else if (result.isDenied) {
+                    ajax_call_for_stocks(stocks_array_to_send, '1');
                 }
-        });
+            })
+        } else {
+            ajax_call_for_stocks(stocks_array_to_send, '0');
+        }
     }
 
 </script>
-

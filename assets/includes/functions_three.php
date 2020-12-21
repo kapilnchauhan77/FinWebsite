@@ -8438,10 +8438,11 @@ function AddCashForAssetManually($portfolio_id, $amount, $note, $date_){
 
     return $done;
 }
-function AddBullionToPortfolio($bullion_data, $portfolio_id){
+function AddBullionToPortfolio($bullion_data, $portfolio_id, $auto_add){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    $auto_add = Wo_Secure($auto_add);
     if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     foreach ($bullion_data as $bullion_datum) {
@@ -8456,19 +8457,31 @@ function AddBullionToPortfolio($bullion_data, $portfolio_id){
         $bullion_note = Wo_Secure($bullion_datum['note']);
         $timestamp_created = strtotime("now");
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Credit',
-            'cash_transaction_date' => $bullion_transaction_date,
-            'cash_transaction_price' => $bullion_net_amount,
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to buy bullion", true, false);
+        if ($auto_add === '1'){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Credit',
+                'cash_transaction_date' => $bullion_transaction_date,
+                'cash_transaction_price' => $bullion_net_amount,
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Deposit to buy bullion", true, false);
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Debit',
-            'cash_transaction_date' => $bullion_transaction_date,
-            'cash_transaction_price' => (-1 * $bullion_net_amount),
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Withrawl to buy bullion", false, false);
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $bullion_transaction_date,
+                'cash_transaction_price' => (-1 * $bullion_net_amount),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withdrwal to buy bullion", false, false);
+        } else if ($auto_add === '0'){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $bullion_transaction_date,
+                'cash_transaction_price' => (-1 * $bullion_net_amount),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withdrwal to buy bullion", false, false);
+        } else {
+            return 'Please Do Not Change System Files!';
+        };
+
 
         $query_one   = "INSERT INTO " . T_PORTFOLIO_BULLION . " (`portfolio_id`, `bullion_type`, `transaction_date`, `transaction_price`, `transaction_quantity`, `timestamp_created`, `charge`, `net_amount`, `purchased_from`, `note`) VALUES ({$portfolio_id}, {$bullion_type}, {$bullion_transaction_date}, {$bullion_transaction_price}, {$bullion_transaction_qty}, {$timestamp_created}, {$bullion_charge}, {$bullion_net_amount}, '{$bullion_purchased_from}', '{$bullion_note}')";
         $query       = mysqli_query($sqlConnect, $query_one);
@@ -8516,14 +8529,14 @@ function AddOAToPortfolio($oa_data, $portfolio_id, $auto_add){
                 'cash_transaction_date' => $oa_transaction_date,
                 'cash_transaction_price' => (-1 * $oa_transaction_price),
                 'note' => ''
-            )), $portfolio_id, "Automatic Cash Withrawl to buy Other Assets", false, false);
+            )), $portfolio_id, "Automatic Cash Withdrwal to buy Other Assets", false, false);
         } else if ($auto_add === '0'){
             AddCashToPortfolio(array(array(
                 'cash_type' => 'Debit',
                 'cash_transaction_date' => $oa_transaction_date,
                 'cash_transaction_price' => (-1 * $oa_transaction_price),
                 'note' => ''
-            )), $portfolio_id, "Automatic Cash Withrawl to buy Other Assets", false, false);
+            )), $portfolio_id, "Automatic Cash Withdrwal to buy Other Assets", false, true);
         } else {
             return 'Please Do Not Change System Files!';
         };
@@ -8650,14 +8663,14 @@ function AddPropertyToPortfolio($property_data, $portfolio_id, $auto_add){
                 'cash_transaction_date' => $property_transaction_date,
                 'cash_transaction_price' => (-1 * $property_transaction_price),
                 'note' => ''
-            )), $portfolio_id, "Automatic Cash Withrawl to buy Property", false, false);
+            )), $portfolio_id, "Automatic Cash Withdrwal to buy Property", false, false);
         } else if ($auto_add === '0'){
             AddCashToPortfolio(array(array(
                 'cash_type' => 'Debit',
                 'cash_transaction_date' => $property_transaction_date,
                 'cash_transaction_price' => (-1 * $property_transaction_price),
                 'note' => ''
-            )), $portfolio_id, "Automatic Cash Withrawl to buy Property", false, true);
+            )), $portfolio_id, "Automatic Cash Withdrwal to buy Property", false, true);
         } else {
             return 'Please Do Not Change System Files!';
         };
@@ -8679,10 +8692,11 @@ function AddPropertyToPortfolio($property_data, $portfolio_id, $auto_add){
 
     return true;
 }
-function AddFDToPortfolio($fd_data, $portfolio_id){
+function AddFDToPortfolio($fd_data, $portfolio_id, $auto_add){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    $auto_add = Wo_Secure($auto_add);
     if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     foreach ($fd_data as $fd_datum) {
@@ -8727,19 +8741,30 @@ function AddFDToPortfolio($fd_data, $portfolio_id){
                 break;
         }
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Credit',
-            'cash_transaction_date' => $fd_transaction_date,
-            'cash_transaction_price' => $fd_transaction_price,
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to make a Fixed Deposit", true, false);
+        if ($auto_add === '1'){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Credit',
+                'cash_transaction_date' => $fd_transaction_date,
+                'cash_transaction_price' => $fd_transaction_price,
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Deposit to make a Fixed Deposit", true, false);
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Debit',
-            'cash_transaction_date' => $fd_transaction_date,
-            'cash_transaction_price' => (-1 * $fd_transaction_price),
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Withrawl to make a Fixed Deposit", false, false);
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $fd_transaction_date,
+                'cash_transaction_price' => (-1 * $fd_transaction_price),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withdrwal to make a Fixed Deposit", false, false);
+        } else if ($auto_add === '0'){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $fd_transaction_date,
+                'cash_transaction_price' => (-1 * $fd_transaction_price),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withdrwal to make a Fixed Deposit", false, true);
+        } else {
+            return 'Please Do Not Change System Files!';
+        };
 
         $query_one   = "INSERT INTO " . T_PORTFOLIO_FD . " (`portfolio_id`, `fd_type`, `fd_bank`, `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `interest_payout_frequency`, `timestamp_created`, `payout_type`) VALUES ({$portfolio_id}, '{$fd_type}', '{$fd_bank}', {$fd_transaction_date}, {$fd_maturity_date}, {$fd_transaction_price}, {$fd_transaction_interest}, {$fd_interest_payout_frequency}, {$timestamp_created}, {$fd_interest_payout_type})";
         $query       = mysqli_query($sqlConnect, $query_one);
@@ -8758,10 +8783,11 @@ function AddFDToPortfolio($fd_data, $portfolio_id){
 
     return true;
 }
-function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
+function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $auto_add){
     global $wo, $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    $auto_add = Wo_Secure($auto_add);
     if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     $no_of_stocks = $wo['portfolio_data']['no_of_stocks'] + $no_of_stocks;
@@ -8779,19 +8805,31 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
         $stock_note = Wo_Secure($stock_quote_datum['note']);
         $timestamp_created = strtotime("now");
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Credit',
-            'cash_transaction_date' => $stock_transaction_date,
-            'cash_transaction_price' => $stock_net_amount,
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to buy Stocks", true, false);
+        if ($auto_add === '1'){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Credit',
+                'cash_transaction_date' => $stock_transaction_date,
+                'cash_transaction_price' => $stock_net_amount,
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Deposit to buy Stocks", true, false);
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Debit',
-            'cash_transaction_date' => $stock_transaction_date,
-            'cash_transaction_price' => (-1 * $stock_net_amount),
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to buy Stocks", false, false);
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $stock_transaction_date,
+                'cash_transaction_price' => (-1 * $stock_net_amount),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withdrwal to buy Stocks", false, false);
+        } else if ($auto_add === '0'){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $stock_transaction_date,
+                'cash_transaction_price' => (-1 * $stock_net_amount),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withdrwal to buy Stocks", false, true);
+        } else {
+            return 'Please Do Not Change System Files!';
+        };
+
 
         $query_text   = "SELECT `id` FROM " . T_PORTFOLIO_STOCKS . " WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id}";
         $query_one    = mysqli_query($sqlConnect, $query_text);
@@ -8826,10 +8864,11 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
 
     return true;
 }
-function AddMFToPortfolio($mf_quote_data, $portfolio_id){
+function AddMFToPortfolio($mf_quote_data, $portfolio_id, $auto_add){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    $auto_add = Wo_Secure($auto_add);
     if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     $no_of_unique_mf = 0;
@@ -8844,19 +8883,30 @@ function AddMFToPortfolio($mf_quote_data, $portfolio_id){
         $mf_note = Wo_Secure($mf_quote_datum['note']);
         $timestamp_created = strtotime("now");
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Credit',
-            'cash_transaction_date' => $mf_transaction_date,
-            'cash_transaction_price' => $mf_amount,
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to buy mutual funds", true, false);
+        if ($auto_add === '1'){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Credit',
+                'cash_transaction_date' => $mf_transaction_date,
+                'cash_transaction_price' => $mf_amount,
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Deposit to buy mutual funds", true, false);
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Debit',
-            'cash_transaction_date' => $mf_transaction_date,
-            'cash_transaction_price' => (-1 * $mf_amount),
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Withrawl to buy mutual funds", false, false);
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $mf_transaction_date,
+                'cash_transaction_price' => (-1 * $mf_amount),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withdrwal to buy mutual funds", false, false);
+        } else if ($auto_add === '0'){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $mf_transaction_date,
+                'cash_transaction_price' => (-1 * $mf_amount),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withdrwal to buy mutual funds", false, true);
+        } else {
+            return 'Please Do Not Change System Files!';
+        };
 
         $query_text   = "SELECT `Scheme Code` FROM " . T_PORTFOLIO_MF . " WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id}";
         $query_one    = mysqli_query($sqlConnect, $query_text);

@@ -99,8 +99,51 @@
         }
     }
 
+    function ajax_call_for_fd(fd_array_to_send, auto_add_){
+        $.ajax({
+            url: Wo_Ajax_Requests_File(),
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                f:'add_fd',
+                fd_array: fd_array_to_send,
+                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                auto_add: auto_add_,
+            },
+                success: function(data) {
+                    if (data['status'] == 200){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Fixed Deposit Added Successfully!',
+                        }).then((result) => {
+                            localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
+                            location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
+                        })
+                    }
+                    else if (data['status'] == 401){
+                        Swal.fire({
+                            icon: 'error',
+                            title: data['error'],
+                        })
+                    }
+                    else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: data['error'],
+                        })
+                        console.log(data['error']);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                }
+        });
+    }
+
     function pushFDDataToBackend(){
-        fd_array_to_send = new Array();
+        var fd_total_price = 0;
+        var earliest_fd_date = undefined;
+        var fd_array_to_send = new Array();
 
         /* console.log($("#"+fd_to_add[id]+id+"charge_").text()) */
 
@@ -115,8 +158,8 @@
                     $("#"+id+" #fd_maturity_date").val("NaN");
                 }
 
-                console.log(parseFloat($("#"+id+"_charge #fd_transaction_net_amount").val()));
-
+                fd_total_price += parseFloat($("#"+id+" #fd_transaction_price").val());
+                if((earliest_fd_date == undefined) || (parseInt(new Date($("#"+id+" #fd_transaction_date").val()).getTime()/1000) < earliest_fd_date)) earliest_fd_date = parseInt(new Date($("#"+id+" #fd_transaction_date").val()).getTime()/1000);
                 fdInfo = {
 
                         fd_type: $('#'+id+' #fd_type').val(),
@@ -134,35 +177,59 @@
             }
         }
 
-        $.ajax({
-            url: Wo_Ajax_Requests_File(),
-            type: 'GET',
-            dataType: 'json',
-            data: {
-                f:'add_fd',
-                fd_array: fd_array_to_send,
-                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
-            },
-                success: function(data) {
-                    if (data['status'] == 200){
-                        console.log(data);
-                        console.log("done");
-                        localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
-                        location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
-                    }
-                    else if (data['status'] == 401){
-                        console.log(data['error']);
-                        $('#fd_add_errors').text(data['error']);
-                    }
-                    else{
-                        console.log(data);
-                        $('#fd_add_errors').text(data['error']);
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+        if (fd_total_price > <?php echo $wo['portfolio_data']['current_value_cash']; ?>){
+            Swal.fire({
+                title: '<p style="color: red;">Insufficient Cash Available</p>',
+                text: 'Cash Available: ₹<?php echo $wo['portfolio_data']['current_value_cash']; ?> & Transaction Cost: ₹' + fd_total_price,
+                width: 400,
+                padding: '3em',
+                showCancelButton: false,
+                showCloseButton: true,
+                showDenyButton: true,
+                confirmButtonColor: 'green',
+                denyButtonColor: '#236CB0',
+                denyButtonText: 'Add Cash Automatically',
+                confirmButtonText: 'Add Cash Manually',
+                showLoaderOnConfirm: true,
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Add Cash Manually',
+                        text: 'Minimum Amount To Add For This Transaction: ₹' + (fd_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>),
+                        input: 'number',
+                        inputAttributes: { min: (fd_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>) },
+                        validationMessage: 'Added amount is less than Required amount!',
+                        showCloseButton: true,
+                        showCancelButton: true,
+                        confirmButtonText: 'Add',
+                        preConfirm: (amount) => {
+                            $.ajax({
+                                url: Wo_Ajax_Requests_File(),
+                                type: 'GET',
+                                dataType: 'json',
+                                data: {
+                                    f:'add_cash_for_asset',
+                                    cash: amount,
+                                    portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                                    note: 'Manually added cash for buying Fixed Deposit',
+                                    date_: earliest_fd_date,
+                                }
+                            });
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            ajax_call_for_fd(fd_array_to_send, '0');
+                        }
+                    })
+                } else if (result.isDenied) {
+                    ajax_call_for_fd(fd_array_to_send, '1');
                 }
-        });
+            })
+        } else {
+            ajax_call_for_fd(fd_array_to_send, '0');
+        }
     }
 
 </script>

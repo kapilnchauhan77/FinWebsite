@@ -85,8 +85,51 @@
         }
     }
 
+    function ajax_call_for_bullion(bullion_array_to_send, auto_add_){
+        $.ajax({
+            url: Wo_Ajax_Requests_File(),
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                f:'add_bullion',
+                bullion_array: bullion_array_to_send,
+                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                auto_add: auto_add_,
+            },
+                success: function(data) {
+                    if (data['status'] == 200){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Property Added Successfully!',
+                        }).then((result) => {
+                            localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
+                            location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
+                        })
+                    }
+                    else if (data['status'] == 401){
+                        Swal.fire({
+                            icon: 'error',
+                            title: data['error'],
+                        })
+                    }
+                    else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: data['error'],
+                        })
+                        console.log(data['error']);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                }
+        });
+    }
+
     function pushBullionDataToBackend(){
-        bullion_array_to_send = new Array();
+        var bullion_total_price = 0;
+        var earliest_bullion_date = undefined;
+        var bullion_array_to_send = new Array();
 
         /* console.log($("#"+bullion_to_add[id]+id+"charge_").text()) */
 
@@ -96,7 +139,9 @@
                 if ($("#"+id+" #bullion_transaction_date").val() === ""){
                     $("#"+id+" #bullion_transaction_date").val("NaN");
                 }
-                console.log(parseFloat($("#"+id+"_charge #bullion_transaction_net_amount").val()));
+
+                bullion_total_price += parseFloat($("#"+id+"_charge #bullion_transaction_net_amount").val());
+                if((earliest_bullion_date == undefined) || (parseInt(new Date($("#"+id+" #bullion_transaction_date").val()).getTime()/1000) < earliest_bullion_date)) earliest_bullion_date = parseInt(new Date($("#"+id+" #bullion_transaction_date").val()).getTime()/1000);
 
                 bullionInfo = {
 
@@ -115,35 +160,59 @@
             }
         }
 
-        $.ajax({
-            url: Wo_Ajax_Requests_File(),
-            type: 'GET',
-            dataType: 'json',
-            data: {
-                f:'add_bullion',
-                bullion_array: bullion_array_to_send,
-                portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>,
-            },
-                success: function(data) {
-                    if (data['status'] == 200){
-                        console.log(data);
-                        console.log("done");
-                        localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
-                        location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
-                    }
-                    else if (data['status'] == 401){
-                        console.log(data['error']);
-                        $('#bullion_add_errors').text(data['error']);
-                    }
-                    else{
-                        console.log(data);
-                        $('#bullion_add_errors').text(data['error']);
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+        if (bullion_total_price > <?php echo $wo['portfolio_data']['current_value_cash']; ?>){
+            Swal.fire({
+                title: '<p style="color: red;">Insufficient Cash Available</p>',
+                text: 'Cash Available: ₹<?php echo $wo['portfolio_data']['current_value_cash']; ?> & Transaction Cost: ₹' + bullion_total_price,
+                width: 400,
+                padding: '3em',
+                showCancelButton: false,
+                showCloseButton: true,
+                showDenyButton: true,
+                confirmButtonColor: 'green',
+                denyButtonColor: '#236CB0',
+                denyButtonText: 'Add Cash Automatically',
+                confirmButtonText: 'Add Cash Manually',
+                showLoaderOnConfirm: true,
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Add Cash Manually',
+                        text: 'Minimum Amount To Add For This Transaction: ₹' + (bullion_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>),
+                        input: 'number',
+                        inputAttributes: { min: (bullion_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>) },
+                        validationMessage: 'Added amount is less than Required amount!',
+                        showCloseButton: true,
+                        showCancelButton: true,
+                        confirmButtonText: 'Add',
+                        preConfirm: (amount) => {
+                            $.ajax({
+                                url: Wo_Ajax_Requests_File(),
+                                type: 'GET',
+                                dataType: 'json',
+                                data: {
+                                    f:'add_cash_for_asset',
+                                    cash: amount,
+                                    portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                                    note: 'Manually added cash for buying Property',
+                                    date_: earliest_bullion_date,
+                                }
+                            });
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            ajax_call_for_bullion(bullion_array_to_send, '0');
+                        }
+                    })
+                } else if (result.isDenied) {
+                    ajax_call_for_bullion(bullion_array_to_send, '1');
                 }
-        });
+            })
+        } else {
+            ajax_call_for_bullion(bullion_array_to_send, '0');
+        }
     }
 
 </script>

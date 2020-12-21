@@ -2,7 +2,7 @@
 if ($f == 'add_mutual_funds') {
     $mf_array = $_GET['mf_array'];
     $portfolio_id = $_GET['portfolio_id'];
-    $no_of_mf = $_GET['no_of_mf'];
+    $auto_add = $_GET['auto_add'];
     $error = '';
     if (!empty($mf_array) && !empty($portfolio_id)) {
 
@@ -25,6 +25,8 @@ if ($f == 'add_mutual_funds') {
             }
         }
 
+        if ($auto_add != '0' && $auto_add != '1') $error = 'Please do not change system files!';
+
         if ($error !== ''){
 
                 $data = array(
@@ -37,7 +39,7 @@ if ($f == 'add_mutual_funds') {
                 exit();
         }
         else{
-            $portfolio_data_added = AddMFToPortfolio($mf_array, $portfolio_id, $no_of_mf);
+            $portfolio_data_added = AddMFToPortfolio($mf_array, $portfolio_id, $auto_add);
             if ($portfolio_data_added === true){
 
                 $data = array(

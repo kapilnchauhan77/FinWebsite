@@ -3,7 +3,7 @@ if ($f == 'portfolio_data') {
     $stock_array = $_GET['stock_array'];
     $portfolio_id = $_GET['portfolio_id'];
     $no_of_stocks = $_GET['no_of_stocks'];
-    /* $errors = array(); */
+    $auto_add = $_GET['auto_add'];
     $error = '';
     if (!empty($stock_array) && !empty($portfolio_id)) {
 
@@ -30,6 +30,8 @@ if ($f == 'portfolio_data') {
             }
         }
 
+        if ($auto_add != '0' && $auto_add != '1') $error = 'Please do not change system files!';
+
         if ($error !== ''){
 
                 $data = array(
@@ -42,7 +44,7 @@ if ($f == 'portfolio_data') {
                 exit();
         }
         else{
-            $portfolio_data_added = AddStocksToPortfolio($stock_array, $portfolio_id, $no_of_stocks);
+            $portfolio_data_added = AddStocksToPortfolio($stock_array, $portfolio_id, $no_of_stocks, $auto_add);
             if ($portfolio_data_added === true){
 
                 $data = array(
