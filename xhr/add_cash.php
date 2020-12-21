@@ -46,7 +46,7 @@ if ($f == 'add_cash') {
         }
         else{
             $internal_note = ($cash_data['cash_type'] == "Debit") ? "Withdrew Cash Manually" : "Deposited Cash Manually";
-            $portfolio_data_added = AddCashToPortfolio($cash_array, $portfolio_id, $internal_note);
+            $portfolio_data_added = AddCashToPortfolio($cash_array, $portfolio_id, $internal_note, true, true);
             if ($portfolio_data_added === true){
 
                 $data = array(

@@ -29,7 +29,7 @@ if ($f == 'add_property') {
             }
         }
 
-        if ($auto_add != false && $auto_add != true) $error = 'Please do not change system files!';
+        if ($auto_add != '0' && $auto_add != '1') $error = 'Please do not change system files!';
 
         if ($error !== ''){
 

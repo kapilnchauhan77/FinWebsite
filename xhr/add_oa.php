@@ -2,6 +2,7 @@
 if ($f == 'add_oa') {
     $oa_array = $_GET['oa_array'];
     $portfolio_id = $_GET['portfolio_id'];
+    $auto_add = $_GET['auto_add'];
     $error = '';
     if (!empty($oa_array) && !empty($portfolio_id)) {
 
@@ -33,6 +34,9 @@ if ($f == 'add_oa') {
             }
         }
 
+        if ($auto_add != '0' && $auto_add != '1') $error = 'Please do not change system files!';
+
+
         if ($error !== ''){
 
                 $data = array(
@@ -45,7 +49,7 @@ if ($f == 'add_oa') {
                 exit();
         }
         else{
-            $portfolio_data_added = AddOAToPortfolio($oa_array, $portfolio_id);
+            $portfolio_data_added = AddOAToPortfolio($oa_array, $portfolio_id, $auto_add);
             if ($portfolio_data_added === true){
 
                 $data = array(

@@ -1,5 +1,4 @@
 <!-- JS Pages functions -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="<?php echo $wo['config']['theme_url'];?>/javascript/bootstrap-tagsinput-latest/src/bootstrap-tagsinput.js"></script>
 <script type="text/javascript">
 
@@ -81,7 +80,7 @@
                     if (data['status'] == 200){
                         Swal.fire({
                             icon: 'success',
-                            title: 'Asset Added Successfully!',
+                            title: 'Property Added Successfully!',
                         }).then((result) => {
                             localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
                             location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
@@ -106,6 +105,7 @@
                 }
         });
     }
+
     function pushPropertyDataToBackend(){
         var property_total_price = 0;
         var earliest_property_date = undefined;
@@ -149,18 +149,6 @@
                 denyButtonText: 'Add Cash Automatically',
                 confirmButtonText: 'Add Cash Manually',
                 showLoaderOnConfirm: true,
-                preDeny: () => {
-                    $.ajax({
-                        url: Wo_Ajax_Requests_File(),
-                        type: 'GET',
-                        dataType: 'json',
-                        data: {
-                            f:'add_property',
-                            property_array: property_array_to_send,
-                            portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
-                        }
-                    });
-                },
                 allowOutsideClick: () => !Swal.isLoading()
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -190,15 +178,15 @@
                         allowOutsideClick: () => !Swal.isLoading()
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            ajax_call_for_property(property_array_to_send, false);
+                            ajax_call_for_property(property_array_to_send, '0');
                         }
                     })
                 } else if (result.isDenied) {
-                    ajax_call_for_property(property_array_to_send, true);
+                    ajax_call_for_property(property_array_to_send, '1');
                 }
             })
-        }else {
-            ajax_call_for_property(property_array_to_send, false);
+        } else {
+            ajax_call_for_property(property_array_to_send, '0');
         }
     }
 

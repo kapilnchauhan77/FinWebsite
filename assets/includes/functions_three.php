@@ -8371,6 +8371,54 @@ function SA_Get_Portfolio_Count(){
     /* username_portfolio_portfoliocountuserid+3 */
     return $fetched_data['portfolio_count'];
 }
+function AddCashToPortfolio($cash_data, $portfolio_id, $internal_note, $change_invested, $change_current){
+    global $sqlConnect, $wo;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
+    $internal_note = Wo_Secure($internal_note);
+
+    foreach ($cash_data as $cash_datum) {
+
+        $cash_type = Wo_Secure($cash_datum['cash_type']);
+        if ($cash_type != "Credit" && $cash_type != "Debit") return "Please Select only from the given options";
+        $cash_transaction_date = Wo_Secure($cash_datum['cash_transaction_date']);
+        $cash_transaction_price = Wo_Secure($cash_datum['cash_transaction_price']);
+        $cash_note = Wo_Secure($cash_datum['note']);
+        $timestamp_created = strtotime("now");
+
+        $query_one   = "INSERT INTO " . T_PORTFOLIO_CASH . " (`portfolio_id`, `cash_type`, `transaction_date`, `transaction_amount`, `timestamp_created`, `note`, `internal_note`) VALUES ({$portfolio_id}, '{$cash_type}', {$cash_transaction_date}, {$cash_transaction_price}, {$timestamp_created}, '{$cash_note}', '{$internal_note}')";
+        $query       = mysqli_query($sqlConnect, $query_one);
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+
+
+
+        if ($change_invested == true){
+            $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$cash_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
+            $query     = mysqli_query($sqlConnect, $query_one);
+
+            $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_cash` = `invested_value_cash` + {$cash_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
+            $query     = mysqli_query($sqlConnect, $query_one);
+        }
+
+        if ($change_current == true){
+            $query_one   = "UPDATE " . T_PORTFOLIO . " SET `current_value_cash` = `current_value_cash` + {$cash_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
+            $query     = mysqli_query($sqlConnect, $query_one);
+        }
+
+        if (!$query) {
+            return mysqli_error($sqlConnect);
+        };
+
+        $wo['portfolio_data']['current_value_cash'] += $cash_transaction_price;
+    }
+
+
+    return true;
+}
 function AddCashForAssetManually($portfolio_id, $amount, $note, $date_){
     global $sqlConnect;
 
@@ -8386,7 +8434,7 @@ function AddCashForAssetManually($portfolio_id, $amount, $note, $date_){
                 'cash_transaction_date' => $date_,
                 'cash_transaction_price' => $amount,
                 'note' => ''
-            )), $portfolio_id, $note);
+            )), $portfolio_id, $note, true, true);
 
     return $done;
 }
@@ -8413,14 +8461,14 @@ function AddBullionToPortfolio($bullion_data, $portfolio_id){
             'cash_transaction_date' => $bullion_transaction_date,
             'cash_transaction_price' => $bullion_net_amount,
             'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to buy bullion");
+        )), $portfolio_id, "Automatic Cash Deposit to buy bullion", true, false);
 
         AddCashToPortfolio(array(array(
             'cash_type' => 'Debit',
             'cash_transaction_date' => $bullion_transaction_date,
             'cash_transaction_price' => (-1 * $bullion_net_amount),
             'note' => ''
-        )), $portfolio_id, "Automatic Cash Withrawl to buy bullion");
+        )), $portfolio_id, "Automatic Cash Withrawl to buy bullion", false, false);
 
         $query_one   = "INSERT INTO " . T_PORTFOLIO_BULLION . " (`portfolio_id`, `bullion_type`, `transaction_date`, `transaction_price`, `transaction_quantity`, `timestamp_created`, `charge`, `net_amount`, `purchased_from`, `note`) VALUES ({$portfolio_id}, {$bullion_type}, {$bullion_transaction_date}, {$bullion_transaction_price}, {$bullion_transaction_qty}, {$timestamp_created}, {$bullion_charge}, {$bullion_net_amount}, '{$bullion_purchased_from}', '{$bullion_note}')";
         $query       = mysqli_query($sqlConnect, $query_one);
@@ -8428,9 +8476,6 @@ function AddBullionToPortfolio($bullion_data, $portfolio_id){
         if (!$query) {
             return mysqli_error($sqlConnect);
         };
-
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$bullion_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
-        $query     = mysqli_query($sqlConnect, $query_one);
 
         $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_bullion` = `invested_value_bullion` + {$bullion_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
@@ -8442,10 +8487,11 @@ function AddBullionToPortfolio($bullion_data, $portfolio_id){
 
     return true;
 }
-function AddOAToPortfolio($oa_data, $portfolio_id){
+function AddOAToPortfolio($oa_data, $portfolio_id, $auto_add){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
+    $auto_add = Wo_Secure($auto_add);
     if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
 
     foreach ($oa_data as $oa_datum) {
@@ -8457,19 +8503,30 @@ function AddOAToPortfolio($oa_data, $portfolio_id){
         $oa_note = Wo_Secure($oa_datum['note']);
         $timestamp_created = strtotime("now");
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Credit',
-            'cash_transaction_date' => $oa_transaction_date,
-            'cash_transaction_price' => $oa_transaction_price,
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to buy Other Assets");
+        if ($auto_add === '1'){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Credit',
+                'cash_transaction_date' => $oa_transaction_date,
+                'cash_transaction_price' => $oa_transaction_price,
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Deposit to buy Other Assets", true, false);
 
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Debit',
-            'cash_transaction_date' => $oa_transaction_date,
-            'cash_transaction_price' => (-1 * $oa_transaction_price),
-            'note' => ''
-        )), $portfolio_id, "Automatic Cash Withrawl to buy Other Assets");
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $oa_transaction_date,
+                'cash_transaction_price' => (-1 * $oa_transaction_price),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withrawl to buy Other Assets", false, false);
+        } else if ($auto_add === '0'){
+            AddCashToPortfolio(array(array(
+                'cash_type' => 'Debit',
+                'cash_transaction_date' => $oa_transaction_date,
+                'cash_transaction_price' => (-1 * $oa_transaction_price),
+                'note' => ''
+            )), $portfolio_id, "Automatic Cash Withrawl to buy Other Assets", false, false);
+        } else {
+            return 'Please Do Not Change System Files!';
+        };
 
         $query_one   = "INSERT INTO " . T_PORTFOLIO_OA . " (`portfolio_id`, `Asset Name`, `transaction_date`, `transaction_price`, `current_price`, `Notes`, `timestamp_created`) VALUES ({$portfolio_id}, '{$oa_type}', {$oa_transaction_date}, {$oa_transaction_price}, {$oa_current_price}, '{$oa_note}', {$timestamp_created})";
         $query       = mysqli_query($sqlConnect, $query_one);
@@ -8477,9 +8534,6 @@ function AddOAToPortfolio($oa_data, $portfolio_id){
         if (!$query) {
             return mysqli_error($sqlConnect);
         };
-
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$oa_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
-        $query     = mysqli_query($sqlConnect, $query_one);
 
         $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_other_assets` = `invested_value_other_assets` + {$oa_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
@@ -8517,7 +8571,7 @@ function AddOBToPortfolio($ob_data, $portfolio_id){
             'cash_transaction_date' => $ob_transaction_date,
             'cash_transaction_price' => $ob_transaction_price,
             'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit via Other Borrowings");
+        )), $portfolio_id, "Automatic Cash Deposit via Other Borrowings", false, true);
 
         /* $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$ob_transaction_price} WHERE `portfolio_id` = {$portfolio_id}"; */
         /* $query     = mysqli_query($sqlConnect, $query_one); */
@@ -8529,49 +8583,6 @@ function AddOBToPortfolio($ob_data, $portfolio_id){
             return mysqli_error($sqlConnect);
         };
     }
-
-    return true;
-}
-function AddCashToPortfolio($cash_data, $portfolio_id, $internal_note){
-    global $sqlConnect;
-
-    $portfolio_id = Wo_Secure($portfolio_id);
-    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
-    $internal_note = Wo_Secure($internal_note);
-
-    foreach ($cash_data as $cash_datum) {
-
-        $cash_type = Wo_Secure($cash_datum['cash_type']);
-        if ($cash_type != "Credit" && $cash_type != "Debit") return "Please Select only from the given options";
-        $cash_transaction_date = Wo_Secure($cash_datum['cash_transaction_date']);
-        $cash_transaction_price = Wo_Secure($cash_datum['cash_transaction_price']);
-        $cash_note = Wo_Secure($cash_datum['note']);
-        $timestamp_created = strtotime("now");
-
-        $query_one   = "INSERT INTO " . T_PORTFOLIO_CASH . " (`portfolio_id`, `cash_type`, `transaction_date`, `transaction_amount`, `timestamp_created`, `note`, `internal_note`) VALUES ({$portfolio_id}, '{$cash_type}', {$cash_transaction_date}, {$cash_transaction_price}, {$timestamp_created}, '{$cash_note}', '{$internal_note}')";
-        $query       = mysqli_query($sqlConnect, $query_one);
-
-        if (!$query) {
-            return mysqli_error($sqlConnect);
-        };
-
-
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$cash_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
-        $query     = mysqli_query($sqlConnect, $query_one);
-
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_cash` = `invested_value_cash` + {$cash_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
-        $query     = mysqli_query($sqlConnect, $query_one);
-
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `current_value_cash` = `current_value_cash` + {$cash_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
-        $query     = mysqli_query($sqlConnect, $query_one);
-
-        if (!$query) {
-            return mysqli_error($sqlConnect);
-        };
-
-        $wo['portfolio_data']['current_value_cash'] += $cash_transaction_price;
-    }
-
 
     return true;
 }
@@ -8626,27 +8637,27 @@ function AddPropertyToPortfolio($property_data, $portfolio_id, $auto_add){
         $property_note = Wo_Secure($property_datum['note']);
         $timestamp_created = strtotime("now");
 
-        if ($auto_add == true){
+        if ($auto_add === '1'){
             AddCashToPortfolio(array(array(
                 'cash_type' => 'Credit',
                 'cash_transaction_date' => $property_transaction_date,
                 'cash_transaction_price' => $property_transaction_price,
                 'note' => ''
-            )), $portfolio_id, "Automatic Cash Deposit to buy Property");
+            )), $portfolio_id, "Automatic Cash Deposit to buy Property", true, false);
 
             AddCashToPortfolio(array(array(
                 'cash_type' => 'Debit',
                 'cash_transaction_date' => $property_transaction_date,
                 'cash_transaction_price' => (-1 * $property_transaction_price),
                 'note' => ''
-            )), $portfolio_id, "Automatic Cash Withrawl to buy Property");
-        } else if ($auto_add == false){
+            )), $portfolio_id, "Automatic Cash Withrawl to buy Property", false, false);
+        } else if ($auto_add === '0'){
             AddCashToPortfolio(array(array(
                 'cash_type' => 'Debit',
                 'cash_transaction_date' => $property_transaction_date,
                 'cash_transaction_price' => (-1 * $property_transaction_price),
                 'note' => ''
-            )), $portfolio_id, "Automatic Cash Withrawl to buy Property");
+            )), $portfolio_id, "Automatic Cash Withrawl to buy Property", false, true);
         } else {
             return 'Please Do Not Change System Files!';
         };
@@ -8657,9 +8668,6 @@ function AddPropertyToPortfolio($property_data, $portfolio_id, $auto_add){
         if (!$query) {
             return mysqli_error($sqlConnect);
         };
-
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$property_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
-        $query     = mysqli_query($sqlConnect, $query_one);
 
         $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_properties` = `invested_value_properties` + {$property_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
@@ -8724,14 +8732,14 @@ function AddFDToPortfolio($fd_data, $portfolio_id){
             'cash_transaction_date' => $fd_transaction_date,
             'cash_transaction_price' => $fd_transaction_price,
             'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to make a Fixed Deposit");
+        )), $portfolio_id, "Automatic Cash Deposit to make a Fixed Deposit", true, false);
 
         AddCashToPortfolio(array(array(
             'cash_type' => 'Debit',
             'cash_transaction_date' => $fd_transaction_date,
             'cash_transaction_price' => (-1 * $fd_transaction_price),
             'note' => ''
-        )), $portfolio_id, "Automatic Cash Withrawl to make a Fixed Deposit");
+        )), $portfolio_id, "Automatic Cash Withrawl to make a Fixed Deposit", false, false);
 
         $query_one   = "INSERT INTO " . T_PORTFOLIO_FD . " (`portfolio_id`, `fd_type`, `fd_bank`, `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `interest_payout_frequency`, `timestamp_created`, `payout_type`) VALUES ({$portfolio_id}, '{$fd_type}', '{$fd_bank}', {$fd_transaction_date}, {$fd_maturity_date}, {$fd_transaction_price}, {$fd_transaction_interest}, {$fd_interest_payout_frequency}, {$timestamp_created}, {$fd_interest_payout_type})";
         $query       = mysqli_query($sqlConnect, $query_one);
@@ -8739,9 +8747,6 @@ function AddFDToPortfolio($fd_data, $portfolio_id){
         if (!$query) {
             return mysqli_error($sqlConnect);
         };
-
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$fd_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
-        $query     = mysqli_query($sqlConnect, $query_one);
 
         $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_FD` = `invested_value_FD` + {$fd_transaction_price} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
@@ -8779,14 +8784,14 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
             'cash_transaction_date' => $stock_transaction_date,
             'cash_transaction_price' => $stock_net_amount,
             'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to buy Stocks");
+        )), $portfolio_id, "Automatic Cash Deposit to buy Stocks", true, false);
 
         AddCashToPortfolio(array(array(
             'cash_type' => 'Debit',
             'cash_transaction_date' => $stock_transaction_date,
             'cash_transaction_price' => (-1 * $stock_net_amount),
             'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to buy Stocks");
+        )), $portfolio_id, "Automatic Cash Deposit to buy Stocks", false, false);
 
         $query_text   = "SELECT `id` FROM " . T_PORTFOLIO_STOCKS . " WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id}";
         $query_one    = mysqli_query($sqlConnect, $query_text);
@@ -8802,12 +8807,7 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks){
             return mysqli_error($sqlConnect);
         };
 
-        $total_stock_invested_value = $stock_invested_value + $stock_charge;
-
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `stock_invested_value` = `stock_invested_value` + {$total_stock_invested_value} WHERE `portfolio_id` = {$portfolio_id}";
-        $query     = mysqli_query($sqlConnect, $query_one);
-
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$total_stock_invested_value} WHERE `portfolio_id` = {$portfolio_id}";
+        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `stock_invested_value` = `stock_invested_value` + {$stock_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
 
         if (!$query) {
@@ -8849,14 +8849,14 @@ function AddMFToPortfolio($mf_quote_data, $portfolio_id){
             'cash_transaction_date' => $mf_transaction_date,
             'cash_transaction_price' => $mf_amount,
             'note' => ''
-        )), $portfolio_id, "Automatic Cash Deposit to buy mutual funds");
+        )), $portfolio_id, "Automatic Cash Deposit to buy mutual funds", true, false);
 
         AddCashToPortfolio(array(array(
             'cash_type' => 'Debit',
             'cash_transaction_date' => $mf_transaction_date,
             'cash_transaction_price' => (-1 * $mf_amount),
             'note' => ''
-        )), $portfolio_id, "Automatic Cash Withrawl to buy mutual funds");
+        )), $portfolio_id, "Automatic Cash Withrawl to buy mutual funds", false, false);
 
         $query_text   = "SELECT `Scheme Code` FROM " . T_PORTFOLIO_MF . " WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id}";
         $query_one    = mysqli_query($sqlConnect, $query_text);
@@ -8873,9 +8873,6 @@ function AddMFToPortfolio($mf_quote_data, $portfolio_id){
         };
 
         $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_mutual_funds` = `invested_value_mutual_funds` + {$mf_amount} WHERE `portfolio_id` = {$portfolio_id}";
-        $query     = mysqli_query($sqlConnect, $query_one);
-
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `total_invested_value` = `total_invested_value` + {$mf_amount} WHERE `portfolio_id` = {$portfolio_id}";
         $query     = mysqli_query($sqlConnect, $query_one);
 
         if (!$query) {
