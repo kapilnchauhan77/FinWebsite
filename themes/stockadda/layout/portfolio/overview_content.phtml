@@ -1,3 +1,19 @@
+<div class="page-margin wow_content">
+            <div class="wo_page_hdng pag_neg_padd pag_alone">
+                <div class="wo_page_hdng_menu">
+                    <ul class="list-unstyled">
+                        <li id='stocks'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=overview&amp;content=stocks" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=overview&amp;content=stocks">Stocks</a></li>
+                        <li id='mutual_funds'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=overview&amp;content=mutual_funds" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=overview&amp;content=mutual_funds">Mutual Funds</a></li>
+                        <li id='bullion'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=overview&amp;content=bullion" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=overview&amp;content=bullion">Bullion</a></li>
+                        <li id='fixed_income'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=overview&amp;content=fixed_income" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=overview&amp;content=fixed_income">Fixed Income</a></li>
+                        <li id='property'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=overview&amp;content=property" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=overview&amp;content=property">Property</a></li>
+                        <li id='other_assets'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=overview&amp;content=other_assets" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=overview&amp;content=other_assets">Other Assets</a></li>
+                        <li id='loans_borrowings'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=overview&amp;content=loans_borrowings" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=overview&amp;content=loans_borrowings">Loans and Borrowings</a></li>
+                        <li id='cash'><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;tab=overview&amp;content=cash" data-ajax="<?php echo  $wo['portfolio_data']['raw_url'];?>&amp;tab=overview&amp;content=cash">Cash</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 <div class="portfolio_html" style="margin-top:1%">
     <div class="portfolio_body">
         <div id="SA_wrapper">
@@ -177,4 +193,13 @@
         </div>
     </div>
 
+<script>
+
+    $( document ).ready(function() {
+        content = '<?php echo $_GET['content']; ?>';
+        $('#' + content).addClass('active');
+        console.log('Tab: ' + content);
+    });
+
+</script>
 </div>

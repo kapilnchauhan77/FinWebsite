@@ -145,6 +145,7 @@
     function pushStockDataToBackend(){
         var stocks_array_to_send = new Array();
         var stocks_total_price = 0;
+        var no_of_stocks = 0;
         var earliest_stocks_date = undefined;
 
         Object.keys(stock_quotes_to_add).forEach(function (id){
