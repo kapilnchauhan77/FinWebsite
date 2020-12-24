@@ -101,6 +101,7 @@
     }
 
     function ajax_call_for_stocks(stocks_array_to_send, auto_add_, no_of_stocks){
+        console.log(auto_add_);
         $.ajax({
             url: Wo_Ajax_Requests_File(),
             type: 'GET',
@@ -116,7 +117,7 @@
                     if (data['status'] == 200){
                         Swal.fire({
                             icon: 'success',
-                            title: 'Property Added Successfully!',
+                            title: 'Stocks Added Successfully!',
                         }).then((result) => {
                             localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
                             location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
@@ -156,7 +157,7 @@
             }
             /* console.log($("#"+stock_quotes_to_add[id]+id+"charge_").text()) */
 
-            stocks_total_price += parseFloat($("#"+stock_quotes_to_add[id]+id+"net_amount").val());
+            stocks_total_price += parseFloat($("#"+stock_quotes_to_add[id]+id+"net_amount").text());
             if((earliest_stocks_date == undefined) || (parseInt(new Date($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000))) earliest_stocks_date = parseInt(new Date($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000);
 
             stockInfo = {
@@ -182,6 +183,8 @@
         /* console.log("no_of_unique_stocks"); */
         /* console.log(no_of_unique_stocks); */
 
+        console.log(stocks_total_price);
+        console.log(<?php echo $wo['portfolio_data']['current_value_cash']; ?>);
         if (stocks_total_price > <?php echo $wo['portfolio_data']['current_value_cash']; ?>){
             Swal.fire({
                 title: '<p style="color: red;">Insufficient Cash Available</p>',

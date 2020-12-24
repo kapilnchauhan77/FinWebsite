@@ -43,26 +43,20 @@
                                             </div>
 
                                             <!-- Card Body -->
-                                            <div class="SA_card-body" style="padding-bottom: 1.6em !important;">
+                                            <div class="SA_card-body" style="padding-top: 0em !important;padding-left: 0em !important;padding-bottom: 0em !important;">
                                                 <div class="SA_row">
-
-                                                    <div class="SA_col-6">
-                                                        <div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                                                            <canvas id="Days_PL" style="display: block; width: 612px; height: 165px;" width="612" height="165" class="chartjs-render-monitor"></canvas>
-                                                        </div>
-                                                    </div>
-
+                                                    <div class="SA_col-6" id="Days_PL"> </div>
                                                     <div class="SA_col-6">
                                                         <div style="margin-top:1.1em;margin-bottom:1.1em;">
-                                                            <span style="font-size:110%;font-weight:650;">2 Stocks Gaining Today</span>
+                                                            <span style="font-size:110%;font-weight:650;"><span id="num_gain_day">0</span> Stocks Gaining Today</span>
                                                             <br>
-                                                            <span style="font-size:150%;font-weight:700;" class="SA_text-success">&#8377;7,250 (34%)</span>
+                                                            <span style="font-size:150%;font-weight:700;" class="SA_text-success">&#8377;<span id="gain_day">0</span></span>
                                                         </div>
                                                         <hr>
                                                         <div style="margin-top:1.1em;">
-                                                            <span style="font-size:110%;font-weight:650;">1 Stock Losing Today</span>
+                                                            <span style="font-size:110%;font-weight:650;"><span id="num_loss_day">0</span> Stock Losing Today</span>
                                                             <br>
-                                                            <span style="font-size:150%;font-weight:700;" class="SA_text-danger">&#8377;500 (34%)</span>
+                                                            <span style="font-size:150%;font-weight:700;" class="SA_text-danger">&#8377;<span id="loss_day">0</span></span>
                                                         </div>
                                                     </div>
 
@@ -81,26 +75,20 @@
                                             </div>
 
                                             <!-- Card Body -->
-                                            <div class="SA_card-body" style="padding-bottom: 1.6em !important;">
+                                            <div class="SA_card-body" style="padding-top: 0em !important;padding-left: 0em !important;padding-bottom: 0em !important;">
                                                 <div class="SA_row">
-
-                                                    <div class="SA_col-6">
-                                                        <div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                                                            <canvas id="Overall_PL" style="display: block; width: 612px; height: 165px;" width="612" height="165" class="chartjs-render-monitor"></canvas>
-                                                        </div>
-                                                    </div>
-
+                                                    <div class="SA_col-6" id="Overall_PL"> </div>
                                                     <div class="SA_col-6">
                                                         <div style="margin-top:1.1em;margin-bottom:1.1em;">
-                                                            <span style="font-size:110%;font-weight:650;">1 Stock Gaining Overall</span>
+                                                            <span style="font-size:110%;font-weight:650;"><span id="num_gain_overall">0</span> Stock Gaining Overall</span>
                                                             <br>
-                                                            <span style="font-size:150%;font-weight:700;" class="SA_text-success">&#8377;34,164.33 (34%)</span>
+                                                            <span style="font-size:150%;font-weight:700;" class="SA_text-success">&#8377;<span id="gain_overall">0</span></span>
                                                         </div>
                                                         <hr>
                                                         <div style="margin-top:1.1em;">
-                                                            <span style="font-size:110%;font-weight:650;">2 Stocks Losing Overall</span>
+                                                            <span style="font-size:110%;font-weight:650;"><span id="num_loss_overall">0</span> Stocks Losing Overall</span>
                                                             <br>
-                                                            <span style="font-size:150%;font-weight:700;" class="SA_text-danger">&#8377;55,005 (34%)</span>
+                                                            <span style="font-size:150%;font-weight:700;" class="SA_text-danger">&#8377;<span id="loss_overall">0</span></span>
                                                         </div>
                                                     </div>
 
@@ -176,8 +164,8 @@
                              <!-- Content Column -->
                             <div class="SA_col-12 SA_mb-4">
                                  <!-- Extra Financial Data -->
-                                 <div class="SA_card SA_shadow SA_mb-4">
-                                    <?php echo Wo_LoadPage('portfolio/dashboard_table'); ?>
+                                 <div class="SA_card SA_shadow SA_mb-4" style="margin-bottom: 0em !important">
+                                    <?php echo Wo_LoadPage('portfolio/overview_table_stocks'); ?>
                                  </div>
                             </div>
                         </div>
@@ -196,10 +184,13 @@
 <script>
 
     $( document ).ready(function() {
-        content = '<?php echo $_GET['content']; ?>';
+        content = '<?php echo (empty($_GET['content'])) ? 'stocks' : $_GET['content']; ?>';
         $('#' + content).addClass('active');
         console.log('Tab: ' + content);
     });
 
 </script>
 </div>
+
+<?php echo Wo_LoadPage('portfolio/overviewGraphFunctions/days_p_l'); ?>
+<?php echo Wo_LoadPage('portfolio/overviewGraphFunctions/overall_p_l'); ?>

@@ -21,176 +21,133 @@
                 });
 
     }
-    function PortfolioDataProcessing(timeline) {
+    function process_data(data_of_all_assets){
+        var currentVal_mf = 0;
+        var currentVal_oa = 0;
+        var currentVal_fd = 0;
+        var currentVal_stocks = 0;
+        var currentVal_bullion = 0;
+        var currentVal_properties = 0;
 
-       var get_data_from_server = false;
-       var data_of_all_assets = new Array();
-       /* var adjustedValTotal, intradayValTotal; */
-       var tab_opened =  ("<?php echo ($_GET['tab']); ?>" !== "") ? "<?php echo $_GET['tab']; ?>" : "dashboard";
-       var currentVal_stocks = 0;
-       var currentVal_mf = 0;
-       var currentVal_properties = 0;
-       var currentVal_oa = 0;
-       var currentVal_fd = 0;
-       var currentVal_bullion = 0;
-       var currentVal_cash = <?php echo round($wo['portfolio_data']['current_value_cash'], 2); ?>;
-       var dates_obj = new Object();
-       var type_dates_obj = new Object();
+        var dates_obj = new Object();
+        var type_dates_obj = new Object();
 
-       $("#" + tab_opened).addClass('menuactive');
+        var tab = "<?php echo (empty($_GET['tab'])) ? 'dashboard' : $_GET['tab']; ?>";
+        var content = "<?php echo (empty($_GET['content'])) ? 'stocks' : $_GET['content']; ?>"
+        var currentVal_cash = <?php echo round($wo['portfolio_data']['current_value_cash'], 2); ?>;
 
-       $('link[rel=stylesheet][href~="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css?version=<?php echo $wo['config']['version']; ?>"]').remove();
-       $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/bootsrap-rtl.min.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
-       $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/style_rtl.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
 
-       if (typeof(Storage) == "undefined") {
-           get_data_from_server = true;
-       } else {
-           expiry_token = localStorage.getItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_time_token");
-           const dt = new Date();
+        data_of_all_stocks = data_of_all_assets.extraStockDataFullPortfolio;
+        data_of_all_mutual_funds = data_of_all_assets.extraMFDataFullPortfolio;
+        data_of_all_properties = data_of_all_assets.extraPropertyDataFullPortfolio;
+        /* data_of_all_loans = data_of_all_assets.extraLoansFullPortfolio; */
+        data_of_all_oa = data_of_all_assets.extraOAFullPortfolio;
+        data_of_all_fd = data_of_all_assets.extraFDFullPortfolio;
+        data_of_all_cash = data_of_all_assets.extraCashFullPortfolio;
+        data_of_all_bullion = data_of_all_assets.extraBullionFullPortfolio;
 
-           if (dt.getTime() > expiry_token && dt.getDay() != 6 && dt.getDay != 0) {
-               get_data_from_server = true;
-           }
-           else{
-               /* data_of_all_stocks = findLocalItems(/^<?php echo $wo['portfolio_data']['portfolio_id']; ?>_\d{6,}_portfolio_stocks$/i); */
-               data_of_all_assets = JSON.parse(localStorage.getItem('<?php echo $wo['portfolio_data']['portfolio_id']; ?>_portfolio_assets'));
-               if (data_of_all_assets == null) get_data_from_server = true;
-               /* data_of_all_assets = Array(); */
-               else (data_of_all_assets.length == 0) && (get_data_from_server = true);
-               /* get_data_from_server = true */
-               console.log('Data localStorage:')
-               console.log(data_of_all_assets)
-           }
-       }
+        console.log(data_of_all_assets);
 
-       if (get_data_from_server) {
+        if (data_of_all_mutual_funds.length != 0) currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj, tab, content);
+        if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj);
+        if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj);
+        if (data_of_all_fd.length != 0) currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj, tab, content);
+        if (data_of_all_cash.length != 0) calculateTotalValsCash_display(data_of_all_cash, dates_obj, type_dates_obj);
+        if (data_of_all_bullion.length != 0) calculateTotalValsBullion_display(data_of_all_bullion, dates_obj, type_dates_obj);
+        if (data_of_all_stocks.length != 0) currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj, tab, content);
 
-           $.ajax({
-               url: Wo_Ajax_Requests_File(),
-               type: 'GET',
-               dataType: 'json',
-               data: {
-                   f:'all_portfolio_stocks_extra_data',
-                   portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>
-               },
-                   })
-                   .done(function(data) {
-                       console.log('Data from server:')
-                       data_of_all_stocks = data.extraStockDataFullPortfolio;
-                       data_of_all_mutual_funds = data.extraMFDataFullPortfolio;
-                       data_of_all_properties = data.extraPropertyDataFullPortfolio;
-                       /* data_of_all_loans = data_of_all_assets.extraLoansFullPortfolio; */
-                       data_of_all_oa = data.extraOAFullPortfolio;
-                       data_of_all_fd = data.extraFDFullPortfolio;
-                       data_of_all_cash = data.extraCashFullPortfolio;
-                       data_of_all_bullion = data.extraBullionFullPortfolio;
+        console.log('type_dates_obj');
+        console.log(type_dates_obj);
 
-                       console.log(data);
+        var total_assets = parseFloat($('#currentVal').text());
+        var daily_p_l = parseFloat($('#daily_p_p_l').text());
+        console.log((daily_p_l / (total_assets - daily_p_l) * 100).toFixed(2));
+        $('#daily_p_p_l_per').text((daily_p_l / (total_assets - daily_p_l) * 100).toFixed(2));
 
-                       if (typeof(Storage) != "undefined") {
-                           localStorage.setItem(data.portfolio_id + "_time_token", new Date().getTime() + 210000);
+        var overall_p_l =  parseFloat($('#overall_p_p_l').text());
+        var overall_p_l_per = overall_p_l / <?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?>;
+        $('#overall_p_p_l_per').text((overall_p_l_per * 100).toFixed(2));
 
-                           localStorage.setItem(data.portfolio_id + "_portfolio_assets", JSON.stringify(data));
-                           data_of_all_stocks.forEach(function (value){
-                               localStorage.setItem(data.portfolio_id + "_" + value.stock_fincode + "_portfolio_stocks", JSON.stringify(value));
-                           })
-                       }
+        change_dynamic_colors();
 
-                       /* if (data_of_all_stocks.length != 0) var [adjustedValTotal, intradayValTotal, currentVal_stocks, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalValsStocks_display(data_of_all_stocks); */
-                       if (data_of_all_stocks.length != 0) currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj);
-                       if (data_of_all_mutual_funds.length != 0) currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj);
-                       if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj);
-                       if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj);
-                       if (data_of_all_fd.length != 0) currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj);
-                       if (data_of_all_cash.length != 0) calculateTotalValsCash_display(data_of_all_cash, dates_obj, type_dates_obj);
-                       if (data_of_all_bullion.length != 0) calculateTotalValsBullion_display(data_of_all_bullion, dates_obj, type_dates_obj);
+        if (tab=='dashboard'){
+            add_doughnutCharts_Portfolio([parseFloat(currentVal_bullion), parseFloat(currentVal_cash), parseFloat(currentVal_fd), parseFloat(currentVal_oa), parseFloat(currentVal_properties), parseFloat(currentVal_stocks), parseFloat(currentVal_mf)]);
+            add_lineChart(dates_obj, type_dates_obj);
 
-                       console.log('type_dates_obj');
-                       console.log(type_dates_obj);
+            var total_equity = $('#total_assets').text() - $('#total_liabilities').text();
+            $('#current_net_worth').text(total_equity);
+        } else if (tab=='overview'){
+        }
+    }
+    function Get_Portfolio_data() {
 
-                       add_doughnutCharts([parseFloat(currentVal_bullion), parseFloat(currentVal_cash), parseFloat(currentVal_fd), parseFloat(currentVal_oa), parseFloat(currentVal_properties), parseFloat(currentVal_stocks), parseFloat(currentVal_mf)]);
-                       add_lineChart(dates_obj, type_dates_obj);
+        var get_data_from_server = false;
+        var data_of_all_assets = new Array();
+        /* var adjustedValTotal, intradayValTotal; */
+        var tab_opened =  ("<?php echo ($_GET['tab']); ?>" !== "") ? "<?php echo $_GET['tab']; ?>" : "dashboard";
 
-                       /* TODO */
-                       /* getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal_stocks, timeline, all_dates); */
+        $("#" + tab_opened).addClass('menuactive');
 
-                       var total_equity = $('#total_assets').text() - $('#total_liabilities').text();
-                       $('#current_net_worth').text(total_equity);
-                       var total_assets = parseFloat($('#total_assets').text());
-                       var daily_p_l = parseFloat($('#total_day_gain').text());
-                       $('#daily_p_p_l').text(daily_p_l.toFixed(2));
-                       $('#daily_p_p_l_per').text((daily_p_l / (total_assets - daily_p_l) * 100).toFixed(2));
+        $('link[rel=stylesheet][href~="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css?version=<?php echo $wo['config']['version']; ?>"]').remove();
+        $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/bootsrap-rtl.min.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
+        $('link[rel=stylesheet][href~="<?php echo $wo['config']['theme_url'];?>/stylesheet/style_rtl.css<?php echo $wo['update_cache']; ?>?version=<?php echo $wo['config']['version']; ?>"]').remove();
 
-                       change_dynamic_colors();
-                   });
+        if (typeof(Storage) == "undefined") {
+            get_data_from_server = true;
+        } else {
+            expiry_token = localStorage.getItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_time_token");
+            const dt = new Date();
 
-       } else{
-           data_of_all_stocks = data_of_all_assets.extraStockDataFullPortfolio;
-           data_of_all_mutual_funds = data_of_all_assets.extraMFDataFullPortfolio;
-           data_of_all_properties = data_of_all_assets.extraPropertyDataFullPortfolio;
-           /* data_of_all_loans = data_of_all_assets.extraLoansFullPortfolio; */
-           data_of_all_oa = data_of_all_assets.extraOAFullPortfolio;
-           data_of_all_fd = data_of_all_assets.extraFDFullPortfolio;
-           data_of_all_cash = data_of_all_assets.extraCashFullPortfolio;
-           data_of_all_bullion = data_of_all_assets.extraBullionFullPortfolio;
+            if (dt.getTime() > expiry_token && dt.getDay() != 6 && dt.getDay != 0) {
+                get_data_from_server = true;
+            }
+            else{
+                /* data_of_all_stocks = findLocalItems(/^<?php echo $wo['portfolio_data']['portfolio_id']; ?>_\d{6,}_portfolio_stocks$/i); */
+                data_of_all_assets = JSON.parse(localStorage.getItem('<?php echo $wo['portfolio_data']['portfolio_id']; ?>_portfolio_assets'));
+                if (data_of_all_assets == null) get_data_from_server = true;
+                /* data_of_all_assets = Array(); */
+                else (data_of_all_assets.length == 0) && (get_data_from_server = true);
+                /* get_data_from_server = true */
+                console.log('Data localStorage:')
+                console.log(data_of_all_assets)
+            }
+        }
 
-           /* if (data_of_all_stocks.length != 0) var [adjustedValTotal, intradayValTotal, currentVal_stocks, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates] = calculateTotalValsStocks_display(data_of_all_stocks); */
-           if (data_of_all_stocks.length != 0) currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj);
-           if (data_of_all_mutual_funds.length != 0) currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj);
-           if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj);
-           if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj);
-           if (data_of_all_fd.length != 0) currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj);
-           if (data_of_all_cash.length != 0) calculateTotalValsCash_display(data_of_all_cash, dates_obj, type_dates_obj);
-           if (data_of_all_bullion.length != 0) calculateTotalValsBullion_display(data_of_all_bullion, dates_obj, type_dates_obj);
+        if (get_data_from_server) {
 
-           console.log('type_dates_obj');
-           console.log(type_dates_obj);
+            $.ajax({
+                url: Wo_Ajax_Requests_File(),
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    f:'all_portfolio_stocks_extra_data',
+                    portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>
+                },
+                    })
+                    .done(function(data_of_all_assets) {
+                        console.log('Data from server:')
+                        process_data(data_of_all_assets);
 
-           add_doughnutCharts([parseFloat(currentVal_bullion), parseFloat(currentVal_cash), parseFloat(currentVal_fd), parseFloat(currentVal_oa), parseFloat(currentVal_properties), parseFloat(currentVal_stocks), parseFloat(currentVal_mf)]);
-           add_lineChart(dates_obj, type_dates_obj);
+                        if (typeof(Storage) != "undefined") {
+                            localStorage.setItem(data_of_all_assets.portfolio_id + "_time_token", new Date().getTime() + 210000);
 
-           /* TODO */
-           /* getGraphData(fincode_price_obj, fincode_volume, fincode_sorted_dates, currentVal_stocks, timeline, all_dates); */
+                            localStorage.setItem(data_of_all_assets.portfolio_id + "_portfolio_assets", JSON.stringify(data_of_all_assets));
+                            data_of_all_stocks.forEach(function (value){
+                                localStorage.setItem(data_of_all_assets.portfolio_id + "_" + value.stock_fincode + "_portfolio_stocks", JSON.stringify(value));
+                            })
+                        }
 
-           var total_assets = parseFloat($('#total_assets').text());
-           var total_equity = total_assets - $('#total_liabilities').text();
-           $('#current_net_worth').text(total_equity);
+                    });
 
-           var daily_p_l = parseFloat($('#total_day_gain').text());
-           $('#daily_p_p_l').text(daily_p_l.toFixed(2));
-           $('#daily_p_p_l_per').text((daily_p_l / (total_assets - daily_p_l) * 100).toFixed(2));
-
-           var overall_p_l =  parseFloat($('#total_unrealised_gain').text()) + parseFloat($('#total_realised_gain').text());
-           var overall_p_l_per = overall_p_l / <?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?>;
-           $('#overall_p_p_l').text(overall_p_l.toFixed(2));
-           $('#overall_p_p_l_per').text((overall_p_l_per * 100).toFixed(2));
-
-           change_dynamic_colors();
-       }
+        } else process_data(data_of_all_assets);
 
     }
 
 
     $( document ).ready(function () {
-        /* TODO */
-        /* INFO: 0: MAX, Time_Stamp: Other */
-        var SA_PORTFOLIO_timestamp = (new Date().getTime() / 1000) - (90 * 24 * 60 * 60); // For 10 Days
-        if (localStorage.getItem('SA_portfolio_time') == null) localStorage.setItem('SA_portfolio_time', SA_PORTFOLIO_timestamp);
-        localStorage.setItem('SA_portfolio_time', SA_PORTFOLIO_timestamp);
-
-        PortfolioDataProcessing(localStorage.getItem('SA_portfolio_time'));
-
-        /* PortfolioDataProcessing(0); */
+        Get_Portfolio_data();
     });
 
-    /* var SA_PORTFOLIO_timestamp = (new Date().getTime() / 1000) - (90 * 24 * 60 * 60); // For 10 Days */
-    /* if (localStorage.getItem('SA_portfolio_time') == null) localStorage.setItem('SA_portfolio_time', SA_PORTFOLIO_timestamp); */
-    /* setInterval(PortfolioDataProcessing, 180000, localStorage.getItem('SA_portfolio_time')); */
-    /* setInterval(function(){ */
-    /*     $('#currentVal_stocks').text(0); */
-    /* }, 1800); */
+    /* setInterval(Get_Portfolio_data, 180000, localStorage.getItem('SA_portfolio_time')); */
 
 </script>
-
-<?php echo Wo_LoadPage('portfolio/dashboard_portfolio_graphs'); ?>

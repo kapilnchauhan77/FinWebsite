@@ -8799,7 +8799,7 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $
         $stock_transaction_date = Wo_Secure($stock_quote_datum['stock_transaction_date']);
         $stock_transaction_price = Wo_Secure($stock_quote_datum['stock_transaction_price']);
         $stock_transaction_qty = Wo_Secure($stock_quote_datum['stock_transaction_qty']);
-        $stock_invested_value = Wo_Secure($stock_quote_datum['stock_invested_value']);
+        /* $stock_invested_value = Wo_Secure($stock_quote_datum['stock_invested_value']); */
         $stock_net_amount = Wo_Secure($stock_quote_datum['stock_net_amount']);
         $stock_charge = Wo_Secure($stock_quote_datum['stock_charge']);
         $stock_note = Wo_Secure($stock_quote_datum['note']);
@@ -9001,7 +9001,7 @@ function Wo_ExtraStockDetailInPortfolio($stock_fincode, $portfolio_id) {
 
     $data['stock_fincode'] = $stock_fincode;
 
-    $query_text = "SELECT `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty` FROM " . T_PORTFOLIO_STOCKS . "
+    $query_text = "SELECT `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `Charges` FROM " . T_PORTFOLIO_STOCKS . "
         WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id}";
     $sql          = mysqli_query($sqlConnect, $query_text);
     $data['stock_portfolio_data'] = array();
@@ -9015,11 +9015,12 @@ function Wo_ExtraStockDetailInPortfolio($stock_fincode, $portfolio_id) {
         return array();
     }
 
-    $query_text = "SELECT `scripcode`, `symbol` FROM " . T_COMPANIES . "
+    $query_text = "SELECT `compname`, `scripcode`, `symbol` FROM " . T_COMPANIES . "
         WHERE `fincode` = {$stock_fincode}";
     $sql          = mysqli_query($sqlConnect, $query_text);
     $fetched_data = mysqli_fetch_assoc($sql);
     $scripcode = $fetched_data['scripcode'];
+    $data['compname'] = $fetched_data['compname'];
     if ($scripcode == ''){
         $symbol = $fetched_data['symbol'];
 

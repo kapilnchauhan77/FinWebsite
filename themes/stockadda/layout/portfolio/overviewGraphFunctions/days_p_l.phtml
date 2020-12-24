@@ -1,0 +1,32 @@
+<script>
+
+    function days_p_l(ctx, total_profit_days, total_loss_days){
+        var options = {
+              series: ((total_profit_days == 0) && (total_loss_days == 0)) ? [1, 0] : [total_profit_days, -1 * total_loss_days],
+              chart: {
+              width: '115%',
+              type: 'donut',
+            },
+            labels: ["Profits Today", "Losses Today"],
+            tooltip: {enabled: false},
+            colors: ((total_profit_days == 0) && (total_loss_days == 0)) ? ['#808080', '#fff'] : ['#1CC88A', '#E32D2D'],
+            dataLabels: {
+                enabled: false
+            },
+            animation: {
+                enabled: false,
+                dynamicAnimation: {
+                    enabled: false,
+                }
+            },
+            legend: {
+              show: false,
+            }
+        };
+
+        var chart = new ApexCharts(ctx, options);
+        chart.render();
+
+    };
+
+</script>

@@ -69,7 +69,7 @@
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
                                         <div class="SA_col SA_mr-2">
-                                            <div class="SA_text-xs SA_font-weight-bold SA_text-primary SA_text-uppercase SA_mb-1">Current Value</div>
+                                            <div class="SA_text-xs SA_font-weight-bold SA_text-primary SA_text-uppercase SA_mb-1">Current Value Of Portfolio</div>
                                             <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id='currentVal'>0</span></div>
                                         </div>
                                         <div class="SA_col-auto">
@@ -85,7 +85,7 @@
                                 <div class="SA_card-body">
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
                                         <div class="SA_col SA_mr-2">
-                                            <div class="SA_text-xs SA_font-weight-bold SA_text-warning SA_text-uppercase SA_mb-1">Invested Value</div>
+                                            <div class="SA_text-xs SA_font-weight-bold SA_text-warning SA_text-uppercase SA_mb-1">Total Invested Value</div>
                                             <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?></div>
                                         </div>
                                         <div class="SA_col-auto">
@@ -109,7 +109,7 @@
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                         <div class="SA_col SA_mr-2">
-                                            <div class="SA_text-xs SA_font-weight-bold SA_text-info SA_text-uppercase SA_mb-1">XIRR</div>
+                                            <div class="SA_text-xs SA_font-weight-bold SA_text-info SA_text-uppercase SA_mb-1">Portfolio XIRR</div>
 
                                             <div class="SA_row SA_no-gutters SA_align-items-center">
                                                 <div class="SA_col-auto">
@@ -162,7 +162,7 @@
                                     <div class="SA_row SA_no-gutters SA_align-items-center">
 
                                         <div class="SA_col SA_mr-2">
-                                            <div id="daily_p_p_l_text" class="SA_text-xs SA_font-weight-bold SA_text-secondary SA_text-uppercase SA_mb-1">Day's P&amp;L:</div>
+                                            <div id="daily_p_p_l_text" class="SA_text-xs SA_font-weight-bold SA_text-secondary SA_text-uppercase SA_mb-1">Total Day's P&amp;L:</div>
 
                                             <div class="SA_row SA_no-gutters SA_align-items-center">
                                                 <div class="SA_col-auto">
@@ -188,7 +188,7 @@
 
                                         <div class="SA_col SA_mr-2">
 
-                                            <div id="overall_p_p_l_text" class="SA_text-xs SA_font-weight-bold SA_text-secondary SA_text-uppercase SA_mb-1">Overall P&amp;L: </div>
+                                            <div id="overall_p_p_l_text" class="SA_text-xs SA_font-weight-bold SA_text-secondary SA_text-uppercase SA_mb-1">Total Overall P&amp;L: </div>
 
                                             <div class="SA_row SA_no-gutters SA_align-items-center">
                                                 <div class="SA_col-auto">
@@ -308,6 +308,6 @@
 <?php break;
     }; ?>
 
+<?php echo Wo_LoadPage('portfolio/dashboard_portfolio_graphs'); ?>
 <?php echo Wo_LoadPage('portfolio/portfolioFunctions'); ?>
-<?php echo Wo_LoadPage('portfolio/cacheAPI'); ?>
 <?php echo Wo_LoadPage('portfolio/dashboard_js'); ?>

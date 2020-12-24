@@ -13,7 +13,7 @@
         return results;
     }
 
-    function calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj){
+    function calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj, tab, content){
 
         var unrealized_currentVal = 0;
         var realized_currentVal = 0;
@@ -77,6 +77,10 @@
 
         currentVal_toDisplay = parseFloat($('#currentVal').text()) + unrealized_currentVal;
         $('#currentVal').text(currentVal_toDisplay.toFixed(2));
+
+        const daily_p_p_l = daysGain;
+        $('#daily_p_p_l').text((parseFloat($('#daily_p_p_l').text()) + daily_p_p_l).toFixed(2));
+
         $('#total_assets').text(currentVal_toDisplay.toFixed(2));
         $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
 
@@ -89,7 +93,6 @@
         var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
         $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
 
-        const daily_p_p_l = daysGain;
         $('#fd_daily_p_p_lTable').text(daily_p_p_l.toFixed(2));
 
         const unrealized_overall_p_p_l = (unrealized_currentVal - unrealized_invested_val);
@@ -222,7 +225,9 @@
         $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
 
         $('#oa_currentValTable').text(currentVal.toFixed(2));
+
         const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['invested_value_other_assets']; ?>);
+        $('#overall_p_p_l').text((parseFloat($('#overall_p_p_l').text()) + overall_p_p_l).toFixed(2));
         $('#oa_overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
 
         var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
@@ -277,7 +282,9 @@
         $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
 
         $('#properties_currentValTable').text(currentVal.toFixed(2));
+
         const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['invested_value_properties']; ?>);
+        $('#overall_p_p_l').text((parseFloat($('#overall_p_p_l').text()) + overall_p_p_l).toFixed(2));
         $('#properties_overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
 
         var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
@@ -295,7 +302,7 @@
         return currentVal.toFixed(2);
     }
 
-    function calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj){
+    function calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj, tab, content){
 
         var oldVal                  = 0;
         var currentVal              = 0;
@@ -334,18 +341,23 @@
 
         currentVal_toDisplay = parseFloat($('#currentVal').text()) + currentVal;
         $('#currentVal').text(currentVal_toDisplay.toFixed(2));
+
+        const daily_p_p_l = (currentVal - oldVal);
+        $('#daily_p_p_l').text((parseFloat($('#daily_p_p_l').text()) + daily_p_p_l).toFixed(2));
+
+        const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['invested_value_mutual_funds']; ?>);
+        $('#overall_p_p_l').text((parseFloat($('#overall_p_p_l').text()) + overall_p_p_l).toFixed(2));
+
         $('#total_assets').text(currentVal_toDisplay.toFixed(2));
         $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
 
         $('#mf_currentValTable').text(currentVal.toFixed(2));
 
-        const daily_p_p_l = (currentVal - oldVal);
         $('#mf_daily_p_p_lTable').text(daily_p_p_l.toFixed(2));
 
         const daily_p_p_l_per = (daily_p_p_l / oldVal) * 100;
         change_colors('mf_daily_p_p_lTable', daily_p_p_l_per);
 
-        const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['invested_value_mutual_funds']; ?>);
         $('#mf_overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
 
         var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
@@ -364,82 +376,81 @@
         return currentVal.toFixed(2);
     }
 
-    /* function calculateTotalValsStocks_display(data_of_all_stocks, get_fincode_data = true){ */
-    function calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj){
+    function calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj, tab, content){
         /* TODO Remove variables that are not needed */
 
-        var adjustedValTotal        = 0;
-        var intradayValTotal        = 0;
         var currentVal              = 0;
+        var num_loss_days           = 0;
+        var total_loss_days         = 0;
+        var num_profit_days         = 0;
+        var num_loss_overall        = 0;
+        var adjustedValTotal        = 0;
+        var total_profit_days       = 0;
+        var num_profit_overall      = 0;
+        var total_loss_overall      = 0;
         var asset_sold_this_year    = 0;
+        var total_profit_overall    = 0;
+        var overview_daily_p_p_l    = 0;
         var asset_added_this_year   = 0;
+        var overview_overall_p_p_l  = 0;
         var currentVal_of_asset_fyr = 0;
+        var num_of_trs              = 0;
+        var profit_fincode          = new Array();
+        var loss_fincode            = new Array();
+        var fincode_overview_table  = new Object();
+
         var fincode_added_this_fyr  = new Object();
         var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
-        /* var fincode_price_obj       = new Object(); */
-        /* var fincode_volume          = new Object(); */
-        /* var fincode_sorted_dates    = new Object(); */
 
         data_of_all_stocks.forEach(function (value) {
-            /* console.log("Val:"); */
-            /* console.log(value); */
 
-            var total_volume_of_stock = 0;
-
-            /* if (get_fincode_data == true) { */
-            /*     var dates = new Array(); */
-            /*     /1* var rolling_sum_price = 0; *1/ */
-
-            /*     fincode_price_obj[value.stock_fincode] = new Object(); */
-            /*     fincode_volume[value.stock_fincode]    = new Object(); */
-
-            /*     value.stock_portfolio_data.forEach(val => { */
-            /*         fincode_price_obj[value.stock_fincode][parseInt(val.stock_transaction_date)] = parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price); */
-            /*         fincode_volume[value.stock_fincode][parseInt(val.stock_transaction_date)] = parseFloat(val.stock_transaction_qty); */
-            /*         total_volume_of_stock += parseFloat(val.stock_transaction_qty); */
-            /*         if (parseInt(val.stock_transaction_date) >= financial_yr_timestamp){ */
-            /*             if (parseFloat(val.stock_transaction_qty) < 0) asset_sold_this_year += -1 * parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price); */
-            /*             else{ */
-            /*                 fincode_added_this_fyr[value.stock_fincode] = parseInt(val.stock_transaction_qty); */
-            /*                 asset_added_this_year += parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price); */
-            /*             } */
-            /*         } */
-            /*     }); */
-
-            /*     dates = Object.keys(fincode_price_obj[value.stock_fincode]); */
-            /*     dates.sort(); */
-
-            /*     /1* TODO This is fishy, test more *1/ */
-            /*     /1* dates.forEach(date_ => { *1/ */
-            /*     /1*     rolling_sum_price += fincode_price_obj[value.stock_fincode][date_]; *1/ */
-            /*     /1*     fincode_price_obj[value.stock_fincode][date_] = rolling_sum_price; *1/ */
-            /*     /1* }); *1/ */
-            /*     /1* Fishy Code *1/ */
-
-            /*     all_dates = all_dates.concat(dates); */
-            /*     fincode_sorted_dates[value.stock_fincode] = dates; */
-            /* }; */
+            total_volume_of_stock  = 0;
+            total_inv_val_of_stock = 0;
+            current_val_of_stock   = 0;
+            adjusted_val_of_stock  = 0;
+            days_held_of_stock     = [];
 
             value.stock_portfolio_data.forEach(function(val) {
 
                 console.log('Date from stocks:');
                 console.log(parseInt(val.stock_transaction_date));
-                if (parseInt(val.stock_transaction_date) in dates_obj) dates_obj[parseInt(val.stock_transaction_date)] += parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty);
-                else dates_obj[parseInt(val.stock_transaction_date)] = parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty);
 
-                if (parseInt(val.stock_transaction_date) in type_dates_obj){
-                    if ('Stocks' in type_dates_obj[parseInt(val.stock_transaction_date)]) type_dates_obj[parseInt(val.stock_transaction_date)]['Stocks'].push(parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty));
-                    else type_dates_obj[parseInt(val.stock_transaction_date)]['Stocks'] = [parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty)];
-                } else {
-                    type_dates_obj[parseInt(val.stock_transaction_date)] = {'Stocks': [parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty)]};
+                total_inv_val_of_stock += (val.stock_transaction_price * val.stock_transaction_qty) + parseFloat(val.Charges);
+                console.log(days_held_of_stock);
+                days_held_of_stock.push(Math.round(((new Date())-(val.stock_transaction_date*1000))/(1000*60*60*24)));
+
+                if (tab == 'overview' && content == 'stocks'){
+                    overview_overall_p_p_l = (value.price_detail_intraday == null) ? ((parseFloat(value.price_detail_adjusted.close) * parseFloat(val.stock_transaction_qty)) - (val.stock_transaction_price * parseFloat(val.stock_transaction_qty)) - parseFloat(val.Charges)) : ((parseFloat(value.price_detail_intraday.close) * val.stock_transaction_qty) - (val.stock_transaction_price * val.stock_transaction_qty) - parseFloat(val.Charges));
+
+                    if (overview_overall_p_p_l > 0){
+                        if (!(value.stock_fincode in profit_fincode)) num_profit_overall += 1;
+                        else profit_fincode.push(value.stock_fincode);
+
+                        total_profit_overall += overview_overall_p_p_l;
+                    } else{
+                        if (!(value.stock_fincode in loss_fincode)) num_loss_overall += 1;
+                        else loss_fincode.push(value.stock_fincode);
+
+                        total_loss_overall += overview_overall_p_p_l * parseFloat(val.stock_transaction_qty);
+                    }
+                } else if (tab == 'dashboard'){
+                    if (parseInt(val.stock_transaction_date) in dates_obj) dates_obj[parseInt(val.stock_transaction_date)] += parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty) + parseFloat(val.Charges);
+                    else dates_obj[parseInt(val.stock_transaction_date)] = (parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty)) + parseFloat(val.Charges);
+
+                    if (parseInt(val.stock_transaction_date) in type_dates_obj){
+                        if ('Stocks' in type_dates_obj[parseInt(val.stock_transaction_date)]) type_dates_obj[parseInt(val.stock_transaction_date)]['Stocks'].push(parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty) + parseFloat(val.Charges));
+                        else type_dates_obj[parseInt(val.stock_transaction_date)]['Stocks'] = [parseFloat(val.Charges) + (parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty))];
+                    } else {
+                        type_dates_obj[parseInt(val.stock_transaction_date)] = {'Stocks': [parseFloat(val.Charges) + (parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty))]};
+                    }
                 }
 
                 total_volume_of_stock += parseFloat(val.stock_transaction_qty);
                 if (parseInt(val.stock_transaction_date) >= financial_yr_timestamp){
-                    if (parseFloat(val.stock_transaction_qty) < 0) asset_sold_this_year += -1 * parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price);
+                    if (parseFloat(val.stock_transaction_qty) < 0) asset_sold_this_year += -1 * (parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price) + parseFloat(val.Charges));
                     else{
                         fincode_added_this_fyr[value.stock_fincode] = parseInt(val.stock_transaction_qty);
-                        asset_added_this_year += parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price);
+                        asset_added_this_year += parseFloat(val.Charges) + (parseFloat(val.stock_transaction_qty) * parseFloat(val.stock_transaction_price));
                     }
                 };
             });
@@ -447,59 +458,131 @@
             if (value.price_detail_intraday == null) {
 
                 if (value.stock_fincode in fincode_added_this_fyr) currentVal_of_asset_fyr += (parseFloat(value.price_detail_adjusted.close) * fincode_added_this_fyr[value.stock_fincode]);
-                currentVal       += parseFloat(value.price_detail_adjusted.close);
-                adjustedValTotal += parseFloat(value.price_detail_adjusted.close);
+                current_val_of_stock = (parseFloat(value.price_detail_adjusted.close) * total_volume_of_stock);
+                adjusted_val_of_stock = (parseFloat(value.price_detail_adjusted.close) * total_volume_of_stock);
+                currentVal       += current_val_of_stock;
+                adjustedValTotal += adjusted_val_of_stock;
 
             } else {
 
                 if (value.stock_fincode in fincode_added_this_fyr) currentVal_of_asset_fyr += (parseFloat(value.price_detail_intraday.close) * fincode_added_this_fyr[value.stock_fincode]);
-                currentVal       += parseFloat(value.price_detail_intraday.close);
-                intradayValTotal += parseFloat(value.price_detail_intraday.close);
-                adjustedValTotal += parseFloat(value.price_detail_adjusted.close);
+                current_val_of_stock = (parseFloat(value.price_detail_intraday.close) * total_volume_of_stock);
+                adjusted_val_of_stock = (parseFloat(value.price_detail_adjusted.close) * total_volume_of_stock);
+                currentVal       += current_val_of_stock;
+                adjustedValTotal += adjusted_val_of_stock;
+
+                if (tab == 'overview' && content == 'stocks'){
+                    overview_daily_p_p_l = parseFloat(value.price_detail_intraday.close) - parseFloat(value.price_detail_adjusted.close);
+                    if (overview_daily_p_p_l > 0){
+                        num_profit_days   += 1;
+                        total_profit_days += (overview_daily_p_p_l * total_volume_of_stock);
+                    } else{
+                        num_loss_days   += 1;
+                        total_loss_days += (overview_daily_p_p_l * total_volume_of_stock);
+                    }
+                }
 
             }
 
-            currentVal       *= total_volume_of_stock;
-            adjustedValTotal *= total_volume_of_stock;
-            intradayValTotal *= total_volume_of_stock;
+            if (tab == 'overview' && content == 'stocks'){
+                overview_table_to_append = `<tr>`;
+                if (days_held_of_stock.length > 1){
+                   overview_table_to_append += `<th scope="row"><span style="margin: 0.75em;">`+ value.compname +`(`+ days_held_of_stock.length +`)</span></th>`;
+                   hover_title_overview_stocks = '';
+                   for (st = 0; st < days_held_of_stock.length-1; st++) hover_title_overview_stocks += days_held_of_stock[st] +', ';
+                   hover_title_overview_stocks += days_held_of_stock[days_held_of_stock.length-1] +'.';
+                   days_held_line = `<td style='cursor: default;' title="`+ hover_title_overview_stocks +`">Hover</td>`;
+                }
+                else{
+                   overview_table_to_append += `<th scope="row"><span style="margin: 0.75em;">`+ value.compname +`</span></th>`;
+                   days_held_line = `<td>`+ days_held_of_stock[0] +`</td>`;
+                }
 
+                cmp = (value.price_detail_intraday == null) ? value.price_detail_adjusted.close : value.price_detail_intraday.close;
+                overview_table_to_append +=`<td>&#8377;`+ parseFloat(cmp).toFixed(2) +`</td>
+                                            <td>`+ total_volume_of_stock +`<br><small>&#8377;`+ (total_inv_val_of_stock / total_volume_of_stock).toFixed(2) +`</small></td>`
+                                            + days_held_line +
+                                            `<td>&#8377;`+ total_inv_val_of_stock.toFixed(2) +`<br><small>`+ (100 * (total_inv_val_of_stock) / <?php echo $wo['portfolio_data']['stock_invested_value']; ?>).toFixed(2) +`%</small></td>
+                                            <td>&#8377;`+ (current_val_of_stock - adjusted_val_of_stock).toFixed(2) +`<br><small>`+ (100 * (current_val_of_stock - adjusted_val_of_stock) / adjusted_val_of_stock).toFixed(2) +`%</small></td>
+                                            <td>&#8377;`+ (current_val_of_stock - total_inv_val_of_stock).toFixed(2) +`<br><small>`+ (100 * (current_val_of_stock - total_inv_val_of_stock) / total_inv_val_of_stock).toFixed(2) +`%</small></td>
+                                            <td>Add</td>
+                                            <td>&#8377;`+ (current_val_of_stock - total_inv_val_of_stock).toFixed(2) +`</td>
+                                            <td>&#8377;`+ current_val_of_stock.toFixed(2) +`<br><small><span id='`+ num_of_trs +`_weightage_stocks'>`+ (100 * current_val_of_stock).toFixed(2) +`</span>%</small></td>
+                                            <td><a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Upgrade to view XIRR">Pro</a></td>`
+
+                overview_table_to_append += `</tr>`;
+                num_of_trs += 1;
+
+                $('#overview_stocks_table_body').append(overview_table_to_append);
+            }
         });
 
         currentVal_toDisplay = parseFloat($('#currentVal').text()) + currentVal;
         $('#currentVal').text(currentVal_toDisplay.toFixed(2));
-        $('#total_assets').text(currentVal_toDisplay.toFixed(2));
-        $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
-
-        $('#currentValTable').text(currentVal.toFixed(2));
-
-        var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + asset_added_this_year;
-        $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
-
-        var p_l_this_year = currentVal_of_asset_fyr - asset_added_this_year;
-        var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
-        $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
-        $('#asset_sold_this_year').text(asset_sold_this_year);
 
         const daily_p_p_l = (currentVal - adjustedValTotal);
-        /* $('#daily_p_p_l').text(daily_p_p_l); */
-        $('#daily_p_p_lTable').text(daily_p_p_l.toFixed(2));
-
-        const daily_p_p_l_per = ((daily_p_p_l / adjustedValTotal) * 100);
-        change_colors('daily_p_p_l', daily_p_p_l_per);
-        change_colors('daily_p_p_lTable', daily_p_p_l_per);
+        $('#daily_p_p_l').text((parseFloat($('#daily_p_p_l').text()) + daily_p_p_l).toFixed(2));
 
         const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['stock_invested_value']; ?>);
-        /* $('#overall_p_p_l').text(overall_p_p_l); */
-        $('#overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
+        $('#overall_p_p_l').text((parseFloat($('#overall_p_p_l').text()) + overall_p_p_l).toFixed(2));
 
-        $('#total_day_gain').text((parseFloat($('#total_day_gain').text()) + daily_p_p_l).toFixed(2));
-        $('#total_unrealised_gain').text((parseFloat($('#total_unrealised_gain').text()) + overall_p_p_l).toFixed(2));
+        if (tab == 'dashboard'){
+            $('#total_assets').text(currentVal_toDisplay.toFixed(2));
+            $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
+            $('#currentValTable').text(currentVal.toFixed(2));
 
-        const overall_p_p_l_per = (overall_p_p_l / <?php echo $wo['portfolio_data']['stock_invested_value']; ?>) * 100;
-        /* change_colors('overall_p_p_l', overall_p_p_l_per); */
-        change_colors('overall_p_p_lTable', overall_p_p_l_per);
+            var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + asset_added_this_year;
+            $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
 
-        /* return [adjustedValTotal, intradayValTotal, currentVal, fincode_price_obj, fincode_volume, fincode_sorted_dates, all_dates]; */
+            var p_l_this_year = currentVal_of_asset_fyr - asset_added_this_year;
+            var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
+            $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
+            $('#asset_sold_this_year').text(asset_sold_this_year);
+
+            $('#daily_p_p_lTable').text(daily_p_p_l.toFixed(2));
+
+            const daily_p_p_l_per = ((daily_p_p_l / adjustedValTotal) * 100);
+            change_colors('daily_p_p_l', daily_p_p_l_per);
+            change_colors('daily_p_p_lTable', daily_p_p_l_per);
+
+            $('#overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
+
+            $('#total_day_gain').text((parseFloat($('#total_day_gain').text()) + daily_p_p_l).toFixed(2));
+            $('#total_unrealised_gain').text((parseFloat($('#total_unrealised_gain').text()) + overall_p_p_l).toFixed(2));
+
+            const overall_p_p_l_per = (overall_p_p_l / <?php echo $wo['portfolio_data']['stock_invested_value']; ?>) * 100;
+            change_colors('overall_p_p_lTable', overall_p_p_l_per);
+        }else if (tab == 'overview' && content == 'stocks'){
+
+            console.log(total_profit_overall, total_loss_overall, total_profit_days, total_loss_days);
+            add_doughnutCharts_Overview(total_profit_overall, total_loss_overall, total_profit_days, total_loss_days);
+            $('#num_gain_day').text(num_profit_days);
+            $('#num_loss_day').text(num_loss_days);
+            $('#gain_overall').text(total_profit_overall.toFixed(2));
+            $('#loss_overall').text(total_loss_overall.toFixed(2));
+            $('#num_gain_overall').text(num_profit_overall);
+            $('#num_loss_overall').text(num_loss_overall);
+            $('#gain_day').text(total_profit_days.toFixed(2));
+            $('#loss_day').text(total_loss_days.toFixed(2));
+            for (tr_num = 0; tr_num < num_of_trs; tr_num++) $('#' + tr_num + '_weightage_stocks').text((parseFloat($('#' + tr_num + '_weightage_stocks').text()) / currentVal).toFixed(2));
+            const daily_p_p_l_per = ((daily_p_p_l / adjustedValTotal) * 100);
+            const overall_p_p_l_per = (overall_p_p_l / <?php echo $wo['portfolio_data']['stock_invested_value']; ?>) * 100;
+            last_tr = `<tr style="background-color:grey">
+                           <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
+                           <td><span style="color: white;">-</span></td>
+                           <td><span style="color: white;">`+ <?php echo $wo['portfolio_data']['no_of_stocks']; ?> +`<br><small>&#8377;`+ (<?php echo $wo['portfolio_data']['stock_invested_value']; ?> / <?php echo $wo['portfolio_data']['no_of_stocks']; ?>).toFixed(2) +`</small></span></td>
+                           <td><span style="color: white;">-</span></td>
+                           <td><span style="color: white;">&#8377;<?php echo round($wo['portfolio_data']['stock_invested_value'], 2); ?></span></td>
+                           <td><span style="color: white;">&#8377;`+ daily_p_p_l.toFixed(2) +`<br><small>`+ (daily_p_p_l_per).toFixed(2) +`%</small></span></td>
+                           <td><span style="color: white;">&#8377;`+ overall_p_p_l.toFixed(2) +`<br><small>`+ (overall_p_p_l_per).toFixed(2) +`%</small></span></td>
+                           <td><span style="color: white;">-</span></td>
+                           <td><span style="color: white;">&#8377;`+ overall_p_p_l.toFixed(2) +`<br><small>`+ (overall_p_p_l_per).toFixed(2) +`%</small></span></td>
+                           <td><span style="color: white;">&#8377;`+ currentVal +`</span></td>
+                           <td><span style="color: white;"><a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" style="color: white;">Pro</a></span></td>
+                       </tr>`
+            $('#overview_stocks_table_body').append(last_tr);
+        }
+
         return currentVal.toFixed(2);
     }
 
@@ -509,7 +592,7 @@
         }
         return {
             n:   n + parseFloat(stock_portfolio_data.stock_transaction_qty),
-            total: total + (parseFloat(stock_portfolio_data.stock_transaction_price) * parseFloat(stock_portfolio_data.stock_transaction_qty)),
+            total: total + (parseFloat(stock_portfolio_data.stock_transaction_price) * parseFloat(stock_portfolio_data.stock_transaction_qty)) + parseFloat(stock_portfolio_data.Charges),
         };
     }
 
