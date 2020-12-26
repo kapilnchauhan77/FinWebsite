@@ -141,5 +141,6 @@ define('T_HISTORICAL', 'historical_prices');
 define('T_MUTUALFUNDS', 'mutual_funds');
 define('T_OLDMUTUALFUNDS', 'old_mutual_funds');
 define('T_PORTFOLIO_MF', 'mf_in_portfolio');
+define('T_MCAP', 'market_cap');
 //END OF CUSTOM ADDITIONS
 ?>

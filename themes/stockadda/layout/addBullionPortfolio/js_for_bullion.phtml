@@ -100,7 +100,7 @@
                     if (data['status'] == 200){
                         Swal.fire({
                             icon: 'success',
-                            title: 'Property Added Successfully!',
+                            title: 'Bullion Added Successfully!',
                         }).then((result) => {
                             localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
                             location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
@@ -181,7 +181,7 @@
                         title: 'Add Cash Manually',
                         text: 'Minimum Amount To Add For This Transaction: ₹' + (bullion_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>),
                         input: 'number',
-                        inputAttributes: { min: (bullion_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>) },
+                        inputAttributes: { min: (parseFloat(bullion_total_price) - <?php echo $wo['portfolio_data']['current_value_cash']; ?>), step: 0.01 },
                         validationMessage: 'Added amount is less than Required amount!',
                         showCloseButton: true,
                         showCancelButton: true,
@@ -195,7 +195,7 @@
                                     f:'add_cash_for_asset',
                                     cash: amount,
                                     portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
-                                    note: 'Manually added cash for buying Property',
+                                    note: 'Manually added cash for buying Bullion',
                                     date_: earliest_bullion_date,
                                 }
                             });

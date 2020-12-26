@@ -198,7 +198,7 @@
                         title: 'Add Cash Manually',
                         text: 'Minimum Amount To Add For This Transaction: ₹' + (fd_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>),
                         input: 'number',
-                        inputAttributes: { min: (fd_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>) },
+                        inputAttributes: { min: (fd_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>), step: 0.01 },
                         validationMessage: 'Added amount is less than Required amount!',
                         showCloseButton: true,
                         showCancelButton: true,

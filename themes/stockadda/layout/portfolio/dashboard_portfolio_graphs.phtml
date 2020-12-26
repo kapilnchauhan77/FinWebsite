@@ -59,103 +59,26 @@
         if (ctx) overall_p_l(ctx, total_profit_overall, total_loss_overall);
     };
 
-    $( document ).ready(function(){
-        Chart.defaults.global.defaultFontColor = '#858796';
+    function add_weightage_Overview(fincode_stock_weightage_current, fincode_sector_weightage_current, fincode_stock_weightage_invested, fincode_sector_weightage_invested, fincode_sector_weightage_profit, fincode_sector_weightage_profit_per){
+        ctx_invested = document.getElementById("overview_stock_weightage_invested");
+        ctx_current = document.getElementById("overview_stock_weightage_current");
+        if (ctx_invested) stockWeightageInvested(ctx_invested, fincode_stock_weightage_invested);
+        if (ctx_current) stockWeightageCurrent(ctx_current, fincode_stock_weightage_current);
 
-        // Bar Chart Example
-        var ctx = document.getElementById("myBarChart");
-        var myBarChart = new Chart(ctx, {
-            type: 'horizontalBar',
-            data: {
-              labels: ["LTCG", "STCG"],
-              datasets: [{
-                  barThickness: 22,
-                  data: [-238, -553],
-                  backgroundColor: "#838383",
-              },{
-                  barThickness: 22,
-                  data: [727, 589],
-                  backgroundColor: "#1471cd",
-              }],
-            },
-            options: {
-                hover: {
-                    animationDuration: 1,
-                    mode: false
-                },
-                maintainAspectRatio: false,
-                scales: {
-                    xAxes: [{
-                        time: {
-                            unit: 'month'
-                        },
-                        gridLines: {
-                            display: false,
-                            drawBorder: false
-                        },
-                        ticks: {
-                            maxTicksLimit: 6
-                        },
-                        maxBarThickness: 25,
-                        stacked: true,
-                    }],
-                    yAxes: [{
-                        ticks: {
-                            min: -1500,
-                            max: 4500,
-                            maxTicksLimit: 5,
-                            padding: 10,
-                        },
-                        gridLines: {
-                            color: "rgb(234, 236, 244)",
-                            zeroLineColor: "rgb(234, 236, 244)",
-                            drawBorder: false,
-                            borderDash: [2],
-                            zeroLineBorderDash: [2]
-                        },
-                        stacked: true,
-                    }],
-                },
-                legend: {
-                    display: false
-                },
-                tooltips: {
-                    titleMarginBottom: 2,
-                    titleFontSize: 14,
-                    borderColor: '#dddfeb',
-                    borderWidth: 1,
-                    xPadding: 20,
-                    displayColors: false,
-                    intersect: false,
-                    mode: 'index',
-                    caretPadding: 10,
-                    callbacks: {
-                        label: function(tooltipItem, chart) {
-                            /* console.log(tooltipItem); */
-                            var datasetLabel = (tooltipItem.datasetIndex === 0) ? 'Unrealised' : 'Realised';
-                            return datasetLabel + ': $' + (tooltipItem.xLabel);
-                        }
-                    }
-                },
-                animation: {
-                    duration: 0,
-                    onComplete: function () {
-                        var chartInstance = this.chart,
-                        ctx = chartInstance.ctx;
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'bottom';
-                        this.data.datasets.forEach(function (dataset, i) {
-                            var meta = chartInstance.controller.getDatasetMeta(i);
-                            meta.data.forEach(function (bar, index) {
-                                var data = dataset.data[index];
-                                ctx.fillText(data, bar._model.x, bar._model.y - 12);
-                            });
-                        });
-                    }
-                }
+        ctx_invested = document.getElementById("overview_sector_weightage_invested");
+        ctx_current = document.getElementById("overview_sector_weightage_current");
+        ctx_profit_per = document.getElementById("overview_sector_weightage_profit_per");
+        if (ctx_invested) sectorWeightageInvested(ctx_invested, fincode_sector_weightage_invested);
+        if (ctx_current) sectorWeightageCurrent(ctx_current, fincode_sector_weightage_current);
+        if (ctx_profit_per) sectorWeightageProfitPer(ctx_profit_per, fincode_sector_weightage_profit, fincode_sector_weightage_profit_per);
+    };
 
-            }
-        });
-    });
+    function add_marketCap_Overview(fincode_mcap_weightage_invested, fincode_mcap_weightage_current){
+        ctx_invested = document.getElementById("overview_mcap_weightage_invested");
+        if (ctx_invested) mcapWeightageInvested(ctx_invested, fincode_mcap_weightage_invested);
+
+        ctx_current = document.getElementById("overview_mcap_weightage_current");
+        if (ctx_current) mcapWeightageCurrent(ctx_current, fincode_mcap_weightage_current);
+    };
 
 </script>

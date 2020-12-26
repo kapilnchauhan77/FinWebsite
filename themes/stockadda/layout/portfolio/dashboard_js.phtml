@@ -46,8 +46,6 @@
         data_of_all_cash = data_of_all_assets.extraCashFullPortfolio;
         data_of_all_bullion = data_of_all_assets.extraBullionFullPortfolio;
 
-        console.log(data_of_all_assets);
-
         if (data_of_all_mutual_funds.length != 0) currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj, tab, content);
         if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj);
         if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj);
@@ -56,12 +54,8 @@
         if (data_of_all_bullion.length != 0) calculateTotalValsBullion_display(data_of_all_bullion, dates_obj, type_dates_obj);
         if (data_of_all_stocks.length != 0) currentVal_stocks = calculateTotalValsStocks_display(data_of_all_stocks, dates_obj, type_dates_obj, tab, content);
 
-        console.log('type_dates_obj');
-        console.log(type_dates_obj);
-
         var total_assets = parseFloat($('#currentVal').text());
         var daily_p_l = parseFloat($('#daily_p_p_l').text());
-        console.log((daily_p_l / (total_assets - daily_p_l) * 100).toFixed(2));
         $('#daily_p_p_l_per').text((daily_p_l / (total_assets - daily_p_l) * 100).toFixed(2));
 
         var overall_p_l =  parseFloat($('#overall_p_p_l').text());
@@ -126,6 +120,7 @@
                     })
                     .done(function(data_of_all_assets) {
                         console.log('Data from server:')
+                        console.log(data_of_all_assets)
                         process_data(data_of_all_assets);
 
                         if (typeof(Storage) != "undefined") {

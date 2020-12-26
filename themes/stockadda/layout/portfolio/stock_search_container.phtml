@@ -204,9 +204,9 @@
                 if (result.isConfirmed) {
                     Swal.fire({
                         title: 'Add Cash Manually',
-                        text: 'Minimum Amount To Add For This Transaction: ₹' + (stocks_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>),
+                        text: 'Minimum Amount To Add For This Transaction: ₹' + (stocks_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>).toFixed(2),
                         input: 'number',
-                        inputAttributes: { min: (stocks_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>) },
+                        inputAttributes: { min: (stocks_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>).toFixed(2), step: 0.01 },
                         validationMessage: 'Added amount is less than Required amount!',
                         showCloseButton: true,
                         showCancelButton: true,
@@ -220,7 +220,7 @@
                                     f:'add_cash_for_asset',
                                     cash: amount,
                                     portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
-                                    note: 'Manually added cash for buying Mutual Funds',
+                                    note: 'Manually added cash for buying Stocks',
                                     date_: earliest_stocks_date,
                                 }
                             });

@@ -1,0 +1,89 @@
+<script>
+
+    function mcapWeightageInvested(ctx, fincode_mcap_weightage){
+
+        var options = {
+              series: Object.values(fincode_mcap_weightage),
+              chart: {
+              width: '85%',
+              type: 'donut',
+            },
+            labels: Object.keys(fincode_mcap_weightage),
+            tooltip: {enabled: false},
+            plotOptions: {
+              pie: {
+                donut: {
+                    labels: {
+                        show: true,
+                        value: {
+                            formatter: function(val){return ('₹' + val);}
+                        }
+                    }
+                },
+              }
+            },
+            colors: ['#00876c', '#58a066', '#98b561', '#dac767', '#e09d4b', '#e06f45', '#d43d51'],
+            dataLabels: {
+              formatter(val, opts) {
+                return (val.toFixed(1) + '%');
+              }
+            },
+            animation: {
+                enabled: false,
+                dynamicAnimation: {
+                    enabled: false,
+                }
+            },
+            legend: {
+              show: false,
+            }
+        };
+        var chart = new ApexCharts(ctx, options);
+        chart.render();
+
+    };
+
+    function mcapWeightageCurrent(ctx, fincode_mcap_weightage){
+
+        var options = {
+              series: Object.values(fincode_mcap_weightage),
+              chart: {
+              width: '85%',
+              type: 'donut',
+            },
+            labels: Object.keys(fincode_mcap_weightage),
+            tooltip: {enabled: false},
+            plotOptions: {
+              pie: {
+                donut: {
+                    labels: {
+                        show: true,
+                        value: {
+                            formatter: function(val){return ('₹' + val);}
+                        }
+                    }
+                },
+              }
+            },
+            colors: ['#00876c', '#58a066', '#98b561', '#dac767', '#e09d4b', '#e06f45', '#d43d51'],
+            dataLabels: {
+              formatter(val, opts) {
+                return (val.toFixed(1) + '%');
+              }
+            },
+            animation: {
+                enabled: false,
+                dynamicAnimation: {
+                    enabled: false,
+                }
+            },
+            legend: {
+              show: false,
+            }
+        };
+        var chart = new ApexCharts(ctx, options);
+        chart.render();
+
+    };
+
+</script>

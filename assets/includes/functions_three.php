@@ -9015,12 +9015,18 @@ function Wo_ExtraStockDetailInPortfolio($stock_fincode, $portfolio_id) {
         return array();
     }
 
-    $query_text = "SELECT `compname`, `scripcode`, `symbol` FROM " . T_COMPANIES . "
+    $query_text = "SELECT `isin`, `ind_name`, `s_name`, `scripcode`, `symbol` FROM " . T_COMPANIES . "
         WHERE `fincode` = {$stock_fincode}";
     $sql          = mysqli_query($sqlConnect, $query_text);
     $fetched_data = mysqli_fetch_assoc($sql);
     $scripcode = $fetched_data['scripcode'];
-    $data['compname'] = $fetched_data['compname'];
+    $data['compname'] = $fetched_data['s_name'];
+    $data['ind_name'] = $fetched_data['ind_name'];
+
+    $query_text = "SELECT `Categorization` FROM " . T_MCAP . " WHERE `ISIN` = '{$fetched_data['isin']}'";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    $category = mysqli_fetch_assoc($sql)['Categorization'];
+    $data['category'] = $category;
     if ($scripcode == ''){
         $symbol = $fetched_data['symbol'];
 

@@ -1,6 +1,7 @@
 <script>
 
     function overall_p_l(ctx, total_profit_overall, total_loss_overall){
+
         var options = {
               series: ((total_profit_overall == 0) && (total_loss_overall == 0)) ? [1, 0] : [total_profit_overall, -1 * total_loss_overall],
               chart: {
