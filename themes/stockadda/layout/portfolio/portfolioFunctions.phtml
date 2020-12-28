@@ -459,7 +459,7 @@
                             loss_fincode.push(parseInt(value.stock_fincode));
                         }
 
-                        total_loss_overall += overview_overall_p_p_l * parseFloat(val.stock_transaction_qty);
+                        total_loss_overall += overview_overall_p_p_l;
                     }
                 } else if (tab == 'dashboard'){
                     if (parseInt(val.stock_transaction_date) in dates_obj) dates_obj[parseInt(val.stock_transaction_date)] += parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty) + parseFloat(val.Charges);
@@ -630,14 +630,9 @@
                 fincode_sector_weightage_profit_per[ind_name] = parseInt(((fincode_sector_weightage_profit[ind_name]) / fincode_sector_weightage_invested[ind_name]) * 10000) / 100;
             }
 
-            add_weightage_Overview(fincode_stock_weightage_current,
-                fincode_sector_weightage_current,
-                fincode_stock_weightage_invested,
-                fincode_sector_weightage_invested,
-                fincode_sector_weightage_profit,
-                fincode_sector_weightage_profit_per);
 
             add_marketCap_Overview(fincode_mcap_weightage_invested, fincode_mcap_weightage_current);
+            add_doughnutCharts_Overview(total_profit_overall, total_loss_overall, total_profit_days, total_loss_days);
             $('#num_gain_day').text(num_profit_days);
             $('#num_loss_day').text(num_loss_days);
             $('#gain_overall').text(total_profit_overall.toFixed(2));
@@ -686,7 +681,7 @@
                        </tr>`;
 
             $('#overview_stocks_table_body').append(last_tr);
-            add_doughnutCharts_Overview(total_profit_overall, total_loss_overall, total_profit_days, total_loss_days);
+            add_weightage_Overview(fincode_stock_weightage_current, fincode_sector_weightage_current, fincode_stock_weightage_invested, fincode_sector_weightage_invested, fincode_sector_weightage_profit, fincode_sector_weightage_profit_per);
         }
 
         return currentVal.toFixed(2);
