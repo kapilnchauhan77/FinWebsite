@@ -15,6 +15,9 @@
                 donut: {
                     labels: {
                         show: true,
+                        name: {
+                            formatter: function(val){return ((val == 'null') ? 'Others' : val);}
+                        },
                         value: {
                             formatter: function(val){return ('₹' + val);}
                         }
