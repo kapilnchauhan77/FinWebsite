@@ -180,7 +180,7 @@
         if (fd_total_price > <?php echo $wo['portfolio_data']['current_value_cash']; ?>){
             Swal.fire({
                 title: '<p style="color: red;">Insufficient Cash Available</p>',
-                text: 'Cash Available: ₹<?php echo $wo['portfolio_data']['current_value_cash']; ?> & Transaction Cost: ₹' + fd_total_price,
+                text: 'Cash Available: ₹<?php echo round($wo['portfolio_data']['current_value_cash'], 2); ?> & Transaction Cost: ₹' + fd_total_price,
                 width: 400,
                 padding: '3em',
                 showCancelButton: false,
@@ -196,7 +196,7 @@
                 if (result.isConfirmed) {
                     Swal.fire({
                         title: 'Add Cash Manually',
-                        text: 'Minimum Amount To Add For This Transaction: ₹' + (fd_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>),
+                        text: 'Minimum Amount To Add For This Transaction: ₹' + (fd_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>).toFixed(2),
                         input: 'number',
                         inputAttributes: { min: (fd_total_price - <?php echo $wo['portfolio_data']['current_value_cash']; ?>), step: 0.01 },
                         validationMessage: 'Added amount is less than Required amount!',

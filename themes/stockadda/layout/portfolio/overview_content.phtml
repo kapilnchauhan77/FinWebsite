@@ -180,8 +180,8 @@
 
                                             <!-- Card Body -->
                                             <div class="SA_card-body" style="padding: 0em !important;">
-                                                <div id="overview_stock_weightage_invested"></div>
-                                                <div id="overview_stock_weightage_current" class="hidden"></div>
+                                                <div id="overview_stock_weightage_invested" style="display: flex; justify-content: center;"></div>
+                                                <div id="overview_stock_weightage_current" class="hidden" style="display: flex; justify-content: center;"></div>
                                             </div>
 
                                         </div>
@@ -199,8 +199,8 @@
 
                                             <!-- Card Body -->
                                             <div class="SA_card-body" style="padding: 0em !important;">
-                                                <div id="overview_mcap_weightage_invested"></div>
-                                                <div id="overview_mcap_weightage_current" class="hidden"></div>
+                                                <div id="overview_mcap_weightage_invested" style="display: flex; justify-content: center;"></div>
+                                                <div id="overview_mcap_weightage_current" class="hidden" style="display: flex; justify-content: center;"></div>
                                             </div>
                                             </div>
 
@@ -222,6 +222,7 @@
                                  </div>
                             </div>
                         </div>
+
                         <!-- /.SA_container-fluid -->
                         <div class="SA_row">
 
@@ -231,22 +232,34 @@
                                     <!-- Card Header - Dropdown -->
                                     <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
                                         <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Sector Weightage</h6>
-                                        <span id="sector_weightage_invested" class="SA_text-secondary" style="float: right;"><span style="cursor: pointer;" onclick="change_overview_weightage('sector_current')">Current Value</span> | <span class="SA_font-weight-bold">Investment</span> | <span style="cursor: pointer;" onclick="change_overview_weightage('sector_profit_per')">Profit%</span></span>
-                                        <span id="sector_weightage_current" class="SA_text-secondary hidden" style="float: right;"><span class="SA_font-weight-bold">Current Value</span> | <span style="cursor: pointer;" onclick="change_overview_weightage('sector_invested')">Investment</span> | <span style="cursor: pointer;" onclick="change_overview_weightage('sector_profit_per')">Profit%</span></span>
-                                        <span id="sector_weightage_profit_per" class="SA_text-secondary hidden" style="float: right;"><span style="cursor: pointer;" onclick="change_overview_weightage('sector_current')">Current Value</span> | <span style="cursor: pointer;" onclick="change_overview_weightage('sector_invested')">Investment</span> | <span class="SA_font-weight-bold">Profit%</span></span>
                                     </div>
 
                                     <!-- Card Body -->
                                     <div class="SA_card-body" style="padding: 0em !important;">
-                                        <div id="overview_sector_weightage_invested"></div>
-                                        <div id="overview_sector_weightage_current" class="hidden"></div>
-                                        <div id="overview_sector_weightage_profit_per" class="hidden"></div>
+                                        <div id="overview_sector_weightage_invested_current" style="display: flex; justify-content: center;"></div>
                                     </div>
 
                             </div>
                         </div>
 
-                    </div>
+                            <div class="SA_col-md-6">
+                               <div class="SA_card SA_shadow SA_mb-4">
+
+                                    <!-- Card Header - Dropdown -->
+                                    <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                                        <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Sector Weightage</h6>
+                                    </div>
+
+                                    <!-- Card Body -->
+                                    <div class="SA_card-body" style="padding: 0em !important;">
+                                        <div id="overview_sector_weightage_profit_per" style="display: flex; justify-content: center;"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
 
                     </div>
                     <!-- End of Main Content -->
@@ -265,39 +278,39 @@
         switch(val){
             case 'stock_current':
                 $('#stock_weightage_invested').addClass('hidden');
-                $('#stock_weightage_current').removeClass('hidden');
                 $('#overview_stock_weightage_invested').addClass('hidden');
+                $('#stock_weightage_current').removeClass('hidden');
                 $('#overview_stock_weightage_current').removeClass('hidden');
                 break;
             case 'stock_invested':
                 $('#stock_weightage_current').addClass('hidden');
-                $('#stock_weightage_invested').removeClass('hidden');
                 $('#overview_stock_weightage_current').addClass('hidden');
+                $('#stock_weightage_invested').removeClass('hidden');
                 $('#overview_stock_weightage_invested').removeClass('hidden');
                 break;
             case 'sector_current':
-                $('#sector_weightage_invested').addClass('hidden');
                 $('#sector_weightage_current').removeClass('hidden');
+                $('#overview_sector_weightage_current').removeClass('hidden');
+                $('#sector_weightage_invested').addClass('hidden');
                 $('#sector_weightage_profit_per').addClass('hidden');
                 $('#overview_sector_weightage_invested').addClass('hidden');
-                $('#overview_sector_weightage_current').removeClass('hidden');
                 $('#overview_sector_weightage_profit_per').addClass('hidden');
                 break;
             case 'sector_invested':
-                $('#sector_weightage_current').addClass('hidden');
+                $('#overview_sector_weightage_invested').removeClass('hidden');
                 $('#sector_weightage_invested').removeClass('hidden');
+                $('#sector_weightage_current').addClass('hidden');
                 $('#sector_weightage_profit_per').addClass('hidden');
                 $('#overview_sector_weightage_current').addClass('hidden');
-                $('#overview_sector_weightage_invested').removeClass('hidden');
                 $('#overview_sector_weightage_profit_per').addClass('hidden');
                 break;
             case 'sector_profit_per':
+                $('#sector_weightage_profit_per').removeClass('hidden');
+                $('#overview_sector_weightage_profit_per').removeClass('hidden');
                 $('#sector_weightage_invested').addClass('hidden');
                 $('#sector_weightage_current').addClass('hidden');
-                $('#sector_weightage_profit_per').removeClass('hidden');
                 $('#overview_sector_weightage_invested').addClass('hidden');
                 $('#overview_sector_weightage_current').addClass('hidden');
-                $('#overview_sector_weightage_profit_per').removeClass('hidden');
                 break;
             case 'mcap_current':
                 $('#mcap_weightage_invested').addClass('hidden');
@@ -310,6 +323,9 @@
                 $('#mcap_weightage_invested').removeClass('hidden');
                 $('#overview_mcap_weightage_current').addClass('hidden');
                 $('#overview_mcap_weightage_invested').removeClass('hidden');
+                break;
+            default:
+                console.log('Some Issue here');
                 break;
         }
 
