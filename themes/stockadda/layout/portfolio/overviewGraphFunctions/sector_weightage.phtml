@@ -11,63 +11,64 @@
         }
 
         var options = {
-          series: [{
-          data: weightage_vals
-        }],
-          chart: {
-          height: 350,
-          type: 'bar',
-        },
-        tooltip: {enabled: false},
-        plotOptions: {
-          bar: {
-            dataLabels: {
-              position: 'top', // top, center, bottom
+            series: [{
+                data: weightage_vals
+            }],
+            chart: {
+            height: 350,
+            type: 'bar',
             },
-          }
-        },
-        dataLabels: {
-          enabled: true,
-          formatter: function (val, opts) {
-            console.log(val, opts);
-            return ('₹' + fincode_sector_weightage[sectors[opts['dataPointIndex']]] + ' (' + val + '%)');
-          },
-          offsetY: -20,
-          style: {
-            fontSize: '12px',
-            colors: ["#304758"]
-          }
-        },
+            tooltip: {enabled: false},
+            plotOptions: {
+              bar: {
+                dataLabels: {
+                  position: 'top', // top, center, bottom
+                },
+              }
+            },
+            dataLabels: {
+              enabled: true,
+              formatter: function (val, opts) {
+                console.log(val, opts);
+                return ('₹' + fincode_sector_weightage[sectors[opts['dataPointIndex']]] + ' (' + val + '%)');
+              },
+              offsetY: -20,
+              style: {
+                fontSize: '12px',
+                colors: ["#304758"]
+              }
+            },
 
-        xaxis: {
-          categories: sectors,
-          position: 'bottom',
-          axisBorder: {
-            show: false
-          },
-          axisTicks: {
-            show: false
-          },
-          tooltip: {
-            enabled: false,
-          }
-        },
-        yaxis: {
-          axisBorder: {
-            show: false
-          },
-          axisTicks: {
-            show: false,
-          },
-          labels: {
-            show: true,
-            formatter: function (val) {
-              return (val + '%');
-            }
-          }
+            xaxis: {
+              categories: sectors,
+              position: 'bottom',
+              axisBorder: {
+                show: false
+              },
+              axisTicks: {
+                show: false
+              },
+              tooltip: {
+                enabled: false,
+              }
+            },
+            yaxis: {
+              axisBorder: {
+                show: false
+              },
+              axisTicks: {
+                show: false,
+              },
+              labels: {
+                show: true,
+                formatter: function (val) {
+                  return (val + '%');
+                }
+              }
 
-        },
+            },
         };
+
         /* var options = { */
         /*       series: Object.values(fincode_sector_weightage), */
         /*       chart: { */
@@ -113,43 +114,111 @@
 
     function sectorWeightageCurrent(ctx, fincode_sector_weightage){
 
+
+        var sectors = Object.keys(fincode_sector_weightage);
+        var weightage_vals = new Array();
+        var total_invested = <?php echo $wo['portfolio_data']['stock_invested_value']; ?>;
+
+        for (sector_idx = 0; sector_idx < sectors.length; sector_idx++){
+            weightage_vals.push(parseInt((fincode_sector_weightage[sectors[sector_idx]] / total_invested) * 10000) / 100);
+        }
+
         var options = {
-              series: Object.values(fincode_sector_weightage),
-              chart: {
-              width: '85%',
-              type: 'donut',
+            series: [{
+                data: weightage_vals
+            }],
+            chart: {
+            height: 350,
+            type: 'bar',
             },
-            labels: Object.keys(fincode_sector_weightage),
             tooltip: {enabled: false},
             plotOptions: {
-              pie: {
-                donut: {
-                    labels: {
-                        show: true,
-                        value: {
-                            formatter: function(val){return ('₹' + val);}
-                        }
-                    }
+              bar: {
+                dataLabels: {
+                  position: 'top', // top, center, bottom
                 },
               }
             },
-            colors: ['#00876c', '#58a066', '#98b561', '#dac767', '#e09d4b', '#e06f45', '#d43d51'],
             dataLabels: {
-              formatter(val, opts) {
-                return (val.toFixed(1) + '%');
+              enabled: true,
+              formatter: function (val, opts) {
+                console.log(val, opts);
+                return ('₹' + fincode_sector_weightage[sectors[opts['dataPointIndex']]] + ' (' + val + '%)');
+              },
+              offsetY: -20,
+              style: {
+                fontSize: '12px',
+                colors: ["#304758"]
               }
             },
-            animation: {
+
+            xaxis: {
+              categories: sectors,
+              position: 'bottom',
+              axisBorder: {
+                show: false
+              },
+              axisTicks: {
+                show: false
+              },
+              tooltip: {
                 enabled: false,
-                dynamicAnimation: {
-                    enabled: false,
-                }
+              }
             },
-            legend: {
-              show: true,
-              position: 'right'
-            }
+            yaxis: {
+              axisBorder: {
+                show: false
+              },
+              axisTicks: {
+                show: false,
+              },
+              labels: {
+                show: true,
+                formatter: function (val) {
+                  return (val + '%');
+                }
+              }
+
+            },
         };
+
+        /* var options = { */
+        /*       series: Object.values(fincode_sector_weightage), */
+        /*       chart: { */
+        /*       width: '85%', */
+        /*       type: 'donut', */
+        /*     }, */
+        /*     labels: Object.keys(fincode_sector_weightage), */
+        /*     tooltip: {enabled: false}, */
+        /*     plotOptions: { */
+        /*       pie: { */
+        /*         donut: { */
+        /*             labels: { */
+        /*                 show: true, */
+        /*                 value: { */
+        /*                     formatter: function(val){return ('₹' + val);} */
+        /*                 } */
+        /*             } */
+        /*         }, */
+        /*       } */
+        /*     }, */
+        /*     colors: ['#00876c', '#58a066', '#98b561', '#dac767', '#e09d4b', '#e06f45', '#d43d51'], */
+        /*     dataLabels: { */
+        /*       formatter(val, opts) { */
+        /*         return (val.toFixed(1) + '%'); */
+        /*       } */
+        /*     }, */
+        /*     animation: { */
+        /*         enabled: false, */
+        /*         dynamicAnimation: { */
+        /*             enabled: false, */
+        /*         } */
+        /*     }, */
+        /*     legend: { */
+        /*       show: true, */
+        /*       position: 'right' */
+        /*     } */
+        /* }; */
 
         var chart = new ApexCharts(ctx, options);
         chart.render();

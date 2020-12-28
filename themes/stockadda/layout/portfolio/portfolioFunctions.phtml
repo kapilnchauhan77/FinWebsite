@@ -446,13 +446,18 @@
                     overview_overall_p_p_l = (value.price_detail_intraday == null) ? ((parseFloat(value.price_detail_adjusted.close) * parseFloat(val.stock_transaction_qty)) - (val.stock_transaction_price * parseFloat(val.stock_transaction_qty)) - parseFloat(val.Charges)) : ((parseFloat(value.price_detail_intraday.close) * val.stock_transaction_qty) - (val.stock_transaction_price * val.stock_transaction_qty) - parseFloat(val.Charges));
 
                     if (overview_overall_p_p_l > 0){
-                        if (!(value.stock_fincode in profit_fincode)) num_profit_overall += 1;
-                        else profit_fincode.push(value.stock_fincode);
+                        if (profit_fincode.indexOf(parseInt(value.stock_fincode)) == -1){
+                            num_profit_overall += 1;
+                            profit_fincode.push(parseInt(value.stock_fincode));
+                        }
 
                         total_profit_overall += overview_overall_p_p_l;
                     } else{
-                        if (!(value.stock_fincode in loss_fincode)) num_loss_overall += 1;
-                        else loss_fincode.push(value.stock_fincode);
+
+                        if (loss_fincode.indexOf(parseInt(value.stock_fincode)) == -1){
+                            num_loss_overall += 1;
+                            loss_fincode.push(parseInt(value.stock_fincode));
+                        }
 
                         total_loss_overall += overview_overall_p_p_l * parseFloat(val.stock_transaction_qty);
                     }
@@ -553,6 +558,9 @@
 
                 overview_table_to_append += `</tr>`;
                 num_of_trs += 1;
+
+                _todays_profit_per_ = parseFloat(_todays_profit_per_);
+                _overall_profit_per_ = parseFloat(_overall_profit_per_);
 
                 if (today_max_per < _todays_profit_per_){
                     today_max = _todays_profit_;
