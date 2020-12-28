@@ -42,7 +42,8 @@
         dataLabels: {
           enabled: true,
           formatter: function (val, opts) {
-            return ('₹' + fincode_sector_weightage_invested[sectors_invested[opts['dataPointIndex']]] + ' (' + val + '%)');
+             if (opts['seriesIndex'] == 0) return ('₹' + fincode_sector_weightage_invested[sectors_invested[opts['dataPointIndex']]] + ' (' + val + '%)');
+             else if (opts['seriesIndex'] == 1) return ('₹' + fincode_sector_weightage_current[sectors_invested[opts['dataPointIndex']]] + ' (' + val + '%)');
           },
           offsetY: -20,
           style: {
