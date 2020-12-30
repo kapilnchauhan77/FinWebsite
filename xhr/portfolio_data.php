@@ -4,33 +4,44 @@ if ($f == 'portfolio_data') {
     $portfolio_id = $_GET['portfolio_id'];
     $no_of_stocks = $_GET['no_of_stocks'];
     $auto_add = $_GET['auto_add'];
+    $stocks_available = $_GET['stocks_available'];
     $error = '';
     if (!empty($stock_array) && !empty($portfolio_id)) {
 
-        foreach ($stock_array as $stock_data) {
-            if ($stock_data['stock_transaction_date'] === "NaN"){
-                /* $errors[] = "Please Enter Date!"; */
-                $error = "Please Enter Date!";
-                break;
-            }
-            if ($stock_data['stock_transaction_date'] > time()){
-                /* $errors[] = "Please Enter Date!"; */
-                $error = "Future Dates not allowed!";
-                break;
-            }
-            if ($stock_data['stock_transaction_price'] == 0){
-                /* $errors[] = "Please Enter Price!"; */
-                $error = "Please Enter Price!";
-                break;
-            }
-            if ($stock_data['stock_transaction_qty'] == 0){
+        if ($auto_add == '2'){
+            if ((-1 * $stock_array['stock_transaction_qty']) > $stocks_available){
                 /* $errors[] = "Please Enter Quantity!"; */
-                $error = "Please Enter Quantity!";
-                break;
+                $error = "You Cannot Sell More Than Quantity Held";
             }
         }
 
-        if ($auto_add != '0' && $auto_add != '1') $error = 'Please do not change system files!';
+        else {
+            foreach ($stock_array as $stock_data) {
+                if ($stock_data['stock_transaction_date'] === "NaN"){
+                    /* $errors[] = "Please Enter Date!"; */
+                    $error = "Please Enter Date!";
+                    break;
+                }
+                if ($stock_data['stock_transaction_date'] > time()){
+                    /* $errors[] = "Please Enter Date!"; */
+                    $error = "Future Dates not allowed!";
+                    break;
+                }
+                if ($stock_data['stock_transaction_price'] == 0){
+                    /* $errors[] = "Please Enter Price!"; */
+                    $error = "Please Enter Price!";
+                    break;
+                }
+                if ($stock_data['stock_transaction_qty'] == 0){
+                    /* $errors[] = "Please Enter Quantity!"; */
+                    $error = "Please Enter Quantity!";
+                    break;
+                }
+            }
+        }
+
+        if ($auto_add != '0' && $auto_add != '1' && $auto_add != '2') $error = 'Please do not change system files!';
+
 
         if ($error !== ''){
 
@@ -44,7 +55,8 @@ if ($f == 'portfolio_data') {
                 exit();
         }
         else{
-            $portfolio_data_added = AddStocksToPortfolio($stock_array, $portfolio_id, $no_of_stocks, $auto_add);
+            if ($auto_add == '2') $portfolio_data_added = SellStocksFromPortfolio($stock_array, $portfolio_id, $stocks_available);
+            else $portfolio_data_added = AddStocksToPortfolio($stock_array, $portfolio_id, $no_of_stocks, $auto_add);
             if ($portfolio_data_added === true){
 
                 $data = array(

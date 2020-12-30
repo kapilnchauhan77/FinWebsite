@@ -79,4 +79,12 @@
         if (ctx_current) mcapWeightageCurrent(ctx_current, fincode_mcap_weightage_current);
     };
 
+    function format_rupees(val){
+        val = Math.round(val).toString();
+        if (val.length > 3 && val.length < 6) val = parseFloat(Math.round(parseInt(val) / 10)/100).toString() + 'K';
+        else if (val.length > 5 && val.length < 8) val = parseFloat(Math.round(parseInt(val) / 1000)/100).toString() + 'L';
+        else if (val.length > 7) val = parseFloat(Math.round(parseInt(val) / 1000)/100).toString() + 'Cr';
+        return '₹' + val;
+    }
+
 </script>

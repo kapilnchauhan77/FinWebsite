@@ -1,5 +1,152 @@
 <script>
 
+    var fincode_date_seperation = new Object();
+
+    function getInvestedPriceEquivalent(id, qty){
+        final_price = 0;
+        var time_stamp_sold = new Object();
+
+        data = fincode_date_seperation[id];
+        for (date_ in data){
+            if (qty < data[date_]['quantity']){
+                final_price += ((data[date_]['price'] + (data[date_]['charge'] /  data[date_]['quantity'])) * qty);
+                time_stamp_sold[date_] = qty;
+                return [final_price, time_stamp_sold];
+            }
+            else{
+                final_price += (data[date_]['price'] * data[date_]['quantity']) + data[date_]['charge']
+                qty -= data[date_]['quantity'];
+                time_stamp_sold[date_] = 0;
+            }
+        }
+
+        return [final_price, time_stamp_sold];
+
+    }
+
+    function changeValues(id){
+        amount = $("#"+id + " #stock_qty").val() * $("#"+id + " #stock_transaction_price").val();
+        stt_charge = amount * 0.001;
+        exchange_charge = ($("#"+id + " #exchange").val()=="BSE") ? (amount * 0.0000275) : (amount * 0.0000325);
+        sebi_charge = amount * 0.000001;
+        stamp_duty = amount * 0.00000;
+        brokerage_charge = ($("#"+id + "charge #percentage_inr").val()=="INR") ? parseFloat($("#"+id + "charge #brokerage").val()) : (amount * $("#"+id + "charge #brokerage").val()/100);
+        charge = stt_charge + exchange_charge + sebi_charge + stamp_duty;
+        net_amount = amount - charge - brokerage_charge;
+        $("#"+id+"broker_charge_").text(brokerage_charge.toFixed(2));
+        $("#"+id+"charge_").text(charge.toFixed(2));
+        $("#"+id+"charge #all_charges").attr('title', ' STT Charge: '+stt_charge.toFixed(2)+'\n Exchange Charge: '+exchange_charge.toFixed(2)+'\n Sebi Charge: '+sebi_charge.toFixed(2)+'\n Stamp Duty: '+stamp_duty.toFixed(2));
+        $("#"+id+"amount_").text(amount.toFixed(2));
+        $("#"+id+"net_amount").text(net_amount.toFixed(2));
+    }
+
+    async function sellElement(name_, uid){
+        qty_available = parseInt($('#'+ uid +'_qty').text());
+        const { value: formValues } = await Swal.fire({
+            title: 'Sell Stocks- ' + name_ + ' (Available Qty: '+ qty_available +')',
+            width: 'auto',
+            html:
+               `<table class="table table-hover table-striped">
+
+                   <thead>
+                       <tr>
+                           <th style="text-align: center;">Selling Date</th>
+                           <th style="text-align: center;">Selling Price</th>
+                           <th style="text-align: center;">Quantity</th>
+                           <th style="text-align: center;">Exchange</th>
+                       </tr>
+                   </thead>
+
+                   <tbody id="table_stock_quote_search_body">
+                        <tr id=`+ uid +` style="height:39px">
+                            <td><input id="stock_transaction_date" type="date" name="transaction_date"/></td>
+                            <td>
+                                <span class="stock_quote_transac_price_div">
+                                    <input id="stock_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeValues(`+ uid +`) onchange=changeValues(`+ uid +`) />
+                                </span>
+                            </td>
+                            <td><input id="stock_qty" type="number" min="0" value="0" step="1" class="stock_quote_transac_price" name="quantity" style="height:39px;" onkeyup=changeValues(`+ uid +`) onchange=changeValues(`+ uid +`) /></td>
+                            <td><select name='exchange' id='exchange' style="width: 6em; height: 2.75em;"><option value="BSE">BSE</option><option value="NSE">NSE</option></select></td>
+                        </tr>
+                        <tr id=`+ uid +`charge style="height:39px">
+                            <td>Amount: <span id=`+ uid +`amount_>0</span></td>
+                            <td><input style="text-decoration: none; width: 6em;cursor: default;" id="brokerage" type="number" value=0 step="any" onkeyup=changeValues(`+ uid +`) onchange=changeValues(`+ uid +`) /><select name='percentage_inr' id='percentage_inr' onchange=changeValues(`+ uid +`) ><option value="Percentage">%</option><option value="INR">₹</option></select>
+                            Brokerage Charge: <span id=`+ uid +`broker_charge_>0</span></td>
+                            <td id='all_charges' title="Current Charges: 0">Other Charges: <span id=`+ uid +`charge_>0</span></td>
+                            <td>Net Amount: <span id=`+ uid +`net_amount>0</span></td>
+                        </tr>
+                        <tr id=`+ uid +`stock_notes style="height:39px">
+                            <td colspan="7"> <span class="small">Notes:</span> <br> <span> <textarea name="notes" id="`+ uid +`notes" rows="1"></textarea> </span> </textarea></td>
+                        </tr>
+                   </tbody>
+               </table>`,
+
+            focusConfirm: false,
+            preConfirm: () => {
+                var [invested_equivalent, time_stamp_sold] = getInvestedPriceEquivalent(uid, parseInt(document.getElementById("stock_qty").value));
+                data_to_send = {
+                    stock_fincode: uid,
+                    stock_transaction_date: parseInt(new Date(document.getElementById("stock_transaction_date").value).getTime()/1000),
+                    stock_transaction_price: parseFloat(document.getElementById('stock_transaction_price').value),
+                    stock_transaction_qty: -1 * parseInt(document.getElementById("stock_qty").value),
+                    stock_charge: parseFloat($("#" + uid + "charge_").text()) + parseFloat($("#" + uid + "broker_charge_").text()),
+                    note: document.getElementById(uid + "notes").value,
+                    stock_net_amount: -1 * invested_equivalent,
+                    timestamp_sold: time_stamp_sold,
+                    realized_gain: (parseFloat($("#"+ uid +"net_amount").text()) - invested_equivalent),
+                    realized_gain_per: (((parseFloat($("#"+ uid +"net_amount").text()) - invested_equivalent) * 100) / invested_equivalent),
+                };
+                console.log(invested_equivalent)
+                console.log(time_stamp_sold)
+                console.log(data_to_send)
+
+
+                $.ajax({
+                    url: Wo_Ajax_Requests_File(),
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        f:'portfolio_data',
+                        stock_array: data_to_send,
+                        stocks_available: parseInt(qty_available),
+                        portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                        auto_add: '2',
+                    },
+                    success: function(data) {
+                        if (data['status'] == 200){
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Stocks Sold Successfully!',
+                            }).then((result) => {
+                                localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
+                                location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>&tab=overview&content=stocks';
+                            })
+                        }
+                        else if (data['status'] == 401){
+                            console.log(data);
+                            Swal.fire({
+                                icon: 'error',
+                                title: data['error'],
+                            })
+                        }
+                        else{
+                            console.log(data);
+                            Swal.fire({
+                                icon: 'error',
+                                title: data['error'],
+                            })
+                            console.log(data['error']);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                    }
+                });
+            }
+        })
+
+    }
+
     function findLocalItems(query) {
         var i, results = [];
         for (i in localStorage) {
@@ -11,7 +158,7 @@
             }
         }
         return results;
-    }
+    };
 
     function calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj, tab, content){
 
@@ -30,14 +177,14 @@
 
         data_of_all_fd.forEach(function (value) {
 
-            no_of_days_individual = parseInt((parseInt(new Date().getTime()/1000) - value.transaction_date) / (60 * 60 * 24));
+            no_of_days_individual = parseInt((parseInt(new Date().getTime() / 1000) - value.transaction_date) / (60 * 60 * 24));
             no_of_days_individual = (no_of_days_individual == 0) ? 1 : no_of_days_individual;
 
             if (value.payout_type == "0"){
                 unrealized_currentVal_individual = (parseFloat(value.transaction_price) * Math.pow((1 +
                     parseFloat(value.transaction_interest/100) /
                     parseInt(value.interest_payout_frequency)),
-    (parseInt(value.interest_payout_frequency) * ( no_of_days_individual / 365))));
+                    (parseInt(value.interest_payout_frequency) * ( no_of_days_individual / 365))));
 
                 daysGain   += (unrealized_currentVal_individual - parseFloat(value.transaction_price))/no_of_days_individual;
                 unrealized_currentVal += unrealized_currentVal_individual;
@@ -46,7 +193,7 @@
                 realized_currentVal_individual = (parseFloat(value.transaction_price) * Math.pow((1 +
                     parseFloat(value.transaction_interest/100) /
                     parseInt(value.interest_payout_frequency)),
-    (parseInt(value.interest_payout_frequency) * ( no_of_days_individual / 365))));
+                    (parseInt(value.interest_payout_frequency) * ( no_of_days_individual / 365))));
 
                 daysGain   += (realized_currentVal_individual - parseFloat(value.transaction_price))/no_of_days_individual;
                 realized_currentVal += realized_currentVal_individual;
@@ -433,11 +580,20 @@
             current_val_of_stock   = 0;
             adjusted_val_of_stock  = 0;
             days_held_of_stock     = [];
+            if (!(value.stock_fincode in fincode_date_seperation)) fincode_date_seperation[value.stock_fincode] = {};
 
             value.stock_portfolio_data.forEach(function(val) {
 
                 console.log('Date from stocks:');
                 console.log(parseInt(val.stock_transaction_date));
+                if (!(parseInt(val.stock_transaction_date) in fincode_date_seperation[value.stock_fincode])) fincode_date_seperation[value.stock_fincode][parseInt(val.stock_transaction_date)] = {'price': parseFloat(val.stock_transaction_price), 'quantity': parseInt(val.stock_transaction_qty), 'charge': parseFloat(val.Charges)};
+                else {
+                    fincode_date_seperation[value.stock_fincode][parseInt(val.stock_transaction_date)]['price'] *= fincode_date_seperation[value.stock_fincode][parseInt(val.stock_transaction_date)]['quantity'];
+                    fincode_date_seperation[value.stock_fincode][parseInt(val.stock_transaction_date)]['quantity'] += parseInt(val.stock_transaction_qty);
+                    fincode_date_seperation[value.stock_fincode][parseInt(val.stock_transaction_date)]['price'] += (parseFloat(val.stock_transaction_price) * parseFloat(val.stock_transaction_qty));
+                    fincode_date_seperation[value.stock_fincode][parseInt(val.stock_transaction_date)]['price'] /= fincode_date_seperation[value.stock_fincode][parseInt(val.stock_transaction_date)]['quantity'];
+                    fincode_date_seperation[value.stock_fincode][parseInt(val.stock_transaction_date)]['charge'] += parseFloat(val.Charges);
+                }
 
                 total_inv_val_of_stock += (val.stock_transaction_price * val.stock_transaction_qty) + parseFloat(val.Charges);
                 days_held_of_stock.push(Math.round(((new Date())-(val.stock_transaction_date*1000))/(1000*60*60*24)));
@@ -513,18 +669,23 @@
             }
 
             if (tab == 'overview' && content == 'stocks'){
-                overview_table_to_append = `<tr>`;
+                overview_table_to_append = `<tr><th scope="row"><span style="margin: 0.75em;">` + value.compname;
                 if (days_held_of_stock.length > 1){
-                   overview_table_to_append += `<th scope="row"><span style="margin: 0.75em;">`+ value.compname +`(`+ days_held_of_stock.length +`)</span></th>`;
-                   hover_title_overview_stocks = '';
-                   for (st = 0; st < days_held_of_stock.length-1; st++) hover_title_overview_stocks += days_held_of_stock[st] +', ';
-                   hover_title_overview_stocks += days_held_of_stock[days_held_of_stock.length-1] +'.';
-                   days_held_line = `<td style='cursor: default;' title="`+ hover_title_overview_stocks +`">Hover</td>`;
+                    overview_table_to_append += `&nbsp;(`+ days_held_of_stock.length +`)`;
+                    hover_title_overview_stocks = '';
+                    for (st = 0; st < days_held_of_stock.length-1; st++) hover_title_overview_stocks += days_held_of_stock[st] +', ';
+                    hover_title_overview_stocks += days_held_of_stock[days_held_of_stock.length-1] +'.';
+                    days_held_line = `<td style='cursor: default;' title="`+ hover_title_overview_stocks +`">Hover</td>`;
                 }
                 else{
-                   overview_table_to_append += `<th scope="row"><span style="margin: 0.75em;">`+ value.compname +`</span></th>`;
-                   days_held_line = `<td>`+ days_held_of_stock[0] +`</td>`;
+                    days_held_line = `<td>`+ days_held_of_stock[0] +`</td>`;
                 }
+
+                overview_table_to_append += `</span><br>`;
+                overview_table_to_append += `<span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-stocks" style="color:red;">Add</a></span>`;
+                overview_table_to_append += `<span style="color:green; margin-right: 0.75em;"><span style='cursor: pointer;' onclick='sellElement("`+ value.compname +`",`+ value.stock_fincode +` )'>Sell</span></span>`;
+
+                overview_table_to_append += `</th>`;
 
                 fincode_stock_weightage_invested[value.compname] = parseInt(total_inv_val_of_stock * 100) / 100;
                 fincode_stock_weightage_current[value.compname] = parseInt(current_val_of_stock * 100) / 100;
@@ -546,7 +707,7 @@
                 _overall_profit_per_ = (100 * _overall_profit_ / total_inv_val_of_stock).toFixed(2)
 
                 overview_table_to_append +=`<td>&#8377;`+ parseFloat(cmp).toFixed(2) +`</td>
-                                            <td>`+ total_volume_of_stock +`<br><small>&#8377;`+ (total_inv_val_of_stock / total_volume_of_stock).toFixed(2) +`</small></td>`
+                                            <td id='`+ value.stock_fincode +`_qty'>`+ total_volume_of_stock +`<br><small>&#8377;`+ (total_inv_val_of_stock / total_volume_of_stock).toFixed(2) +`</small></td>`
                                             + days_held_line +
                                             `<td>&#8377;`+ total_inv_val_of_stock.toFixed(2) +`<br><small>`+ (100 * (total_inv_val_of_stock) / <?php echo $wo['portfolio_data']['stock_invested_value']; ?>).toFixed(2) +`%</small></td>
                                             <td>&#8377;`+ _todays_profit_ +`<br><small>`+ _todays_profit_per_ +`%</small></td>
@@ -588,6 +749,7 @@
             }
         });
 
+        console.log(fincode_date_seperation)
         currentVal_toDisplay = parseFloat($('#currentVal').text()) + currentVal;
         $('#currentVal').text(currentVal_toDisplay.toFixed(2));
 
@@ -676,7 +838,7 @@
                            <td><span style="color: white;">&#8377;`+ overall_p_p_l.toFixed(2) +`<br><small>`+ (overall_p_p_l_per).toFixed(2) +`%</small></span></td>
                            <td><span style="color: white;">-</span></td>
                            <td><span style="color: white;">&#8377;`+ overall_p_p_l.toFixed(2) +`<br><small>`+ (overall_p_p_l_per).toFixed(2) +`%</small></span></td>
-                           <td><span style="color: white;">&#8377;<span id='currentVal_stocks_Overview'>`+ currentVal +`</span></span></td>
+                           <td><span style="color: white;">&#8377;<span id='currentVal_stocks_Overview'>`+ currentVal.toFixed(2) +`</span></span></td>
                            <td><span style="color: white;"><a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" style="color: white;">Pro</a></span></td>
                        </tr>`;
 
