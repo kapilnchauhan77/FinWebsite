@@ -1,0 +1,57 @@
+<?php echo Wo_LoadPage('portfolio/stock_search_container'); ?>
+<script>
+
+    async function buyElement(name_, uid){
+        qty_available = parseInt($('#'+ uid +'_qty').text());
+        const { value: formValues } = await Swal.fire({
+            title: 'Buy Stock- ' + name_,
+            width: 'auto',
+            html:
+               `<table class="table table-hover table-striped">
+
+                   <thead>
+                       <tr>
+                           <th style="text-align: center;">Stock Name</th>
+                           <th style="text-align: center;">Transaction Date</th>
+                           <th style="text-align: center;">Transaction Price</th>
+                           <th style="text-align: center;">Quantity</th>
+                           <th style="text-align: center;">Exchange</th>
+                           <th style="text-align: center;">Action</th>
+                       </tr>
+                   </thead>
+
+                   <tbody id="table_stock_quote_search_body">
+                       <tr id=`+ uid +`0 style="height:39px">
+                         <td id="stock_name" class="stock_quote_name_search">` + name_ + `</td>
+                         <td><input id="stock_transaction_date" type="date" name="transaction_date"/></td>
+                         <td>
+                             <span class="stock_quote_transac_price_div">
+                                 <input id="stock_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeValues(`+ uid +`0) onchange=changeValues(`+ uid +`0) />
+                             </span>
+                         </td>
+                          <td><input id="stock_qty" type="number" min="0" value="0" step="1" class="stock_quote_transac_price" name="quantity" style="height:39px;" onkeyup=changeValues(`+ uid +`0) onchange=changeValues(`+ uid +`0) /></td>
+                         <td><select name='exchange' id='exchange' style="width: 6em; height: 2.75em;"><option value="BSE">BSE</option><option value="NSE">NSE</option></select></td>
+                         <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteStockQuoteFromSearch('`+ uid +`0')"></i></td>
+                       </tr>
+                       <tr id=`+ uid +`0charge style="height:39px">
+                         <td>Amount: <span id=`+ uid +`0amount_>0</span></td>
+                         <td id='all_charges' title="Current Charges: 0">Charge: <span id=`+ uid +`0charge_>0</span></td>
+                         <td><input style="text-decoration: none; cursor: default;" id="brokerage" type="number" value=0 step="any" onkeyup=changeValues(`+ uid +`0) onchange=changeValues(`+ uid +`0) /><select name='percentage_inr' id='percentage_inr' onchange=changeValues(`+ uid +`0) ><option value="Percentage">Percentage</option><option value="INR">INR</option></select></td>
+                         <td colspan="2">Brokerage Charge: <span id=`+ uid +`0broker_charge_>0</span></td>
+                         <td>Net Amount: <span id=`+ uid +`0net_amount>0</span></td>
+                      </tr>
+                      <tr id=`+ uid +`0stock_notes style="height:39px">
+                         <td colspan="7"> <span class="small">Notes:</span> <br> <span> <textarea name="notes" id="notes" rows="1"></textarea> </span> </textarea></td>
+                      </tr>;
+                   </tbody>
+               </table>`,
+
+            focusConfirm: false,
+            preConfirm: () => {
+                stock_quotes_to_add[0] = uid;
+                pushStockDataToBackend();
+            }
+        })
+
+    }
+</script>

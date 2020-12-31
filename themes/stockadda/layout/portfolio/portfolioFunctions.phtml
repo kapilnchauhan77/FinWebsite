@@ -2,14 +2,15 @@
 
     var fincode_date_seperation = new Object();
 
-    function getInvestedPriceEquivalent(id, qty){
+    function getInvestedPriceEquivalent(id, qty, selling_date_){
         final_price = 0;
         var time_stamp_sold = new Object();
 
         data = fincode_date_seperation[id];
         for (date_ in data){
+            if (date_ > selling_date_) return [false, false];
             if (qty < data[date_]['quantity']){
-                final_price += ((data[date_]['price'] + (data[date_]['charge'] /  data[date_]['quantity'])) * qty);
+                final_price += ((data[date_]['price'] + (data[date_]['charge'] / data[date_]['quantity'])) * qty);
                 time_stamp_sold[date_] = qty;
                 return [final_price, time_stamp_sold];
             }
@@ -17,6 +18,7 @@
                 final_price += (data[date_]['price'] * data[date_]['quantity']) + data[date_]['charge']
                 qty -= data[date_]['quantity'];
                 time_stamp_sold[date_] = 0;
+                if (qty == 0) break;
             }
         }
 
@@ -24,7 +26,7 @@
 
     }
 
-    function changeValues(id){
+    function changeValue_Selling(id){
         amount = $("#"+id + " #stock_qty").val() * $("#"+id + " #stock_transaction_price").val();
         stt_charge = amount * 0.001;
         exchange_charge = ($("#"+id + " #exchange").val()=="BSE") ? (amount * 0.0000275) : (amount * 0.0000325);
@@ -43,7 +45,7 @@
     async function sellElement(name_, uid){
         qty_available = parseInt($('#'+ uid +'_qty').text());
         const { value: formValues } = await Swal.fire({
-            title: 'Sell Stocks- ' + name_ + ' (Available Qty: '+ qty_available +')',
+            title: 'Sell Stock- ' + name_ + ' (Available Qty: '+ qty_available +')',
             width: 'auto',
             html:
                `<table class="table table-hover table-striped">
@@ -62,15 +64,15 @@
                             <td><input id="stock_transaction_date" type="date" name="transaction_date"/></td>
                             <td>
                                 <span class="stock_quote_transac_price_div">
-                                    <input id="stock_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeValues(`+ uid +`) onchange=changeValues(`+ uid +`) />
+                                    <input id="stock_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeValue_Selling(`+ uid +`) onchange=changeValue_Selling(`+ uid +`) />
                                 </span>
                             </td>
-                            <td><input id="stock_qty" type="number" min="0" value="0" step="1" class="stock_quote_transac_price" name="quantity" style="height:39px;" onkeyup=changeValues(`+ uid +`) onchange=changeValues(`+ uid +`) /></td>
+                            <td><input id="stock_qty" type="number" min="0" value="0" step="1" class="stock_quote_transac_price" name="quantity" style="height:39px;" onkeyup=changeValue_Selling(`+ uid +`) onchange=changeValue_Selling(`+ uid +`) /></td>
                             <td><select name='exchange' id='exchange' style="width: 6em; height: 2.75em;"><option value="BSE">BSE</option><option value="NSE">NSE</option></select></td>
                         </tr>
                         <tr id=`+ uid +`charge style="height:39px">
                             <td>Amount: <span id=`+ uid +`amount_>0</span></td>
-                            <td><input style="text-decoration: none; width: 6em;cursor: default;" id="brokerage" type="number" value=0 step="any" onkeyup=changeValues(`+ uid +`) onchange=changeValues(`+ uid +`) /><select name='percentage_inr' id='percentage_inr' onchange=changeValues(`+ uid +`) ><option value="Percentage">%</option><option value="INR">₹</option></select>
+                            <td><input style="text-decoration: none; width: 6em;cursor: default;" id="brokerage" type="number" value=0 step="any" onkeyup=changeValue_Selling(`+ uid +`) onchange=changeValue_Selling(`+ uid +`) /><select name='percentage_inr' id='percentage_inr' onchange=changeValue_Selling(`+ uid +`) ><option value="Percentage">%</option><option value="INR">₹</option></select>
                             Brokerage Charge: <span id=`+ uid +`broker_charge_>0</span></td>
                             <td id='all_charges' title="Current Charges: 0">Other Charges: <span id=`+ uid +`charge_>0</span></td>
                             <td>Net Amount: <span id=`+ uid +`net_amount>0</span></td>
@@ -83,12 +85,21 @@
 
             focusConfirm: false,
             preConfirm: () => {
-                var [invested_equivalent, time_stamp_sold] = getInvestedPriceEquivalent(uid, parseInt(document.getElementById("stock_qty").value));
+                stock_transaction_qty = parseInt(document.getElementById("stock_qty").value);
+                stock_transaction_date = parseInt(new Date(document.getElementById("stock_transaction_date").value).getTime()/1000);
+                stock_transaction_price = parseFloat(document.getElementById('stock_transaction_price').value);
+                if (!stock_transaction_date) return "Please Enter Selling Date!";
+                if (stock_transaction_date > parseInt(new Date().getTime())/1000) return "You Cannot Sell On a Future Date!";
+                if (stock_transaction_price < 0) return "Stock Price Cannot Be Less Than 0!";
+                if (qty_available < stock_transaction_qty) return "You Cannot Sell More Than Quantity Held";
+                var [invested_equivalent, time_stamp_sold] = getInvestedPriceEquivalent(uid, stock_transaction_qty, stock_transaction_date);
+                if (invested_equivalent == false && time_stamp_sold == false) return 'You do not have enough stocks on the selling date!';
+
                 data_to_send = {
                     stock_fincode: uid,
-                    stock_transaction_date: parseInt(new Date(document.getElementById("stock_transaction_date").value).getTime()/1000),
-                    stock_transaction_price: parseFloat(document.getElementById('stock_transaction_price').value),
-                    stock_transaction_qty: -1 * parseInt(document.getElementById("stock_qty").value),
+                    stock_transaction_date: stock_transaction_date,
+                    stock_transaction_price: stock_transaction_price,
+                    stock_transaction_qty: -1 * stock_transaction_qty,
                     stock_charge: parseFloat($("#" + uid + "charge_").text()) + parseFloat($("#" + uid + "broker_charge_").text()),
                     note: document.getElementById(uid + "notes").value,
                     stock_net_amount: -1 * invested_equivalent,
@@ -109,7 +120,7 @@
                         f:'portfolio_data',
                         stock_array: data_to_send,
                         stocks_available: parseInt(qty_available),
-                        portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id'] ?>,
+                        portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>,
                         auto_add: '2',
                     },
                     success: function(data) {
@@ -119,7 +130,8 @@
                                 title: 'Stocks Sold Successfully!',
                             }).then((result) => {
                                 localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
-                                location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>&tab=overview&content=stocks';
+                                if ((<?php echo $wo ['portfolio_data']['no_of_stocks']; ?> - stock_transaction_qty) == 0) location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
+                                else location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>&tab=overview&content=stocks';
                             })
                         }
                         else if (data['status'] == 401){
@@ -135,16 +147,18 @@
                                 icon: 'error',
                                 title: data['error'],
                             })
-                            console.log(data['error']);
                         }
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         alert("AJAX call failed: " + textStatus + ", " + errorThrown);
                     }
                 });
+                return false;
             }
         })
 
+        if (formValues) Swal.fire({icon: 'error', title: formValues});
+        /* if (formValues) Swal.fire({icon: 'error', title: JSON.stringify(formValues)}); */
     }
 
     function findLocalItems(query) {
@@ -682,7 +696,7 @@
                 }
 
                 overview_table_to_append += `</span><br>`;
-                overview_table_to_append += `<span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-stocks" style="color:red;">Add</a></span>`;
+                overview_table_to_append += `<span style="color:red; margin-right: 0.75em;"><span style='cursor: pointer;' onclick='buyElement("`+ value.compname +`",`+ value.stock_fincode +` )'>Add</span></span>`;
                 overview_table_to_append += `<span style="color:green; margin-right: 0.75em;"><span style='cursor: pointer;' onclick='sellElement("`+ value.compname +`",`+ value.stock_fincode +` )'>Sell</span></span>`;
 
                 overview_table_to_append += `</th>`;
@@ -987,3 +1001,4 @@
     }
 
 </script>
+<?php echo Wo_LoadPage('addStocksPortfolio/add_stock_popup'); ?>

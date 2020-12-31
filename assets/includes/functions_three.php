@@ -8956,11 +8956,11 @@ function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_avai
         return mysqli_error($sqlConnect);
     };
 
-    $query_text   = "SELECT `id` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'stock';";
+    $query_text   = "SELECT `id` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'stock' AND `element_uid` = {$stock_fincode};";
     $query_one    = mysqli_query($sqlConnect, $query_text);
 
     if (mysqli_num_rows($query_one) <= 0){
-        $query_text   = "INSERT INTO " . T_REALIZED . " (`portfolio_id`, `type`, `realized_gain`, `realized_gain_per`) VALUES ({$portfolio_id}, 'stock', {$realized_gain}, {$realized_gain_per});";
+        $query_text   = "INSERT INTO " . T_REALIZED . " (`portfolio_id`, `type`, `realized_gain`, `realized_gain_per`, `element_uid`) VALUES ({$portfolio_id}, 'stock', {$realized_gain}, {$realized_gain_per}, {$stock_fincode});";
         $query_one    = mysqli_query($sqlConnect, $query_text);
     } else {
         $query_text   = "UPDATE " . T_REALIZED . " SET `realized_gain` = `realized_gain` + {$realized_gain}, `realized_gain_per` = `realized_gain_per` + {$realized_gain_per} WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'stock';";

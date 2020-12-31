@@ -9,9 +9,9 @@ if ($f == 'portfolio_data') {
     if (!empty($stock_array) && !empty($portfolio_id)) {
 
         if ($auto_add == '2'){
-            if ((-1 * $stock_array['stock_transaction_qty']) > $stocks_available){
+            if (((-1 * $stock_array['stock_transaction_qty']) > $stocks_available) || (($stock_array['stock_transaction_price']) < 0) || (!$stock_array['stock_transaction_date'])){
                 /* $errors[] = "Please Enter Quantity!"; */
-                $error = "You Cannot Sell More Than Quantity Held";
+                $error = "Please Do Not Change System files";
             }
         }
 

@@ -48,7 +48,7 @@
                                              <input id="stock_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeValues(`+ fincode + stock_num +`) onchange=changeValues(`+ fincode + stock_num +`) />
                                          </span>
                                      </td>
-                                      <td><input id="stock_qty" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="quantity" style="height:39px;" onkeyup=changeValues(`+ fincode + stock_num +`) onchange=changeValues(`+ fincode + stock_num +`) /></td>
+                                      <td><input id="stock_qty" type="number" min="0" value="0" step="1" class="stock_quote_transac_price" name="quantity" style="height:39px;" onkeyup=changeValues(`+ fincode + stock_num +`) onchange=changeValues(`+ fincode + stock_num +`) /></td>
                                      <td><select name='exchange' id='exchange' style="width: 6em; height: 2.75em;"><option value="BSE">BSE</option><option value="NSE">NSE</option></select></td>
                                      <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteStockQuoteFromSearch('`+ fincode + stock_num +`')"></i></td>
                                    </tr>
@@ -120,7 +120,7 @@
                             title: 'Stocks Added Successfully!',
                         }).then((result) => {
                             localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
-                            location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
+                            location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>&tab=overview&content=stocks';
                         })
                     }
                     else if (data['status'] == 401){
