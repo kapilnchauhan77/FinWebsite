@@ -118,6 +118,9 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Stocks Added Successfully!',
+                            showConfirmButton: false,
+                            timer: 1250,
+                            timerProgressBar: true,
                         }).then((result) => {
                             localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
                             location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>&tab=overview&content=stocks';

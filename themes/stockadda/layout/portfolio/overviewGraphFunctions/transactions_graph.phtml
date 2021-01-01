@@ -1,0 +1,92 @@
+<script>
+
+    function transaction_stocks(ctx, transaction_obj, date_compname_type){
+        console.log('\n\n\n');
+        console.log(transaction_obj);
+        console.log(date_compname_type);
+        console.log('\n\n\n');
+
+        var dates_array = Object.keys(transaction_obj);
+
+        var options = {
+          series: [{
+          name: '',
+          data: Object.values(transaction_obj),
+        }],
+          chart: {
+          type: 'bar',
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            colors: {
+              ranges: [{
+                from: -Infinity,
+                to: 0,
+                color: '#E74A3B'
+              }, {
+                from: 0,
+                to: Infinity,
+                color: '#46CC9D'
+              }]
+            },
+            columnWidth: '30%',
+          }
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        yaxis: {
+          title: {
+            text: 'Transaction Amount',
+          },
+          labels: {
+            formatter: function (y) {
+              return format_rupees(y);
+            }
+          }
+        },
+        xaxis: {
+          type: 'datetime',
+          categories: dates_array,
+          labels: {
+            rotate: -90
+          }
+          },
+          tooltip: {
+            x: {
+                formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
+                    if (series != undefined){
+                        var date_ = new Date(value);
+                        return ('Invested Value till <b>'+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +':</b><b>₹' + series[seriesIndex][dataPointIndex].toFixed(2) + "</b>");
+                    }
+                },
+            },
+            y: {
+                 formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
+                     to_show = "";
+                     Object.keys(date_compname_type[dates_array[dataPointIndex]]).forEach(function(company_name){
+                         date_compname_type[dates_array[dataPointIndex]][company_name].forEach(function(datum){
+                             sold = datum[0];
+                             amount = datum[1];
+                             quantity = datum[2];
+                             if (sold == '2') to_show += "Sold "+ (-1 * quantity) +" stocks of "+ company_name +" for "+ format_rupees(-1 * amount) +"<br>";
+                             else to_show += "Bought "+ quantity +" stocks of "+ company_name +" for "+ format_rupees(amount) +"<br>";
+                         });
+                     });
+                     return to_show;
+                 },
+                 title: ""
+             },
+             marker: {
+                 show: false,
+             },
+          },
+        };
+
+        var chart = new ApexCharts(ctx, options);
+        chart.render();
+
+    };
+
+</script>

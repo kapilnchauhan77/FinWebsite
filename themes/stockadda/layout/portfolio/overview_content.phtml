@@ -260,6 +260,25 @@
                             </div>
                         </div>
 
+                       <div class="SA_row">
+
+                            <div class="SA_col-md-6">
+                               <div class="SA_card SA_shadow SA_mb-4">
+
+                                    <!-- Card Header - Dropdown -->
+                                    <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                                        <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Stock Transactions</h6>
+                                    </div>
+
+                                    <!-- Card Body -->
+                                    <div class="SA_card-body" style="padding: 0em !important;">
+                                        <div id="overview_transactions" style="display: flex; justify-content: center;"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
 
 
                     </div>
@@ -341,6 +360,7 @@
 </script>
 </div>
 
+<?php echo Wo_LoadPage('portfolio/overviewGraphFunctions/transactions_graph'); ?>
 <?php echo Wo_LoadPage('portfolio/overviewGraphFunctions/mcap_weightage'); ?>
 <?php echo Wo_LoadPage('portfolio/overviewGraphFunctions/sector_weightage'); ?>
 <?php echo Wo_LoadPage('portfolio/overviewGraphFunctions/stock_weightage'); ?>

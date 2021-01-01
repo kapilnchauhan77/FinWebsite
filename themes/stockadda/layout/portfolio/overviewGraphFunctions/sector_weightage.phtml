@@ -84,7 +84,6 @@
               return (val + '%');
             }
           }
-
         },
         fill: {
           opacity: 1
@@ -97,6 +96,48 @@
     };
 
     function sectorWeightageProfitPer(ctx, fincode_sector_weightage_profit, fincode_sector_weightage_profit_per){
+
+        /* var options = { */
+        /*   series: [{ */
+        /*   name: 'Cash Flow', */
+        /*   data: Object.values(fincode_sector_weightage_profit_per) */
+        /* }], */
+        /*   chart: { */
+        /*   type: 'bar', */
+        /*   height: 350, */
+        /* }, */
+        /* labels: Object.keys(fincode_sector_weightage_profit_per), */
+        /* plotOptions: { */
+        /*   bar: { */
+        /*     columnWidth: '0%', */
+        /*     colors: { */
+        /*       ranges: [{ */
+        /*         from: -100, */
+        /*         to: -46, */
+        /*         color: '#F15B46' */
+        /*       }, { */
+        /*         from: -45, */
+        /*         to: 0, */
+        /*         color: '#FEB019' */
+        /*       }] */
+        /*     }, */
+        /*     columnWidth: '80%', */
+        /*   } */
+        /* }, */
+        /* dataLabels: { */
+        /*   enabled: false, */
+        /* }, */
+        /* yaxis: { */
+        /*   title: { */
+        /*     text: 'Growth', */
+        /*   }, */
+        /*   labels: { */
+        /*     formatter: function (y) { */
+        /*       return y.toFixed(0) + "%"; */
+        /*     } */
+        /*   } */
+        /* }, */
+        /* }; */
 
         var options = {
               series: Object.values(fincode_sector_weightage_profit_per),
@@ -112,7 +153,7 @@
                     labels: {
                         show: true,
                         name: {
-                        formatter: function(val){return (val + ': ₹' + fincode_sector_weightage_profit[val]);}
+                        formatter: function(val){return (val + ': ₹' + fincode_sector_weightage_profit[val].toFixed(2));}
                         },
                         value: {
                             formatter: function(val){return ( val + '%');}

@@ -8152,6 +8152,9 @@ function SA_deletePortfolio($portfolio_id){
     $query_one   = "DELETE FROM " . T_PORTFOLIO_MF . " WHERE `portfolio_id` = {$portfolio_id}";
     $query       = mysqli_query($sqlConnect, $query_one);
 
+    $query_one   = "DELETE FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id}";
+    $query       = mysqli_query($sqlConnect, $query_one);
+
     if (!$query) {
         return mysqli_error($sqlConnect);
     };
@@ -8862,6 +8865,32 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $
 
     return true;
 }
+function AddDividendToPortfolio($stock_quote_datum, $portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+    $stock_fincode = Wo_Secure($stock_quote_datum['stock_fincode']);
+    $date_ = Wo_Secure($stock_quote_datum['date']);
+    $amount = Wo_Secure($stock_quote_datum['dividend_amount']);
+    $dividend_notes = Wo_Secure($stock_quote_datum['notes']);
+    $timestamp_created = strtotime("now");
+
+    AddCashToPortfolio(array(array(
+        'cash_type' => 'Credit',
+        'cash_transaction_date' => $date_,
+        'cash_transaction_price' => $amount,
+        'note' => ''
+    )), $portfolio_id, "Dividend Received From Stocks", false, true);
+
+    $query_text   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `timestamp_created`, `Notes`, `SOLD`) VALUES ({$portfolio_id}, {$stock_fincode}, {$date_}, {$amount}, {$timestamp_created}, '{$dividend_notes}', 3)";
+    $query_one    = mysqli_query($sqlConnect, $query_text);
+
+    if (!$query_one) {
+        return mysqli_error($sqlConnect);
+    };
+
+    return true;
+}
 function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_available){
     global $wo, $sqlConnect;
 
@@ -8879,7 +8908,6 @@ function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_avai
     $timestamp_created = strtotime("now");
     $timestamps_sold = $stock_quote_datum['timestamp_sold'];
     $realized_gain = Wo_Secure($stock_quote_datum['realized_gain']);
-    $realized_gain_per = Wo_Secure($stock_quote_datum['realized_gain_per']);
 
     if ($realized_gain > 0){
         AddCashToPortfolio(array(array(
@@ -8960,10 +8988,10 @@ function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_avai
     $query_one    = mysqli_query($sqlConnect, $query_text);
 
     if (mysqli_num_rows($query_one) <= 0){
-        $query_text   = "INSERT INTO " . T_REALIZED . " (`portfolio_id`, `type`, `realized_gain`, `realized_gain_per`, `element_uid`) VALUES ({$portfolio_id}, 'stock', {$realized_gain}, {$realized_gain_per}, {$stock_fincode});";
+        $query_text   = "INSERT INTO " . T_REALIZED . " (`portfolio_id`, `type`, `realized_gain`, `element_uid`) VALUES ({$portfolio_id}, 'stock', {$realized_gain}, {$stock_fincode});";
         $query_one    = mysqli_query($sqlConnect, $query_text);
     } else {
-        $query_text   = "UPDATE " . T_REALIZED . " SET `realized_gain` = `realized_gain` + {$realized_gain}, `realized_gain_per` = `realized_gain_per` + {$realized_gain_per} WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'stock';";
+        $query_text   = "UPDATE " . T_REALIZED . " SET `realized_gain` = `realized_gain` + {$realized_gain} WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'stock';";
         $query_one    = mysqli_query($sqlConnect, $query_text);
     };
 
@@ -9108,8 +9136,7 @@ function Wo_ExtraStockDetailInPortfolio($stock_fincode, $portfolio_id) {
 
     $data['stock_fincode'] = $stock_fincode;
 
-    $query_text = "SELECT `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `Charges` FROM " . T_PORTFOLIO_STOCKS . "
-        WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `SOLD` = 0";
+    $query_text = "SELECT `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `Charges` FROM " . T_PORTFOLIO_STOCKS . " WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `SOLD` = 0";
     $sql          = mysqli_query($sqlConnect, $query_text);
     $data['stock_portfolio_data'] = array();
     while ($fetched_data = mysqli_fetch_assoc($sql)) {
@@ -9134,6 +9161,19 @@ function Wo_ExtraStockDetailInPortfolio($stock_fincode, $portfolio_id) {
     $sql          = mysqli_query($sqlConnect, $query_text);
     $category = mysqli_fetch_assoc($sql)['Categorization'];
     $data['category'] = $category;
+
+    $query_text = "SELECT `realized_gain` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `element_uid` = {$stock_fincode} AND type = 'stock';";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    $fetched_data = mysqli_fetch_assoc($sql);
+    if (empty($fetched_data)) $realized_gain = 0;
+    else $realized_gain = $fetched_data['realized_gain'];
+    $data['realized_gain'] = $realized_gain;
+
+    $query_text = "SELECT SUM(`stock_transaction_price`) as `total_dividend` FROM " . T_PORTFOLIO_STOCKS . " WHERE `portfolio_id` = {$portfolio_id} AND `stock_fincode` = {$stock_fincode} AND `SOLD` = 3;";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    $fetched_data = mysqli_fetch_assoc($sql);
+    $data['dividend_amount'] = $fetched_data['total_dividend'];
+
     if ($scripcode == ''){
         $symbol = $fetched_data['symbol'];
 
@@ -9241,6 +9281,65 @@ function Wo_ExtraOADetailForAllOAInPortfolio($portfolio_id){
 
 /*     return $data; */
 /* } */
+function SA_otherStockTransactions($portfolio_id){
+    global $sqlConnect;
+
+    $data         = array();
+    $stocks       = array();
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_text = "SELECT `stock_fincode` FROM " . T_PORTFOLIO_STOCKS . " WHERE `portfolio_id` = {$portfolio_id} AND `SOLD` != 0 AND `SOLD` != 3;";
+
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        if (!in_array($fetched_data['stock_fincode'], $stocks)) {
+            $stocks[] = $fetched_data['stock_fincode'];
+            $query_text = "SELECT `s_name` as `compname` FROM " . T_COMPANIES . " WHERE fincode = {$fetched_data['stock_fincode']};";
+            $sql_compname          = mysqli_query($sqlConnect, $query_text);
+            $data[mysqli_fetch_assoc($sql_compname)['compname']]   = SA_otherStockTransactionDetails($portfolio_id, $fetched_data['stock_fincode']);
+        }
+    };
+
+    return $data;
+}
+function SA_otherStockTransactionDetails($portfolio_id, $stock_fincode) {
+    global $sqlConnect;
+
+    $data       = array();
+    $stock_fincode = Wo_Secure($stock_fincode);
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_text = "SELECT `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `Charges`, `SOLD` FROM " . T_PORTFOLIO_STOCKS . " WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `SOLD` != 0 AND `SOLD` != 3";
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        $data[] = $fetched_data;
+    };
+
+    return $data;
+}
+function SA_getAllTransactions($portfolio_id, $type_) {
+    global $sqlConnect;
+
+    $data         = array();
+    $portfolio_id = Wo_Secure($portfolio_id);
+    $type_ = Wo_Secure($type_);
+
+    switch ($type_){
+        case 'stocks':
+            $query_text = "SELECT * FROM " . T_PORTFOLIO_STOCKS . "
+                WHERE `portfolio_id` = {$portfolio_id}";
+            break;
+        default:
+            return 'Please Don\'t Change System Files!';
+    }
+
+    $sql          = mysqli_query($sqlConnect, $query_text);
+    while ($fetched_data = mysqli_fetch_assoc($sql)) {
+        $data[]   = $fetched_data;
+    };
+
+    return $data;
+}
 function Wo_ExtraFDDetailForAllFDInPortfolio($portfolio_id){
     global $sqlConnect;
 

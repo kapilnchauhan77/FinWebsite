@@ -79,6 +79,11 @@
         if (ctx_current) mcapWeightageCurrent(ctx_current, fincode_mcap_weightage_current);
     };
 
+    function add_Overview_stock_transactionChart(transaction_obj, date_compname_type){
+        ctx = document.querySelector("#overview_transactions");
+        if (ctx) transaction_stocks(ctx, transaction_obj, date_compname_type);
+    };
+
     function format_rupees(val){
         val = Math.round(val).toString();
         if (val.length > 3 && val.length < 6) val = parseFloat(Math.round(parseInt(val) / 10)/100).toString() + 'K';

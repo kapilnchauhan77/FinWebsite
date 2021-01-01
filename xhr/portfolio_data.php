@@ -14,8 +14,13 @@ if ($f == 'portfolio_data') {
                 $error = "Please Do Not Change System files";
             }
         }
-
-        else {
+        else if ($auto_add == '3'){
+            if (($stock_array['date'] > time()) || (($stock_array['dividend_amount']) < 0) || (!$stock_array['date'])){
+                /* $errors[] = "Please Enter Quantity!"; */
+                $error = "Please Do Not Change System files";
+            }
+        }
+        else if ($auto_add == '0' || $auto_add == '1'){
             foreach ($stock_array as $stock_data) {
                 if ($stock_data['stock_transaction_date'] === "NaN"){
                     /* $errors[] = "Please Enter Date!"; */
@@ -38,10 +43,7 @@ if ($f == 'portfolio_data') {
                     break;
                 }
             }
-        }
-
-        if ($auto_add != '0' && $auto_add != '1' && $auto_add != '2') $error = 'Please do not change system files!';
-
+        } else $error = 'Please do not change system files!';
 
         if ($error !== ''){
 
@@ -55,8 +57,11 @@ if ($f == 'portfolio_data') {
                 exit();
         }
         else{
+
             if ($auto_add == '2') $portfolio_data_added = SellStocksFromPortfolio($stock_array, $portfolio_id, $stocks_available);
+            else if ($auto_add == '3') $portfolio_data_added = AddDividendToPortfolio($stock_array, $portfolio_id);
             else $portfolio_data_added = AddStocksToPortfolio($stock_array, $portfolio_id, $no_of_stocks, $auto_add);
+
             if ($portfolio_data_added === true){
 
                 $data = array(
