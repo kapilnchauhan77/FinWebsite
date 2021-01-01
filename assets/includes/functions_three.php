@@ -8161,6 +8161,38 @@ function SA_deletePortfolio($portfolio_id){
 
     return true;
 }
+function SA_getPortfolioRealizedGain($portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_one   = "SELECT SUM(`realized_gain`) AS `total_realised_gain` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id}";
+    $query       = mysqli_query($sqlConnect, $query_one);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    $fetched_data = mysqli_fetch_assoc($query);
+
+    return $fetched_data['total_realised_gain'];
+}
+function SA_getPortfolioDividend($portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+
+    $query_one   = "SELECT SUM(`stock_transaction_price`) AS `total_dividend` FROM " . T_PORTFOLIO_STOCKS . " WHERE `portfolio_id` = {$portfolio_id} AND `SOLD` = 3;";
+    $query       = mysqli_query($sqlConnect, $query_one);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    $fetched_data = mysqli_fetch_assoc($query);
+
+    return $fetched_data['total_dividend'];
+}
 function Wo_CreatePortfolio($data){
     global $wo, $sqlConnect;
 
