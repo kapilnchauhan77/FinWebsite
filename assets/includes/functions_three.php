@@ -8939,6 +8939,7 @@ function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_avai
     $stock_note = Wo_Secure($stock_quote_datum['note']);
     $timestamp_created = strtotime("now");
     $timestamps_sold = $stock_quote_datum['timestamp_sold'];
+    $final_charge = $stock_quote_datum['final_charge'];
     $realized_gain = Wo_Secure($stock_quote_datum['realized_gain']);
 
     if ($realized_gain > 0){
@@ -8951,6 +8952,7 @@ function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_avai
     };
 
     foreach ($timestamps_sold as $timestamp_sold => $qty){
+        $tmp_charge   = ($final_charge * $qty);
         $query_text   = "SELECT * FROM " . T_PORTFOLIO_STOCKS . " WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `stock_transaction_date` = {$timestamp_sold} AND `SOLD` = 0;";
         $query_one    = mysqli_query($sqlConnect, $query_text);
 
@@ -8963,16 +8965,17 @@ function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_avai
                 return 'Please do not change system files!';
             } else if($num_rows == 1){
                 $fetched_data = mysqli_fetch_assoc($query_one);
-                $query_text   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `timestamp_created`, `Charges`, `Notes`, `SOLD`) VALUES ({$portfolio_id}, {$stock_fincode}, {$fetched_data['stock_transaction_date']}, {$fetched_data['stock_transaction_price']}, {$qty}, {$fetched_data['timestamp_created']}, {$fetched_data['Charges']}, '{$fetched_data['Notes']}', 1)";
+                $query_text   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `timestamp_created`, `Charges`, `Notes`, `SOLD`) VALUES ({$portfolio_id}, {$stock_fincode}, {$fetched_data['stock_transaction_date']}, {$fetched_data['stock_transaction_price']}, {$qty}, {$fetched_data['timestamp_created']}, {$tmp_charge}, '{$fetched_data['Notes']}', 1)";
                 $query_one    = mysqli_query($sqlConnect, $query_text);
 
-                $query_text   = "UPDATE " . T_PORTFOLIO_STOCKS . " SET `stock_transaction_qty` = `stock_transaction_qty` - {$qty} WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `stock_transaction_date` = {$timestamp_sold} AND `SOLD` = 0;";
+                $query_text   = "UPDATE " . T_PORTFOLIO_STOCKS . " SET `stock_transaction_qty` = `stock_transaction_qty` - {$qty}, `Charges` = `Charges` - {$tmp_charge} WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `stock_transaction_date` = {$timestamp_sold} AND `SOLD` = 0;";
                 $query_one    = mysqli_query($sqlConnect, $query_text);
             } else {
                 $qty_left = $qty;
                 while ($fetched_data = mysqli_fetch_assoc($query_one)) {
                     if (is_array($fetched_data)) {
                         $qty_left = $fetched_data['stock_transaction_qty'] - $qty_left;
+                        $tmp_charge_left = $final_charge * $qty_left;
                         $timestamp_created = $fetched_data['timestamp_created'];
                         if ($qty_left <= 0){
                             $query_text   = "UPDATE " . T_PORTFOLIO_STOCKS . " SET `SOLD` = 1 WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `stock_transaction_date` = {$timestamp_sold} AND `timestamp_created` = {$timestamp_created} AND `SOLD` = 0;";
@@ -8980,10 +8983,10 @@ function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_avai
                             if ($qty_left == 0) break;
                             else $qty_left *= -1;
                         } else {
-                            $query_text   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `timestamp_created`, `Charges`, `Notes`, `SOLD`) VALUES ({$portfolio_id}, {$stock_fincode}, {$fetched_data['stock_transaction_date']}, {$fetched_data['stock_transaction_price']}, {$qty_left}, {$fetched_data['timestamp_created']}, {$fetched_data['Charges']}, '{$fetched_data['Notes']}', 1)";
+                            $query_text   = "INSERT INTO " . T_PORTFOLIO_STOCKS . " (`portfolio_id`, `stock_fincode`, `stock_transaction_date`, `stock_transaction_price`, `stock_transaction_qty`, `timestamp_created`, `Charges`, `Notes`, `SOLD`) VALUES ({$portfolio_id}, {$stock_fincode}, {$fetched_data['stock_transaction_date']}, {$fetched_data['stock_transaction_price']}, {$qty_left}, {$fetched_data['timestamp_created']}, {$tmp_charge_left}, '{$fetched_data['Notes']}', 1)";
                             $query_one    = mysqli_query($sqlConnect, $query_text);
 
-                            $query_text   = "UPDATE " . T_PORTFOLIO_STOCKS . " SET `stock_transaction_qty` = `stock_transaction_qty` - {$qty_left} WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `stock_transaction_date` = {$timestamp_sold} AND `timestamp_created` = {$timestamp_created} AND `SOLD` = 0;";
+                            $query_text   = "UPDATE " . T_PORTFOLIO_STOCKS . " SET `stock_transaction_qty` = `stock_transaction_qty` - {$qty_left}, `Charges` = `Charges` - {$tmp_charge_left} WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `stock_transaction_date` = {$timestamp_sold} AND `timestamp_created` = {$timestamp_created} AND `SOLD` = 0;";
                             $query_one    = mysqli_query($sqlConnect, $query_text);
                             break;
                         }

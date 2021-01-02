@@ -58,8 +58,8 @@
                 formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
                     if (series != undefined){
                         var date_ = new Date(value);
-                        if (parseFloat(series[seriesIndex][dataPointIndex]) > 0) return ('Toal Transactions On <b>'+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +':</b><b>₹' + series[seriesIndex][dataPointIndex].toFixed(2) + "</b>");
-                        else return ('Toal Transactions On <b>'+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +':</b><b>₹' + (-1 * parseFloat(series[seriesIndex][dataPointIndex])).toFixed(2) + "</b>");
+                        if (parseFloat(series[seriesIndex][dataPointIndex]) > 0) return ('Total Transactions On <b>'+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +':</b><b>₹' + series[seriesIndex][dataPointIndex].toFixed(2) + "</b>");
+                        else return ('Total Transactions On <b>'+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +':</b><b>₹' + (-1 * parseFloat(series[seriesIndex][dataPointIndex])).toFixed(2) + "</b>");
                     }
                 },
             },

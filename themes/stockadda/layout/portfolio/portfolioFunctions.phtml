@@ -3,26 +3,29 @@
     var fincode_date_seperation = new Object();
 
     function getInvestedPriceEquivalent(id, qty, selling_date_){
-        final_price = 0;
+        var final_price  = 0;
+        var final_charge = 0;
         var time_stamp_sold = new Object();
 
         data = fincode_date_seperation[id];
         for (date_ in data){
             if (date_ > selling_date_) return [false, false];
             if (qty < data[date_]['quantity']){
+                final_charge += ((data[date_]['charge'] / data[date_]['quantity']) * qty);
                 final_price += ((data[date_]['price'] + (data[date_]['charge'] / data[date_]['quantity'])) * qty);
                 time_stamp_sold[date_] = qty;
-                return [final_price, time_stamp_sold];
+                return [final_price, time_stamp_sold, (final_charge/qty)];
             }
             else{
-                final_price += (data[date_]['price'] * data[date_]['quantity']) + data[date_]['charge']
+                final_charge += data[date_]['charge'];
+                final_price += ((data[date_]['price'] * data[date_]['quantity']) + data[date_]['charge']);
                 qty -= data[date_]['quantity'];
                 time_stamp_sold[date_] = 0;
                 if (qty == 0) break;
             }
         }
 
-        return [final_price, time_stamp_sold];
+        return [final_price, time_stamp_sold, (final_charge/qty)];
 
     }
 
@@ -184,7 +187,7 @@
                 if (stock_transaction_date > parseInt(new Date().getTime())/1000) return "You Cannot Sell On a Future Date!";
                 if (stock_transaction_price < 0) return "Stock Price Cannot Be Less Than 0!";
                 if (qty_available < stock_transaction_qty) return "You Cannot Sell More Than Quantity Held";
-                var [invested_equivalent, time_stamp_sold] = getInvestedPriceEquivalent(uid, stock_transaction_qty, stock_transaction_date);
+                var [invested_equivalent, time_stamp_sold, final_charge] = getInvestedPriceEquivalent(uid, stock_transaction_qty, stock_transaction_date);
                 if (invested_equivalent == false && time_stamp_sold == false) return 'You do not have enough stocks on the selling date!';
 
                 data_to_send = {
@@ -196,6 +199,7 @@
                     note: document.getElementById(uid + "notes").value,
                     stock_net_amount: -1 * invested_equivalent,
                     timestamp_sold: time_stamp_sold,
+                    final_charge: final_charge,
                     realized_gain: (parseFloat($("#"+ uid +"net_amount").text()) - invested_equivalent),
                 };
                 console.log(invested_equivalent)
