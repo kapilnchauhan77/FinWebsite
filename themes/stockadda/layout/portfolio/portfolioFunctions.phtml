@@ -711,8 +711,10 @@
                 tmp_date = new Date(parseInt(val.stock_transaction_date) * 1000);
                 tmp_price = (parseFloat(val.stock_transaction_price) * parseInt(val.stock_transaction_qty)) + parseFloat(val.Charges);
                 tmp_proper_date =  (tmp_date.getMonth() + 1) +"-"+ tmp_date.getDate() +"-"+ tmp_date.getFullYear()
-                if (tmp_proper_date in date_seperation) date_seperation[tmp_proper_date] += tmp_price;
-                else{
+                if (tmp_proper_date in date_seperation){
+                    date_seperation[tmp_proper_date] += tmp_price;
+                    date_compname_type[tmp_proper_date][value.compname].push(['0', tmp_price, parseInt(val.stock_transaction_qty)]);
+                } else{
                     date_seperation[tmp_proper_date] = tmp_price;
                     date_compname_type[tmp_proper_date] = Object();
                     date_compname_type[tmp_proper_date][value.compname] = [['0', tmp_price, parseInt(val.stock_transaction_qty)]];
