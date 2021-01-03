@@ -70,13 +70,13 @@
         for (date_ in data){
             if (date_ > selling_date_) return [false, false];
             if (qty < data[date_]['quantity']){
-                final_charge += ((data[date_]['charge'] / data[date_]['quantity']) * qty);
+                final_charge += (data[date_]['charge'] / data[date_]['quantity']);
                 final_price += ((data[date_]['price'] + (data[date_]['charge'] / data[date_]['quantity'])) * qty);
                 time_stamp_sold[date_] = qty;
-                return [final_price, time_stamp_sold, (final_charge/qty)];
+                return [final_price, time_stamp_sold];
             }
             else{
-                final_charge += data[date_]['charge'];
+                final_charge += (data[date_]['charge'] / data[date_]['quantity']);
                 final_price += ((data[date_]['price'] * data[date_]['quantity']) + data[date_]['charge']);
                 qty -= data[date_]['quantity'];
                 time_stamp_sold[date_] = 0;
@@ -84,7 +84,7 @@
             }
         }
 
-        return [final_price, time_stamp_sold, (final_charge/qty)];
+        return [final_price, time_stamp_sold];
     }
 
     async function addDividend(name_, uid){
@@ -245,7 +245,7 @@
                 if (stock_transaction_date > parseInt(new Date().getTime())/1000) return "You Cannot Sell On a Future Date!";
                 if (stock_transaction_price < 0) return "Stock Price Cannot Be Less Than 0!";
                 if (qty_available < stock_transaction_qty) return "You Cannot Sell More Than Quantity Held";
-                var [invested_equivalent, time_stamp_sold, final_charge] = getInvestedPriceEquivalent(uid, stock_transaction_qty, stock_transaction_date);
+                var [invested_equivalent, time_stamp_sold] = getInvestedPriceEquivalent(uid, stock_transaction_qty, stock_transaction_date);
                 if (invested_equivalent == false && time_stamp_sold == false) return 'You do not have enough stocks on the selling date!';
 
                 data_to_send = {
@@ -257,7 +257,6 @@
                     note: document.getElementById(uid + "notes").value,
                     stock_net_amount: -1 * invested_equivalent,
                     timestamp_sold: time_stamp_sold,
-                    final_charge: final_charge,
                     realized_gain: (parseFloat($("#"+ uid +"net_amount").text()) - invested_equivalent),
                 };
                 console.log(invested_equivalent)
@@ -865,7 +864,7 @@
                 cmp = (value.price_detail_intraday == null) ? value.price_detail_adjusted.close : value.price_detail_intraday.close;
                 if (Object.keys(fincode_date_seperation[value.stock_fincode]).length > 1){
                     overview_table_to_append += `&nbsp;(`+ Object.keys(fincode_date_seperation[value.stock_fincode]).length +`)`;
-                    days_held_line = `<span style='color:#4E73DF; margin-left: 0.75em; cursor: default;' onclick="multipleStocksInfo(`+ value.stock_fincode +`, `+ cmp +`, '`+ value.compname +`')">Age: Click</span>`;
+                    days_held_line = `<span style='color:#4E73DF; margin-left: 0.75em; cursor: pointer;' onclick="multipleStocksInfo(`+ value.stock_fincode +`, `+ cmp +`, '`+ value.compname +`')">Age: Click</span>`;
                 } else{
                     days_held_line = `<span style="color:#4E73DF; margin-left: 0.75em;">Age: `+ Math.round(((new Date())-((Object.keys(fincode_date_seperation[value.stock_fincode])[0])*1000))/(1000*60*60*24)) +` Days</span>`;
                 }
