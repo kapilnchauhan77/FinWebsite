@@ -85,11 +85,34 @@
     };
 
     function format_rupees(val){
-        val = Math.round(val).toString();
+        /* val = Math.round(val).toString(); */
+        val = val.toString();
+        [val, val2] = val.split('.');
+        if (val2 == undefined) val2 = '';
+        if (val2.length > 2) val2 = val2.substr(0, 2);
         if (val.length > 3 && val.length < 6) val = parseFloat(Math.round(parseInt(val) / 10)/100).toString() + 'K';
         else if (val.length > 5 && val.length < 8) val = parseFloat(Math.round(parseInt(val) / 1000)/100).toString() + 'L';
         else if (val.length > 7) val = parseFloat(Math.round(parseInt(val) / 1000)/100).toString() + 'Cr';
+        else return '₹' + val + '.' + val2;
         return '₹' + val;
+    }
+
+    function make_comma_seperated(val){
+        to_switch = false;
+        if (parseInt(val) < 0){
+            val = -1 * parseFloat(val);
+            to_switch = true;
+        }
+        val = val.toString();
+        [x, decimal_place] = val.split('.');
+        var lastThree = x.substring(x.length-3);
+        var otherNumbers = x.substring(0,x.length-3);
+        if(otherNumbers != '')
+            lastThree = ',' + lastThree;
+        var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+        if (decimal_place == undefined) decimal_place = '00';
+        if (to_switch) return ('-' + res + '.' + decimal_place);
+        else return (res + '.' + decimal_place);
     }
 
 </script>
