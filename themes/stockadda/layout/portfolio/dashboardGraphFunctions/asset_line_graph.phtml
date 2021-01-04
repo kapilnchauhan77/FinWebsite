@@ -78,22 +78,30 @@
                  formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
                      to_show = "";
                      if (skip_end == false || dates_array[dataPointIndex]['x']/1000 != current_date){
+
                          Object.keys(type_dates_obj[dates_array[dataPointIndex]['x']/1000]).forEach(function(type) {
                              for (i = 0; i < type_dates_obj[dates_array[dataPointIndex]['x']/1000][type].length; i++){
-                                 to_show += "• ";
                                  if (type == "Fixed Deposit"){
                                       var date_ = new Date(type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i]['maturity_date'] * 1000);
-                                      to_show += "Opened " + type + " of ₹" + parseFloat(type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i]['transaction_price']).toFixed(2) + " at interest rate of " + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i]['interest_rate'] + "%; Maturity Date: "+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +".</br>"
+                                      to_show += "• Opened " + type + " of ₹" + parseFloat(type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i]['transaction_price']).toFixed(2) + " at interest rate of " + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i]['interest_rate'] + "%; Maturity Date: "+ date_.getDate() +"/"+ (date_.getMonth() + 1) +"/"+ date_.getFullYear() +".</br>"
                                  }
                                  else{
                                       if (type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i] > 0){
-                                          if (type == "Cash") to_show += "Added ";
-                                          else to_show += "Bought ";
-                                          to_show += type + " worth ₹" + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i].toFixed(2) + ".</br>"
+                                          if (type == "Cash"){
+                                              to_show += "• " + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i][1] + ": ₹" + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i].toFixed(2) + "</br>"
+                                          } else{
+                                              to_show += "• Bought ";
+                                              to_show += type + " worth ₹" + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i].toFixed(2) + "</br>";
+                                          }
                                       } else{
-                                          if (type == "Cash") to_show += "Withdrew ";
-                                          else to_show += "Sold ";
-                                          to_show += type + " worth ₹" + -1 * type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i].toFixed(2)  + ".</br>"
+                                          if (type == "Cash"){
+                                              internal_note = type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i][1];
+                                              if (internal_note.includes('Automatic Cash Withdrawal')) to_show += '';
+                                              else to_show += "• " + internal_note + ": ₹" + type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i][0].toFixed(2) + "</br>"
+                                          } else{
+                                              to_show += "• Sold ";
+                                              to_show += type + " worth ₹" + -1 * type_dates_obj[dates_array[dataPointIndex]['x']/1000][type][i].toFixed(2)  + "</br>";
+                                          }
                                       }
                                  }
                              }

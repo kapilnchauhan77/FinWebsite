@@ -483,10 +483,10 @@
             else dates_obj[parseInt(value.transaction_date)] = parseFloat(value.transaction_amount);
 
             if (parseInt(value.transaction_date) in type_dates_obj){
-                if ('Cash' in type_dates_obj[parseInt(value.transaction_date)]) type_dates_obj[parseInt(value.transaction_date)]['Cash'].push(parseFloat(value.transaction_amount));
-                else type_dates_obj[parseInt(value.transaction_date)]['Cash'] = [parseFloat(value.transaction_amount)];
+                if ('Cash' in type_dates_obj[parseInt(value.transaction_date)]) type_dates_obj[parseInt(value.transaction_date)]['Cash'].push([parseFloat(value.transaction_amount), value.internal_note]);
+                else type_dates_obj[parseInt(value.transaction_date)]['Cash'] = [[parseFloat(value.transaction_amount), value.internal_note]];
             } else {
-                type_dates_obj[parseInt(value.transaction_date)] = {'Cash': [parseFloat(value.transaction_amount)]};
+                type_dates_obj[parseInt(value.transaction_date)] = {'Cash': [[parseFloat(value.transaction_amount), value.internal_note]]};
             }
 
             if (parseInt(value.transaction_date) >= financial_yr_timestamp){
