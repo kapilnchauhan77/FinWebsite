@@ -9142,25 +9142,25 @@ function Wo_GetStocksInPortfolio($portfolio_id) {
 
     return $stocks;
 }
-function Wo_GetStockDetailInPortfolio($stock_fincode, $portfolio_id) {
-    global $sqlConnect;
+/* function Wo_GetStockDetailInPortfolio($stock_fincode, $portfolio_id) { */
+/*     global $sqlConnect; */
 
-    $data       = array();
-    $stock_fincode = Wo_Secure($stock_fincode);
-    $portfolio_id = Wo_Secure($portfolio_id);
+/*     $data       = array(); */
+/*     $stock_fincode = Wo_Secure($stock_fincode); */
+/*     $portfolio_id = Wo_Secure($portfolio_id); */
 
-    $query_text = "SELECT `stock_fincode` FROM " . T_PORTFOLIO_STOCKS . "
-        WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `SOLD` = 0";
-    $sql          = mysqli_query($sqlConnect, $query_text);
+/*     $query_text = "SELECT `stock_fincode` FROM " . T_PORTFOLIO_STOCKS . " */
+/*         WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `SOLD` = 0"; */
+/*     $sql          = mysqli_query($sqlConnect, $query_text); */
 
-    if (empty(mysqli_fetch_assoc($sql))){
-        return array();
-    }
+/*     if (empty(mysqli_fetch_assoc($sql))){ */
+/*         return array(); */
+/*     } */
 
-    $data = Wo_CompanyCaching($stock_fincode);
+/*     $data = Wo_CompanyCaching($stock_fincode); */
 
-    return $data;
-}
+/*     return $data; */
+/* } */
 function Wo_ExtraStockDetailInPortfolio($stock_fincode, $portfolio_id) {
     global $sqlConnect;
 

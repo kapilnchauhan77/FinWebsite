@@ -627,13 +627,17 @@
         var currentVal              = 0;
         var currentVal_fyr          = 0;
         var invested_fyr            = 0;
+        var num_of_trs              = 0;
+        var total_realised_gain     = 0;
         var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         Object.keys(data_of_all_mutual_funds).forEach(function (scheme_code) {
 
+            var total_inv_mf = 0;
             var total_qty_of_mf = 0;
             Object.keys(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data']).forEach(function(date_time_stamp){
-                total_qty_of_mf += data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty'];
+                total_qty_of_mf += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty']);
+                total_inv_mf += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
 
                 console.log('Date from mf:');
                 console.log(parseInt(date_time_stamp));
@@ -653,13 +657,51 @@
                 }
             });
 
-            currentVal += data_of_all_mutual_funds[scheme_code]['mf_data']['Net Asset Value'] * total_qty_of_mf;
-            oldVal += data_of_all_mutual_funds[scheme_code]['mf_data']['Old Net Asset Value'] * total_qty_of_mf;
+            current_val_of_mf = data_of_all_mutual_funds[scheme_code]['mf_data']['Net Asset Value'] * total_qty_of_mf;
+            old_val_of_mf = data_of_all_mutual_funds[scheme_code]['mf_data']['Old Net Asset Value'] * total_qty_of_mf;
+            currentVal += current_val_of_mf;
+            oldVal += old_val_of_mf;
+
+            if (tab == 'overview' && content == 'mutual_funds'){
+                dates_bought = Object.keys(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data']);
+                overview_table_to_append = `<tr><th scope="row"><span style="margin: 0.75em;">` + data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'];
+                if (dates_bought.length > 1){
+                    overview_table_to_append += `&nbsp;(`+ dates_bought.length +`)`;
+                    days_held_line = `<span style='color:#4E73DF; margin-left: 0.75em; cursor: pointer;' onclick="multipleMFInfo(`+ scheme_code +`, `+ data_of_all_mutual_funds[scheme_code]['mf_data']['Net Asset Value'] +`, '`+ data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] +`')">Age: Click</span>`;
+                } else days_held_line = `<span style="color:#4E73DF; margin-left: 0.75em;">Age: `+ Math.round(((new Date())-((dates_bought[0])*1000))/(1000*60*60*24)) +` Days</span>`;
+
+                overview_table_to_append += `</span><br>
+                                             <span style="color:red; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='buyElement("`+ data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] +`",`+ scheme_code +` )'>Add</span></span>
+                                             <span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellElement("`+ data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] +`",`+ scheme_code +` )'>Sell</span></span>`;
+                overview_table_to_append += days_held_line;
+                overview_table_to_append += `</th>`;
+
+                _todays_profit_ = current_val_of_mf - old_val_of_mf;
+                _overall_profit_ = current_val_of_mf - total_inv_mf;
+                _todays_profit_per_ = 100 * _todays_profit_ / old_val_of_mf;
+                _overall_profit_per_ = 100 * _overall_profit_ / total_inv_mf;
+                _realized_gain_ = 0;
+                total_realised_gain = 0;
+
+                overview_table_to_append +=`<td>&#8377;`+ make_comma_seperated(parseFloat(data_of_all_mutual_funds[scheme_code]['mf_data']['Net Asset Value']).toFixed(2)) +`</td>
+                                            <td id='`+ scheme_code +`_qty'>`+ total_qty_of_mf +`<br><small>&#8377;`+ make_comma_seperated((total_inv_mf / total_qty_of_mf).toFixed(2)) +`</small></td>
+                                            <td>&#8377;`+ make_comma_seperated(total_inv_mf.toFixed(2)) +`<br><small>`+ make_comma_seperated((100 * total_inv_mf / <?php echo $wo['portfolio_data']['invested_value_mutual_funds']; ?>).toFixed(2)) +`%</small></td>
+                                            <td style='color: `+ ((_todays_profit_ > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(_todays_profit_) +`<br><small>`+ make_comma_seperated(_todays_profit_per_.toFixed(2)) +`%</small></td>
+                                            <td style='color: `+ ((_overall_profit_ > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(_overall_profit_.toFixed(2)) +`<br><small>`+ make_comma_seperated(_overall_profit_per_.toFixed(2)) +`%</small></td>
+                                            <td style='color: `+ ((_realized_gain_ > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(_realized_gain_.toFixed(2)) +`</td>
+                                            <td>&#8377;`+ make_comma_seperated(current_val_of_mf.toFixed(2)) +`<br><small><span id='`+ num_of_trs +`_weightage_mfs'>`+ (100 * current_val_of_mf).toFixed(2) +`</span>%</small></td>
+                                            <td><a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Upgrade to view XIRR">Pro</a></td>`
+
+                overview_table_to_append += `</tr>`;
+                $('#overview_mf_table_body').append(overview_table_to_append);
+                num_of_trs += 1;
+            }
 
         });
 
         currentVal_toDisplay = parseFloat($('#currentVal').text()) + currentVal;
         $('#currentVal').text(currentVal_toDisplay.toFixed(2));
+        for (tr_num = 0; tr_num < num_of_trs; tr_num++) $('#' + tr_num + '_weightage_mfs').text((parseFloat($('#' + tr_num + '_weightage_mfs').text()) / currentVal).toFixed(2));
 
         const daily_p_p_l = (currentVal - oldVal);
         $('#daily_p_p_l').text((parseFloat($('#daily_p_p_l').text()) + daily_p_p_l).toFixed(2));
@@ -667,30 +709,47 @@
         const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['invested_value_mutual_funds']; ?>);
         $('#overall_p_p_l').text((parseFloat($('#overall_p_p_l').text()) + overall_p_p_l).toFixed(2));
 
-        $('#total_assets').text(currentVal_toDisplay.toFixed(2));
-        $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
-
-        $('#mf_currentValTable').text(currentVal.toFixed(2));
-
-        $('#mf_daily_p_p_lTable').text(daily_p_p_l.toFixed(2));
-
         const daily_p_p_l_per = (daily_p_p_l / oldVal) * 100;
-        change_colors('mf_daily_p_p_lTable', daily_p_p_l_per);
-
-        $('#mf_overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
-
-        var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
-        $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
-
-        $('#total_day_gain').text((parseFloat($('#total_day_gain').text()) + daily_p_p_l).toFixed(2));
-        $('#total_unrealised_gain').text((parseFloat($('#total_unrealised_gain').text()) + overall_p_p_l).toFixed(2));
-
-        var p_l_this_year = currentVal_fyr - invested_fyr;
-        var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
-        $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
-
         const overall_p_p_l_per = (overall_p_p_l / <?php echo $wo['portfolio_data']['invested_value_mutual_funds']; ?>) * 100;
-        change_colors('mf_overall_p_p_lTable', overall_p_p_l_per);
+
+        if (tab == 'dashboard'){
+            $('#total_assets').text(currentVal_toDisplay.toFixed(2));
+            $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
+
+            $('#mf_currentValTable').text(currentVal.toFixed(2));
+
+            $('#mf_daily_p_p_lTable').text(daily_p_p_l.toFixed(2));
+
+            change_colors('mf_daily_p_p_lTable', daily_p_p_l_per);
+
+            $('#mf_overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
+
+            var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
+            $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
+
+            $('#total_day_gain').text((parseFloat($('#total_day_gain').text()) + daily_p_p_l).toFixed(2));
+            $('#total_unrealised_gain').text((parseFloat($('#total_unrealised_gain').text()) + overall_p_p_l).toFixed(2));
+
+            var p_l_this_year = currentVal_fyr - invested_fyr;
+            var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
+            $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
+
+            change_colors('mf_overall_p_p_lTable', overall_p_p_l_per);
+        } else {
+            last_tr = `<tr style="background-color:grey">
+                           <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
+                           <td></td>
+                           <td></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(<?php echo round($wo['portfolio_data']['invested_value_mutual_funds'], 2); ?>) +`</span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(daily_p_p_l.toFixed(2)) +`<br><small>`+ make_comma_seperated((daily_p_p_l_per).toFixed(2)) +`%</small></span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(overall_p_p_l.toFixed(2)) +`<br><small>`+ make_comma_seperated((overall_p_p_l_per).toFixed(2)) +`%</small></span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(total_realised_gain.toFixed(2)) +`</span></td>
+                           <td><span style="color: white;">&#8377;<span id='currentVal_stocks_Overview'>`+ make_comma_seperated(currentVal.toFixed(2)) +`</span></span></td>
+                           <td><span style="color: white;"><a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" style="color: white;">Pro</a></span></td>
+                       </tr>`;
+
+            $('#overview_mf_table_body').append(last_tr);
+        }
 
         return currentVal.toFixed(2);
     }
@@ -767,7 +826,8 @@
 
                 tmp_date = new Date(parseInt(val.stock_transaction_date) * 1000);
                 tmp_price = (parseFloat(val.stock_transaction_price) * parseInt(val.stock_transaction_qty)) + parseFloat(val.Charges);
-                tmp_proper_date =  (tmp_date.getMonth() + 1) +"-"+ tmp_date.getDate() +"-"+ tmp_date.getFullYear()
+                /* tmp_proper_date =  (tmp_date.getMonth() + 1) +"-"+ tmp_date.getDate() +"-"+ tmp_date.getFullYear() */
+                tmp_proper_date =  tmp_date.getFullYear() + "-" + (tmp_date.getMonth() + 1) +"-"+ tmp_date.getDate();
                 if (tmp_proper_date in date_seperation){
                     date_seperation[tmp_proper_date] += tmp_price;
                     date_compname_type[tmp_proper_date][value.compname].push(['0', tmp_price, parseInt(val.stock_transaction_qty)]);
@@ -873,7 +933,6 @@
                 overview_table_to_append += `<span style="color:red; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='buyElement("`+ value.compname +`",`+ value.stock_fincode +` )'>Add</span></span>`;
                 overview_table_to_append += `<span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellElement("`+ value.compname +`",`+ value.stock_fincode +` )'>Sell</span></span>`;
                 overview_table_to_append += days_held_line;
-
                 overview_table_to_append += `</th>`;
 
                 fincode_stock_weightage_invested[value.compname] = parseInt(total_inv_val_of_stock * 100) / 100;
@@ -981,7 +1040,7 @@
 
             const overall_p_p_l_per = (overall_p_p_l / <?php echo $wo['portfolio_data']['stock_invested_value']; ?>) * 100;
             change_colors('overall_p_p_lTable', overall_p_p_l_per);
-        }else if (tab == 'overview' && content == 'stocks'){
+        } else if (tab == 'overview' && content == 'stocks'){
 
             /* for (var ind_name in fincode_sector_weightage_current){ */
             /*     fincode_sector_weightage_profit[ind_name] = fincode_sector_weightage_current[ind_name] - fincode_sector_weightage_invested[ind_name]; */
@@ -1205,7 +1264,8 @@
                         console.log(data.other_stock_transactions[compname]);
                         data.other_stock_transactions[compname].forEach( function (val){
                             tmp_date = new Date(parseInt(val.stock_transaction_date) * 1000);
-                            tmp_proper_date =  (tmp_date.getMonth() + 1) +"-"+ tmp_date.getDate() +"-"+ tmp_date.getFullYear()
+                            /* tmp_proper_date =  (tmp_date.getMonth() + 1) +"-"+ tmp_date.getDate() +"-"+ tmp_date.getFullYear() */
+                            tmp_proper_date =  tmp_date.getFullYear() + "-" + (tmp_date.getMonth() + 1) +"-"+ tmp_date.getDate();
                             tmp_price = (parseFloat(val.stock_transaction_price) * parseInt(val.stock_transaction_qty)) + parseFloat(val.Charges);
                             if (tmp_proper_date in date_seperation) date_seperation[tmp_proper_date] += tmp_price;
                             else date_seperation[tmp_proper_date] = tmp_price;

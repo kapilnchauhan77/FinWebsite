@@ -1,0 +1,332 @@
+<div id="SA_content">
+
+    <div class="SA_container-fluid">
+
+        <div class="SA_row">
+
+            <div class="SA_col-xl-6 SA_col-lg-6">
+                <div class="SA_row">
+
+                    <div class="SA_col-md-6 SA_mb-0">
+                       <div class="SA_card SA_shadow SA_mb-0">
+
+                            <!-- Card Header - Dropdown -->
+                            <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Day's P&L Distribution</h6>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="SA_card-body" style="padding-top: 0em !important;padding-left: 0em !important;padding-bottom: 0em !important;">
+                                <div class="SA_row">
+                                    <div class="SA_col-6" id="Days_PL"> </div>
+                                    <div class="SA_col-6">
+                                        <div style="margin-top:1.1em;margin-bottom:1.1em;">
+                                            <span style="font-size:110%;font-weight:650;"><span id="num_gain_day">0</span> Stocks Gaining Today</span>
+                                            <br>
+                                            <span style="font-size:150%;font-weight:700;" class="SA_text-success">&#8377;<span id="gain_day">0</span></span>
+                                        </div>
+                                        <hr>
+                                        <div style="margin-top:1.1em;">
+                                            <span style="font-size:110%;font-weight:650;"><span id="num_loss_day">0</span> Stock Losing Today</span>
+                                            <br>
+                                            <span style="font-size:150%;font-weight:700;" class="SA_text-danger">&#8377;<span id="loss_day">0</span></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="SA_col-md-6 SA_mb-0">
+                       <div class="SA_card SA_shadow SA_mb-0">
+
+                            <!-- Card Header - Dropdown -->
+                            <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Overall P&L Distribution</h6>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="SA_card-body" style="padding-top: 0em !important;padding-left: 0em !important;padding-bottom: 0em !important;">
+                                <div class="SA_row">
+                                    <div class="SA_col-6" id="Overall_PL"> </div>
+                                    <div class="SA_col-6">
+                                        <div style="margin-top:1.1em;margin-bottom:1.1em;">
+                                            <span style="font-size:110%;font-weight:650;"><span id="num_gain_overall">0</span> Stock Gaining Overall</span>
+                                            <br>
+                                            <span style="font-size:150%;font-weight:700;" class="SA_text-success">&#8377;<span id="gain_overall">0</span></span>
+                                        </div>
+                                        <hr>
+                                        <div style="margin-top:1.1em;">
+                                            <span style="font-size:110%;font-weight:650;"><span id="num_loss_overall">0</span> Stocks Losing Overall</span>
+                                            <br>
+                                            <span style="font-size:150%;font-weight:700;" class="SA_text-danger">&#8377;<span id="loss_overall">0</span></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="SA_row" style="margin-bottom: 0em !important;margin-top: 1.4em;">
+
+                    <div class="SA_col-md-6 SA_mb-4" style="margin-bottom: 0em !important;">
+                       <div class="SA_card SA_shadow SA_mb-4">
+
+                            <!-- Card Body -->
+                            <div class="SA_card-body" style="margin-bottom: 0em !important;padding: 0em !important;">
+                                <div class="SA_row">
+                                    <div class="SA_col-6" style="padding: 0em">
+                                        <div style="margin-top:0.7em; margin-left: 2.1em; margin-bottom:1.1em;">
+                                            <div style="margin-bottom: -1em; font-size:133%;font-weight:650; color: black;">Today's Top Gainer</div>
+                                            <br>
+                                            <span style="font-size:120%; font-weight:500; color: green;"><span id="top_gainer_day">-</span></span>
+                                            <br>
+                                            <span style="font-size:110%;font-weight:500;" class="SA_text-success">&#8377;<span id="top_gainer_day_amount">0</span>&nbsp;<span style="font-size: 85%;">(<span id="top_gainer_day_per">0</span>%)</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="SA_col-6">
+                                        <div style="margin-top:0.7em; margin-left: 2.1em; margin-bottom:1.1em;">
+                                            <div style="margin-bottom: -1em; font-size:133%;font-weight:650; color: black;">Today's Top Loser</div>
+                                            <br>
+                                            <span style="font-size:120%; font-weight:500; color: red;"><span id="top_loser_day">-</span></span>
+                                            <br>
+                                            <span style="font-size:110%;font-weight:500;" class="SA_text-danger">&#8377;<span id="top_loser_day_amount">0</span>&nbsp;<span style="font-size: 85%;">(<span id="top_loser_day_per">0</span>%)</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="SA_col-md-6 SA_mb-4" style="margin-bottom: 0em !important;">
+                       <div class="SA_card SA_shadow SA_mb-4">
+
+                            <!-- Card Body -->
+                            <div class="SA_card-body" style="margin-bottom: 0em !important;padding-top: 0em !important;padding-left: 0em !important;padding-bottom: 0em !important;">
+                                <div class="SA_row">
+                                    <div class="SA_col-6">
+                                        <div style="margin-top:0.7em; margin-left: 2.1em; margin-bottom:1.1em;">
+                                            <div style="margin-bottom: -1em; font-size:133%;font-weight:650; color: black;">Top Profit</div>
+                                            <br>
+                                            <span style="font-size:120%; font-weight:500;" class="SA_text-success"><span id="top_profit_overall">-</span></span>
+                                            <br>
+                                            <span style="font-size:115%;font-weight:500; color: green;">&#8377;<span id="top_profit_overall_amount">0</span>&nbsp;<span style="font-size: 85%">(<span id="top_profit_overall_per">0</span>%)</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="SA_col-6">
+                                        <div style="margin-top:0.7em; margin-left: 2.1em; margin-bottom:1.1em;">
+                                            <div style="margin-bottom: -1em; font-size:133%;font-weight:650; color: black;">Top Loss</div>
+                                            <br>
+                                            <span style="font-size:120%; font-weight:500; color: red;"><span id="top_loss_overall">-</span></span>
+                                            <br>
+                                            <span style="font-size:115%;font-weight:500;" class="SA_text-danger">&#8377;<span id="top_loss_overall_amount">0</span>&nbsp;<span style="font-size: 85%;">(<span id="top_loss_overall_per">0</span>%)</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- TODO REALIZED -->
+                <div class="SA_row" style="margin-top: 0em !important;">
+
+                    <div class="SA_col-md-6 SA_mb-4">
+                       <div class="SA_card SA_shadow SA_mb-4">
+
+                            <!-- Card Body -->
+                            <div class="SA_card-body" style="padding: 0em !important;">
+                                <div class="SA_row">
+                                    <div class="SA_col-6" style="padding: 0em">
+                                        <div style="margin-top:0.7em; margin-left: 2.1em; margin-bottom:1.1em;">
+                                            <div style="margin-bottom: -1em; font-size:133%;font-weight:650; color: black;">Total Realised Gains</div>
+                                            <br>
+                                            <span style="font-size:150%;font-weight:500;" id="total_realised_gain_div">&#8377;<span id="total_realised_gain">0</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="SA_col-6">
+                                        <div style="margin-top:0.7em; margin-left: 2.1em; margin-bottom:1.1em;">
+                                            <div style="margin-bottom: -1em; font-size:133%;font-weight:650; color: black;">Total Dividend</div>
+                                            <br>
+                                            <span style="font-size:150%;font-weight:750;">&#8377;<span id="total_dividend_amount">0</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="SA_col-xl-6 SA_col-lg-6">
+                <div class="SA_row">
+
+                    <div class="SA_col-md-6">
+                       <div class="SA_card SA_shadow SA_mb-4">
+
+                            <!-- Card Header - Dropdown -->
+                            <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Stock Weightage</h6>
+                                <span id="stock_weightage_invested" class="SA_text-secondary" style="float: right;"><span style="cursor: pointer;" onclick="change_overview_weightage('stock_current')">Current Value</span> | <span class="SA_font-weight-bold">Investment</span></span>
+                                <span id="stock_weightage_current" class="SA_text-secondary hidden" style="float: right;"><span class="SA_font-weight-bold">Current Value</span> | <span style="cursor: pointer;" onclick="change_overview_weightage('stock_invested')">Investment</span></span>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="SA_card-body" style="padding: 0em !important;">
+                                <div id="overview_stock_weightage_invested" style="display: flex; justify-content: center;"></div>
+                                <div id="overview_stock_weightage_current" class="hidden" style="display: flex; justify-content: center;"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="SA_col-md-6">
+                       <div class="SA_card SA_shadow SA_mb-4">
+
+                            <!-- Card Header - Dropdown -->
+                            <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                                <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Market Cap Weightage</h6>
+                                <span id="mcap_weightage_invested" class="SA_text-secondary" style="float: right;"><span style="cursor: pointer;" onclick="change_overview_weightage('mcap_current')">Current Value</span> | <span class="SA_font-weight-bold">Investment</span></span>
+                                <span id="mcap_weightage_current" class="SA_text-secondary hidden" style="float: right;"><span class="SA_font-weight-bold">Current Value</span> | <span style="cursor: pointer;" onclick="change_overview_weightage('mcap_invested')">Investment</span></span>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="SA_card-body" style="padding: 0em !important;">
+                                <div id="overview_mcap_weightage_invested" style="display: flex; justify-content: center;"></div>
+                                <div id="overview_mcap_weightage_current" class="hidden" style="display: flex; justify-content: center;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="SA_row">
+         <!-- Content Column -->
+        <div class="SA_col-12 SA_mb-4">
+             <!-- Extra Financial Data -->
+             <div class="SA_card SA_shadow SA_mb-4" style="margin-bottom: 0em !important">
+                <?php echo Wo_LoadPage('portfolio/overviewContents/overview_table_mf'); ?>
+             </div>
+        </div>
+    </div>
+
+    <div class="SA_row">
+
+        <div class="SA_col-md-6">
+           <div class="SA_card SA_shadow SA_mb-4">
+
+                <!-- Card Header - Dropdown -->
+                <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                    <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Sector Weightage</h6>
+                </div>
+
+                <!-- Card Body -->
+                <div class="SA_card-body" style="padding: 0em !important;">
+                    <div id="overview_sector_weightage_invested_current" style="display: flex; justify-content: center;"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="SA_col-md-6">
+           <div class="SA_card SA_shadow SA_mb-4">
+
+                <!-- Card Header - Dropdown -->
+                <div class="SA_card-header SA_py-3 SA_d-flex SA_flex-row SA_align-items-center SA_justify-content-between">
+                    <h6 class="SA_m-0 SA_font-weight-bold SA_text-primary">Stock Transactions</h6>
+                </div>
+
+                <!-- Card Body -->
+                <div class="SA_card-body" style="padding: 0em !important;">
+                    <div id="overview_transactions" style="display: flex; justify-content: center;"></div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    function change_overview_weightage(val){
+        console.log(val);
+        switch(val){
+            case 'stock_current':
+                $('#stock_weightage_invested').addClass('hidden');
+                $('#overview_stock_weightage_invested').addClass('hidden');
+                $('#stock_weightage_current').removeClass('hidden');
+                $('#overview_stock_weightage_current').removeClass('hidden');
+                break;
+            case 'stock_invested':
+                $('#stock_weightage_current').addClass('hidden');
+                $('#overview_stock_weightage_current').addClass('hidden');
+                $('#stock_weightage_invested').removeClass('hidden');
+                $('#overview_stock_weightage_invested').removeClass('hidden');
+                break;
+            case 'sector_current':
+                $('#sector_weightage_current').removeClass('hidden');
+                $('#overview_sector_weightage_current').removeClass('hidden');
+                $('#sector_weightage_invested').addClass('hidden');
+                $('#sector_weightage_profit_per').addClass('hidden');
+                $('#overview_sector_weightage_invested').addClass('hidden');
+                $('#overview_sector_weightage_profit_per').addClass('hidden');
+                break;
+            case 'sector_invested':
+                $('#overview_sector_weightage_invested').removeClass('hidden');
+                $('#sector_weightage_invested').removeClass('hidden');
+                $('#sector_weightage_current').addClass('hidden');
+                $('#sector_weightage_profit_per').addClass('hidden');
+                $('#overview_sector_weightage_current').addClass('hidden');
+                $('#overview_sector_weightage_profit_per').addClass('hidden');
+                break;
+            case 'sector_profit_per':
+                $('#sector_weightage_profit_per').removeClass('hidden');
+                $('#overview_sector_weightage_profit_per').removeClass('hidden');
+                $('#sector_weightage_invested').addClass('hidden');
+                $('#sector_weightage_current').addClass('hidden');
+                $('#overview_sector_weightage_invested').addClass('hidden');
+                $('#overview_sector_weightage_current').addClass('hidden');
+                break;
+            case 'mcap_current':
+                $('#mcap_weightage_invested').addClass('hidden');
+                $('#mcap_weightage_current').removeClass('hidden');
+                $('#overview_mcap_weightage_invested').addClass('hidden');
+                $('#overview_mcap_weightage_current').removeClass('hidden');
+                break;
+            case 'mcap_invested':
+                $('#mcap_weightage_current').addClass('hidden');
+                $('#mcap_weightage_invested').removeClass('hidden');
+                $('#overview_mcap_weightage_current').addClass('hidden');
+                $('#overview_mcap_weightage_invested').removeClass('hidden');
+                break;
+            default:
+                console.log('Some Issue here');
+                break;
+        }
+
+    }
+
+    $( document ).ready(function() {
+        content = '<?php echo (empty($_GET['content'])) ? 'stocks' : $_GET['content']; ?>';
+        $('#' + content).addClass('active');
+        console.log('Tab: ' + content);
+    });
+
+</script>

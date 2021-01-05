@@ -12,11 +12,18 @@
 
         var sectors_current = Object.keys(fincode_sector_weightage_current);
         var weightage_vals_current = new Array();
-        var total_current = parseFloat($('#currentVal_stocks_Overview').text());
+        var total_current = parseFloat($('#currentVal_stocks_Overview').text().replace(/,/g, ''));
 
         for (sector_idx = 0; sector_idx < sectors_current.length; sector_idx++){
             weightage_vals_current.push(parseInt((fincode_sector_weightage_current[sectors_current[sector_idx]] / total_current) * 10000) / 100);
         }
+
+        console.log('weightage_vals_invested');
+        console.log(weightage_vals_invested);
+        console.log('weightage_vals_current');
+        console.log(weightage_vals_current);
+        console.log('total_current');
+        console.log(total_current);
 
         var options = {
           series: [{
