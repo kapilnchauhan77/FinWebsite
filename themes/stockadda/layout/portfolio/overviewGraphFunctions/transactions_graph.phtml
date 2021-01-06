@@ -1,6 +1,6 @@
 <script>
 
-    function transaction_stocks(ctx, transaction_obj, date_compname_type){
+    function transaction_stocks(ctx, transaction_obj, date_compname_type, type_){
         console.log('\n\n\n');
         console.log(transaction_obj);
         console.log(date_compname_type);
@@ -72,8 +72,8 @@
                              sold = datum[0];
                              amount = datum[1];
                              quantity = datum[2];
-                             if (sold == '2') to_show += "Sold "+ (-1 * quantity) +" stocks of "+ company_name +" for "+ format_rupees(-1 * amount) +"<br>";
-                             else to_show += "Bought "+ quantity +" stocks of "+ company_name +" for "+ format_rupees(amount) +"<br>";
+                             if (sold == '2') to_show += "Sold "+ (-1 * quantity) +" "+ type_ +" of "+ company_name +" for "+ format_rupees(-1 * amount) +"<br>";
+                             else to_show += "Bought "+ quantity +" "+ type_ +" of "+ company_name +" for "+ format_rupees(amount) +"<br>";
                          });
                      });
                      return to_show;

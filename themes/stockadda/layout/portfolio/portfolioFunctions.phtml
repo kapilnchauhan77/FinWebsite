@@ -192,7 +192,7 @@
         $("#"+id+"net_amount").text(net_amount.toFixed(2));
     }
 
-    async function sellElement(name_, uid){
+    async function sellStock(name_, uid){
         qty_available = parseInt($('#'+ uid +'_qty').text());
         const { value: formValues } = await Swal.fire({
             title: 'Sell Stock- ' + name_ + ' (Available Qty: '+ qty_available +')',
@@ -657,6 +657,9 @@
         var schemeDistributionInv = new Object();
         var schemeDistributionCur = new Object();
 
+        var transaction_obj = new Object();
+        var name_transaction_obj = new Object();
+
         Object.keys(data_of_all_mutual_funds).forEach(function (scheme_code) {
 
             var total_inv_mf = 0;
@@ -683,6 +686,22 @@
                         invested_fyr   += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
                     }
                 } else if (tab == 'overview' && content == 'mutual_funds'){
+                    tmp_date = new Date(parseInt(date_time_stamp) * 1000);
+                    tmp_proper_date =  tmp_date.getFullYear() + "-" + (tmp_date.getMonth() + 1) +"-"+ tmp_date.getDate();
+
+                    if (tmp_proper_date in transaction_obj) transaction_obj[tmp_proper_date] += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
+                    else transaction_obj[tmp_proper_date] = parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
+
+
+                    scheme_name = data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'];
+                    if (tmp_proper_date in name_transaction_obj){
+                        if (scheme_name in name_transaction_obj[tmp_proper_date]) name_transaction_obj[tmp_proper_date][scheme_name].push(['0', parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']), parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty'])]);
+                        else name_transaction_obj[tmp_proper_date][scheme_name] = [['0', parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']), parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty'])]];
+                    } else{
+                        name_transaction_obj[tmp_proper_date] = Object();
+                        name_transaction_obj[tmp_proper_date][scheme_name] = [['0', parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']), parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty'])]];
+                    }
+
                     total_inv_mf += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
                 }
             });
@@ -693,11 +712,13 @@
             oldVal += old_val_of_mf;
 
             if (tab == 'overview' && content == 'mutual_funds'){
-                if (data_of_all_mutual_funds[scheme_code]['mf_data']['Category'] in categoryDistributionInv) categoryDistributionInv[data_of_all_mutual_funds[scheme_code]['mf_data']['Category']] += total_inv_mf;
-                else categoryDistributionInv[data_of_all_mutual_funds[scheme_code]['mf_data']['Category']] = total_inv_mf;
+                var regExp = /\(([^)]+)\)/;
+                var category_ = regExp.exec(data_of_all_mutual_funds[scheme_code]['mf_data']['Category'])[1];
+                if (category_ in categoryDistributionInv) categoryDistributionInv[category_] += total_inv_mf;
+                else categoryDistributionInv[category_] = total_inv_mf;
 
-                if (data_of_all_mutual_funds[scheme_code]['mf_data']['Category'] in categoryDistributionCur) categoryDistributionCur[data_of_all_mutual_funds[scheme_code]['mf_data']['Category']] += current_val_of_mf;
-                else categoryDistributionCur[data_of_all_mutual_funds[scheme_code]['mf_data']['Category']] = current_val_of_mf;
+                if (category_ in categoryDistributionCur) categoryDistributionCur[category_] += current_val_of_mf;
+                else categoryDistributionCur[category_] = current_val_of_mf;
 
                 if (data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] in schemeDistributionInv) schemeDistributionInv[data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name']] += total_inv_mf;
                 else schemeDistributionInv[data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name']] = total_inv_mf;
@@ -713,8 +734,8 @@
                 } else days_held_line = `<span style="color:#4E73DF; margin-left: 0.75em;">Age: `+ Math.round(((new Date())-((dates_bought[0])*1000))/(1000*60*60*24)) +` Days</span>`;
 
                 overview_table_to_append += `</span><br>
-                                             <span style="color:red; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='buyElement("`+ data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] +`",`+ scheme_code +` )'>Add</span></span>
-                                             <span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellElement("`+ data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] +`",`+ scheme_code +` )'>Sell</span></span>`;
+                                                 <span style="color:red; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='buyMutualFund("`+ data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] +`",`+ scheme_code +` )'>Add</span></span>
+                                             <span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellMutualFund("`+ data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] +`",`+ scheme_code +` )'>Sell</span></span>`;
                 overview_table_to_append += days_held_line;
                 overview_table_to_append += `</th>`;
 
@@ -831,6 +852,7 @@
             add_doughnutCharts_Overview(total_profit_overall, total_loss_overall, total_profit_days, total_loss_days);
             add_marketCap_Overview(categoryDistributionCur, categoryDistributionInv);
             add_stock_weightage_Overview(schemeDistributionCur, schemeDistributionInv);
+            add_Overview_stock_transactionChart(transaction_obj, name_transaction_obj, 'mutual funds');
 
             $('#num_gain_day').text(num_profit_days);
             $('#num_loss_day').text(num_loss_days);
@@ -1040,8 +1062,8 @@
                 }
 
                 overview_table_to_append += `</span><br>`;
-                overview_table_to_append += `<span style="color:red; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='buyElement("`+ value.compname +`",`+ value.stock_fincode +` )'>Add</span></span>`;
-                overview_table_to_append += `<span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellElement("`+ value.compname +`",`+ value.stock_fincode +` )'>Sell</span></span>`;
+                overview_table_to_append += `<span style="color:red; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='buyStock("`+ value.compname +`",`+ value.stock_fincode +` )'>Add</span></span>`;
+                overview_table_to_append += `<span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellStock("`+ value.compname +`",`+ value.stock_fincode +` )'>Sell</span></span>`;
                 overview_table_to_append += days_held_line;
                 overview_table_to_append += `</th>`;
 
@@ -1371,7 +1393,7 @@
                             }
                         })
                     }
-                    add_Overview_stock_transactionChart(date_seperation, date_compname_type);
+                    add_Overview_stock_transactionChart(date_seperation, date_compname_type, 'stocks');
                 }
                 else if (data['status'] == 401){
                     console.log(data);
@@ -1392,7 +1414,6 @@
                 alert("AJAX call failed: " + textStatus + ", " + errorThrown);
             }
         });
-
     }
     async function realized_gain_dividend_show(){
         $.ajax({

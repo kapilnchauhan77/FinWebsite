@@ -81,9 +81,9 @@
         if (ctx_current) mcapWeightageCurrent(ctx_current, fincode_mcap_weightage_current);
     };
 
-    function add_Overview_stock_transactionChart(transaction_obj, date_compname_type){
+    function add_Overview_stock_transactionChart(transaction_obj, date_compname_type, type_){
         ctx = document.querySelector("#overview_transactions");
-        if (ctx) transaction_stocks(ctx, transaction_obj, date_compname_type);
+        if (ctx) transaction_stocks(ctx, transaction_obj, date_compname_type, type_);
     };
 
     function format_rupees(val){

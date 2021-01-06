@@ -1,7 +1,7 @@
 <?php echo Wo_LoadPage('portfolio/stock_search_container'); ?>
 <script>
 
-    async function buyElement(name_, uid){
+    async function buyStock(name_, uid){
         const { value: formValues } = await Swal.fire({
             title: 'Buy Stock- ' + name_,
             showCancelButton: true,
