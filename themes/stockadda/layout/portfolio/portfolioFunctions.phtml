@@ -629,7 +629,33 @@
         var invested_fyr            = 0;
         var num_of_trs              = 0;
         var total_realised_gain     = 0;
+        var overall_max_amount      = 0;
+        var overall_max_per         = 0;
+        var today_max_amount        = 0;
+        var today_max_per           = 0;
+        var overall_min_amount      = 0;
+        var overall_min_per         = 0;
+        var today_min_amount        = 0;
+        var today_min_per           = 0;
+        var today_max_mf            = '-';
+        var today_min_mf            = '-';
+        var overall_max_mf          = '-';
+        var overall_min_mf          = '-';
+        var total_loss_days         = 0;
+        var total_profit_days       = 0;
+        var num_profit_days         = 0;
+        var num_loss_days           = 0;
+        var total_loss_overall      = 0;
+        var total_profit_overall    = 0;
+        var num_profit_overall      = 0;
+        var num_loss_overall        = 0;
         var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
+
+        var categoryDistributionInv = new Object();
+        var categoryDistributionCur = new Object();
+
+        var schemeDistributionInv = new Object();
+        var schemeDistributionCur = new Object();
 
         Object.keys(data_of_all_mutual_funds).forEach(function (scheme_code) {
 
@@ -637,7 +663,6 @@
             var total_qty_of_mf = 0;
             Object.keys(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data']).forEach(function(date_time_stamp){
                 total_qty_of_mf += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty']);
-                total_inv_mf += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
 
                 console.log('Date from mf:');
                 console.log(parseInt(date_time_stamp));
@@ -651,9 +676,14 @@
                     type_dates_obj[parseInt(date_time_stamp)] = {'Mutual Funds': [parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount'])]};
                 }
 
-                if (parseInt(date_time_stamp) >= financial_yr_timestamp){
-                    currentVal_fyr += data_of_all_mutual_funds[scheme_code]['mf_data']['Net Asset Value'] * data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty'];
-                    invested_fyr   += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
+
+                if (tab == 'dashboard'){
+                    if (parseInt(date_time_stamp) >= financial_yr_timestamp){
+                        currentVal_fyr += data_of_all_mutual_funds[scheme_code]['mf_data']['Net Asset Value'] * data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty'];
+                        invested_fyr   += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
+                    }
+                } else if (tab == 'overview' && content == 'mutual_funds'){
+                    total_inv_mf += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
                 }
             });
 
@@ -663,6 +693,18 @@
             oldVal += old_val_of_mf;
 
             if (tab == 'overview' && content == 'mutual_funds'){
+                if (data_of_all_mutual_funds[scheme_code]['mf_data']['Category'] in categoryDistributionInv) categoryDistributionInv[data_of_all_mutual_funds[scheme_code]['mf_data']['Category']] += total_inv_mf;
+                else categoryDistributionInv[data_of_all_mutual_funds[scheme_code]['mf_data']['Category']] = total_inv_mf;
+
+                if (data_of_all_mutual_funds[scheme_code]['mf_data']['Category'] in categoryDistributionCur) categoryDistributionCur[data_of_all_mutual_funds[scheme_code]['mf_data']['Category']] += current_val_of_mf;
+                else categoryDistributionCur[data_of_all_mutual_funds[scheme_code]['mf_data']['Category']] = current_val_of_mf;
+
+                if (data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] in schemeDistributionInv) schemeDistributionInv[data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name']] += total_inv_mf;
+                else schemeDistributionInv[data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name']] = total_inv_mf;
+
+                if (data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] in schemeDistributionCur) schemeDistributionCur[data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name']] += current_val_of_mf;
+                else schemeDistributionCur[data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name']] = current_val_of_mf;
+
                 dates_bought = Object.keys(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data']);
                 overview_table_to_append = `<tr><th scope="row"><span style="margin: 0.75em;">` + data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'];
                 if (dates_bought.length > 1){
@@ -677,14 +719,50 @@
                 overview_table_to_append += `</th>`;
 
                 _todays_profit_ = current_val_of_mf - old_val_of_mf;
-                _overall_profit_ = current_val_of_mf - total_inv_mf;
                 _todays_profit_per_ = 100 * _todays_profit_ / old_val_of_mf;
+                if (_todays_profit_ > 0){
+                    if (_todays_profit_ > today_max_amount){
+                        today_max_amount = _todays_profit_;
+                        today_max_mf = data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'];
+                        today_max_per = _todays_profit_per_;
+                    }
+                    num_profit_days += 1;
+                    total_profit_days += _todays_profit_;
+                } else if (_todays_profit_ < 0){
+                    if (_todays_profit_ < today_min_amount){
+                        today_min_amount = _todays_profit_;
+                        today_min_mf = data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'];
+                        today_min_per = _todays_profit_per_;
+                    }
+                    num_loss_days += 1;
+                    total_loss_days += _todays_profit_;
+                }
+
+                _overall_profit_ = current_val_of_mf - total_inv_mf;
                 _overall_profit_per_ = 100 * _overall_profit_ / total_inv_mf;
+                if (_overall_profit_ > 0){
+                    num_profit_overall += 1;
+                    total_profit_overall += _overall_profit_;
+                    if (_overall_profit_ > overall_max_amount){
+                        overall_max_amount = _overall_profit_;
+                        overall_max_mf = data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'];
+                        overall_max_per = _overall_profit_per_;
+                    }
+                } else if (_overall_profit_ < 0){
+                    num_loss_overall += 1;
+                    total_loss_overall += _overall_profit_;
+                    if (_overall_profit_ < overall_min_amount){
+                        overall_min_amount = _overall_profit_;
+                        overall_min_mf = data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'];
+                        overall_min_per = _overall_profit_per_;
+                    }
+                }
+
                 _realized_gain_ = 0;
                 total_realised_gain = 0;
 
                 overview_table_to_append +=`<td>&#8377;`+ make_comma_seperated(parseFloat(data_of_all_mutual_funds[scheme_code]['mf_data']['Net Asset Value']).toFixed(2)) +`</td>
-                                            <td id='`+ scheme_code +`_qty'>`+ total_qty_of_mf +`<br><small>&#8377;`+ make_comma_seperated((total_inv_mf / total_qty_of_mf).toFixed(2)) +`</small></td>
+                                            <td id='`+ scheme_code +`_qty'>`+ total_qty_of_mf.toFixed(3) +`<br><small>&#8377;`+ make_comma_seperated((total_inv_mf / total_qty_of_mf).toFixed(2)) +`</small></td>
                                             <td>&#8377;`+ make_comma_seperated(total_inv_mf.toFixed(2)) +`<br><small>`+ make_comma_seperated((100 * total_inv_mf / <?php echo $wo['portfolio_data']['invested_value_mutual_funds']; ?>).toFixed(2)) +`%</small></td>
                                             <td style='color: `+ ((_todays_profit_ > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(_todays_profit_) +`<br><small>`+ make_comma_seperated(_todays_profit_per_.toFixed(2)) +`%</small></td>
                                             <td style='color: `+ ((_overall_profit_ > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(_overall_profit_.toFixed(2)) +`<br><small>`+ make_comma_seperated(_overall_profit_per_.toFixed(2)) +`%</small></td>
@@ -735,7 +813,7 @@
             $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
 
             change_colors('mf_overall_p_p_lTable', overall_p_p_l_per);
-        } else {
+        } else if (tab == 'overview' && content == 'mutual_funds'){
             last_tr = `<tr style="background-color:grey">
                            <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
                            <td></td>
@@ -749,6 +827,40 @@
                        </tr>`;
 
             $('#overview_mf_table_body').append(last_tr);
+
+            add_doughnutCharts_Overview(total_profit_overall, total_loss_overall, total_profit_days, total_loss_days);
+            add_marketCap_Overview(categoryDistributionCur, categoryDistributionInv);
+            add_stock_weightage_Overview(schemeDistributionCur, schemeDistributionInv);
+
+            $('#num_gain_day').text(num_profit_days);
+            $('#num_loss_day').text(num_loss_days);
+            $('#gain_overall').text(total_profit_overall.toFixed(2));
+            $('#loss_overall').text(total_loss_overall.toFixed(2));
+            $('#num_gain_overall').text(num_profit_overall);
+            $('#num_loss_overall').text(num_loss_overall);
+            $('#gain_day').text(total_profit_days.toFixed(2));
+            $('#loss_day').text(total_loss_days.toFixed(2));
+
+            if (today_max_per > 0){
+                $('#top_gainer_day').text(today_max_mf);
+                $('#top_gainer_day_amount').text(today_max_amount.toFixed(2));
+                $('#top_gainer_day_per').text(today_max_per.toFixed(2));
+            }
+            if (today_min_per < 0){
+                $('#top_loser_day').text(today_min_mf);
+                $('#top_loser_day_amount').text(today_min_amount.toFixed(2));
+                $('#top_loser_day_per').text(today_min_per.toFixed(2));
+            }
+            if (overall_max_per > 0){
+                $('#top_profit_overall').text(overall_max_mf);
+                $('#top_profit_overall_amount').text(overall_max_amount.toFixed(2));
+                $('#top_profit_overall_per').text(overall_max_per.toFixed(2));
+            }
+            if (overall_min_per < 0){
+                $('#top_loss_overall').text(overall_min_mf);
+                $('#top_loss_overall_amount').text(overall_min_amount.toFixed(2));
+                $('#top_loss_overall_per').text(overall_min_per.toFixed(2));
+            }
         }
 
         return currentVal.toFixed(2);
@@ -796,8 +908,6 @@
         var fincode_mcap_weightage_invested     = new Object();
         var fincode_stock_weightage_current     = new Object();
         var fincode_sector_weightage_current    = new Object();
-        var fincode_sector_weightage_profit     = new Object();
-        var fincode_sector_weightage_profit_per = new Object();
         var fincode_mcap_weightage_current      = new Object();
 
         var fincode_added_this_fyr  = new Object();
@@ -1099,7 +1209,8 @@
                        </tr>`;
 
             $('#overview_stocks_table_body').append(last_tr);
-            add_weightage_Overview(fincode_stock_weightage_current, fincode_sector_weightage_current, fincode_stock_weightage_invested, fincode_sector_weightage_invested, fincode_sector_weightage_profit, fincode_sector_weightage_profit_per);
+            add_sector_weightage_Overview(fincode_sector_weightage_current, fincode_sector_weightage_invested);
+            add_stock_weightage_Overview(fincode_stock_weightage_current, fincode_stock_weightage_invested);
         }
 
         return currentVal.toFixed(2);
@@ -1117,45 +1228,27 @@
 
     function change_dynamic_colors(){
         if (parseFloat($('#overall_p_p_l_per').text()) > 0){
-            /* $('#p_l_added_this_year_unrealised_div').removeClass('SA_border-left-secondary'); */
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').removeClass('SA_text-gray-800'); */
             $('#overall_p_p_l_div').addClass('SA_border-left-success');
             $('#overall_p_p_l_text').addClass('SA_text-success');
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').addClass('SA_text-success'); */
         } else if (parseFloat($('#overall_p_p_l_per').text()) < 0){
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').removeClass('SA_text-gray-800'); */
             $('#overall_p_p_l_div').addClass('SA_border-left-danger');
             $('#overall_p_p_l_text').addClass('SA_text-danger');
-            /* $('#p_l_this_year').addClass('SA_text-danger'); */
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').addClass('SA_text-danger'); */
         }
 
         if (parseFloat($('#daily_p_p_l_per').text()) > 0){
-            /* $('#p_l_added_this_year_unrealised_div').removeClass('SA_border-left-secondary'); */
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').removeClass('SA_text-gray-800'); */
             $('#daily_p_p_l_div').addClass('SA_border-left-success');
             $('#daily_p_p_l_text').addClass('SA_text-success');
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').addClass('SA_text-success'); */
         } else if (parseFloat($('#daily_p_p_l_per').text()) < 0){
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').removeClass('SA_text-gray-800'); */
             $('#daily_p_p_l_div').addClass('SA_border-left-danger');
             $('#daily_p_p_l_text').addClass('SA_text-danger');
-            /* $('#p_l_this_year').addClass('SA_text-danger'); */
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').addClass('SA_text-danger'); */
         }
 
         if (parseFloat($('#p_l_this_year').text()) > 0){
-            /* $('#p_l_added_this_year_unrealised_div').removeClass('SA_border-left-secondary'); */
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').removeClass('SA_text-gray-800'); */
             $('#p_l_added_this_year_unrealised_div').addClass('SA_border-left-success');
             $('#p_l_added_this_year_unrealised_text').addClass('SA_text-success');
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').addClass('SA_text-success'); */
         } else if (parseFloat($('#p_l_this_year').text()) < 0){
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').removeClass('SA_text-gray-800'); */
             $('#p_l_added_this_year_unrealised_div').addClass('SA_border-left-danger');
             $('#p_l_added_this_year_unrealised_text').addClass('SA_text-danger');
-            /* $('#p_l_this_year').addClass('SA_text-danger'); */
-            /* $('#p_l_added_this_year_unrealised_text_ruppee').addClass('SA_text-danger'); */
         }
     }
 
