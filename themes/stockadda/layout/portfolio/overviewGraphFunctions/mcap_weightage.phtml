@@ -1,25 +1,32 @@
 <script>
 
-    function mcapWeightageInvested(ctx, fincode_mcap_weightage){
+    function mcapWeightageInvested(ctx, fincode_mcap_weightage, type_){
 
         var options = {
               series: Object.values(fincode_mcap_weightage),
               chart: {
               width: '85%',
-              type: 'donut',
+              type: (type_ == 'stocks') ? 'donut' : 'pie',
             },
             labels: Object.keys(fincode_mcap_weightage),
-            tooltip: {enabled: false},
+            tooltip: {
+                enabled: (type_ == 'mutual funds'),
+                y: {
+                  formatter: function(val) {
+                    return (format_rupees(val));
+                  }
+                },
+            },
             plotOptions: {
               pie: {
                 donut: {
                     labels: {
-                        show: true,
+                        show: (type_ == 'stocks'),
                         name: {
                             formatter: function(val){return ((val == 'null') ? 'Others' : val);}
                         },
                         value: {
-                            formatter: function(val){return ('₹' + val.toFixed(2));}
+                            formatter: function(val){return ('₹' + parseFloat(val).toFixed(2));}
                         }
                     }
                 },
@@ -46,23 +53,33 @@
 
     };
 
-    function mcapWeightageCurrent(ctx, fincode_mcap_weightage){
+    function mcapWeightageCurrent(ctx, fincode_mcap_weightage, type_){
 
         var options = {
               series: Object.values(fincode_mcap_weightage),
               chart: {
               width: '85%',
-              type: 'donut',
+              type: (type_ == 'stocks') ? 'donut' : 'pie',
             },
             labels: Object.keys(fincode_mcap_weightage),
-            tooltip: {enabled: false},
+            tooltip: {
+                enabled: (type_ == 'mutual funds'),
+                y: {
+                  formatter: function(val) {
+                    return (format_rupees(val));
+                  }
+                },
+            },
             plotOptions: {
               pie: {
                 donut: {
                     labels: {
-                        show: true,
+                        show: (type_ == 'stocks'),
+                        name: {
+                            formatter: function(val){return ((val == 'null') ? 'Others' : val);}
+                        },
                         value: {
-                            formatter: function(val){return ('₹' + val);}
+                            formatter: function(val){return ('₹' + parseFloat(val).toFixed(2));}
                         }
                     }
                 },

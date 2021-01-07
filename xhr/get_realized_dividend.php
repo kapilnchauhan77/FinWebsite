@@ -1,9 +1,10 @@
 <?php
 if ($f == 'get_realized_dividend') {
     $portfolio_id = $_GET['portfolio_id'];
+    $type_ = $_GET['type_'];
     if (!empty($portfolio_id)) {
-        $realized_gains = SA_getPortfolioRealizedGain($portfolio_id);
-        $dividend_amount = SA_getPortfolioDividend($portfolio_id);
+        $realized_gains = SA_getPortfolioRealizedGain($portfolio_id, $type_);
+        $dividend_amount = SA_getPortfolioDividend($portfolio_id, $type_);
 
         $data = array(
             'portfolio_id'                    => $portfolio_id,
