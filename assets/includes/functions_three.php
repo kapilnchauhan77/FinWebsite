@@ -9373,7 +9373,7 @@ function Wo_ExtraPropertyDetailForAllPropertyInPortfolio($portfolio_id){
     $data         = array();
     $portfolio_id = Wo_Secure($portfolio_id);
 
-    $query_text = "SELECT `transaction_date`, `transaction_price`, `current_price` FROM " . T_PORTFOLIO_PROPERTY . "
+    $query_text = "SELECT `id`, `Property Name`, `transaction_date`, `transaction_price`, `current_price`, `timestamp_created` FROM " . T_PORTFOLIO_PROPERTY . "
         WHERE `portfolio_id` = {$portfolio_id}";
     $sql          = mysqli_query($sqlConnect, $query_text);
     while ($fetched_data = mysqli_fetch_assoc($sql)) {
@@ -9418,7 +9418,7 @@ function Wo_ExtraOADetailForAllOAInPortfolio($portfolio_id){
     $data         = array();
     $portfolio_id = Wo_Secure($portfolio_id);
 
-    $query_text = "SELECT `transaction_date`, `transaction_price`, `current_price` FROM " . T_PORTFOLIO_OA . "
+    $query_text = "SELECT `id`, `Asset Name`, `transaction_date`, `transaction_price`, `current_price`, `timestamp_created` FROM " . T_PORTFOLIO_OA . "
         WHERE `portfolio_id` = {$portfolio_id}";
     $sql          = mysqli_query($sqlConnect, $query_text);
     while ($fetched_data = mysqli_fetch_assoc($sql)) {
@@ -9541,7 +9541,7 @@ function Wo_ExtraFDDetailForAllFDInPortfolio($portfolio_id){
     $data         = array();
     $portfolio_id = Wo_Secure($portfolio_id);
 
-    $query_text = "SELECT `transaction_date`, `maturity_date`, `transaction_price`, `transaction_interest`, `interest_payout_frequency`, `payout_type` FROM " . T_PORTFOLIO_FD . "
+    $query_text = "SELECT * FROM " . T_PORTFOLIO_FD . "
         WHERE `portfolio_id` = {$portfolio_id}";
     $sql          = mysqli_query($sqlConnect, $query_text);
     while ($fetched_data = mysqli_fetch_assoc($sql)) {

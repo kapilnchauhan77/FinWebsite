@@ -55,6 +55,18 @@
                             <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-mutual-funds" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_shadow-sm" style="background-color: black;color: white;">Edit Mutual Funds</a>
                             <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-mutual-funds" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_shadow-sm" style="background-color: red;color: white;">Add Mutual Funds</a>
                         <?php break;
+                        case 'property': ?>
+                            <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-property" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_shadow-sm" style="background-color: black;color: white;">Edit Properties</a>
+                            <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-property" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_shadow-sm" style="background-color: red;color: white;">Add Properties</a>
+                        <?php break;
+                        case 'other_assets': ?>
+                            <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-OA" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_shadow-sm" style="background-color: black;color: white;">Edit Other Assets</a>
+                            <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-OA" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_shadow-sm" style="background-color: red;color: white;">Add Other Assets</a>
+                        <?php break;
+                        case 'fixed_income': ?>
+                            <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-FD" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_shadow-sm" style="background-color: black;color: white;">Edit Fixed Deposit</a>
+                            <a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-FD" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_shadow-sm" style="background-color: red;color: white;">Add Fixed Deposit</a>
+                        <?php break;
                             }; ?>
                     <?php if ($wo['user']['portfolio_count'] > 2 && $wo['user']['is_pro'] == 0){ ?>
                         <a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" class="SA_d-none SA-d-sm-inline_block SA_btn SA_btn-sm SA_btn-success SA_shadow-sm" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Upgrade to add more Portfolios">&nbsp;Upgrade to Pro</a>

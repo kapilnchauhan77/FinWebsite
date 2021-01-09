@@ -50,8 +50,8 @@
         data_of_all_bullion = data_of_all_assets.extraBullionFullPortfolio;
 
         if (data_of_all_mutual_funds.length != 0) currentVal_mf = calculateTotalValsMF_display(data_of_all_mutual_funds, dates_obj, type_dates_obj, tab, content);
-        if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj);
-        if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj);
+        if (data_of_all_properties.length != 0) currentVal_properties = calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj, tab, content);
+        if (data_of_all_oa.length != 0) currentVal_oa = calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj, tab, content);
         if (data_of_all_fd.length != 0) currentVal_fd = calculateTotalValsFD_display(data_of_all_fd, dates_obj, type_dates_obj, tab, content);
         if (data_of_all_cash.length != 0) calculateTotalValsCash_display(data_of_all_cash, dates_obj, type_dates_obj);
         if (data_of_all_bullion.length != 0) calculateTotalValsBullion_display(data_of_all_bullion, dates_obj, type_dates_obj);

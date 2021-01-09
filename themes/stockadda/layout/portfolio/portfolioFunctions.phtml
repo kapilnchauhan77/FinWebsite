@@ -373,23 +373,36 @@
 
         data_of_all_fd.forEach(function (value) {
 
+            _period_ = (parseInt(value.maturity_date)-parseInt(value.transaction_date))/(1000*60*60*24*365);
+            _maturity_value_ = (parseFloat(value.transaction_price) * Math.pow((1 +
+                        parseFloat(value.transaction_interest/100) /
+                        parseInt(value.interest_payout_frequency)),
+                        (parseInt(value.interest_payout_frequency) * (_period_))));
+            console.log('_maturity_value_');
+            console.log(_maturity_value_);
+
             no_of_days_individual = parseInt((parseInt(new Date().getTime() / 1000) - value.transaction_date) / (60 * 60 * 24));
             no_of_days_individual = (no_of_days_individual == 0) ? 1 : no_of_days_individual;
+            _matured_ = (parseInt(value.maturity_date) > parseInt(new Date().getTime() / 1000));
 
             if (value.payout_type == "0"){
-                unrealized_currentVal_individual = (parseFloat(value.transaction_price) * Math.pow((1 +
-                    parseFloat(value.transaction_interest/100) /
-                    parseInt(value.interest_payout_frequency)),
-                    (parseInt(value.interest_payout_frequency) * ( no_of_days_individual / 365))));
+                if (_matured_){
+                    unrealized_currentVal_individual = (parseFloat(value.transaction_price) * Math.pow((1 +
+                        parseFloat(value.transaction_interest/100) /
+                        parseInt(value.interest_payout_frequency)),
+                        (parseInt(value.interest_payout_frequency) * ( no_of_days_individual / 365))));
+                } else unrealized_currentVal_individual = _maturity_value_;
 
                 daysGain   += (unrealized_currentVal_individual - parseFloat(value.transaction_price))/no_of_days_individual;
                 unrealized_currentVal += unrealized_currentVal_individual;
                 unrealized_invested_val += parseFloat(value.transaction_price);
             } else{
-                realized_currentVal_individual = (parseFloat(value.transaction_price) * Math.pow((1 +
-                    parseFloat(value.transaction_interest/100) /
-                    parseInt(value.interest_payout_frequency)),
-                    (parseInt(value.interest_payout_frequency) * ( no_of_days_individual / 365))));
+                if (_matured_){
+                    realized_currentVal_individual = (parseFloat(value.transaction_price) * Math.pow((1 +
+                        parseFloat(value.transaction_interest/100) /
+                        parseInt(value.interest_payout_frequency)),
+                        (parseInt(value.interest_payout_frequency) * ( no_of_days_individual / 365))));
+                } else realized_currentVal_individual = _maturity_value_;
 
                 daysGain   += (realized_currentVal_individual - parseFloat(value.transaction_price))/no_of_days_individual;
                 realized_currentVal += realized_currentVal_individual;
@@ -399,66 +412,116 @@
 
             console.log('Date from FD:');
             console.log(parseInt(value.transaction_date));
-            if (parseInt(value.transaction_date) in dates_obj) dates_obj[parseInt(value.transaction_date)] += parseFloat(value.transaction_price);
-            else dates_obj[parseInt(value.transaction_date)] = parseFloat(value.transaction_price);
+            if (tab == 'dashboard'){
+                if (parseInt(value.transaction_date) in dates_obj) dates_obj[parseInt(value.transaction_date)] += parseFloat(value.transaction_price);
+                else dates_obj[parseInt(value.transaction_date)] = parseFloat(value.transaction_price);
 
-            if (parseInt(value.transaction_date) in type_dates_obj){
-                if ('Fixed Deposit' in type_dates_obj[parseInt(value.transaction_date)]) type_dates_obj[parseInt(value.transaction_date)]['Fixed Deposit'].push({'transaction_price': value.transaction_price, 'maturity_date': value.maturity_date, 'interest_rate': value.transaction_interest});
-                else type_dates_obj[parseInt(value.transaction_date)]['Fixed Deposit'] = [{'transaction_price': value.transaction_price, 'maturity_date': value.maturity_date, 'interest_rate': value.transaction_interest}];
-            } else {
-                type_dates_obj[parseInt(value.transaction_date)] = {'Fixed Deposit': [{'transaction_price': value.transaction_price, 'maturity_date': value.maturity_date, 'interest_rate': value.transaction_interest}]}
+                if (parseInt(value.transaction_date) in type_dates_obj){
+                    if ('Fixed Deposit' in type_dates_obj[parseInt(value.transaction_date)]) type_dates_obj[parseInt(value.transaction_date)]['Fixed Deposit'].push({'transaction_price': value.transaction_price, 'maturity_date': value.maturity_date, 'interest_rate': value.transaction_interest});
+                    else type_dates_obj[parseInt(value.transaction_date)]['Fixed Deposit'] = [{'transaction_price': value.transaction_price, 'maturity_date': value.maturity_date, 'interest_rate': value.transaction_interest}];
+                } else {
+                    type_dates_obj[parseInt(value.transaction_date)] = {'Fixed Deposit': [{'transaction_price': value.transaction_price, 'maturity_date': value.maturity_date, 'interest_rate': value.transaction_interest}]}
+                }
+
+                if (parseInt(value.transaction_date) >= financial_yr_timestamp){
+                    unrealized_currentVal_fyr += unrealized_currentVal_individual;
+                    realized_currentVal_fyr += realized_currentVal_individual;
+                    invested_fyr += parseFloat(value.transaction_price);
+                }
+            } else if (tab == 'overview' && content == 'fixed_income'){
+                tmp_date_pur = new Date(parseInt(value.transaction_date) * 1000);
+                purchase_date = tmp_date_pur.getDate() + "-" + (tmp_date_pur.getMonth() + 1) + "-" + tmp_date_pur.getFullYear();
+                tmp_date = new Date(parseInt(value.maturity_date) * 1000);
+                update_date = tmp_date.getDate() + "-" + (tmp_date.getMonth() + 1) + "-" + tmp_date.getFullYear();
+
+                payout_frequency = '';
+                switch (parseInt(value.interest_payout_frequency)){
+                    case 12:
+                        payout_frequency = 'Monthly';
+                        break;
+                    case 4:
+                        payout_frequency = 'Quaterly';
+                        break;
+                    case 2:
+                        payout_frequency = 'Half Yearly';
+                        break;
+                    case 1:
+                        payout_frequency = 'Yearly';
+                        break;
+                }
+                _period_years = tmp_date.getFullYear() - tmp_date_pur.getFullYear();
+                _period_months = tmp_date.getMonth() - tmp_date_pur.getMonth();
+                _period_days = tmp_date.getDate() - tmp_date_pur.getDate();
+
+                if (_period_months < 0){
+                    _period_months += 12;
+                    _period_years -= 1;
+                }
+                if (_period_days < 0){
+                    _period_days += 30;
+                    _period_months -= 1;
+                }
+
+                period_line = '';
+                if (_period_years > 0) period_line += _period_years + " Years ";
+                if (_period_months > 0) period_line += _period_months + " Months ";
+                if (_period_days > 0) period_line += _period_days + " Days";
+
+                overview_table_to_append = `<tr><th scope="row"><span style="margin: 0.75em;">` + value.fd_type;
+                overview_table_to_append += `</span><br>
+                                             <span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['id'] +`")'>Sell</span></span>
+                                             <span style="color:red; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='buyProperty("`+ value['id'] +`")'>Delete</span></span>
+                                             <span style="color:blue; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['id'] +`")'>Update Value</span></span>`;
+                overview_table_to_append += `</th>`;
+
+                overview_table_to_append +=`<th><span style="margin: 0.75em;">`+ value.fd_bank +`</span></th>
+                                            <td>`+ make_comma_seperated(value.transaction_interest) +`%<br><small>`+ payout_frequency +`</small></td>
+                                            <td>`+ period_line +` </td>
+                                            <td>-<br><small>-</small></td>
+                                            <td>&#8377;`+ make_comma_seperated(value.transaction_price) +`<br><small>`+ purchase_date +`</small></td>
+                                            <td>&#8377;`+ make_comma_seperated(_maturity_value_) +`<br><small>`+ update_date +`</small></td>
+                                            <td>&#8377;`+ make_comma_seperated(unrealized_currentVal_individual) +`</td>
+                                            <td>&#8377;`+ make_comma_seperated(realized_currentVal_individual) +`</td>`;
+
+                overview_table_to_append += `</tr>`;
+                $('#overview_mf_table_body').append(overview_table_to_append);
             }
-
-            if (parseInt(value.transaction_date) >= financial_yr_timestamp){
-                unrealized_currentVal_fyr += unrealized_currentVal_individual;
-                realized_currentVal_fyr += realized_currentVal_individual;
-                invested_fyr += parseFloat(value.transaction_price);
-            }
-
-
         });
+
+        const daily_p_p_l = daysGain;
+        const unrealized_overall_p_p_l = (unrealized_currentVal - unrealized_invested_val);
+        const realized_overall_p_p_l = (realized_currentVal - realized_invested_val);
+        const overall_p_p_l_per_realised = (realized_invested_val == 0) ? 0 : (realized_overall_p_p_l / realized_invested_val) * 100;
+        const overall_p_p_l_per_unrealised = (unrealized_invested_val == 0) ? 0 : (unrealized_overall_p_p_l / unrealized_invested_val) * 100;
 
         currentVal_toDisplay = parseFloat($('#currentVal').text()) + unrealized_currentVal;
         $('#currentVal').text(currentVal_toDisplay.toFixed(2));
-
-        const daily_p_p_l = daysGain;
         $('#daily_p_p_l').text((parseFloat($('#daily_p_p_l').text()) + daily_p_p_l).toFixed(2));
-
-        $('#total_assets').text(currentVal_toDisplay.toFixed(2));
-        $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
-
-        $('#fd_currentValTable').text(((unrealized_currentVal) + realized_invested_val).toFixed(2));
-
-        var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
-        console.log('\n\n\n');
-        console.log('invested_fyr_toDisplay');
-        console.log(invested_fyr_toDisplay);
-        $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
-
-        var p_l_this_year = (unrealized_currentVal_fyr + realized_currentVal) - invested_fyr;
-        var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
-        $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
-
-        $('#fd_daily_p_p_lTable').text(daily_p_p_l.toFixed(2));
-
-        const unrealized_overall_p_p_l = (unrealized_currentVal - unrealized_invested_val);
-        $('#fd_overall_p_p_lTable_unrealised').text(unrealized_overall_p_p_l.toFixed(2));
-
-        const realized_overall_p_p_l = (realized_currentVal - realized_invested_val);
-        $('#fd_overall_p_p_lTable_realised').text(realized_overall_p_p_l.toFixed(2));
-
         $('#total_day_gain').text((parseFloat($('#total_day_gain').text()) + daysGain).toFixed(2));
         $('#total_unrealised_gain').text((parseFloat($('#total_unrealised_gain').text()) + unrealized_overall_p_p_l).toFixed(2));
         $('#total_realised_gain').text((parseFloat($('#total_realised_gain').text()) + realized_overall_p_p_l).toFixed(2));
 
-        const overall_p_p_l_per_realised = (realized_invested_val == 0) ? 0 : (realized_overall_p_p_l / realized_invested_val) * 100;
-        change_colors('fd_overall_p_p_lTable_realised', overall_p_p_l_per_realised);
+        if (tab == 'dashboard'){
+            $('#total_assets').text(currentVal_toDisplay.toFixed(2));
+            $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
 
-        const overall_p_p_l_per_unrealised = (unrealized_invested_val == 0) ? 0 : (unrealized_overall_p_p_l / unrealized_invested_val) * 100;
-        change_colors('fd_overall_p_p_lTable_unrealised', overall_p_p_l_per_unrealised);
+            $('#fd_currentValTable').text(((unrealized_currentVal) + realized_invested_val).toFixed(2));
 
-        $('#fd_daily_p_p_lTable_text').removeClass('SA_text-secondary');
-        $('#fd_daily_p_p_lTable_text').addClass('SA_text-success');
+            var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
+            $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
+
+            var p_l_this_year = (unrealized_currentVal_fyr + realized_currentVal) - invested_fyr;
+            var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
+            $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
+
+            $('#fd_daily_p_p_lTable').text(daily_p_p_l.toFixed(2));
+            $('#fd_overall_p_p_lTable_unrealised').text(unrealized_overall_p_p_l.toFixed(2));
+            $('#fd_overall_p_p_lTable_realised').text(realized_overall_p_p_l.toFixed(2));
+            change_colors('fd_overall_p_p_lTable_realised', overall_p_p_l_per_realised);
+            change_colors('fd_overall_p_p_lTable_unrealised', overall_p_p_l_per_unrealised);
+            $('#fd_daily_p_p_lTable_text').removeClass('SA_text-secondary');
+            $('#fd_daily_p_p_lTable_text').addClass('SA_text-success');
+        } else if (tab == 'overview' && content == 'fixed_income'){}
 
         return ((unrealized_currentVal) + realized_invested_val).toFixed(2);
 
@@ -535,11 +598,17 @@
         $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
     }
 
-    function calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj){
+    function calculateTotalValsOA_display(data_of_all_oa, dates_obj, type_dates_obj, tab, content){
 
         var currentVal = 0;
         var currentVal_fyr = 0;
         var invested_fyr = 0;
+        var highest_profit = 0;
+        var highest_loss = 0;
+        var highest_profit_per = 0;
+        var highest_loss_per = 0;
+        var highest_profit_name = '';
+        var highest_loss_name = '';
         var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         data_of_all_oa.forEach(function (value) {
@@ -548,55 +617,116 @@
 
             console.log('Date from OA:');
             console.log(parseInt(value.transaction_date));
-            if (parseInt(value.transaction_date) in dates_obj) dates_obj[parseInt(value.transaction_date)] += parseFloat(value.transaction_price);
-            else dates_obj[parseInt(value.transaction_date)] = parseFloat(value.transaction_price);
+            if (tab == 'dashboard'){
+                if (parseInt(value.transaction_date) in dates_obj) dates_obj[parseInt(value.transaction_date)] += parseFloat(value.transaction_price);
+                else dates_obj[parseInt(value.transaction_date)] = parseFloat(value.transaction_price);
 
-            if (parseInt(value.transaction_date) in type_dates_obj){
-                if ('Other Assets' in type_dates_obj[parseInt(value.transaction_date)]) type_dates_obj[parseInt(value.transaction_date)]['Other Assets'].push(parseFloat(value.transaction_price));
-                else type_dates_obj[parseInt(value.transaction_date)]['Other Assets'] = [parseFloat(value.transaction_price)];
-            } else {
-                type_dates_obj[parseInt(value.transaction_date)] = {'Other Assets': [parseFloat(value.transaction_price)]};
-            }
+                if (parseInt(value.transaction_date) in type_dates_obj){
+                    if ('Other Assets' in type_dates_obj[parseInt(value.transaction_date)]) type_dates_obj[parseInt(value.transaction_date)]['Other Assets'].push(parseFloat(value.transaction_price));
+                    else type_dates_obj[parseInt(value.transaction_date)]['Other Assets'] = [parseFloat(value.transaction_price)];
+                } else {
+                    type_dates_obj[parseInt(value.transaction_date)] = {'Other Assets': [parseFloat(value.transaction_price)]};
+                }
 
-            if (parseInt(value.transaction_date) >= financial_yr_timestamp){
-                currentVal_fyr += parseFloat(value.current_price);
-                invested_fyr += parseFloat(value.transaction_price);
+                if (parseInt(value.transaction_date) >= financial_yr_timestamp){
+                    currentVal_fyr += parseFloat(value.current_price);
+                    invested_fyr += parseFloat(value.transaction_price);
+                }
+            } else if (tab == 'overview' && content == 'other_assets'){
+                tmp_date = new Date(parseInt(value.transaction_date) * 1000);
+                purchase_date = tmp_date.getDate() + "-" + (tmp_date.getMonth() + 1) + "-" + tmp_date.getFullYear();
+                tmp_date = new Date(parseInt(value.timestamp_created) * 1000);
+                update_date = tmp_date.getDate() + "-" + (tmp_date.getMonth() + 1) + "-" + tmp_date.getFullYear();
+
+                _unrealized_gain = parseFloat(value.current_price) - parseFloat(value.transaction_price);
+                _unrealized_gain_per = ((_unrealized_gain * 100) / parseFloat(value.transaction_price)).toFixed(2);
+
+                if (_unrealized_gain_per > highest_profit_per){
+                    highest_profit = _unrealized_gain;
+                    highest_profit_per = _unrealized_gain_per;
+                    highest_profit_name = value['Asset Name'];
+                } else if (_unrealized_gain_per < highest_loss_per){
+                    highest_loss = _unrealized_gain;
+                    highest_loss_per = _unrealized_gain_per;
+                    highest_loss_name = value['Asset Name'];
+                }
+
+                overview_table_to_append = `<tr><th scope="row"><span style="margin: 0.75em;">` + value['Asset Name'];
+                overview_table_to_append += `</span><br>
+                                             <span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['id'] +`")'>Sell</span></span>
+                                             <span style="color:red; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='buyProperty("`+ value['id'] +`")'>Delete</span></span>
+                                             <span style="color:blue; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['id'] +`")'>Update Value</span></span>`;
+                overview_table_to_append += `</th>`;
+
+                overview_table_to_append +=`<td>&#8377;`+ make_comma_seperated(value.transaction_price) +`<br><small>`+ purchase_date +`</small></td>
+                                            <td>&#8377;`+ make_comma_seperated(value.current_price) +`<br><small>`+ update_date +`</small></td>
+                                            <td>&#8377;`+ make_comma_seperated(_unrealized_gain) +`<br><small>`+ make_comma_seperated(_unrealized_gain_per) +`%</small></td>`;
+                overview_table_to_append += `</tr>`;
+                $('#overview_mf_table_body').append(overview_table_to_append);
             }
 
         });
 
         currentVal_toDisplay = parseFloat($('#currentVal').text()) + currentVal;
         $('#currentVal').text(currentVal_toDisplay.toFixed(2));
-        $('#total_assets').text(currentVal_toDisplay.toFixed(2));
-        $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
-
-        $('#oa_currentValTable').text(currentVal.toFixed(2));
 
         const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['invested_value_other_assets']; ?>);
         $('#overall_p_p_l').text((parseFloat($('#overall_p_p_l').text()) + overall_p_p_l).toFixed(2));
-        $('#oa_overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
-
-        var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
-        $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
-
-        var p_l_this_year = currentVal_fyr - invested_fyr;
-        var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
-        $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
-
         $('#total_unrealised_gain').text((parseFloat($('#total_unrealised_gain').text()) + overall_p_p_l).toFixed(2));
 
         const overall_p_p_l_per = (overall_p_p_l / <?php echo $wo['portfolio_data']['invested_value_other_assets']; ?>) * 100;
-        change_colors('oa_overall_p_p_lTable', overall_p_p_l_per);
+
+        if (tab == 'dashboard'){
+            $('#oa_currentValTable').text(currentVal.toFixed(2));
+            $('#total_assets').text(currentVal_toDisplay.toFixed(2));
+            $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
+            $('#oa_overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
+
+            var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
+            $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
+
+            var p_l_this_year = currentVal_fyr - invested_fyr;
+            var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
+            $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
+
+            change_colors('oa_overall_p_p_lTable', overall_p_p_l_per);
+        } else if (tab == 'overview' && content == 'other_assets'){
+            last_tr = `<tr style="background-color:grey">
+                           <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(<?php echo round($wo['portfolio_data']['invested_value_properties'], 2); ?>) +`</span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(currentVal) +`</span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(overall_p_p_l) +`<br><small>`+ make_comma_seperated(overall_p_p_l_per.toFixed(2)) +`%</small></span></td>
+                       </tr>`;
+            $('#overview_mf_table_body').append(last_tr);
+
+            if (highest_profit > 0){
+                $('#top_profit_overall').text(highest_profit_name);
+                $('#top_profit_overall_amount').text(highest_profit.toFixed(2));
+                $('#top_profit_overall_per').text(highest_profit_per.toFixed(2));
+            } else if (highest_loss < 0){
+                $('#top_loss_overall').text(highest_loss_name);
+                $('#top_loss_overall_amount').text(highest_loss.toFixed(2));
+                $('#top_loss_overall_per').text(highest_loss_per.toFixed(2));
+            }
+        }
 
         return currentVal.toFixed(2);
     }
 
-    function calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj){
+    function calculateTotalValsProperties_display(data_of_all_properties, dates_obj, type_dates_obj, tab, content){
 
         var currentVal = 0;
         var currentVal_fyr = 0;
         var invested_fyr = 0;
+        var highest_profit = 0;
+        var highest_loss = 0;
+        var highest_profit_per = 0;
+        var highest_loss_per = 0;
+        var highest_profit_name = '';
+        var highest_loss_name = '';
         var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
+
+        var overview_table_to_append = '';
 
         data_of_all_properties.forEach(function (value) {
 
@@ -604,46 +734,97 @@
 
             console.log('Date from properties:');
             console.log(parseInt(value.transaction_date));
-            if (parseInt(value.transaction_date) in dates_obj) dates_obj[parseInt(value.transaction_date)] += parseFloat(value.transaction_price);
-            else dates_obj[parseInt(value.transaction_date)] = parseFloat(value.transaction_price);
+            if (tab == 'dashboard'){
+                if (parseInt(value.transaction_date) in dates_obj) dates_obj[parseInt(value.transaction_date)] += parseFloat(value.transaction_price);
+                else dates_obj[parseInt(value.transaction_date)] = parseFloat(value.transaction_price);
 
-            console.log(parseFloat(value.transaction_price));
-            if (parseInt(value.transaction_date) in type_dates_obj){
-                if ('Properties' in type_dates_obj[parseInt(value.transaction_date)]) type_dates_obj[parseInt(value.transaction_date)]['Properties'].push(parseFloat(value.transaction_price));
-                else type_dates_obj[parseInt(value.transaction_date)]['Properties'] = [parseFloat(value.transaction_price)];
-            } else {
-                type_dates_obj[parseInt(value.transaction_date)] = {'Properties': [parseFloat(value.transaction_price)]};
-            }
+                console.log(parseFloat(value.transaction_price));
+                if (parseInt(value.transaction_date) in type_dates_obj){
+                    if ('Properties' in type_dates_obj[parseInt(value.transaction_date)]) type_dates_obj[parseInt(value.transaction_date)]['Properties'].push(parseFloat(value.transaction_price));
+                    else type_dates_obj[parseInt(value.transaction_date)]['Properties'] = [parseFloat(value.transaction_price)];
+                } else {
+                    type_dates_obj[parseInt(value.transaction_date)] = {'Properties': [parseFloat(value.transaction_price)]};
+                }
 
-            if (parseInt(value.transaction_date) >= financial_yr_timestamp){
-                currentVal_fyr += parseFloat(value.current_price);
-                invested_fyr += parseFloat(value.transaction_price);
+                if (parseInt(value.transaction_date) >= financial_yr_timestamp){
+                    currentVal_fyr += parseFloat(value.current_price);
+                    invested_fyr += parseFloat(value.transaction_price);
+                }
+            } else if (tab == 'overview' && content == 'property'){
+                tmp_date = new Date(parseInt(value.transaction_date) * 1000);
+                purchase_date = tmp_date.getDate() + "-" + (tmp_date.getMonth() + 1) + "-" + tmp_date.getFullYear();
+                tmp_date = new Date(parseInt(value.timestamp_created) * 1000);
+                update_date = tmp_date.getDate() + "-" + (tmp_date.getMonth() + 1) + "-" + tmp_date.getFullYear();
+
+                _unrealized_gain = parseFloat(value.current_price) - parseFloat(value.transaction_price);
+                _unrealized_gain_per = ((_unrealized_gain * 100) / parseFloat(value.transaction_price)).toFixed(2);
+
+                if (_unrealized_gain_per > highest_profit_per){
+                    highest_profit = _unrealized_gain;
+                    highest_profit_per = _unrealized_gain_per;
+                    highest_profit_name = value['Property Name'];
+                } else if (_unrealized_gain_per < highest_loss_per){
+                    highest_loss = _unrealized_gain;
+                    highest_loss_per = _unrealized_gain_per;
+                    highest_loss_name = value['Property Name'];
+                }
+
+                overview_table_to_append = `<tr><th scope="row"><span style="margin: 0.75em;">` + value['Property Name']; overview_table_to_append += `</span><br> <span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['id'] +`")'>Sell</span></span> <span style="color:red; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='buyProperty("`+ value['id'] +`")'>Delete</span></span> <span style="color:blue; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['id'] +`")'>Update Value</span></span>`; overview_table_to_append += `</th>`;
+
+                overview_table_to_append +=`<td>&#8377;`+ make_comma_seperated(value.transaction_price) +`<br><small>`+ purchase_date +`</small></td>
+                                            <td>&#8377;`+ make_comma_seperated(value.current_price) +`<br><small>`+ update_date +`</small></td>
+                                            <td>Start Rental Income<br><small>Stop Rental Income</small></td>
+                                            <td>&#8377;`+ make_comma_seperated(_unrealized_gain) +`<br><small>`+ make_comma_seperated(_unrealized_gain_per) +`%</small></td>`;
+                overview_table_to_append += `</tr>`;
+                $('#overview_mf_table_body').append(overview_table_to_append);
             }
 
         });
 
         currentVal_toDisplay = parseFloat($('#currentVal').text()) + currentVal;
         $('#currentVal').text(currentVal_toDisplay.toFixed(2));
-        $('#total_assets').text(currentVal_toDisplay.toFixed(2));
-        $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
-
-        $('#properties_currentValTable').text(currentVal.toFixed(2));
 
         const overall_p_p_l = (currentVal - <?php echo $wo['portfolio_data']['invested_value_properties']; ?>);
         $('#overall_p_p_l').text((parseFloat($('#overall_p_p_l').text()) + overall_p_p_l).toFixed(2));
-        $('#properties_overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
-
-        var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
-        $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
-
-        var p_l_this_year = currentVal_fyr - invested_fyr;
-        var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
-        $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
-
+        const overall_p_p_l_per = (overall_p_p_l / <?php echo $wo['portfolio_data']['invested_value_properties'];?>) * 100;
         $('#total_unrealised_gain').text((parseFloat($('#total_unrealised_gain').text()) + overall_p_p_l).toFixed(2));
 
-        const overall_p_p_l_per = (overall_p_p_l / <?php echo $wo['portfolio_data']['invested_value_properties'];?>) * 100;
-        change_colors('properties_overall_p_p_lTable', overall_p_p_l_per);
+        if (tab == 'dashboard'){
+            $('#properties_currentValTable').text(currentVal.toFixed(2));
+            $('#properties_overall_p_p_lTable').text(overall_p_p_l.toFixed(2));
+
+            $('#total_current_value').text(currentVal_toDisplay.toFixed(2));
+            $('#total_assets').text(currentVal_toDisplay.toFixed(2));
+
+            var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
+            $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
+
+            var p_l_this_year = currentVal_fyr - invested_fyr;
+            var p_l_fyr_toDisplay = parseFloat($('#p_l_this_year').text()) + p_l_this_year;
+            $('#p_l_this_year').text(p_l_fyr_toDisplay.toFixed(2));
+
+            change_colors('properties_overall_p_p_lTable', overall_p_p_l_per);
+        } else if (tab == 'overview' && content == 'property'){
+            last_tr = `<tr style="background-color:grey">
+                           <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(<?php echo round($wo['portfolio_data']['invested_value_properties'], 2); ?>) +`</span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(currentVal) +`</span></td>
+                           <td><span style="color: white;">&#8377;0</span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(overall_p_p_l) +`<br><small>`+ make_comma_seperated(overall_p_p_l_per.toFixed(2)) +`%</small></span></td>
+                       </tr>`;
+            $('#overview_mf_table_body').append(last_tr);
+
+            if (highest_profit > 0){
+                $('#top_profit_overall').text(highest_profit_name);
+                $('#top_profit_overall_amount').text(highest_profit.toFixed(2));
+                $('#top_profit_overall_per').text(highest_profit_per.toFixed(2));
+            } else if (highest_loss < 0){
+                $('#top_loss_overall').text(highest_loss_name);
+                $('#top_loss_overall_amount').text(highest_loss.toFixed(2));
+                $('#top_loss_overall_per').text(highest_loss_per.toFixed(2));
+            }
+
+        }
 
         return currentVal.toFixed(2);
     }
@@ -702,18 +883,16 @@
 
                 console.log('Date from mf:');
                 console.log(parseInt(date_time_stamp));
-                if (parseInt(date_time_stamp) in dates_obj) dates_obj[parseInt(date_time_stamp)] += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
-                else dates_obj[parseInt(date_time_stamp)] = parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
-
-                if (parseInt(date_time_stamp) in type_dates_obj){
-                    if ('Mutual Funds' in type_dates_obj[parseInt(date_time_stamp)]) type_dates_obj[parseInt(date_time_stamp)]['Mutual Funds'].push(parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']));
-                    else type_dates_obj[parseInt(date_time_stamp)]['Mutual Funds'] = [parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount'])];
-                } else {
-                    type_dates_obj[parseInt(date_time_stamp)] = {'Mutual Funds': [parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount'])]};
-                }
-
-
                 if (tab == 'dashboard'){
+                    if (parseInt(date_time_stamp) in dates_obj) dates_obj[parseInt(date_time_stamp)] += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
+                    else dates_obj[parseInt(date_time_stamp)] = parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
+
+                    if (parseInt(date_time_stamp) in type_dates_obj){
+                        if ('Mutual Funds' in type_dates_obj[parseInt(date_time_stamp)]) type_dates_obj[parseInt(date_time_stamp)]['Mutual Funds'].push(parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']));
+                        else type_dates_obj[parseInt(date_time_stamp)]['Mutual Funds'] = [parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount'])];
+                    } else {
+                        type_dates_obj[parseInt(date_time_stamp)] = {'Mutual Funds': [parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount'])]};
+                    }
                     if (parseInt(date_time_stamp) >= financial_yr_timestamp){
                         currentVal_fyr += data_of_all_mutual_funds[scheme_code]['mf_data']['Net Asset Value'] * data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty'];
                         invested_fyr   += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);

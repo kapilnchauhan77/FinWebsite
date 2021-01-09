@@ -81,9 +81,12 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Other Assets Added Successfully!',
+                            showConfirmButton: false,
+                            timer: 1250,
+                            timerProgressBar: true,
                         }).then((result) => {
                             localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
-                            location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
+                            location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>&tab=overview&content=other_assets';
                         })
                     }
                     else if (data['status'] == 401){
