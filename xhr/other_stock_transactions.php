@@ -1,16 +1,9 @@
 <?php
 if ($f == 'other_stock_transactions') {
     $portfolio_id = $_GET['portfolio_id'];
-    $type = $_GET['type'];
     if (!empty($portfolio_id)) {
-        switch ($type){
-            case 'stocks':
-                $other_transactions = SA_otherStockTransactions($portfolio_id);
-                break;
-            case 'mutual_funds':
-                $other_transactions = SA_otherMFTransactions($portfolio_id);
-                break;
-        }
+        $other_transactions = SA_otherStockTransactions($portfolio_id);
+
         $data = array(
             'portfolio_id'                    => $portfolio_id,
             'other_stock_transactions'        => $other_transactions,

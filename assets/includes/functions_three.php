@@ -8161,13 +8161,12 @@ function SA_deletePortfolio($portfolio_id){
 
     return true;
 }
-function SA_getPortfolioRealizedGain($portfolio_id, $type_){
+function SA_getPortfolioRealizedGain($portfolio_id){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
-    $type_ = Wo_Secure($type_);
 
-    $query_one   = "SELECT SUM(`realized_gain`) AS `total_realised_gain` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `type` = '{$type_}';";
+    $query_one   = "SELECT SUM(`realized_gain`) AS `total_realised_gain` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id}";
     $query       = mysqli_query($sqlConnect, $query_one);
 
     if (!$query) {
@@ -8178,14 +8177,12 @@ function SA_getPortfolioRealizedGain($portfolio_id, $type_){
 
     return $fetched_data['total_realised_gain'];
 }
-function SA_getPortfolioDividend($portfolio_id, $type_){
+function SA_getPortfolioDividend($portfolio_id){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
-    $type_ = Wo_Secure($type_);
 
-    if ($type_ == 'stocks') $query_one   = "SELECT SUM(`stock_transaction_price`) AS `total_dividend` FROM " . T_PORTFOLIO_STOCKS . " WHERE `portfolio_id` = {$portfolio_id} AND `SOLD` = 3;";
-    if ($type_ == 'mutual_funds') $query_one   = "SELECT SUM(`mf_transaction_price`) AS `total_dividend` FROM " . T_PORTFOLIO_MF . " WHERE `portfolio_id` = {$portfolio_id} AND `SOLD` = 3;";
+    $query_one   = "SELECT SUM(`stock_transaction_price`) AS `total_dividend` FROM " . T_PORTFOLIO_STOCKS . " WHERE `portfolio_id` = {$portfolio_id} AND `SOLD` = 3;";
     $query       = mysqli_query($sqlConnect, $query_one);
 
     if (!$query) {
@@ -8900,7 +8897,7 @@ function AddStocksToPortfolio($stock_quote_data, $portfolio_id, $no_of_stocks, $
 
     return true;
 }
-function AddDividendStocksToPortfolio($stock_quote_datum, $portfolio_id){
+function AddDividendToPortfolio($stock_quote_datum, $portfolio_id){
     global $sqlConnect;
 
     $portfolio_id = Wo_Secure($portfolio_id);
@@ -8922,130 +8919,6 @@ function AddDividendStocksToPortfolio($stock_quote_datum, $portfolio_id){
 
     if (!$query_one) {
         return mysqli_error($sqlConnect);
-    };
-
-    return true;
-}
-function AddDividendMFToPortfolio($stock_quote_datum, $portfolio_id){
-    global $sqlConnect;
-
-    $portfolio_id = Wo_Secure($portfolio_id);
-    $stock_fincode = Wo_Secure($stock_quote_datum['stock_fincode']);
-    $date_ = Wo_Secure($stock_quote_datum['date']);
-    $amount = Wo_Secure($stock_quote_datum['dividend_amount']);
-    $dividend_notes = Wo_Secure($stock_quote_datum['notes']);
-    $timestamp_created = strtotime("now");
-
-    AddCashToPortfolio(array(array(
-        'cash_type' => 'Credit',
-        'cash_transaction_date' => $date_,
-        'cash_transaction_price' => $amount,
-        'note' => ''
-    )), $portfolio_id, "Dividend Received From Mutual Funds", false, true);
-
-    $query_text   = "INSERT INTO " . T_PORTFOLIO_MF . " (`portfolio_id`, `Scheme Code`, `mf_transaction_date`, `mf_transaction_price`, `timestamp_created`, `Notes`, `SOLD`) VALUES ({$portfolio_id}, {$stock_fincode}, {$date_}, {$amount}, {$timestamp_created}, '{$dividend_notes}', 3)";
-    $query_one    = mysqli_query($sqlConnect, $query_text);
-
-    if (!$query_one) {
-        return mysqli_error($sqlConnect);
-    };
-
-    return true;
-}
-function SellMFFromPortfolio($mf_quote_datum, $portfolio_id, $mf_available){
-    global $sqlConnect;
-
-    $portfolio_id = Wo_Secure($portfolio_id);
-    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
-
-    $no_of_unique_mf = 0;
-
-    $scheme_code = Wo_Secure($mf_quote_datum['scheme_code']);
-    $mf_transaction_date = Wo_Secure($mf_quote_datum['mf_transaction_date']);
-    $mf_transaction_price = Wo_Secure($mf_quote_datum['mf_transaction_price']);
-    $mf_transaction_qty = Wo_Secure($mf_quote_datum['mf_transaction_qty']);
-    $mf_amount = Wo_Secure($mf_quote_datum['mf_net_amount']);
-    $mf_note = Wo_Secure($mf_quote_datum['note']);
-    $realized_gain = Wo_Secure($mf_quote_datum['realized_gain']);
-    $timestamps_sold = $mf_quote_datum['timestamp_sold'];
-    $timestamp_created = strtotime("now");
-
-    if ($realized_gain > 0){
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Credit',
-            'cash_transaction_date' => $mf_transaction_date,
-            'cash_transaction_price' => $realized_gain,
-            'note' => ''
-        )), $portfolio_id, "Realized Gain After selling Stocks", false, true);
-    };
-
-    foreach ($timestamps_sold as $timestamp_sold => $qty){
-        $query_text   = "SELECT * FROM " . T_PORTFOLIO_MF . " WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id} AND `mf_transaction_date` = {$timestamp_sold} AND `SOLD` = 0;";
-        $query_one    = mysqli_query($sqlConnect, $query_text);
-
-        $num_rows = mysqli_num_rows($query_one);
-        if ($qty == 0){
-            $query_text   = "UPDATE " . T_PORTFOLIO_MF . " SET `SOLD` = 1 WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id} AND `mf_transaction_date` = {$timestamp_sold} AND `SOLD` = 0;";
-            $query_one    = mysqli_query($sqlConnect, $query_text);
-        } else if ($qty > 0){
-            if ($num_rows <= 0){
-                return 'Please do not change system files!';
-            } else if($num_rows == 1){
-                $fetched_data = mysqli_fetch_assoc($query_one);
-                $query_text   = "INSERT INTO " . T_PORTFOLIO_MF . " (`portfolio_id`, `Scheme Code`, `mf_transaction_date`, `mf_transaction_price`, `mf_transaction_qty`, `timestamp_created`, `Notes`, `SOLD`) VALUES ({$portfolio_id}, {$scheme_code}, {$fetched_data['mf_transaction_date']}, {$fetched_data['mf_transaction_price']}, {$qty}, {$fetched_data['timestamp_created']}, '{$fetched_data['Notes']}', 1)";
-                $query_one    = mysqli_query($sqlConnect, $query_text);
-
-                $query_text   = "UPDATE " . T_PORTFOLIO_MF . " SET `mf_transaction_qty` = `mf_transaction_qty` - {$qty} WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id} AND `mf_transaction_date` = {$timestamp_sold} AND `SOLD` = 0;";
-                $query_one    = mysqli_query($sqlConnect, $query_text);
-            } else {
-                $qty_left = $qty;
-                while ($fetched_data = mysqli_fetch_assoc($query_one)) {
-                    if (is_array($fetched_data)) {
-                        $qty_left = $fetched_data['mf_transaction_qty'] - $qty_left;
-                        $timestamp_created = $fetched_data['timestamp_created'];
-                        if ($qty_left <= 0){
-                            $query_text   = "UPDATE " . T_PORTFOLIO_MF . " SET `SOLD` = 1 WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id} AND `mf_transaction_date` = {$timestamp_sold} AND `SOLD` = 0;";
-                            $query_one    = mysqli_query($sqlConnect, $query_text);
-                            if ($qty_left == 0) break;
-                            else $qty_left *= -1;
-                        } else {
-                            $query_text   = "INSERT INTO " . T_PORTFOLIO_MF . " (`portfolio_id`, `Scheme Code`, `mf_transaction_date`, `mf_transaction_price`, `mf_transaction_qty`, `timestamp_created`, `Notes`, `SOLD`) VALUES ({$portfolio_id}, {$scheme_code}, {$fetched_data['mf_transaction_date']}, {$fetched_data['mf_transaction_price']}, {$qty_left}, {$fetched_data['timestamp_created']}, '{$fetched_data['Notes']}', 1)";
-                            $query_one    = mysqli_query($sqlConnect, $query_text);
-
-                            $query_text   = "UPDATE " . T_PORTFOLIO_MF . " SET `mf_transaction_qty` = `mf_transaction_qty` - {$qty_left} WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id} AND `mf_transaction_date` = {$timestamp_sold} AND `timestamp_created` = {$timestamp_created} AND `SOLD` = 0;";
-                            $query_one    = mysqli_query($sqlConnect, $query_text);
-                            break;
-                        }
-                    }
-                }
-            };
-        } else return 'Please do not change system files!';
-    }
-
-    $query_one   = "INSERT INTO " . T_PORTFOLIO_MF . " (`portfolio_id`, `Scheme Code`, `mf_transaction_date`, `mf_transaction_price`, `mf_transaction_qty`, `timestamp_created`, `Notes`, `SOLD`) VALUES ({$portfolio_id}, {$scheme_code}, {$mf_transaction_date}, {$mf_transaction_price}, {$mf_transaction_qty}, {$timestamp_created}, '{$mf_note}', 2)";
-    $query       = mysqli_query($sqlConnect, $query_one);
-
-    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_mutual_funds` = `invested_value_mutual_funds` + {$mf_amount} WHERE `portfolio_id` = {$portfolio_id}";
-    $query     = mysqli_query($sqlConnect, $query_one);
-
-    if ($mf_transaction_qty == $mf_available) {
-        $query_one   = "UPDATE " . T_PORTFOLIO . " SET `no_of_unique_mf` = `no_of_unique_mf` + {$no_of_unique_mf} WHERE `portfolio_id` = {$portfolio_id}";
-        $query     = mysqli_query($sqlConnect, $query_one);
-    }
-
-    if (!$query) {
-        return mysqli_error($sqlConnect);
-    };
-
-    $query_text   = "SELECT `id` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'mutual_funds' AND `element_uid` = {$scheme_code};";
-    $query_one    = mysqli_query($sqlConnect, $query_text);
-
-    if (mysqli_num_rows($query_one) <= 0){
-        $query_text   = "INSERT INTO " . T_REALIZED . " (`portfolio_id`, `type`, `realized_gain`, `element_uid`) VALUES ({$portfolio_id}, 'mutual_funds', {$realized_gain}, {$scheme_code});";
-        $query_one    = mysqli_query($sqlConnect, $query_text);
-    } else {
-        $query_text   = "UPDATE " . T_REALIZED . " SET `realized_gain` = `realized_gain` + {$realized_gain} WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'mutual_funds';";
-        $query_one    = mysqli_query($sqlConnect, $query_text);
     };
 
     return true;
@@ -9145,14 +9018,14 @@ function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_avai
         return mysqli_error($sqlConnect);
     };
 
-    $query_text   = "SELECT `id` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'stocks' AND `element_uid` = {$stock_fincode};";
+    $query_text   = "SELECT `id` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'stock' AND `element_uid` = {$stock_fincode};";
     $query_one    = mysqli_query($sqlConnect, $query_text);
 
     if (mysqli_num_rows($query_one) <= 0){
-        $query_text   = "INSERT INTO " . T_REALIZED . " (`portfolio_id`, `type`, `realized_gain`, `element_uid`) VALUES ({$portfolio_id}, 'stocks', {$realized_gain}, {$stock_fincode});";
+        $query_text   = "INSERT INTO " . T_REALIZED . " (`portfolio_id`, `type`, `realized_gain`, `element_uid`) VALUES ({$portfolio_id}, 'stock', {$realized_gain}, {$stock_fincode});";
         $query_one    = mysqli_query($sqlConnect, $query_text);
     } else {
-        $query_text   = "UPDATE " . T_REALIZED . " SET `realized_gain` = `realized_gain` + {$realized_gain} WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'stocks';";
+        $query_text   = "UPDATE " . T_REALIZED . " SET `realized_gain` = `realized_gain` + {$realized_gain} WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'stock';";
         $query_one    = mysqli_query($sqlConnect, $query_text);
     };
 
@@ -9204,7 +9077,7 @@ function AddMFToPortfolio($mf_quote_data, $portfolio_id, $auto_add){
             return 'Please Do Not Change System Files!';
         };
 
-        $query_text   = "SELECT `Scheme Code` FROM " . T_PORTFOLIO_MF . " WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id} AND `SOLD` = 0";
+        $query_text   = "SELECT `Scheme Code` FROM " . T_PORTFOLIO_MF . " WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id}";
         $query_one    = mysqli_query($sqlConnect, $query_text);
 
         if (mysqli_num_rows($query_one) <= 0){
@@ -9323,7 +9196,7 @@ function Wo_ExtraStockDetailInPortfolio($stock_fincode, $portfolio_id) {
     $category = mysqli_fetch_assoc($sql)['Categorization'];
     $data['category'] = $category;
 
-    $query_text = "SELECT `realized_gain` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `element_uid` = {$stock_fincode} AND type = 'stocks';";
+    $query_text = "SELECT `realized_gain` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `element_uid` = {$stock_fincode} AND type = 'stock';";
     $sql          = mysqli_query($sqlConnect, $query_text);
     $fetched_data = mysqli_fetch_assoc($sql);
     if (empty($fetched_data)) $realized_gain = 0;
@@ -9442,41 +9315,6 @@ function Wo_ExtraOADetailForAllOAInPortfolio($portfolio_id){
 
 /*     return $data; */
 /* } */
-function SA_otherMFTransactions($portfolio_id){
-    global $sqlConnect;
-
-    $data         = array();
-    $stocks       = array();
-    $portfolio_id = Wo_Secure($portfolio_id);
-
-    $query_text = "SELECT `Scheme Code` FROM " . T_PORTFOLIO_MF . " WHERE `portfolio_id` = {$portfolio_id} AND `SOLD` != 0 AND `SOLD` != 3;";
-    $sql          = mysqli_query($sqlConnect, $query_text);
-    while ($fetched_data = mysqli_fetch_assoc($sql)) {
-        if (!in_array($fetched_data['Scheme Code'], $stocks)) {
-            $stocks[] = $fetched_data['Scheme Code'];
-            $query_text = "SELECT `Scheme Name` FROM " . T_MUTUALFUNDS . " WHERE `Scheme Code` = {$fetched_data['Scheme Code']};";
-            $sql_compname          = mysqli_query($sqlConnect, $query_text);
-            $data[mysqli_fetch_assoc($sql_compname)['Scheme Name']]   = SA_otherMFTransactionDetails($portfolio_id, $fetched_data['Scheme Code']);
-        }
-    };
-
-    return $data;
-}
-function SA_otherMFTransactionDetails($portfolio_id, $scheme_code) {
-    global $sqlConnect;
-
-    $data       = array();
-    $scheme_code = Wo_Secure($scheme_code);
-    $portfolio_id = Wo_Secure($portfolio_id);
-
-    $query_text = "SELECT `mf_transaction_date`, `mf_transaction_price`, `mf_transaction_qty`, `SOLD` FROM " . T_PORTFOLIO_MF . " WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id} AND `SOLD` != 0 AND `SOLD` != 3";
-    $sql          = mysqli_query($sqlConnect, $query_text);
-    while ($fetched_data = mysqli_fetch_assoc($sql)) {
-        $data[] = $fetched_data;
-    };
-
-    return $data;
-}
 function SA_otherStockTransactions($portfolio_id){
     global $sqlConnect;
 
@@ -9485,6 +9323,7 @@ function SA_otherStockTransactions($portfolio_id){
     $portfolio_id = Wo_Secure($portfolio_id);
 
     $query_text = "SELECT `stock_fincode` FROM " . T_PORTFOLIO_STOCKS . " WHERE `portfolio_id` = {$portfolio_id} AND `SOLD` != 0 AND `SOLD` != 3;";
+
     $sql          = mysqli_query($sqlConnect, $query_text);
     while ($fetched_data = mysqli_fetch_assoc($sql)) {
         if (!in_array($fetched_data['stock_fincode'], $stocks)) {
@@ -9580,7 +9419,7 @@ function Wo_ExtraMFDetailForAllMFInPortfolio($portfolio_id) {
     $scheme_code    = array();
     $portfolio_id   = Wo_Secure($portfolio_id);
 
-    $query_text = "SELECT `Scheme Code`, `mf_transaction_date`, `mf_transaction_qty`, `mf_transaction_price` FROM " . T_PORTFOLIO_MF . " WHERE `portfolio_id` = {$portfolio_id} AND `SOLD` = 0";
+    $query_text = "SELECT `Scheme Code`, `mf_transaction_date`, `mf_transaction_qty`, `mf_transaction_price` FROM " . T_PORTFOLIO_MF . " WHERE `portfolio_id` = {$portfolio_id}";
     $sql          = mysqli_query($sqlConnect, $query_text);
     while ($fetched_data = mysqli_fetch_assoc($sql)) {
         if (is_array($fetched_data) && !in_array($fetched_data['Scheme Code'], $scheme_code)) {
@@ -9591,19 +9430,6 @@ function Wo_ExtraMFDetailForAllMFInPortfolio($portfolio_id) {
             $data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']]                              = array();
             $data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']]['mf_transaction_qty']        = $fetched_data['mf_transaction_qty'];
             $data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']]['mf_transaction_amount']     = ($fetched_data['mf_transaction_price'] * $fetched_data['mf_transaction_qty']);
-
-            $query_text2   = "SELECT `realized_gain` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `element_uid` = {$fetched_data['Scheme Code']} AND type = 'mutual_funds';";
-            $sql2          = mysqli_query($sqlConnect, $query_text2);
-            $fetched_data2 = mysqli_fetch_assoc($sql2);
-            if (empty($fetched_data2)) $realized_gain = 0;
-            else $realized_gain = $fetched_data2['realized_gain'];
-            $data[$fetched_data['Scheme Code']]['mf_data']['realized_gain'] = $realized_gain;
-
-            $query_text3 = "SELECT SUM(`mf_transaction_price`) as `total_dividend` FROM " . T_PORTFOLIO_MF . " WHERE `portfolio_id` = {$portfolio_id} AND `Scheme Code` = {$fetched_data['Scheme Code']} AND `SOLD` = 3;";
-            $sql3          = mysqli_query($sqlConnect, $query_text3);
-            $fetched_data3 = mysqli_fetch_assoc($sql3);
-            $data[$fetched_data['Scheme Code']]['mf_data']['dividend_amount'] = $fetched_data3['total_dividend'];
-
         }
         else{
             if (empty($data[$fetched_data['Scheme Code']]['mf_portfolio_data'][$fetched_data['mf_transaction_date']])){

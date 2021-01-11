@@ -66,19 +66,19 @@
         if (ctx_invested_current) sectorWeightageInvestedCurrent(ctx_invested_current, fincode_sector_weightage_invested, fincode_sector_weightage_current);
     };
 
-    function add_stock_weightage_Overview(fincode_stock_weightage_current, fincode_stock_weightage_invested, type_){
+    function add_stock_weightage_Overview(fincode_stock_weightage_current, fincode_stock_weightage_invested){
         ctx_invested = document.getElementById("overview_stock_weightage_invested");
         ctx_current = document.getElementById("overview_stock_weightage_current");
-        if (ctx_invested) stockWeightageInvested(ctx_invested, fincode_stock_weightage_invested, type_);
-        if (ctx_current) stockWeightageCurrent(ctx_current, fincode_stock_weightage_current, type_);
+        if (ctx_invested) stockWeightageInvested(ctx_invested, fincode_stock_weightage_invested);
+        if (ctx_current) stockWeightageCurrent(ctx_current, fincode_stock_weightage_current);
     };
 
-    function add_marketCap_Overview(fincode_mcap_weightage_invested, fincode_mcap_weightage_current, type_){
+    function add_marketCap_Overview(fincode_mcap_weightage_invested, fincode_mcap_weightage_current){
         ctx_invested = document.getElementById("overview_mcap_weightage_invested");
-        if (ctx_invested) mcapWeightageInvested(ctx_invested, fincode_mcap_weightage_invested, type_);
+        if (ctx_invested) mcapWeightageInvested(ctx_invested, fincode_mcap_weightage_invested);
 
         ctx_current = document.getElementById("overview_mcap_weightage_current");
-        if (ctx_current) mcapWeightageCurrent(ctx_current, fincode_mcap_weightage_current, type_);
+        if (ctx_current) mcapWeightageCurrent(ctx_current, fincode_mcap_weightage_current);
     };
 
     function add_Overview_stock_transactionChart(transaction_obj, date_compname_type, type_){

@@ -110,12 +110,9 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Mutual Funds Added Successfully!',
-                            showConfirmButton: false,
-                            timer: 1250,
-                            timerProgressBar: true,
                         }).then((result) => {
                             localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
-                            location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>&tab=overview&content=mutual_funds';
+                            location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>';
                         })
                     }
                     else if (data['status'] == 401){
