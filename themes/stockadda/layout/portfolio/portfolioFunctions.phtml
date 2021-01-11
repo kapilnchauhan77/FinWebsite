@@ -2,7 +2,7 @@
 
     var fincode_date_seperation = new Object();
 
-    async function multipleStocksInfo(fincode, cmp, company_name){
+    async function multipleStocksInfo(fincode, cmp, company_name, type_){
         /* Swal.fire({ */
         /*     icon: 'error', */
         /*     title: JSON.stringify(fincode_date_seperation[fincode]), */
@@ -15,21 +15,31 @@
         var unrealized_gain = 0;
         var proper_date = '';
         var _date_ = 0;
+        var _title_ = '';
+        var _quantity_ = 0;
         for (date_ in fincode_date_seperation[fincode]){
 
             age = Math.round(((new Date())-(date_*1000))/(1000*60*60*24));
 
-            individual_charge = (parseFloat(fincode_date_seperation[fincode][date_]['charge']) / parseFloat(fincode_date_seperation[fincode][date_]['quantity']));
-            individual_price = parseFloat(fincode_date_seperation[fincode][date_]['price']) + individual_charge;
-            unrealized_gain = (cmp - individual_price) * parseInt(fincode_date_seperation[fincode][date_]['quantity']);
+            if (type_ == 'stocks'){
+                individual_charge = (parseFloat(fincode_date_seperation[fincode][date_]['charge']) / parseFloat(fincode_date_seperation[fincode][date_]['quantity']));
+                individual_price = parseFloat(fincode_date_seperation[fincode][date_]['price']) + individual_charge;
+                unrealized_gain = (cmp - individual_price) * parseInt(fincode_date_seperation[fincode][date_]['quantity']);
+                _title_ = `title = 'Price of Stock:` + format_rupees(parseFloat(fincode_date_seperation[fincode][date_]['price'])) + `, Charge Per Stock: ` + format_rupees(individual_charge) + `'`;
+                _quantity_ = make_comma_seperated(fincode_date_seperation[fincode][date_]['quantity']).split('.')[0];
+            } else {
+                individual_price = parseFloat(fincode_date_seperation[fincode][date_]['price']);
+                unrealized_gain = (cmp * parseFloat(fincode_date_seperation[fincode][date_]['quantity'])) - individual_price;
+                _quantity_ = make_comma_seperated(fincode_date_seperation[fincode][date_]['quantity']);
+            }
 
             _date_ = new Date(parseInt(date_*1000));
             _proper_date =  _date_.getDate() +"-"+ (_date_.getMonth() + 1) +"-"+ _date_.getFullYear()
 
             table_data += `<tr id=`+ fincode +` style="height:39px">
                                <td>`+ _proper_date +`</td>
-                               <td>`+ make_comma_seperated(fincode_date_seperation[fincode][date_]['quantity']).split('.')[0] +`</td>
-                               <td title='Price of Stock: `+ format_rupees(parseFloat(fincode_date_seperation[fincode][date_]['price'])) + `, Charge Per Stock: ` + format_rupees(individual_charge) +`'>&#8377;`+ make_comma_seperated((individual_price).toFixed(2)) +`</td>`
+                               <td>`+ _quantity_ +`</td>
+                               <td `+ _title_ +`>&#8377;`+ make_comma_seperated((individual_price).toFixed(2)) +`</td>`
                                +`<td style='color: `+ ((unrealized_gain > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(unrealized_gain.toFixed(2)) +`</td>`
                                +`<td>`+ age +`</td>
                                <td>`+ ((age > 365) ? ('10% (Long Term)') : ('15% (Short Term)')) +`</td>
@@ -38,8 +48,11 @@
 
         const { value: formValues } = await Swal.fire({
             title: company_name,
-            showCancelButton: false,
+            showConfirmButton: false,
+            showCancelButton: true,
             showCloseButton: true,
+            cancelButtonText: 'Close',
+            cancelButtonColor: '#f00',
             width: 'auto',
             html:
                `<table class="table table-hover table-striped">
@@ -61,23 +74,23 @@
         })
     }
 
-    function getInvestedPriceEquivalent(id, qty, selling_date_){
+    function getInvestedPriceEquivalent(id, qty, selling_date_, type_){
         var final_price  = 0;
-        var final_charge = 0;
         var time_stamp_sold = new Object();
 
         data = fincode_date_seperation[id];
         for (date_ in data){
             if (date_ > selling_date_) return [false, false];
             if (qty < data[date_]['quantity']){
-                final_charge += (data[date_]['charge'] / data[date_]['quantity']);
-                final_price += ((data[date_]['price'] + (data[date_]['charge'] / data[date_]['quantity'])) * qty);
+                if (type_ == 'stocks') final_price += ((data[date_]['price'] + (data[date_]['charge'] / data[date_]['quantity'])) * qty);
+                else final_price += ((data[date_]['price'] / data[date_]['quantity']) * qty);
+
                 time_stamp_sold[date_] = qty;
                 return [final_price, time_stamp_sold];
             }
             else{
-                final_charge += (data[date_]['charge'] / data[date_]['quantity']);
-                final_price += ((data[date_]['price'] * data[date_]['quantity']) + data[date_]['charge']);
+                if (type_ == 'stocks') final_price += ((data[date_]['price'] * data[date_]['quantity']) + data[date_]['charge']);
+                else final_price += data[date_]['price'];
                 qty -= data[date_]['quantity'];
                 time_stamp_sold[date_] = 0;
                 if (qty == 0) break;
@@ -87,7 +100,7 @@
         return [final_price, time_stamp_sold];
     }
 
-    async function addDividend(name_, uid){
+    async function addDividend(name_, uid, type_){
         const { value: formValues } = await Swal.fire({
             title: 'Add Divided for ' + name_,
             showCancelButton: true,
@@ -127,16 +140,30 @@
                 if (dividend_amount_ <= 0) return 'Invalid Dividend Amount Entered!';
                 to_send = {'stock_fincode': uid, 'date': date_, 'dividend_amount': dividend_amount_, 'notes': document.getElementById("dividend_notes").value};
 
+                switch (type_){
+                case 'stocks':
+                    datum = {
+                        f: 'portfolio_data' ,
+                        stock_array: to_send,
+                        portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>,
+                        auto_add: '3',
+                        };
+                    break;
+                case 'mutual_funds':
+                    datum = {
+                        f: 'add_mutual_funds' ,
+                        mf_array: to_send,
+                        portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>,
+                        auto_add: '3',
+                        };
+                    break;
+                }
+
                 $.ajax({
                     url: Wo_Ajax_Requests_File(),
                     type: 'GET',
                     dataType: 'json',
-                    data: {
-                        f:'portfolio_data',
-                        stock_array: to_send,
-                        portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>,
-                        auto_add: '3',
-                    },
+                    data: datum,
                     success: function(data) {
                         if (data['status'] == 200){
                             Swal.fire({
@@ -147,7 +174,7 @@
                                 timerProgressBar: true,
                             }).then((result) => {
                                 localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
-                                location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>&tab=overview&content=stocks';
+                                location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>&tab=overview&content='+type_;
                             })
                         }
                         else if (data['status'] == 401){
@@ -245,7 +272,7 @@
                 if (stock_transaction_date > parseInt(new Date().getTime())/1000) return "You Cannot Sell On a Future Date!";
                 if (stock_transaction_price < 0) return "Stock Price Cannot Be Less Than 0!";
                 if (qty_available < stock_transaction_qty) return "You Cannot Sell More Than Quantity Held";
-                var [invested_equivalent, time_stamp_sold] = getInvestedPriceEquivalent(uid, stock_transaction_qty, stock_transaction_date);
+                var [invested_equivalent, time_stamp_sold] = getInvestedPriceEquivalent(uid, stock_transaction_qty, stock_transaction_date, 'stocks');
                 if (invested_equivalent == false && time_stamp_sold == false) return 'You do not have enough stocks on the selling date!';
 
                 data_to_send = {
@@ -334,25 +361,26 @@
         var unrealized_currentVal = 0;
         var realized_currentVal = 0;
         var daysGain = 0;
-        var unrealized_currentVal_individual = 0;
-        var realized_currentVal_individual = 0;
         var no_of_days_individual = 0;
         var invested_fyr = 0;
         var unrealized_currentVal_fyr = 0;
         var realized_currentVal_fyr = 0;
         var unrealized_invested_val = 0;
         var realized_invested_val = 0;
+        var total_maturity_val = 0;
         var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         data_of_all_fd.forEach(function (value) {
+            var unrealized_currentVal_individual = 0;
+            var realized_currentVal_individual = 0;
 
-            _period_ = (parseInt(value.maturity_date)-parseInt(value.transaction_date))/(1000*60*60*24*365);
+            _period_ = (parseInt(value.maturity_date*1000)-parseInt(value.transaction_date*1000))/(1000*60*60*24*365);
             _maturity_value_ = (parseFloat(value.transaction_price) * Math.pow((1 +
                         parseFloat(value.transaction_interest/100) /
                         parseInt(value.interest_payout_frequency)),
                         (parseInt(value.interest_payout_frequency) * (_period_))));
-            console.log('_maturity_value_');
-            console.log(_maturity_value_);
+            total_maturity_val += _maturity_value_;
+            /* _maturity_value_ = parseFloat(value.transaction_price) + (parseFloat(value.transaction_price) * parseFloat(value.transaction_interest) * parseFloat(_period_) / 100); */
 
             no_of_days_individual = parseInt((parseInt(new Date().getTime() / 1000) - value.transaction_date) / (60 * 60 * 24));
             no_of_days_individual = (no_of_days_individual == 0) ? 1 : no_of_days_individual;
@@ -431,7 +459,7 @@
                     _period_years -= 1;
                 }
                 if (_period_days < 0){
-                    _period_days += 30;
+                    _period_days += 31;
                     _period_months -= 1;
                 }
 
@@ -452,12 +480,13 @@
                                             <td>`+ period_line +` </td>
                                             <td>-<br><small>-</small></td>
                                             <td>&#8377;`+ make_comma_seperated(value.transaction_price) +`<br><small>`+ purchase_date +`</small></td>
-                                            <td>&#8377;`+ make_comma_seperated(_maturity_value_) +`<br><small>`+ update_date +`</small></td>
-                                            <td>&#8377;`+ make_comma_seperated(unrealized_currentVal_individual) +`</td>
-                                            <td>&#8377;`+ make_comma_seperated(realized_currentVal_individual) +`</td>`;
+                                            <td>&#8377;`+ make_comma_seperated(_maturity_value_.toFixed(2)) +`<br><small>`+ update_date +`</small></td>
+                                            <td>&#8377;`+ make_comma_seperated(unrealized_currentVal_individual.toFixed(2)) +`</td>
+                                            <td>&#8377;`+ make_comma_seperated(realized_currentVal_individual.toFixed(2)) +`</td>`;
 
                 overview_table_to_append += `</tr>`;
                 $('#overview_mf_table_body').append(overview_table_to_append);
+                /* $("#fd_overview_table").dataTable(); */
             }
         });
 
@@ -494,7 +523,20 @@
             change_colors('fd_overall_p_p_lTable_unrealised', overall_p_p_l_per_unrealised);
             $('#fd_daily_p_p_lTable_text').removeClass('SA_text-secondary');
             $('#fd_daily_p_p_lTable_text').addClass('SA_text-success');
-        } else if (tab == 'overview' && content == 'fixed_income'){}
+        } else if (tab == 'overview' && content == 'fixed_income'){
+            last_tr = `<tr style="background-color:grey">
+                           <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td><span style="color: white;">&#8377;`+ <?php echo $wo['portfolio_data']['invested_value_FD']; ?> +`</span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(total_maturity_val.toFixed(2)) +`</span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(unrealized_currentVal.toFixed(2)) +`</span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(realized_currentVal.toFixed(2)) +`</span></td>
+                       </tr>`;
+            $('#overview_mf_table_body').append(last_tr);
+        }
 
         return ((unrealized_currentVal) + realized_invested_val).toFixed(2);
 
@@ -810,6 +852,7 @@
         var invested_fyr            = 0;
         var num_of_trs              = 0;
         var total_realised_gain     = 0;
+        var total_dividend_amount   = 0;
         var overall_max_amount      = 0;
         var overall_max_per         = 0;
         var today_max_amount        = 0;
@@ -841,10 +884,15 @@
         var transaction_obj = new Object();
         var name_transaction_obj = new Object();
 
+        var show_dividend = false;
+
         Object.keys(data_of_all_mutual_funds).forEach(function (scheme_code) {
 
             var total_inv_mf = 0;
             var total_qty_of_mf = 0;
+
+            if (!(scheme_code in fincode_date_seperation)) fincode_date_seperation[scheme_code] = {};
+
             Object.keys(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data']).forEach(function(date_time_stamp){
                 total_qty_of_mf += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty']);
 
@@ -882,6 +930,11 @@
                     }
 
                     total_inv_mf += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
+                    if (!(parseInt(date_time_stamp) in fincode_date_seperation[scheme_code])) fincode_date_seperation[scheme_code][parseInt(date_time_stamp)] = {'price': parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']), 'quantity': parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty'])};
+                    else {
+                        fincode_date_seperation[scheme_code][parseInt(date_time_stamp)]['quantity'] += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_qty']);
+                        fincode_date_seperation[scheme_code][parseInt(date_time_stamp)]['price'] += parseFloat(data_of_all_mutual_funds[scheme_code]['mf_portfolio_data'][date_time_stamp]['mf_transaction_amount']);
+                    }
                 }
             });
 
@@ -909,7 +962,7 @@
                 overview_table_to_append = `<tr><th scope="row"><span style="margin: 0.75em;">` + data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'];
                 if (dates_bought.length > 1){
                     overview_table_to_append += `&nbsp;(`+ dates_bought.length +`)`;
-                    days_held_line = `<span style='color:#4E73DF; margin-left: 0.75em; cursor: pointer;' onclick="multipleMFInfo(`+ scheme_code +`, `+ data_of_all_mutual_funds[scheme_code]['mf_data']['Net Asset Value'] +`, '`+ data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] +`')">Age: Click</span>`;
+                    days_held_line = `<span style='color:#4E73DF; margin-left: 0.75em; cursor: pointer;' onclick="multipleStocksInfo(`+ scheme_code +`, `+ data_of_all_mutual_funds[scheme_code]['mf_data']['Net Asset Value'] +`, '`+ data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] +`', 'mutual_funds')">Age: Click</span>`;
                 } else days_held_line = `<span style="color:#4E73DF; margin-left: 0.75em;">Age: `+ Math.round(((new Date())-((dates_bought[0])*1000))/(1000*60*60*24)) +` Days</span>`;
 
                 overview_table_to_append += `</span><br>
@@ -958,8 +1011,13 @@
                     }
                 }
 
-                _realized_gain_ = 0;
-                total_realised_gain = 0;
+                _realized_gain_ = parseFloat(data_of_all_mutual_funds[scheme_code]['mf_data']['realized_gain']);
+                _realized_gain_ = (_realized_gain_) ? _realized_gain_ : 0;
+                _dividend_amount_ = parseFloat(data_of_all_mutual_funds[scheme_code]['mf_data']['dividend_amount']);
+                _dividend_amount_ = (_dividend_amount_) ? _dividend_amount_ : 0;
+                total_realised_gain += _realized_gain_;
+                total_dividend_amount += _dividend_amount_;
+                show_dividend = (data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'].toLowerCase().includes('dividend'));
 
                 overview_table_to_append +=`<td>&#8377;`+ make_comma_seperated(parseFloat(data_of_all_mutual_funds[scheme_code]['mf_data']['Net Asset Value']).toFixed(2)) +`</td>
                                             <td id='`+ scheme_code +`_qty'>`+ total_qty_of_mf.toFixed(3) +`<br><small>&#8377;`+ make_comma_seperated((total_inv_mf / total_qty_of_mf).toFixed(2)) +`</small></td>
@@ -967,6 +1025,7 @@
                                             <td style='color: `+ ((_todays_profit_ > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(_todays_profit_) +`<br><small>`+ make_comma_seperated(_todays_profit_per_.toFixed(2)) +`%</small></td>
                                             <td style='color: `+ ((_overall_profit_ > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(_overall_profit_.toFixed(2)) +`<br><small>`+ make_comma_seperated(_overall_profit_per_.toFixed(2)) +`%</small></td>
                                             <td style='color: `+ ((_realized_gain_ > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(_realized_gain_.toFixed(2)) +`</td>
+                                            <td>`+ ((show_dividend) ? `&#8377;`+ make_comma_seperated(_dividend_amount_) +`<br><small style='cursor: pointer; color: red' onclick='addDividend("`+ data_of_all_mutual_funds[scheme_code]['mf_data']['Scheme Name'] +`",`+ scheme_code +`, "mutual_funds")'>Add</small>` : '') +`</td>
                                             <td>&#8377;`+ make_comma_seperated(current_val_of_mf.toFixed(2)) +`<br><small><span id='`+ num_of_trs +`_weightage_mfs'>`+ (100 * current_val_of_mf).toFixed(2) +`</span>%</small></td>
                                             <td><a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Upgrade to view XIRR">Pro</a></td>`
 
@@ -1022,6 +1081,7 @@
                            <td><span style="color: white;">&#8377;`+ make_comma_seperated(daily_p_p_l.toFixed(2)) +`<br><small>`+ make_comma_seperated((daily_p_p_l_per).toFixed(2)) +`%</small></span></td>
                            <td><span style="color: white;">&#8377;`+ make_comma_seperated(overall_p_p_l.toFixed(2)) +`<br><small>`+ make_comma_seperated((overall_p_p_l_per).toFixed(2)) +`%</small></span></td>
                            <td><span style="color: white;">&#8377;`+ make_comma_seperated(total_realised_gain.toFixed(2)) +`</span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(parseFloat(total_dividend_amount).toFixed(2)) +`</span></td>
                            <td><span style="color: white;">&#8377;<span id='currentVal_stocks_Overview'>`+ make_comma_seperated(currentVal.toFixed(2)) +`</span></span></td>
                            <td><span style="color: white;"><a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" style="color: white;">Pro</a></span></td>
                        </tr>`;
@@ -1029,9 +1089,10 @@
             $('#overview_mf_table_body').append(last_tr);
 
             add_doughnutCharts_Overview(total_profit_overall, total_loss_overall, total_profit_days, total_loss_days);
-            add_marketCap_Overview(categoryDistributionCur, categoryDistributionInv);
-            add_stock_weightage_Overview(schemeDistributionCur, schemeDistributionInv);
-            add_Overview_stock_transactionChart(transaction_obj, name_transaction_obj, 'mutual funds');
+            add_marketCap_Overview(categoryDistributionCur, categoryDistributionInv, 'mutual funds');
+            add_stock_weightage_Overview(schemeDistributionCur, schemeDistributionInv, 'mutual funds');
+            /* add_Overview_stock_transactionChart(transaction_obj, name_transaction_obj, 'mutual funds'); */
+            transaction_price_graph(transaction_obj, name_transaction_obj, 'mutual_funds');
 
             $('#num_gain_day').text(num_profit_days);
             $('#num_loss_day').text(num_loss_days);
@@ -1235,7 +1296,7 @@
                 cmp = (value.price_detail_intraday == null) ? value.price_detail_adjusted.close : value.price_detail_intraday.close;
                 if (Object.keys(fincode_date_seperation[value.stock_fincode]).length > 1){
                     overview_table_to_append += `&nbsp;(`+ Object.keys(fincode_date_seperation[value.stock_fincode]).length +`)`;
-                    days_held_line = `<span style='color:#4E73DF; margin-left: 0.75em; cursor: pointer;' onclick="multipleStocksInfo(`+ value.stock_fincode +`, `+ cmp +`, '`+ value.compname +`')">Age: Click</span>`;
+                    days_held_line = `<span style='color:#4E73DF; margin-left: 0.75em; cursor: pointer;' onclick="multipleStocksInfo(`+ value.stock_fincode +`, `+ cmp +`, '`+ value.compname +`', 'stocks')">Age: Click</span>`;
                 } else{
                     days_held_line = `<span style="color:#4E73DF; margin-left: 0.75em;">Age: `+ Math.round(((new Date())-((Object.keys(fincode_date_seperation[value.stock_fincode])[0])*1000))/(1000*60*60*24)) +` Days</span>`;
                 }
@@ -1275,7 +1336,7 @@
                                             <td style='color: `+ ((_todays_profit_ > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(_todays_profit_) +`<br><small>`+ make_comma_seperated(_todays_profit_per_) +`%</small></td>
                                             <td style='color: `+ ((_overall_profit_ > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(_overall_profit_) +`<br><small>`+ make_comma_seperated(_overall_profit_per_) +`%</small></td>
                                             <td style='color: `+ ((_realized_gain_ > 0) ? '#39CA91' : 'red') +`;'>&#8377;`+ make_comma_seperated(_realized_gain_.toFixed(2)) +`</td>
-                                            <td>&#8377;`+ make_comma_seperated(_dividend_amount_) +`<br><small style='cursor: pointer; color: red' onclick='addDividend("`+ value.compname +`",`+ value.stock_fincode +` )'>Add</small></td>
+                                            <td>&#8377;`+ make_comma_seperated(_dividend_amount_) +`<br><small style='cursor: pointer; color: red' onclick='addDividend("`+ value.compname +`",`+ value.stock_fincode +`, "stocks")'>Add</small></td>
                                             <td>&#8377;`+ make_comma_seperated(current_val_of_stock.toFixed(2)) +`<br><small><span id='`+ num_of_trs +`_weightage_stocks'>`+ (100 * current_val_of_stock).toFixed(2) +`</span>%</small></td>
                                             <td><a href="<?php echo Wo_SeoLink('index.php?link1=go-pro');?>" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Upgrade to view XIRR">Pro</a></td>`
 
@@ -1358,10 +1419,9 @@
             /*     fincode_sector_weightage_profit_per[ind_name] = parseInt(((fincode_sector_weightage_profit[ind_name]) / fincode_sector_weightage_invested[ind_name]) * 10000) / 100; */
             /* } */
 
-            add_marketCap_Overview(fincode_mcap_weightage_invested, fincode_mcap_weightage_current);
+            add_marketCap_Overview(fincode_mcap_weightage_invested, fincode_mcap_weightage_current, 'stocks');
             add_doughnutCharts_Overview(total_profit_overall, total_loss_overall, total_profit_days, total_loss_days);
-            transaction_price_graph(date_seperation, date_compname_type);
-            realized_gain_dividend_show();
+            transaction_price_graph(date_seperation, date_compname_type, 'stocks');
 
             $('#num_gain_day').text(num_profit_days);
             $('#num_loss_day').text(num_loss_days);
@@ -1411,7 +1471,7 @@
 
             $('#overview_stocks_table_body').append(last_tr);
             add_sector_weightage_Overview(fincode_sector_weightage_current, fincode_sector_weightage_invested);
-            add_stock_weightage_Overview(fincode_stock_weightage_current, fincode_stock_weightage_invested);
+            add_stock_weightage_Overview(fincode_stock_weightage_current, fincode_stock_weightage_invested, 'stocks');
         }
 
         return currentVal.toFixed(2);
@@ -1536,7 +1596,7 @@
        }
     }
 
-    function transaction_price_graph(date_seperation, date_compname_type){
+    function transaction_price_graph(date_seperation, date_compname_type, type_){
         var tmp_proper_date = '';
         var tmp_date = 0;
         var tmp_price = 0;
@@ -1547,28 +1607,37 @@
             dataType: 'json',
             data: {
                 f:'other_stock_transactions',
+                type: type_,
                 portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>,
             },
             success: function(data) {
                 if (data['status'] == 200){
+                    console.log('data');
                     console.log(data);
 
                     for (compname in data.other_stock_transactions){
                         console.log(compname);
                         console.log(data.other_stock_transactions[compname]);
                         data.other_stock_transactions[compname].forEach( function (val){
-                            tmp_date = new Date(parseInt(val.stock_transaction_date) * 1000);
+                            if (type_ == ''){
+                                _qty_ = parseInt(val.stock_transaction_qty);
+                                tmp_price = (parseFloat(val.stock_transaction_price) * _qty_) + parseFloat(val.Charges);
+                                tmp_date = new Date(parseInt(val.stock_transaction_date) * 1000);
+                            } else{
+                                tmp_price = parseFloat(val.mf_transaction_price);
+                                _qty_ = parseFloat(val.mf_transaction_qty);
+                                tmp_date = new Date(parseInt(val.mf_transaction_date) * 1000);
+                            }
                             /* tmp_proper_date =  (tmp_date.getMonth() + 1) +"-"+ tmp_date.getDate() +"-"+ tmp_date.getFullYear() */
                             tmp_proper_date =  tmp_date.getFullYear() + "-" + (tmp_date.getMonth() + 1) +"-"+ tmp_date.getDate();
-                            tmp_price = (parseFloat(val.stock_transaction_price) * parseInt(val.stock_transaction_qty)) + parseFloat(val.Charges);
                             if (tmp_proper_date in date_seperation) date_seperation[tmp_proper_date] += tmp_price;
                             else date_seperation[tmp_proper_date] = tmp_price;
                             if (tmp_proper_date in date_compname_type){
-                                if (compname in date_compname_type[tmp_proper_date]) date_compname_type[tmp_proper_date][compname].push([val.SOLD, tmp_price, parseInt(val.stock_transaction_qty)]);
-                                else date_compname_type[tmp_proper_date][compname] = [[val.SOLD, tmp_price, parseInt(val.stock_transaction_qty)]];
+                                if (compname in date_compname_type[tmp_proper_date]) date_compname_type[tmp_proper_date][compname].push([val.SOLD, tmp_price, _qty_]);
+                                else date_compname_type[tmp_proper_date][compname] = [[val.SOLD, tmp_price, _qty_]];
                             } else{
                                 date_compname_type[tmp_proper_date] = Object();
-                                date_compname_type[tmp_proper_date][compname] = [[val.SOLD, tmp_price, parseInt(val.stock_transaction_qty)]];
+                                date_compname_type[tmp_proper_date][compname] = [[val.SOLD, tmp_price, _qty_]];
                             }
                         })
                     }
@@ -1594,22 +1663,23 @@
             }
         });
     }
-    async function realized_gain_dividend_show(){
+    async function realized_gain_dividend_show(content){
         $.ajax({
             url: Wo_Ajax_Requests_File(),
             type: 'GET',
             dataType: 'json',
             data: {
                 f:'get_realized_dividend',
+                type_: content,
                 portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>,
             },
             success: function(data) {
                 if (data['status'] == 200){
                     console.log(data);
-                    $('#total_realised_gain').text((parseFloat(data.realized_gains)) ? parseFloat(data.realized_gains).toFixed(2) : 0);
+                    $('#total_'+ content +'_realised_gain').text((parseFloat(data.realized_gains)) ? parseFloat(data.realized_gains).toFixed(2) : 0);
                     if (parseFloat(data.realized_gains) > 0) $('#total_realised_gain_div').addClass('SA_text-success');
                     else if (parseFloat(data.realized_gains) < 0) $('#total_realised_gain_div').addClass('SA_text-danger');
-                    $('#total_dividend_amount').text((parseFloat(data.dividend_amount)) ? parseFloat(data.dividend_amount).toFixed(2) : 0);
+                    $('#total_'+ content +'_dividend_amount').text((parseFloat(data.dividend_amount)) ? parseFloat(data.dividend_amount).toFixed(2) : 0);
                 }
                 else if (data['status'] == 401){
                     console.log(data);
@@ -1633,3 +1703,5 @@
     }
 </script>
 <?php echo Wo_LoadPage('addStocksPortfolio/add_stock_popup'); ?>
+<?php echo Wo_LoadPage('addMFPortfolio/buyMF'); ?>
+<?php echo Wo_LoadPage('addMFPortfolio/sellMF'); ?>

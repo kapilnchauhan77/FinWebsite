@@ -59,7 +59,7 @@ if ($f == 'portfolio_data') {
         else{
 
             if ($auto_add == '2') $portfolio_data_added = SellStocksFromPortfolio($stock_array, $portfolio_id, $stocks_available);
-            else if ($auto_add == '3') $portfolio_data_added = AddDividendToPortfolio($stock_array, $portfolio_id);
+            else if ($auto_add == '3') $portfolio_data_added = AddDividendStocksToPortfolio($stock_array, $portfolio_id);
             else $portfolio_data_added = AddStocksToPortfolio($stock_array, $portfolio_id, $no_of_stocks, $auto_add);
 
             if ($portfolio_data_added === true){

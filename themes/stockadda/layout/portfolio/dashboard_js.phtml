@@ -35,6 +35,9 @@
         var tab = "<?php echo (empty($_GET['tab'])) ? 'dashboard' : $_GET['tab']; ?>";
         var content = "<?php echo (empty($_GET['content'])) ? 'stocks' : $_GET['content']; ?>"
         var currentVal_cash = <?php echo round($wo['portfolio_data']['current_value_cash'], 2); ?>;
+        console.log('content');
+        console.log(content);
+        realized_gain_dividend_show(content);
 
 
         data_of_all_stocks = data_of_all_assets.extraStockDataFullPortfolio;
@@ -75,7 +78,6 @@
     }
     function Get_Portfolio_data() {
 
-        realized_gain_dividend_show();
         var get_data_from_server = false;
         var data_of_all_assets = new Array();
         /* var adjustedValTotal, intradayValTotal; */
@@ -105,6 +107,7 @@
                 /* get_data_from_server = true */
                 console.log('Data localStorage:')
                 console.log(data_of_all_assets)
+                /* for (key in data_of_all_assets) console.table(data_of_all_assets[key]); */
             }
         }
 
@@ -120,8 +123,9 @@
                 },
                     })
                     .done(function(data_of_all_assets) {
-                        console.log('Data from server:')
-                        console.log(data_of_all_assets)
+                        console.log('Data from server:');
+                        console.log(data_of_all_assets);
+                        /* for (key in data_of_all_assets) console.table(data_of_all_assets[key]); */
                         process_data(data_of_all_assets);
 
                         if (typeof(Storage) != "undefined") {

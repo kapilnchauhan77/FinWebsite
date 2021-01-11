@@ -1,20 +1,27 @@
 <script>
 
-    function stockWeightageInvested(ctx, fincode_stock_weightage){
+    function stockWeightageInvested(ctx, fincode_stock_weightage, type_){
 
         var options = {
               series: Object.values(fincode_stock_weightage),
               chart: {
               width: '85%',
-              type: 'donut',
+              type: (type_ == 'stocks') ? 'donut' : 'pie',
             },
             labels: Object.keys(fincode_stock_weightage),
-            tooltip: {enabled: false},
+            tooltip: {
+                enabled: (type_ == 'mutual funds'),
+                y: {
+                  formatter: function(val) {
+                    return (format_rupees(val));
+                  }
+                },
+            },
             plotOptions: {
               pie: {
                 donut: {
                     labels: {
-                        show: true,
+                        show: (type_ == 'stocks'),
                         value: {
                             formatter: function(val){return ('₹' + val.toFixed(2));}
                         }
@@ -43,21 +50,28 @@
 
     };
 
-    function stockWeightageCurrent(ctx, fincode_stock_weightage){
+    function stockWeightageCurrent(ctx, fincode_stock_weightage, type_){
 
         var options = {
               series: Object.values(fincode_stock_weightage),
               chart: {
               width: '85%',
-              type: 'donut',
+              type: (type_ == 'stocks') ? 'donut' : 'pie',
             },
             labels: Object.keys(fincode_stock_weightage),
-            tooltip: {enabled: false},
+            tooltip: {
+                enabled: (type_ == 'mutual funds'),
+                y: {
+                  formatter: function(val) {
+                    return (format_rupees(val));
+                  }
+                },
+            },
             plotOptions: {
               pie: {
                 donut: {
                     labels: {
-                        show: true,
+                        show: (type_ == 'stocks'),
                         value: {
                             formatter: function(val){return ('₹' + val.toFixed(2));}
                         }
