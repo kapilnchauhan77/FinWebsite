@@ -486,7 +486,6 @@
 
                 overview_table_to_append += `</tr>`;
                 $('#overview_mf_table_body').append(overview_table_to_append);
-                /* $("#fd_overview_table").dataTable(); */
             }
         });
 
@@ -539,7 +538,6 @@
         }
 
         return ((unrealized_currentVal) + realized_invested_val).toFixed(2);
-
     }
 
     function calculateTotalValsBullion_display(data_of_all_bullion, dates_obj, type_dates_obj){
@@ -708,7 +706,7 @@
         } else if (tab == 'overview' && content == 'other_assets'){
             last_tr = `<tr style="background-color:grey">
                            <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
-                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(<?php echo round($wo['portfolio_data']['invested_value_properties'], 2); ?>) +`</span></td>
+                           <td><span style="color: white;">&#8377;`+ make_comma_seperated(<?php echo round($wo['portfolio_data']['invested_value_other_assets'], 2); ?>) +`</span></td>
                            <td><span style="color: white;">&#8377;`+ make_comma_seperated(currentVal) +`</span></td>
                            <td><span style="color: white;">&#8377;`+ make_comma_seperated(overall_p_p_l) +`<br><small>`+ make_comma_seperated(overall_p_p_l_per.toFixed(2)) +`%</small></span></td>
                        </tr>`;
@@ -717,11 +715,11 @@
             if (highest_profit > 0){
                 $('#top_profit_overall').text(highest_profit_name);
                 $('#top_profit_overall_amount').text(highest_profit.toFixed(2));
-                $('#top_profit_overall_per').text(highest_profit_per.toFixed(2));
+                $('#top_profit_overall_per').text(parseFloat(highest_profit_per).toFixed(2));
             } else if (highest_loss < 0){
                 $('#top_loss_overall').text(highest_loss_name);
                 $('#top_loss_overall_amount').text(highest_loss.toFixed(2));
-                $('#top_loss_overall_per').text(highest_loss_per.toFixed(2));
+                $('#top_loss_overall_per').text(parseFloat(highest_loss_per).toFixed(2));
             }
         }
 
@@ -747,8 +745,6 @@
 
             currentVal += parseFloat(value.current_price);
 
-            console.log('Date from properties:');
-            console.log(parseInt(value.transaction_date));
             if (tab == 'dashboard'){
                 if (parseInt(value.transaction_date) in dates_obj) dates_obj[parseInt(value.transaction_date)] += parseFloat(value.transaction_price);
                 else dates_obj[parseInt(value.transaction_date)] = parseFloat(value.transaction_price);
@@ -784,10 +780,15 @@
                     highest_loss_name = value['Property Name'];
                 }
 
-                overview_table_to_append = `<tr><th scope="row"><span style="margin: 0.75em;">` + value['Property Name']; overview_table_to_append += `</span><br> <span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['id'] +`")'>Sell</span></span> <span style="color:red; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='buyProperty("`+ value['id'] +`")'>Delete</span></span> <span style="color:blue; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['id'] +`")'>Update Value</span></span>`; overview_table_to_append += `</th>`;
+                overview_table_to_append = `<tr><th scope="row"><span style="margin: 0.75em;">` + value['Property Name'];
+                overview_table_to_append += `</span><br>
+                                             <span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['Property Name'] +`", `+ value['id'] +`)'>Sell</span></span>
+                                             <span style="color:red; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='deleteProperty("`+ value['Property Name'] +`", `+ value['id'] +`)'>Delete</span></span>
+                                             <span style="color:blue; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='updateProperty("`+ value['Property Name'] +`", `+ value['id'] +`, `+ value.transaction_price +`, `+ value.current_price +`)'>Update Value</span></span>`;
+                overview_table_to_append += `</th>`;
 
-                overview_table_to_append +=`<td>&#8377;`+ make_comma_seperated(value.transaction_price) +`<br><small>`+ purchase_date +`</small></td>
-                                            <td>&#8377;`+ make_comma_seperated(value.current_price) +`<br><small>`+ update_date +`</small></td>
+                overview_table_to_append +=`<td>&#8377;<span id="`+ value['id'] +`_pur_price">`+ make_comma_seperated(value.transaction_price) +`</span><br><small>`+ purchase_date +`</small></td>
+                                            <td>&#8377;<span id="`+ value['id'] +`_cur_price">`+ make_comma_seperated(value.current_price) +`</span><br><small>`+ update_date +`</small></td>
                                             <td>Start Rental Income<br><small>Stop Rental Income</small></td>
                                             <td>&#8377;`+ make_comma_seperated(_unrealized_gain) +`<br><small>`+ make_comma_seperated(_unrealized_gain_per) +`%</small></td>`;
                 overview_table_to_append += `</tr>`;
@@ -832,11 +833,11 @@
             if (highest_profit > 0){
                 $('#top_profit_overall').text(highest_profit_name);
                 $('#top_profit_overall_amount').text(highest_profit.toFixed(2));
-                $('#top_profit_overall_per').text(highest_profit_per.toFixed(2));
+                $('#top_profit_overall_per').text(parseFloat(highest_profit_per).toFixed(2));
             } else if (highest_loss < 0){
                 $('#top_loss_overall').text(highest_loss_name);
                 $('#top_loss_overall_amount').text(highest_loss.toFixed(2));
-                $('#top_loss_overall_per').text(highest_loss_per.toFixed(2));
+                $('#top_loss_overall_per').text(parseFloat(highest_loss_per).toFixed(2));
             }
 
         }
@@ -1705,3 +1706,4 @@
 <?php echo Wo_LoadPage('addStocksPortfolio/add_stock_popup'); ?>
 <?php echo Wo_LoadPage('addMFPortfolio/buyMF'); ?>
 <?php echo Wo_LoadPage('addMFPortfolio/sellMF'); ?>
+<?php echo Wo_LoadPage('addPropertyPortfolio/sellProperty'); ?>

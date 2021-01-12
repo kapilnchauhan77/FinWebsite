@@ -8186,6 +8186,7 @@ function SA_getPortfolioDividend($portfolio_id, $type_){
 
     if ($type_ == 'stocks') $query_one   = "SELECT SUM(`stock_transaction_price`) AS `total_dividend` FROM " . T_PORTFOLIO_STOCKS . " WHERE `portfolio_id` = {$portfolio_id} AND `SOLD` = 3;";
     if ($type_ == 'mutual_funds') $query_one   = "SELECT SUM(`mf_transaction_price`) AS `total_dividend` FROM " . T_PORTFOLIO_MF . " WHERE `portfolio_id` = {$portfolio_id} AND `SOLD` = 3;";
+    else return 0;
     $query       = mysqli_query($sqlConnect, $query_one);
 
     if (!$query) {
@@ -8670,6 +8671,55 @@ function AddOBToPortfolio($ob_data, $portfolio_id){
 
 /*     return true; */
 /* } */
+function UpdatePropertyFromPortfolio($property_datum, $portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
+
+
+    $uid = Wo_Secure($property_datum['uid']);
+    $purchase_price = Wo_Secure($property_datum['purchase_price']);
+    $property_type = Wo_Secure($property_datum['property_type']);
+    $property_transaction_date = Wo_Secure($property_datum['property_transaction_date']);
+    $property_transaction_price = Wo_Secure($property_datum['property_transaction_price']);
+    $property_current_price = Wo_Secure($property_datum['property_current_price']);
+    $property_note = Wo_Secure($property_datum['note']);
+    $purchase_price_change = $property_transaction_price - $purchase_price;
+    $timestamp_created = strtotime("now");
+
+    if ($purchase_price_change > 0){
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Credit',
+            'cash_transaction_date' => $property_transaction_date,
+            'cash_transaction_price' => $purchase_price_change,
+            'note' => ''
+        )), $portfolio_id, "Price Adjustment For Updating Property", true, false);
+    } else{
+        AddCashToPortfolio(array(array(
+            'cash_type' => 'Debit',
+            'cash_transaction_date' => $property_transaction_date,
+            'cash_transaction_price' => $purchase_price_change,
+            'note' => ''
+        )), $portfolio_id, "Price Adjustment For Updating Property", false, true);
+    };
+
+    $query_one   = "UPDATE " . T_PORTFOLIO_PROPERTY . " SET `Property Name` = '{$property_type}', `transaction_date` = {$property_transaction_date}, `transaction_price` = {$property_transaction_price}, `current_price` = {$property_current_price}, `Notes` = '{$property_note}', `timestamp_created` = {$timestamp_created} WHERE `id` = {$uid};";
+    $query       = mysqli_query($sqlConnect, $query_one);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_properties` = `invested_value_properties` + {$purchase_price_change} WHERE `portfolio_id` = {$portfolio_id}";
+    $query     = mysqli_query($sqlConnect, $query_one);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    return true;
+}
 function AddPropertyToPortfolio($property_data, $portfolio_id, $auto_add){
     global $sqlConnect;
 
@@ -8952,6 +9002,83 @@ function AddDividendMFToPortfolio($stock_quote_datum, $portfolio_id){
 
     return true;
 }
+function deletePropertyFromPortfolio($portfolio_id, $uid, $purchase_price){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
+
+    $uid = Wo_Secure($uid);
+    $purchase_price = Wo_Secure($purchase_price);
+
+    $query_text   = "SELECT `id` FROM " . T_PORTFOLIO_PROPERTY . " WHERE `id` = {$uid} AND `SOLD` = 0;";
+    $query_one    = mysqli_query($sqlConnect, $query_text);
+
+    $num_rows = mysqli_num_rows($query_one);
+    if ($num_rows <= 0){
+        return 'Please do not change system files!';
+    } else{
+        $query_text   = "DELETE FROM " . T_PORTFOLIO_PROPERTY . " WHERE `id` = {$uid};";
+        $query_one    = mysqli_query($sqlConnect, $query_text);
+    }
+
+    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_properties` = `invested_value_properties` - {$purchase_price} WHERE `portfolio_id` = {$portfolio_id};";
+    $query     = mysqli_query($sqlConnect, $query_one);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    return true;
+}
+function SellPropertyFromPortfolio($property_datum, $portfolio_id){
+    global $sqlConnect;
+
+    $portfolio_id = Wo_Secure($portfolio_id);
+    if (!user_portfolio_auth($portfolio_id)) return "The portfolio you are trying to change does not belong to you!";
+
+    $uid = Wo_Secure($property_datum['uid']);
+    $property_name = Wo_Secure($property_datum['property_name']);
+    $property_transaction_date = Wo_Secure($property_datum['property_transaction_date']);
+    $property_transaction_price = Wo_Secure($property_datum['property_transaction_price']);
+    $property_purchase_price = Wo_Secure($property_datum['purchase_price']);
+    $property_note = Wo_Secure($property_datum['note']);
+    $timestamp_created = strtotime("now");
+    $realized_gain = Wo_Secure($property_datum['realized_gain']);
+
+    AddCashToPortfolio(array(array(
+        'cash_type' => 'Credit',
+        'cash_transaction_date' => $property_transaction_date,
+        'cash_transaction_price' => $property_transaction_price,
+        'note' => ''
+    )), $portfolio_id, "Credited For Selling Property", false, true);
+
+    $query_text   = "SELECT `id` FROM " . T_PORTFOLIO_PROPERTY . " WHERE `id` = {$uid} AND `SOLD` = 0;";
+    $query_one    = mysqli_query($sqlConnect, $query_text);
+
+    $num_rows = mysqli_num_rows($query_one);
+    if ($num_rows <= 0){
+        return 'Please do not change system files!';
+    } else{
+        $query_text   = "UPDATE " . T_PORTFOLIO_PROPERTY . " SET `SOLD` = 1 WHERE `id` = {$uid};";
+        $query_one    = mysqli_query($sqlConnect, $query_text);
+    }
+
+    $query_one   = "INSERT INTO " . T_PORTFOLIO_PROPERTY . " (`portfolio_id`, `Property Name`, `transaction_date`, `transaction_price`, `current_price`, `Notes`, `timestamp_created`, `SOLD`) VALUES ({$portfolio_id}, '{$property_name}', {$property_transaction_date}, {$property_transaction_price}, 0, '{$property_note}', {$timestamp_created}, 2)";
+    $query       = mysqli_query($sqlConnect, $query_one);
+
+    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_properties` = `invested_value_properties` - {$property_purchase_price} WHERE `portfolio_id` = {$portfolio_id};";
+    $query     = mysqli_query($sqlConnect, $query_one);
+
+    $query_text   = "INSERT INTO " . T_REALIZED . " (`portfolio_id`, `type`, `realized_gain`, `element_uid`) VALUES ({$portfolio_id}, 'property', {$realized_gain}, {$uid});";
+    $query_one    = mysqli_query($sqlConnect, $query_text);
+
+    if (!$query) {
+        return mysqli_error($sqlConnect);
+    };
+
+    return true;
+}
 function SellMFFromPortfolio($mf_quote_datum, $portfolio_id, $mf_available){
     global $sqlConnect;
 
@@ -8970,14 +9097,12 @@ function SellMFFromPortfolio($mf_quote_datum, $portfolio_id, $mf_available){
     $timestamps_sold = $mf_quote_datum['timestamp_sold'];
     $timestamp_created = strtotime("now");
 
-    if ($realized_gain > 0){
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Credit',
-            'cash_transaction_date' => $mf_transaction_date,
-            'cash_transaction_price' => $realized_gain,
-            'note' => ''
-        )), $portfolio_id, "Realized Gain After selling Stocks", false, true);
-    };
+    AddCashToPortfolio(array(array(
+        'cash_type' => 'Credit',
+        'cash_transaction_date' => $mf_transaction_date,
+        'cash_transaction_price' => $mf_transaction_price,
+        'note' => ''
+    )), $portfolio_id, "Credited for Selling Mutual Funds", false, true);
 
     foreach ($timestamps_sold as $timestamp_sold => $qty){
         $query_text   = "SELECT * FROM " . T_PORTFOLIO_MF . " WHERE `Scheme Code` = {$scheme_code} AND `portfolio_id` = {$portfolio_id} AND `mf_transaction_date` = {$timestamp_sold} AND `SOLD` = 0;";
@@ -9044,7 +9169,7 @@ function SellMFFromPortfolio($mf_quote_datum, $portfolio_id, $mf_available){
         $query_text   = "INSERT INTO " . T_REALIZED . " (`portfolio_id`, `type`, `realized_gain`, `element_uid`) VALUES ({$portfolio_id}, 'mutual_funds', {$realized_gain}, {$scheme_code});";
         $query_one    = mysqli_query($sqlConnect, $query_text);
     } else {
-        $query_text   = "UPDATE " . T_REALIZED . " SET `realized_gain` = `realized_gain` + {$realized_gain} WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'mutual_funds';";
+        $query_text   = "UPDATE " . T_REALIZED . " SET `realized_gain` = `realized_gain` + {$realized_gain} WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'mutual_funds' AND `element_uid` = {$scheme_code};";
         $query_one    = mysqli_query($sqlConnect, $query_text);
     };
 
@@ -9068,14 +9193,12 @@ function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_avai
     $timestamps_sold = $stock_quote_datum['timestamp_sold'];
     $realized_gain = Wo_Secure($stock_quote_datum['realized_gain']);
 
-    if ($realized_gain > 0){
-        AddCashToPortfolio(array(array(
-            'cash_type' => 'Credit',
-            'cash_transaction_date' => $stock_transaction_date,
-            'cash_transaction_price' => $realized_gain,
-            'note' => ''
-        )), $portfolio_id, "Realized Gain After selling Stocks", false, true);
-    };
+    AddCashToPortfolio(array(array(
+        'cash_type' => 'Credit',
+        'cash_transaction_date' => $stock_transaction_date,
+        'cash_transaction_price' => $stock_transaction_price,
+        'note' => ''
+    )), $portfolio_id, "Credited For Selling Stocks", false, true);
 
     foreach ($timestamps_sold as $timestamp_sold => $qty){
         $query_text   = "SELECT * FROM " . T_PORTFOLIO_STOCKS . " WHERE `stock_fincode` = {$stock_fincode} AND `portfolio_id` = {$portfolio_id} AND `stock_transaction_date` = {$timestamp_sold} AND `SOLD` = 0;";
@@ -9152,7 +9275,7 @@ function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_avai
         $query_text   = "INSERT INTO " . T_REALIZED . " (`portfolio_id`, `type`, `realized_gain`, `element_uid`) VALUES ({$portfolio_id}, 'stocks', {$realized_gain}, {$stock_fincode});";
         $query_one    = mysqli_query($sqlConnect, $query_text);
     } else {
-        $query_text   = "UPDATE " . T_REALIZED . " SET `realized_gain` = `realized_gain` + {$realized_gain} WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'stocks';";
+        $query_text   = "UPDATE " . T_REALIZED . " SET `realized_gain` = `realized_gain` + {$realized_gain} WHERE `portfolio_id` = {$portfolio_id} AND `type` = 'stocks' AND `element_uid` = {$stock_fincode};";
         $query_one    = mysqli_query($sqlConnect, $query_text);
     };
 
@@ -9374,7 +9497,7 @@ function Wo_ExtraPropertyDetailForAllPropertyInPortfolio($portfolio_id){
     $portfolio_id = Wo_Secure($portfolio_id);
 
     $query_text = "SELECT `id`, `Property Name`, `transaction_date`, `transaction_price`, `current_price`, `timestamp_created` FROM " . T_PORTFOLIO_PROPERTY . "
-        WHERE `portfolio_id` = {$portfolio_id}";
+        WHERE `portfolio_id` = {$portfolio_id} AND `SOLD` = 0;";
     $sql          = mysqli_query($sqlConnect, $query_text);
     while ($fetched_data = mysqli_fetch_assoc($sql)) {
         $data[]   = $fetched_data;

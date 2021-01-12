@@ -6,30 +6,36 @@ if ($f == 'add_property') {
     $error = '';
     if (!empty($property_array) && !empty($portfolio_id)) {
 
-        foreach ($property_array as $property_data) {
-            if ($property_data['property_transaction_date'] === "NaN"){
-                /* $errors[] = "Please Enter Date!"; */
-                $error = "Please Enter All Purchase Dates!";
-                break;
-            }
-            if ($property_data['property_transaction_date'] > time()){
-                /* $errors[] = "Please Enter Date!"; */
-                $error = "Future Dates Not Allowed!";
-                break;
-            }
-            if ($property_data['property_transaction_price'] == 0){
-                /* $errors[] = "Please Enter Price!"; */
-                $error = "Please Enter All Invested values";
-                break;
-            }
-            if ($property_data['property_current_price'] < 0){
-                /* $errors[] = "Please Enter Price!"; */
-                $error = "Please Enter Correct Current Value Of All Your Properties!";
-                break;
+        if ($auto_add == '2'){
+            if (($property_array['property_transaction_price'] < 0) || (!$property_array['property_transaction_date'])){
+                /* $errors[] = "Please Enter Quantity!"; */
+                $error = "Please Do Not Change System files!";
             }
         }
-
-        if ($auto_add != '0' && $auto_add != '1') $error = 'Please do not change system files!';
+        else if ($auto_add == '0' || $auto_add == '1'){
+            foreach ($property_array as $property_data) {
+                if ($property_data['property_transaction_date'] === "NaN"){
+                    /* $errors[] = "Please Enter Date!"; */
+                    $error = "Please Enter All Purchase Dates!";
+                    break;
+                }
+                if ($property_data['property_transaction_date'] > time()){
+                    /* $errors[] = "Please Enter Date!"; */
+                    $error = "Future Dates Not Allowed!";
+                    break;
+                }
+                if ($property_data['property_transaction_price'] == 0){
+                    /* $errors[] = "Please Enter Price!"; */
+                    $error = "Please Enter All Invested values";
+                    break;
+                }
+                if ($property_data['property_current_price'] < 0){
+                    /* $errors[] = "Please Enter Price!"; */
+                    $error = "Please Enter Correct Current Value Of All Your Properties!";
+                    break;
+                }
+            }
+        }
 
         if ($error !== ''){
 
@@ -43,7 +49,11 @@ if ($f == 'add_property') {
                 exit();
         }
         else{
-            $portfolio_data_added = AddPropertyToPortfolio($property_array, $portfolio_id, $auto_add);
+
+            if ($auto_add == '2') $portfolio_data_added = SellPropertyFromPortfolio($property_array, $portfolio_id);
+            else if ($auto_add == '3') $portfolio_data_added = UpdatePropertyFromPortfolio($property_array, $portfolio_id);
+            else $portfolio_data_added = AddPropertyToPortfolio($property_array, $portfolio_id, $auto_add);
+
             if ($portfolio_data_added === true){
 
                 $data = array(
