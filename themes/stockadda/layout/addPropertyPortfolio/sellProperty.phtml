@@ -164,11 +164,11 @@
         /* if (formValues) Swal.fire({icon: 'error', title: JSON.stringify(formValues)}); */
     }
 
-    async function updateProperty(name_, uid, purchase_price, current_price){
+    async function editProperty(name_, uid, purchase_price, current_price){
         console.log(purchase_price, current_price)
 
         const { value: formValues } = await Swal.fire({
-            title: 'Update Values Of ' + name_,
+            title: 'Edit Values Of ' + name_,
             showCancelButton: true,
             cancelButtonColor: 'red',
             showCloseButton: true,
@@ -206,6 +206,115 @@
                               <br>
                               <span>
                                   <textarea name="notes" id="notes" rows="1"></textarea>
+                              </span>
+                          </td>
+                        </tr>
+                   </tbody>
+               </table>`,
+
+            focusConfirm: false,
+            preConfirm: () => {
+                stock_transaction_date = parseInt(new Date($("#"+uid+" #property_transaction_date").val()).getTime()/1000);
+                stock_transaction_price = parseFloat($("#"+uid+" #property_transaction_price").val());
+                if (!stock_transaction_date) return "Please Enter Selling Date!";
+                if (stock_transaction_date > parseInt(new Date().getTime())/1000) return "You Cannot Sell On a Future Date!";
+                if (stock_transaction_price < 0) return "Cannot Sell For Less Than 0!";
+                property_type = $('#'+ uid+' #property_type').val();
+                property_current_price = parseFloat($("#"+uid+" #property_current_price").val());
+                note = $("#"+uid+"_charge #notes").val();
+
+                data_to_send = {
+                    uid: uid,
+                    property_type: property_type,
+                    property_transaction_date: stock_transaction_date,
+                    property_transaction_price: stock_transaction_price,
+                    property_current_price: property_current_price,
+                    note: note,
+                    purchase_price: purchase_price
+                };
+                console.log(data_to_send)
+
+                $.ajax({
+                    url: Wo_Ajax_Requests_File(),
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        f:'add_property',
+                        property_array: data_to_send,
+                        portfolio_id: <?php echo $wo['portfolio_data']['portfolio_id']; ?>,
+                        auto_add: '3',
+                    },
+                    success: function(data) {
+                        if (data['status'] == 200){
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Property Updated Successfully!',
+                                showConfirmButton: false,
+                                timer: 1250,
+                                timerProgressBar: true,
+                            }).then((result) => {
+                                localStorage.removeItem(<?php echo $wo['portfolio_data']['portfolio_id']; ?> + "_portfolio_assets");
+                                location.href = '<?php echo $wo['portfolio_data']['portfolio_url']; ?>&tab=overview&content=property';
+                            })
+                        }
+                        else if (data['status'] == 401){
+                            console.log(data);
+                            Swal.fire({
+                                icon: 'error',
+                                title: data['error'],
+                            })
+                        }
+                        else{
+                            console.log(data);
+                            Swal.fire({
+                                icon: 'error',
+                                title: data['error'],
+                            })
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                    }
+                });
+                return false;
+            }
+        })
+
+        if (formValues) Swal.fire({icon: 'error', title: formValues});
+        /* if (formValues) Swal.fire({icon: 'error', title: JSON.stringify(formValues)}); */
+    }
+
+    async function updateProperty(name_, uid, purchase_price, current_price){
+        transaction_date = $('#'+ uid +'_pur_date').text().split('-');
+        _transaction_date = transaction_date[2] + '-' + ((transaction_date[1].length > 1) ? transaction_date[1] : ('0' + transaction_date[1])) + '-' + ((transaction_date[0].length > 1) ? transaction_date[0] : ('0' + transaction_date[0]));
+
+        const { value: formValues } = await Swal.fire({
+            title: 'Update Value Of ' + name_,
+            showCancelButton: true,
+            cancelButtonColor: 'red',
+            /* showCloseButton: true, */
+            width: 'auto',
+            html:
+               `<table class="table table-hover table-striped">
+
+                   <thead>
+                       <tr>
+                           <th style="text-align: center;">Current Value</th>
+                       </tr>
+                   </thead>
+
+                   <tbody id="table_stock_quote_search_body">
+                        <tr id=`+ uid +` style="height:39px">
+                          <td class="hidden"><input id="property_type" type="text" style="height:39px" value="`+ name_ +`" readonly /></td>
+                          <td class="hidden"><input id="property_transaction_date" type="date" value="`+ _transaction_date +`" name="transaction_date" readonly /></td>
+                          <td class="hidden">
+                              <span class="stock_quote_transac_price_div">
+                                  <input id="property_transaction_price" type="number" min="0" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" value="`+ purchase_price +`" readonly/>
+                              </span>
+                          </td>
+                          <td>
+                              <span class="stock_quote_transac_price_div">
+                                  <input id="property_current_price" type="number" min="0" step="any" class="stock_quote_transac_price" name="current_price" style="height:39px;" value="`+ current_price +`"/>
                               </span>
                           </td>
                         </tr>

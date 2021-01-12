@@ -470,15 +470,13 @@
 
                 overview_table_to_append = `<tr><th scope="row"><span style="margin: 0.75em;">` + value.fd_type;
                 overview_table_to_append += `</span><br>
-                                             <span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['id'] +`")'>Sell</span></span>
-                                             <span style="color:red; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='buyProperty("`+ value['id'] +`")'>Delete</span></span>
-                                             <span style="color:blue; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['id'] +`")'>Update Value</span></span>`;
+                                             <span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['id'] +`")'>Close</span></span>
+                                             <span style="color:red; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='buyProperty("`+ value['id'] +`")'>Delete</span></span>`;
                 overview_table_to_append += `</th>`;
 
                 overview_table_to_append +=`<th><span style="margin: 0.75em;">`+ value.fd_bank +`</span></th>
                                             <td>`+ make_comma_seperated(value.transaction_interest) +`%<br><small>`+ payout_frequency +`</small></td>
                                             <td>`+ period_line +` </td>
-                                            <td>-<br><small>-</small></td>
                                             <td>&#8377;`+ make_comma_seperated(value.transaction_price) +`<br><small>`+ purchase_date +`</small></td>
                                             <td>&#8377;`+ make_comma_seperated(_maturity_value_.toFixed(2)) +`<br><small>`+ update_date +`</small></td>
                                             <td>&#8377;`+ make_comma_seperated(unrealized_currentVal_individual.toFixed(2)) +`</td>
@@ -525,7 +523,6 @@
         } else if (tab == 'overview' && content == 'fixed_income'){
             last_tr = `<tr style="background-color:grey">
                            <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
-                           <td></td>
                            <td></td>
                            <td></td>
                            <td></td>
@@ -784,10 +781,11 @@
                 overview_table_to_append += `</span><br>
                                              <span style="color:green; margin-left: 0.75em;"><span style='cursor: pointer;' onclick='sellProperty("`+ value['Property Name'] +`", `+ value['id'] +`)'>Sell</span></span>
                                              <span style="color:red; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='deleteProperty("`+ value['Property Name'] +`", `+ value['id'] +`)'>Delete</span></span>
-                                             <span style="color:blue; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='updateProperty("`+ value['Property Name'] +`", `+ value['id'] +`, `+ value.transaction_price +`, `+ value.current_price +`)'>Update Value</span></span>`;
+                                             <span style="color:blue; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='editProperty("`+ value['Property Name'] +`", `+ value['id'] +`, `+ value.transaction_price +`, `+ value.current_price +`)'>Edit</span></span>
+                                             <span style="color:black; margin-left: 0.25em;"><span style='cursor: pointer;' onclick='updateProperty("`+ value['Property Name'] +`", `+ value['id'] +`, `+ value.transaction_price +`, `+ value.current_price +`)'>Update Value</span></span>`;
                 overview_table_to_append += `</th>`;
 
-                overview_table_to_append +=`<td>&#8377;<span id="`+ value['id'] +`_pur_price">`+ make_comma_seperated(value.transaction_price) +`</span><br><small>`+ purchase_date +`</small></td>
+                overview_table_to_append +=`<td>&#8377;<span id="`+ value['id'] +`_pur_price">`+ make_comma_seperated(value.transaction_price) +`</span><br><small id="`+ value['id'] +`_pur_date">`+ purchase_date +`</small></td>
                                             <td>&#8377;<span id="`+ value['id'] +`_cur_price">`+ make_comma_seperated(value.current_price) +`</span><br><small>`+ update_date +`</small></td>
                                             <td>Start Rental Income<br><small>Stop Rental Income</small></td>
                                             <td>&#8377;`+ make_comma_seperated(_unrealized_gain) +`<br><small>`+ make_comma_seperated(_unrealized_gain_per) +`%</small></td>`;
@@ -1682,10 +1680,18 @@
             success: function(data) {
                 if (data['status'] == 200){
                     console.log(data);
+                    console.log('content');
+                    console.log(content);
                     $('#total_'+ content +'_realised_gain').text((parseFloat(data.realized_gains)) ? parseFloat(data.realized_gains).toFixed(2) : 0);
-                    if (parseFloat(data.realized_gains) > 0) $('#total_realised_gain_div').addClass('SA_text-success');
-                    else if (parseFloat(data.realized_gains) < 0) $('#total_realised_gain_div').addClass('SA_text-danger');
-                    $('#total_'+ content +'_dividend_amount').text((parseFloat(data.dividend_amount)) ? parseFloat(data.dividend_amount).toFixed(2) : 0);
+                    if (content == 'all'){
+                        if (parseFloat(data.realized_gains) > 0) $('#total_all_realised_gain_div').addClass('SA_border-left-success');
+                        else if (parseFloat(data.realized_gains) < 0) $('#total_all_realised_gain_div').addClass('SA_border-left-danger');
+                    }
+                    else{
+                        if (parseFloat(data.realized_gains) > 0) $('#total_realised_gain_div').addClass('SA_text-success');
+                        else if (parseFloat(data.realized_gains) < 0) $('#total_realised_gain_div').addClass('SA_text-danger');
+                        $('#total_'+ content +'_dividend_amount').text((parseFloat(data.dividend_amount)) ? parseFloat(data.dividend_amount).toFixed(2) : 0);
+                    }
                 }
                 else if (data['status'] == 401){
                     console.log(data);

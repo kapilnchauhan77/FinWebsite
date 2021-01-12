@@ -38,6 +38,67 @@
                                     </div>
 
                                 </div>
+
+                                <div class="SA_row">
+
+                                    <div class="SA_col-md-4 SA_mb-4">
+                                        <div class="SA_card SA_border-left-secondary SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-gray SA_text-uppercase SA_mb-1">Cash On Hand</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="cash_on_hand"><?php echo round($wo['portfolio_data']['current_value_cash'], 2); ?></span></div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-money fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-4 SA_mb-4">
+                                        <div class="SA_card SA_border-left-success SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-success SA_text-uppercase SA_mb-1">Cash Invested</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="cash_invested"><?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?></span></div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-money fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="SA_col-md-4 SA_mb-4">
+                                        <div id="total_all_realised_gain_div" class="SA_card SA_shadow SA_h-100">
+                                            <div class="SA_card-body">
+                                                <div class="SA_row SA_no-gutters SA_align-items-center">
+
+                                                    <div class="SA_col SA_mr-2">
+                                                        <div class="SA_text-xs SA_font-weight-bold SA_text-uppercase SA_mb-1">Realised Gain</div>
+                                                        <div class="SA_h5 SA_mb-0 SA_font-weight-bold SA_text-gray-800">&#8377;<span id="total_all_realised_gain">0</span></div>
+                                                    </div>
+
+                                                    <div class="SA_col-auto">
+                                                        <i class="fa fa-money fa-2x SA_text-gray-300"></i>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
                              </div>
 
                             <!-- Pie Chart -->
@@ -57,7 +118,6 @@
 
                                                     <div class="SA_col-auto">
                                                         <i class="fa fa-money fa-2x SA_text-gray-300"></i>
-                                                        <i class="fa fa-arrow-up fa-2x SA_text-gray-300"></i>
                                                     </div>
 
                                                 </div>
@@ -77,7 +137,6 @@
 
                                                     <div class="SA_col-auto">
                                                         <i class="fa fa-money fa-2x SA_text-gray-300"></i>
-                                                        <i class="fa fa-arrow-up fa-2x SA_text-gray-300"></i>
                                                     </div>
 
                                                 </div>
@@ -97,7 +156,6 @@
 
                                                     <div class="SA_col-auto">
                                                         <i class="fa fa-money fa-2x SA_text-gray-300"></i>
-                                                        <i class="fa fa-arrow-down fa-2x SA_text-gray-300"></i>
                                                     </div>
 
                                                 </div>
@@ -121,7 +179,6 @@
 
                                                     <div class="SA_col-auto">
                                                         <i class="fa fa-money fa-2x SA_text-gray-300"></i>
-                                                        <i class="fa fa-arrow-up fa-2x SA_text-gray-300"></i>
                                                     </div>
 
                                                 </div>
@@ -141,7 +198,6 @@
 
                                                     <div class="SA_col-auto">
                                                         <i class="fa fa-money fa-2x SA_text-gray-300"></i>
-                                                        <i class="fa fa-arrow-up fa-2x SA_text-gray-300"></i>
                                                     </div>
 
                                                 </div>
@@ -161,7 +217,6 @@
 
                                                     <div class="SA_col-auto">
                                                         <i class="fa fa-money fa-2x SA_text-gray-300"></i>
-                                                        <i class="fa fa-arrow-down fa-2x SA_text-gray-300"></i>
                                                     </div>
 
                                                 </div>

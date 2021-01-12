@@ -4034,6 +4034,7 @@ function Wo_GetMytransactions($args = array()) {
     }
 
     $data      = array();
+    $query_one = '';
     if ($offset > 0) {
         $query_one .= " AND `id` < {$offset} AND `id` <> {$offset} ";
     }
@@ -8167,7 +8168,8 @@ function SA_getPortfolioRealizedGain($portfolio_id, $type_){
     $portfolio_id = Wo_Secure($portfolio_id);
     $type_ = Wo_Secure($type_);
 
-    $query_one   = "SELECT SUM(`realized_gain`) AS `total_realised_gain` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `type` = '{$type_}';";
+    if ($type_ == 'all') $query_one   = "SELECT SUM(`realized_gain`) AS `total_realised_gain` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id};";
+    else $query_one   = "SELECT SUM(`realized_gain`) AS `total_realised_gain` FROM " . T_REALIZED . " WHERE `portfolio_id` = {$portfolio_id} AND `type` = '{$type_}';";
     $query       = mysqli_query($sqlConnect, $query_one);
 
     if (!$query) {
@@ -9067,7 +9069,7 @@ function SellPropertyFromPortfolio($property_datum, $portfolio_id){
     $query_one   = "INSERT INTO " . T_PORTFOLIO_PROPERTY . " (`portfolio_id`, `Property Name`, `transaction_date`, `transaction_price`, `current_price`, `Notes`, `timestamp_created`, `SOLD`) VALUES ({$portfolio_id}, '{$property_name}', {$property_transaction_date}, {$property_transaction_price}, 0, '{$property_note}', {$timestamp_created}, 2)";
     $query       = mysqli_query($sqlConnect, $query_one);
 
-    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_properties` = `invested_value_properties` - {$property_purchase_price} WHERE `portfolio_id` = {$portfolio_id};";
+    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_properties` = `invested_value_properties` - {$property_purchase_price}, `total_invested_value` = `total_invested_value` + {$property_purchase_price} WHERE `portfolio_id` = {$portfolio_id};";
     $query     = mysqli_query($sqlConnect, $query_one);
 
     $query_text   = "INSERT INTO " . T_REALIZED . " (`portfolio_id`, `type`, `realized_gain`, `element_uid`) VALUES ({$portfolio_id}, 'property', {$realized_gain}, {$uid});";
@@ -9150,7 +9152,7 @@ function SellMFFromPortfolio($mf_quote_datum, $portfolio_id, $mf_available){
     $query_one   = "INSERT INTO " . T_PORTFOLIO_MF . " (`portfolio_id`, `Scheme Code`, `mf_transaction_date`, `mf_transaction_price`, `mf_transaction_qty`, `timestamp_created`, `Notes`, `SOLD`) VALUES ({$portfolio_id}, {$scheme_code}, {$mf_transaction_date}, {$mf_transaction_price}, {$mf_transaction_qty}, {$timestamp_created}, '{$mf_note}', 2)";
     $query       = mysqli_query($sqlConnect, $query_one);
 
-    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_mutual_funds` = `invested_value_mutual_funds` + {$mf_amount} WHERE `portfolio_id` = {$portfolio_id}";
+    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `invested_value_mutual_funds` = `invested_value_mutual_funds` + {$mf_amount}, `total_invested_value` = `total_invested_value` + {$mf_amount} WHERE `portfolio_id` = {$portfolio_id}";
     $query     = mysqli_query($sqlConnect, $query_one);
 
     if ($mf_transaction_qty == $mf_available) {
@@ -9261,7 +9263,7 @@ function SellStocksFromPortfolio($stock_quote_datum, $portfolio_id, $stocks_avai
         return mysqli_error($sqlConnect);
     };
 
-    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `stock_invested_value` = `stock_invested_value` + {$stock_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
+    $query_one   = "UPDATE " . T_PORTFOLIO . " SET `stock_invested_value` = `stock_invested_value` + {$stock_net_amount}, `total_invested_value` = `total_invested_value` + {$stock_net_amount} WHERE `portfolio_id` = {$portfolio_id}";
     $query     = mysqli_query($sqlConnect, $query_one);
 
     if (!$query) {

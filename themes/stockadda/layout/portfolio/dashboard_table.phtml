@@ -31,6 +31,7 @@
             <td>&#8377;<span id='mf_currentValTable'>0</span></td>
         </tr>
 
+<!--
         <tr>
             <th scope="row"><span style="margin: 0.75em;">Cash</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-cash" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-cash">Edit</a></span></th>
             <td>&#8377;<?php echo round($wo['portfolio_data']['invested_value_cash'], 2); ?></td>
@@ -39,6 +40,7 @@
             <td>N.A.</td>
             <td>&#8377;<?php echo round($wo['portfolio_data']['current_value_cash'], 2); ?></td>
         </tr>
+-->
 
         <tr>
             <th scope="row"><span style="margin: 0.75em;">Bullion</span><br><span style="color:red; margin-right: 0.75em;"><a href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=add-bullion" style="color:red;">Add</a></span><span style="color:green; margin-right: 0.75em;"><a style="color:green" href="<?php echo $wo['portfolio_data']['url'];?>&amp;t2=edit-bullion">Edit</a></span></th>
@@ -100,7 +102,7 @@
 
         <tr style="background-color:grey">
             <th scope="row"><span style="margin: 0.75em; color: white;">Total</span></th>
-            <td><span style="margin: 0.75em; color: white;">&#8377;<?php echo round($wo['portfolio_data']['total_invested_value'], 2); ?></span></td>
+            <td><span style="margin: 0.75em; color: white;">&#8377;<?php echo round(($wo['portfolio_data']['total_invested_value']), 2); ?></span></td>
             <td><span style="margin: 0.75em; color: white;">&#8377;<span id="total_day_gain">0</span></span></td>
             <td><span style="margin: 0.75em; color: white;">&#8377;<span id="total_unrealised_gain">0</span></span></td>
             <td><span style="margin: 0.75em; color: white;">&#8377;<span id="total_realised_gain">0</span></span></td>
