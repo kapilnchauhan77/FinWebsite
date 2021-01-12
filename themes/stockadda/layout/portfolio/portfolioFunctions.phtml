@@ -1625,7 +1625,7 @@
                         console.log(compname);
                         console.log(data.other_stock_transactions[compname]);
                         data.other_stock_transactions[compname].forEach( function (val){
-                            if (type_ == ''){
+                            if (type_ == 'stocks'){
                                 _qty_ = parseInt(val.stock_transaction_qty);
                                 tmp_price = (parseFloat(val.stock_transaction_price) * _qty_) + parseFloat(val.Charges);
                                 tmp_date = new Date(parseInt(val.stock_transaction_date) * 1000);
