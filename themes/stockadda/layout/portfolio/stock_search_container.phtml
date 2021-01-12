@@ -131,6 +131,7 @@
                             icon: 'error',
                             title: data['error'],
                         })
+                        console.log(data['error']);
                     }
                     else{
                         Swal.fire({
@@ -180,6 +181,7 @@
             stocks_array_to_send.push(stockInfo);
         });
 
+        console.log('stocks_array_to_send');
         console.log(stocks_array_to_send);
 
         /* no_of_unique_stocks = [...new Set(Object.values(stock_quotes_to_add))].length; */

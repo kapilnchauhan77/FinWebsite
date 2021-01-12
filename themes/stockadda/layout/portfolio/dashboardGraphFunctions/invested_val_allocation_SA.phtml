@@ -3,12 +3,12 @@
     function invested_value_allocation(ctx){
 
         var options = {
-              series: [<?php echo round($wo['portfolio_data']['invested_value_bullion'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_cash'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_FD'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_other_assets'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_properties'], 2); ?>, <?php echo round($wo['portfolio_data']['stock_invested_value'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_mutual_funds'], 2); ?>],
+              series: [<?php echo round($wo['portfolio_data']['invested_value_bullion'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_FD'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_other_assets'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_properties'], 2); ?>, <?php echo round($wo['portfolio_data']['stock_invested_value'], 2); ?>, <?php echo round($wo['portfolio_data']['invested_value_mutual_funds'], 2); ?>],
               chart: {
               width: '100%',
               type: 'donut',
             },
-            labels: ["Bullion", "Cash", "Fixed Deposit", "Other Assets", "Properties", "Stocks", "Mutual Funds"],
+            labels: ["Bullion", "Fixed Deposit", "Other Assets", "Properties", "Stocks", "Mutual Funds"],
             tooltip: {enabled: false},
             plotOptions: {
               pie: {

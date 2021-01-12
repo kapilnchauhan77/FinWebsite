@@ -368,7 +368,7 @@
         var unrealized_invested_val = 0;
         var realized_invested_val = 0;
         var total_maturity_val = 0;
-        var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
+        var financial_yr_timestamp = (new Date().getMonth() <= 3) ? new Date(new Date().getFullYear()-1, 3).getTime()/1000 : new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         data_of_all_fd.forEach(function (value) {
             var unrealized_currentVal_individual = 0;
@@ -544,7 +544,7 @@
 
         var currentVal = 0;
         var invested_fyr = 0;
-        var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
+        var financial_yr_timestamp = (new Date().getMonth() <= 3) ? new Date(new Date().getFullYear()-1, 3).getTime()/1000 : new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         data_of_all_bullion.forEach(function (value) {
 
@@ -574,7 +574,7 @@
 
         var currentVal = 0;
         var invested_fyr = 0;
-        var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
+        var financial_yr_timestamp = (new Date().getMonth() <= 3) ? new Date(new Date().getFullYear()-1, 3).getTime()/1000 : new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         data_of_all_cash.forEach(function (value) {
 
@@ -622,7 +622,7 @@
         var highest_loss_per = 0;
         var highest_profit_name = '';
         var highest_loss_name = '';
-        var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
+        var financial_yr_timestamp = (new Date().getMonth() <= 3) ? new Date(new Date().getFullYear()-1, 3).getTime()/1000 : new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         data_of_all_oa.forEach(function (value) {
 
@@ -737,7 +737,7 @@
         var highest_loss_per = 0;
         var highest_profit_name = '';
         var highest_loss_name = '';
-        var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
+        var financial_yr_timestamp = (new Date().getMonth() <= 3) ? new Date(new Date().getFullYear()-1, 3).getTime()/1000 : new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         var overview_table_to_append = '';
 
@@ -813,6 +813,9 @@
             $('#total_assets').text(currentVal_toDisplay.toFixed(2));
 
             var invested_fyr_toDisplay = parseFloat($('#asset_added_this_year').text()) + invested_fyr;
+            console.log('invested_fyr_toDisplay')
+            console.log(invested_fyr_toDisplay)
+            console.log(invested_fyr)
             $('#asset_added_this_year').text(invested_fyr_toDisplay.toFixed(2));
 
             var p_l_this_year = currentVal_fyr - invested_fyr;
@@ -874,7 +877,7 @@
         var total_profit_overall    = 0;
         var num_profit_overall      = 0;
         var num_loss_overall        = 0;
-        var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
+        var financial_yr_timestamp = (new Date().getMonth() <= 3) ? new Date(new Date().getFullYear()-1, 3).getTime()/1000 : new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         var categoryDistributionInv = new Object();
         var categoryDistributionCur = new Object();
@@ -1174,7 +1177,7 @@
         var fincode_mcap_weightage_current      = new Object();
 
         var fincode_added_this_fyr  = new Object();
-        var financial_yr_timestamp  = new Date(new Date().getFullYear(), 3).getTime()/1000;
+        var financial_yr_timestamp = (new Date().getMonth() <= 3) ? new Date(new Date().getFullYear()-1, 3).getTime()/1000 : new Date(new Date().getFullYear(), 3).getTime()/1000;
 
         var tmp_date = 0;
         var tmp_price = 0;
@@ -1196,6 +1199,7 @@
 
                 console.log('Date from stocks:');
                 console.log(parseInt(val.stock_transaction_date));
+                console.log(date_compname_type);
 
                 tmp_date = new Date(parseInt(val.stock_transaction_date) * 1000);
                 tmp_price = (parseFloat(val.stock_transaction_price) * parseInt(val.stock_transaction_qty)) + parseFloat(val.Charges);
@@ -1203,7 +1207,8 @@
                 tmp_proper_date =  tmp_date.getFullYear() + "-" + (tmp_date.getMonth() + 1) +"-"+ tmp_date.getDate();
                 if (tmp_proper_date in date_seperation){
                     date_seperation[tmp_proper_date] += tmp_price;
-                    date_compname_type[tmp_proper_date][value.compname].push(['0', tmp_price, parseInt(val.stock_transaction_qty)]);
+                    if (value.compname in date_compname_type[tmp_proper_date]) date_compname_type[tmp_proper_date][value.compname].push(['0', tmp_price, parseInt(val.stock_transaction_qty)]);
+                    else date_compname_type[tmp_proper_date][value.compname] = [['0', tmp_price, parseInt(val.stock_transaction_qty)]];
                 } else{
                     date_seperation[tmp_proper_date] = tmp_price;
                     date_compname_type[tmp_proper_date] = Object();

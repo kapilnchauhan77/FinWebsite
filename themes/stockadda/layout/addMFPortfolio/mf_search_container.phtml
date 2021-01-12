@@ -8,60 +8,60 @@
         return local.toJSON().slice(0, 10);
     });
 
-    var StockSearchContainer = $('.stock-search-container');
-    var StockSearchResult = $('.stock-search-dropdown-result');
-    var stock_quotes_to_add = {};
-    var stock_num = 0;
+    var mfSearchContainer = $('.stock-search-container');
+    var MFSearchResult = $('.stock-search-dropdown-result');
+    var mf_quotes_to_add = {};
+    var mf_num = 0;
 
     function Wo_StockSearchResult(query) {
         if (query != '') {
-            Wo_progressIconLoader(StockSearchContainer.find('.stock_search'));
-            StockSearchContainer.addClass('open');
+            Wo_progressIconLoader(mfSearchContainer.find('.stock_search'));
+            mfSearchContainer.addClass('open');
             $.get(Wo_Ajax_Requests_File(), {f: 'search', s: 'mutual_fund', query: query}, function(data) {
                 if (data.status == 200) {
                     if (data.html.length == 0) {
-                        StockSearchResult.html('<span class="center-text">' + " <?php echo $wo['lang']['no_result']; ?>" + '<span>');
+                        MFSearchResult.html('<span class="center-text">' + " <?php echo $wo['lang']['no_result']; ?>" + '<span>');
                     } else {
-                        StockSearchResult.html(data.html);
+                       MFSearchResult.html(data.html);
                     }
                 }
-                Wo_progressIconLoader(StockSearchContainer.find('#stock_search'));
+                Wo_progressIconLoader(mfSearchContainer.find('#stock_search'));
             });
             $(document).click(function() {
-                StockSearchContainer.removeClass('open');
+                mfSearchContainer.removeClass('open');
             });
         } else {
-            StockSearchContainer.removeClass('open');
+            mfSearchContainer.removeClass('open');
         }
     }
 
     function AddStockToTable(fincode, comp_name){
-        if (!stock_quotes_to_add.length){
+        if (!mf_quotes_to_add.length){
             $('#stock_container').addClass('hidden');
             $('#stock_quote_table_search').removeClass('hidden');
         }
-        table_body_data_to_add = `<tr id=`+ fincode + stock_num +` style="height:39px">
+        table_body_data_to_add = `<tr id=`+ fincode + mf_num +` style="height:39px">
                                      <td id="stock_name" class="stock_quote_name_search">` + comp_name + `</td>
                                      <td><input id="stock_transaction_date" type="date" name="transaction_date"/></td>
                                      <td>
                                          <span class="stock_quote_transac_price_div">
-                                             <input id="stock_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeValueAmount(`+ fincode + stock_num +`) onchange=changeValueAmount(`+ fincode + stock_num +`) />
+                                             <input id="stock_transaction_price" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_price" style="height:39px;" onkeyup=changeValueAmount(`+ fincode + mf_num +`) onchange=changeValueAmount(`+ fincode + mf_num +`) />
                                          </span>
                                      </td>
-                                     <td><input id="stock_qty" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="quantity" style="height:39px;" onkeyup=changeValueAmount(`+ fincode + stock_num +`) onchange=changeValueAmount(`+ fincode + stock_num +`) /></td>
+                                     <td><input id="stock_qty" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="quantity" style="height:39px;" onkeyup=changeValueAmount(`+ fincode + mf_num +`) onchange=changeValueAmount(`+ fincode + mf_num +`) /></td>
                                      <td>
                                          <span class="stock_quote_transac_price_div">
-                                             <input id="stock_transaction_amount" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_amount" style="height:39px;" onkeyup=changeValueQuantity(`+ fincode + stock_num +`) onchange=changeValueQuantity(`+ fincode + stock_num +`) />
+                                             <input id="stock_transaction_amount" type="number" min="0" value="0.00" step="any" class="stock_quote_transac_price" name="transaction_amount" style="height:39px;" onkeyup=changeValueQuantity(`+ fincode + mf_num +`) onchange=changeValueQuantity(`+ fincode + mf_num +`) />
                                          </span>
                                      </td>
-                                     <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteStockQuoteFromSearch('`+ fincode + stock_num +`')"></i></td>
+                                     <td style="vertical-align: middle;"><i class="fa fa-trash fa-2x stock_search_delete_trash" onclick="deleteStockQuoteFromSearch('`+ fincode + mf_num +`')"></i></td>
                                    </tr>
-                                  <tr id=`+ fincode + stock_num +`stock_notes style="height:39px">
+                                  <tr id=`+ fincode + mf_num +`stock_notes style="height:39px">
                                      <td colspan="7"> <span class="small">Notes:</span> <br> <span> <textarea name="notes" id="notes" rows="1"></textarea> </span> </textarea></td>
                                   </tr>`;
 
-        stock_quotes_to_add[stock_num] = fincode;
-        stock_num += 1;
+        mf_quotes_to_add[mf_num] = fincode;
+        mf_num += 1;
 
         $('#table_stock_quote_search_body').append(table_body_data_to_add);
     }
@@ -82,9 +82,9 @@
 
     function deleteStockQuoteFromSearch(id){
 
-        delete stock_quotes_to_add[id.slice(6)];
+        delete mf_quotes_to_add[id.slice(6)];
 
-        if (!(Object.keys(stock_quotes_to_add).length)){
+        if (!(Object.keys(mf_quotes_to_add).length)){
             $('#stock_container').removeClass('hidden');
             $('#stock_quote_table_search').addClass('hidden');
         }
@@ -94,7 +94,7 @@
         $("#"+id+"stock_notes").remove();
     }
 
-    function ajax_call_for_stocks(stocks_array_to_send, auto_add_){
+    function ajax_call_for_mf(stocks_array_to_send, auto_add_){
         $.ajax({
             url: Wo_Ajax_Requests_File(),
             type: 'GET',
@@ -138,30 +138,30 @@
         });
     }
 
-    function pushStockDataToBackend(){
+    function pushMFDataToBackend(){
         var stocks_array_to_send = new Array();
         var stocks_total_price = 0;
         var earliest_stocks_date = undefined;
 
-        Object.keys(stock_quotes_to_add).forEach(function (id){
-            if ($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val() === ""){
+        Object.keys(mf_quotes_to_add).forEach(function (id){
+            if ($("#"+mf_quotes_to_add[id]+id+" #stock_transaction_date").val() === ""){
                 /* alert('Please Enter a Date'); */
-                /* $("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val(new Date().toDateInputValue()); */
-                $("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val("NaN");
+                /* $("#"+mf_quotes_to_add[id]+id+" #stock_transaction_date").val(new Date().toDateInputValue()); */
+                $("#"+mf_quotes_to_add[id]+id+" #stock_transaction_date").val("NaN");
             }
-            /* console.log($("#"+stock_quotes_to_add[id]+id+"charge_").text()) */
+            /* console.log($("#"+mf_quotes_to_add[id]+id+"charge_").text()) */
 
-            stocks_total_price += parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_amount").val());
-            if((earliest_stocks_date == undefined) || (parseInt(new Date($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000))) earliest_stocks_date = parseInt(new Date($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000);
+            stocks_total_price += parseFloat($("#"+mf_quotes_to_add[id]+id+" #stock_transaction_amount").val());
+            if((earliest_stocks_date == undefined) || (parseInt(new Date($("#"+mf_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000))) earliest_stocks_date = parseInt(new Date($("#"+mf_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000);
 
             stockInfo = {
 
-                    scheme_code: parseInt(stock_quotes_to_add[id]),
-                    mf_transaction_date: parseInt(new Date($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000),
-                    mf_transaction_price: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_price").val()),
-                    mf_transaction_qty: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_qty").val()).toFixed(3),
-                    mf_amount: parseFloat($("#"+stock_quotes_to_add[id]+id+" #stock_transaction_amount").val()),
-                    note: $("#"+stock_quotes_to_add[id]+id+"stock_notes #notes").val(),
+                    scheme_code: parseInt(mf_quotes_to_add[id]),
+                    mf_transaction_date: parseInt(new Date($("#"+mf_quotes_to_add[id]+id+" #stock_transaction_date").val()).getTime()/1000),
+                    mf_transaction_price: parseFloat($("#"+mf_quotes_to_add[id]+id+" #stock_transaction_price").val()),
+                    mf_transaction_qty: parseFloat($("#"+mf_quotes_to_add[id]+id+" #stock_qty").val()).toFixed(3),
+                    mf_amount: parseFloat($("#"+mf_quotes_to_add[id]+id+" #stock_transaction_amount").val()),
+                    note: $("#"+mf_quotes_to_add[id]+id+"stock_notes #notes").val(),
 
                         };
 
@@ -170,7 +170,7 @@
 
         console.log(stocks_array_to_send);
 
-        /* no_of_unique_stocks = [...new Set(Object.values(stock_quotes_to_add))].length; */
+        /* no_of_unique_stocks = [...new Set(Object.values(mf_quotes_to_add))].length; */
         /* console.log("no_of_unique_stocks"); */
         /* console.log(no_of_unique_stocks); */
 
@@ -217,15 +217,15 @@
                         allowOutsideClick: () => !Swal.isLoading()
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            ajax_call_for_stocks(stocks_array_to_send, '0');
+                            ajax_call_for_mf(stocks_array_to_send, '0');
                         }
                     })
                 } else if (result.isDenied) {
-                    ajax_call_for_stocks(stocks_array_to_send, '1');
+                    ajax_call_for_mf(stocks_array_to_send, '1');
                 }
             })
         } else {
-            ajax_call_for_stocks(stocks_array_to_send, '0');
+            ajax_call_for_mf(stocks_array_to_send, '0');
         }
     }
 

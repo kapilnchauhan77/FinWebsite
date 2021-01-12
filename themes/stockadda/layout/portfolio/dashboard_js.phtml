@@ -68,7 +68,7 @@
         change_dynamic_colors();
 
         if (tab=='dashboard'){
-            add_doughnutCharts_Portfolio([parseFloat(currentVal_bullion), parseFloat(currentVal_cash), parseFloat(currentVal_fd), parseFloat(currentVal_oa), parseFloat(currentVal_properties), parseFloat(currentVal_stocks), parseFloat(currentVal_mf)]);
+            add_doughnutCharts_Portfolio([parseFloat(currentVal_bullion), parseFloat(currentVal_fd), parseFloat(currentVal_oa), parseFloat(currentVal_properties), parseFloat(currentVal_stocks), parseFloat(currentVal_mf)]);
             add_lineChart(dates_obj, type_dates_obj);
 
             var total_equity = $('#total_assets').text() - $('#total_liabilities').text();
