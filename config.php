@@ -21,5 +21,5 @@ $sql_db_name = "wowondernew";
 $site_url = "http://localhost/saddanew"; // e.g (http://example.com)
 
 // Purchase code
-$purchase_code = "empty1234-12b6-411d-8d31-aa6bc978735e"; // Your purchase code, don't give it to anyone.
+$purchase_code = ""; // Your purchase code, don't give it to anyone.
 ?>

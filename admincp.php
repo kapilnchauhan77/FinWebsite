@@ -1,5 +1,5 @@
 <?php
-// You can access the admin panel by using the following url: http://yoursite.com/admincp 
+// You can access the admin panel by using the following url: http://yoursite.com/admincp
 
 require 'assets/init.php';
 
@@ -15,7 +15,7 @@ if ($wo['config']['maintenance_mode'] == 1) {
             header("Location: " . Wo_SeoLink('index.php?link1=welcome') . $wo['marker'] . 'm=true');
             exit();
         }
-    } 
+    }
 }
 if ($is_admin == false && $is_moderoter == false) {
 	header("Location: " . Wo_SeoLink('index.php?link1=welcome'));
